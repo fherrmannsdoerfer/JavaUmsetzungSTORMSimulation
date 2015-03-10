@@ -14,11 +14,10 @@ public class Test {
 	 * @throws IOException 
 	 */
 	
-	static String FILE = "mito.nff";
-	static String FILE2 = "Microtubules.wimp";
 	
 	public static void main(String[] args) throws IOException {
-		
+		LineObjectParser lineParser = new LineObjectParser(null);
+		lineParser.parse();
      }
 
 }
