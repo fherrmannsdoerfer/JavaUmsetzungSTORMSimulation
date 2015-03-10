@@ -41,5 +41,5 @@ ehthumbs.db
 Thumbs.db
 
 # raw data
-.nff
-.wimp
+*.nff
+*.wimp
