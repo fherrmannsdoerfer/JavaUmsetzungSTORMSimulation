@@ -12,33 +12,47 @@ public class LineObjectParser {
 	static String FILE = "mito.nff";
 	static String FILE2 = "Microtubules.wimp";
 	static String FILE3 = "Microtubules_large.wimp";
+	//static String REGEX = "\\s+ \\d+ \\s+\\d+\\.*\\d+.*";
+	static String REGEX = "\\s+\\d+\\s+\\d+\\.*\\d+.*";
 	
+	List<> allObjects = new ArrayList<>();
+		
 	public LineObjectParser(String path) {
 		
 	}
 	
 	public void parse() throws IOException {
 		long start = System.nanoTime();
-        BufferedReader br = new BufferedReader(new FileReader(FILE2));
+        BufferedReader br = new BufferedReader(new FileReader(FILE3));
         String line;
         List<String> words = new ArrayList<String>();
         int objectNumber = 0;
+        jregex.Pattern pattern = new jregex.Pattern(REGEX);
         while ((line = br.readLine()) != null) {
             words.clear();
+            jregex.Matcher m = pattern.matcher(line);
             if (line.contains("Object #:")) {
             	objectNumber++;
             	continue;
             }
-            else if (objectNumber > 0 && line.matches("\\s+ \\d+ \\s+\\d+\\.*\\d+.*")) {
+            else if (objectNumber > 0 && m.matches()) {
             	int pos = 0, end;
             	//System.out.println(line);
             	//printMatches(line, "\\d+\\.*\\d+");
             	//line = line.replaceFirst("\\s+", "");
             	//System.out.println(line);
-                while ((end = line.indexOf(' ', pos)) >= 0) {
-                    words.add(line.substring(pos, end));
-                    pos = end + 1;
+            	            	
+//                while ((end = line.indexOf(' ', pos)) >= 0) {
+//                    words.add(line.substring(pos,end));
+//                    pos = end + 1;
+//                }
+                
+                for(int i = 0; i<line.length(); i++) {
+                	end = line.indexOf(' ', i);
+                	words.add(line.substring(i,end));
+                    i = end + 1;
                 }
+                
                 //System.out.println(words);
                 List<String> coordinates = new ArrayList<String>();
                 for(String s : words) {
@@ -53,7 +67,21 @@ public class LineObjectParser {
                 if (coordinates.size() > 3) {
         	    	coordinates.remove(0);
         	    }
-                System.out.println(coordinates);
+                
+                float[] point = new float[3];
+                try{
+                    point[0] = Float.parseFloat(coordinates.get(0));
+                    point[1] = Float.parseFloat(coordinates.get(1));
+                    point[2] = Float.parseFloat(coordinates.get(2));
+                } 
+                catch (Exception e) {
+                	
+                }
+                
+//                for (int i = 0; i < 3;i++) {
+//                	System.out.println(point[i]);
+//                }
+                //System.out.println(coordinates);
             }
             else {
             	continue;
