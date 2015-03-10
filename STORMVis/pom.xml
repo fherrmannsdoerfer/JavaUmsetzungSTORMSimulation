@@ -18,12 +18,13 @@
      <url>http://maven.jzy3d.org/releases</url>
   </repository>
 </repositories>
-  
+  <dependencies>
   <dependency>
     <groupId>org.jzy3d</groupId>
     <artifactId>jzy3d-api</artifactId>
-    <version>0.9.2-SNAPSHOT</version>
+    <version>0.9.1</version>
 </dependency>
+</dependencies>
   <!--  test -->
   <!--  neu -->
 </project>
