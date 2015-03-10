@@ -23,7 +23,7 @@ public class LineObjectParser {
 	
 	public void parse() throws IOException {
 		long start = System.nanoTime();
-        BufferedReader br = new BufferedReader(new FileReader(FILE3));
+        BufferedReader br = new BufferedReader(new FileReader(FILE2));
         String line;
         List<String> words = new ArrayList<String>();
         int objectNumber = 0;
@@ -33,11 +33,11 @@ public class LineObjectParser {
             words.clear();
             jregex.Matcher m = pattern.matcher(line);
             if (line.contains("Object #:")) {
-            	objectNumber++;
-            	//if(objectNumber!= 0) {
+            	if(objectNumber!= 0) {
             		allObjects.add(currentObject);
             		currentObject = new ArrayList<Point>();
-            	//}
+            	}
+            	objectNumber++;
             	continue;
             }
             else if (objectNumber > 0 && m.matches()) {
@@ -87,12 +87,13 @@ public class LineObjectParser {
             // words.
             //System.out.println(words);
         }
+        allObjects.add(currentObject);
         br.close();
         long time = System.nanoTime() - start;
         System.out.printf("Took %f seconds to read lines and break using indexOf%n", time / 1e9);
         System.out.println("Number of objects: "+ objectNumber);
         System.out.println("Number of objects in Array: " + allObjects.size());
-        System.out.println(allObjects);
+        //System.out.println(allObjects);
 	}
 	
 	public static void printMatches(String text, String regex) {
