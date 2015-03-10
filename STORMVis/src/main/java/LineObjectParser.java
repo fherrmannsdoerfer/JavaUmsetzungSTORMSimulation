@@ -15,7 +15,7 @@ public class LineObjectParser {
 	//static String REGEX = "\\s+ \\d+ \\s+\\d+\\.*\\d+.*";
 	static String REGEX = "\\s+\\d+\\s+\\d+\\.*\\d+.*";
 	
-	List<> allObjects = new ArrayList<>();
+	List<ArrayList<Point>> allObjects = new ArrayList<ArrayList<Point>>();
 		
 	public LineObjectParser(String path) {
 		
@@ -28,30 +28,36 @@ public class LineObjectParser {
         List<String> words = new ArrayList<String>();
         int objectNumber = 0;
         jregex.Pattern pattern = new jregex.Pattern(REGEX);
+        ArrayList<Point> currentObject = new ArrayList<Point>();
         while ((line = br.readLine()) != null) {
             words.clear();
             jregex.Matcher m = pattern.matcher(line);
             if (line.contains("Object #:")) {
             	objectNumber++;
+            	//if(objectNumber!= 0) {
+            		allObjects.add(currentObject);
+            		currentObject = new ArrayList<Point>();
+            	//}
             	continue;
             }
             else if (objectNumber > 0 && m.matches()) {
-            	int pos = 0, end;
+            	int pos = 0,end;
             	//System.out.println(line);
             	//printMatches(line, "\\d+\\.*\\d+");
             	//line = line.replaceFirst("\\s+", "");
             	//System.out.println(line);
             	            	
-//                while ((end = line.indexOf(' ', pos)) >= 0) {
-//                    words.add(line.substring(pos,end));
-//                    pos = end + 1;
-//                }
-                
-                for(int i = 0; i<line.length(); i++) {
-                	end = line.indexOf(' ', i);
-                	words.add(line.substring(i,end));
-                    i = end + 1;
+                while ((end = line.indexOf(' ', pos)) >= 0) {
+                    words.add(line.substring(pos,end));
+                    pos = end + 1;
                 }
+                
+//                for(int i = 0; i<line.length(); i++) {
+//                	end = line.indexOf(' ', i);
+//                	words.add(line.substring(i,end));
+//                    i = end+1;
+//                }
+                // strange failure with for loop
                 
                 //System.out.println(words);
                 List<String> coordinates = new ArrayList<String>();
@@ -68,16 +74,8 @@ public class LineObjectParser {
         	    	coordinates.remove(0);
         	    }
                 
-                float[] point = new float[3];
-                try{
-                    point[0] = Float.parseFloat(coordinates.get(0));
-                    point[1] = Float.parseFloat(coordinates.get(1));
-                    point[2] = Float.parseFloat(coordinates.get(2));
-                } 
-                catch (Exception e) {
-                	
-                }
-                
+                Point p = new Point(Float.parseFloat(coordinates.get(0)),Float.parseFloat(coordinates.get(1)),Float.parseFloat(coordinates.get(2)));
+                currentObject.add(p);
 //                for (int i = 0; i < 3;i++) {
 //                	System.out.println(point[i]);
 //                }
@@ -93,6 +91,8 @@ public class LineObjectParser {
         long time = System.nanoTime() - start;
         System.out.printf("Took %f seconds to read lines and break using indexOf%n", time / 1e9);
         System.out.println("Number of objects: "+ objectNumber);
+        System.out.println("Number of objects in Array: " + allObjects.size());
+        System.out.println(allObjects);
 	}
 	
 	public static void printMatches(String text, String regex) {
