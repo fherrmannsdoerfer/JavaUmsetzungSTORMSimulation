@@ -33,6 +33,7 @@ public class ScatterDemo extends AbstractAnalysis{
         
 		List<AbstractDrawable> sphereList = new ArrayList<AbstractDrawable>();
 		List<AbstractDrawable> lineList = new ArrayList<AbstractDrawable>();
+		List<List<AbstractDrawable>> separateLines = new ArrayList<List<AbstractDrawable>>();
 		
 		Coord3d[] points = new Coord3d[lineParser.pointNumber];
         Color[] colors = new Color[lineParser.pointNumber];
@@ -40,7 +41,7 @@ public class ScatterDemo extends AbstractAnalysis{
 		boolean first = true;
 		Point point1 = null, point2 = null;
         for(ArrayList<Coord3d> obj : lineParser.allObjects) {
-        	boolean ALLOBJECTS = (lineParser.allObjects.indexOf(obj) == 60);
+        	boolean ALLOBJECTS = (lineParser.allObjects.indexOf(obj) == 0 || (lineParser.allObjects.indexOf(obj)) == 1 ) && true;
         	for(Coord3d coord : obj) {
         		points[i] = coord;
         		float a = 1.f;
@@ -48,8 +49,9 @@ public class ScatterDemo extends AbstractAnalysis{
         		if(SHOWSPHERES) {
         			sphereList.add(addSphere(points[i], colors[i], 3.f, 5));
         		}
-        		
+        		/*
         		if(first && ALLOBJECTS) {
+        			lineList = new ArrayList<AbstractDrawable>();
         			point1 = new Point(points[i]);
         			first = false;
         		}
@@ -61,8 +63,28 @@ public class ScatterDemo extends AbstractAnalysis{
         			strip.setWidth(4.f);
         			lineList.add(strip);
         		}
+        		*/
         		i++;
+        	}//        	separateLines.add(lineList);
+        	//lineList.clear();
+        	int c = 0;
+        	for(Coord3d coord : obj) {
+        		points[c] = coord;
+        		if(!obj.get(obj.size()-1).equals(coord) && ALLOBJECTS) {
+        			lineList = new ArrayList<AbstractDrawable>();
+        			point1 = new Point(points[c]);
+            		point2 = new Point(points[c+1]);
+            		LineStrip strip = new LineStrip(point1,point2);
+        			strip.setWireframeColor(Color.BLACK);
+        			strip.setWidth(1.f);
+        			lineList.add(strip);
+        		}    
+        		c++;
         	}
+//        	List<AbstractDrawable> copy = new ArrayList<AbstractDrawable>();
+//        	copy.addAll(lineList);
+//        	separateLines.add(copy);
+//        	lineList.clear();
         }
                 
         Scatter scatter = new Scatter(points, colors, 5.f);
@@ -75,8 +97,15 @@ public class ScatterDemo extends AbstractAnalysis{
         	chart.getScene().add(scatter);
         }
         
+        
+        for(List<AbstractDrawable> linesOfObject : separateLines) {
+        	chart.getScene().add(linesOfObject);
+        }
+        
+        //chart.getScene().add(lineList);
+        
         System.out.println("Line list elements: " + lineList.size());
-        chart.getScene().add(lineList);
+        
         
         if(LIGHTON) {
         	Light light = chart.addLight(new Coord3d(500f, 500f, 2500f));
