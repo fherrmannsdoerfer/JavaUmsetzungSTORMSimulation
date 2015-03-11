@@ -11,22 +11,22 @@ import org.jzy3d.maths.Coord3d;
 
 public class LineObjectParser {
 	
-	static String FILE2 = "Microtubules.wimp";
-	static String FILE3 = "Microtubules_large.wimp";
 	//static String REGEX = "\\s+ \\d+ \\s+\\d+\\.*\\d+.*";
 	static String REGEX = "\\s+\\d+\\s+\\d+\\.*\\d+.*";
 	
 	public List<ArrayList<Coord3d>> allObjects = new ArrayList<ArrayList<Coord3d>>();
 	public int objectNumber = 0;
 	public int pointNumber = 0;
+	
+	public String path;
 		
 	public LineObjectParser(String path) {
-		
+		this.path = path;
 	}
 	
 	public void parse() throws IOException {
 		long start = System.nanoTime();
-        BufferedReader br = new BufferedReader(new FileReader(FILE2));
+        BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
         List<String> words = new ArrayList<String>();
         jregex.Pattern pattern = new jregex.Pattern(REGEX);

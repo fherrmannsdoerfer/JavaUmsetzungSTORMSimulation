@@ -27,11 +27,16 @@ import org.jzy3d.plot3d.primitives.Point;
 
 public class ScatterDemo extends AbstractAnalysis{
 	
+	static String FILE2 = "Microtubules.wimp";
+	static String FILE3 = "Microtubules_large.wimp";
+	
 	static boolean SHOWSPHERES = false;
+	static boolean SHOWLINES = true;
 	static boolean LIGHTON = false;	
 		
 	public void init() throws IOException{
-		LineObjectParser lineParser = new LineObjectParser(null);
+		long startTime = System.nanoTime();
+		LineObjectParser lineParser = new LineObjectParser(FILE2);
 		lineParser.parse();
         
 		List<AbstractDrawable> sphereList = new ArrayList<AbstractDrawable>();
@@ -40,7 +45,7 @@ public class ScatterDemo extends AbstractAnalysis{
         Color[] colors = new Color[lineParser.pointNumber];
 		int i = 0;
         for(ArrayList<Coord3d> obj : lineParser.allObjects) {
-        	boolean ALLOBJECTS = (lineParser.allObjects.indexOf(obj) == 0) && true;
+        	boolean ALLOBJECTS = (lineParser.allObjects.indexOf(obj) == 0) || true;
         	LineStrip strip = new LineStrip();
     		strip.setWidth(2.f);
     		strip.setWireframeColor(Color.BLACK);
@@ -51,12 +56,14 @@ public class ScatterDemo extends AbstractAnalysis{
         		if(SHOWSPHERES) {
         			sphereList.add(addSphere(points[i], colors[i], 3.f, 5));
         		}
-        		strip.add(new Point(coord));
+        		if(SHOWLINES && ALLOBJECTS) {
+        			strip.add(new Point(coord));
+        		}
         		i++;
         	}
         	lineList.add(strip);
         }
-        Scatter scatter = new Scatter(points, colors, 5.f);
+        Scatter scatter = new Scatter(points, colors, 3.f);
         chart = AWTChartComponentFactory.chart(Quality.Fastest, "awt");
         
         if(SHOWSPHERES) {
@@ -88,6 +95,8 @@ public class ScatterDemo extends AbstractAnalysis{
         System.out.println(chart.getControllers());
         System.out.println("Drawing " + lineParser.pointNumber + " points.");
         //View.current().rotate(new Coord2d(100,100), true);
+        long stop = System.nanoTime();
+        System.out.println("Total startup time: " + (stop-startTime)/1e9 +" s");
     }
 	
 	
@@ -101,8 +110,6 @@ public class ScatterDemo extends AbstractAnalysis{
                     threadController.stop(); 
 
             float factor = 1 + (e.getWheelRotation()/100.f); 
-            //zoom(factor); 
-
             Scale currScale = View.current().getScale(); 
             double range = currScale.getMax() - currScale.getMin(); 
 
@@ -117,7 +124,7 @@ public class ScatterDemo extends AbstractAnalysis{
                     scale = new org.jzy3d.maths.Scale(min, max); 
             } 
             else{ 
-                    if(factor<1) // forbid to have min = max if we zoom in 
+                    if(factor<1) 
                             scale = new org.jzy3d.maths.Scale(center, center); 
             } 
             BoundingBox3d bounds = View.current().getBounds(); 
@@ -127,8 +134,6 @@ public class ScatterDemo extends AbstractAnalysis{
             bounds.setYmax((float)scale.getMax()); 
             bounds.setXmin((float)scale.getMin()); 
             bounds.setXmax((float)scale.getMax()); 
-            //View.current().setBoundManual(bounds); can't use this 
-            //View.current().updateBounds(); 
             View.current().shoot(); 
 		}
 	}
@@ -145,8 +150,5 @@ public class ScatterDemo extends AbstractAnalysis{
 		s.setFaceDisplayed(true);
 		return s;
 	}
-	
-	
-	
-	
+
 }
