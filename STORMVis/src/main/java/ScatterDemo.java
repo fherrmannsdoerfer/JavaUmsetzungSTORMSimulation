@@ -11,11 +11,8 @@ import org.jzy3d.maths.Scale;
 import org.jzy3d.plot3d.primitives.Scatter;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.view.View;
-
 import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
-
-import com.jogamp.newt.swt.NewtCanvasSWT;
-
+import org.jzy3d.bridge.swing.*;
 
 public class ScatterDemo extends AbstractAnalysis{
 	public static void main(String[] args) throws Exception {
@@ -47,11 +44,12 @@ public class ScatterDemo extends AbstractAnalysis{
         
         
         Scatter scatter = new Scatter(points, colors);
-        chart = AWTChartComponentFactory.chart(Quality.Fastest, "awt");
+        chart = AWTChartComponentFactory.chart(Quality.Nicest, "awt");
         chart.getScene().add(scatter);
        
         ZoomController cont = new ZoomController();
         chart.addController(cont);
+        System.out.println(chart.getControllers());
     }
 	
 	
@@ -64,7 +62,7 @@ public class ScatterDemo extends AbstractAnalysis{
             if(threadController!=null) 
                     threadController.stop(); 
 
-            float factor = 1 + (e.getWheelRotation()/10.0f); 
+            float factor = 1 + (e.getWheelRotation()/100.f); 
             //zoom(factor); 
 
             Scale currScale = View.current().getScale(); 
