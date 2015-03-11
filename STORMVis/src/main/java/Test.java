@@ -15,7 +15,6 @@ public class Test {
 //		LineObjectParser lineParser = new LineObjectParser(null);
 //		lineParser.parse();
 		AnalysisLauncher.open(new ScatterDemo());
-		
 //		TriangleObjectParser trParser = new TriangleObjectParser(null);
 //		trParser.parse();
      }

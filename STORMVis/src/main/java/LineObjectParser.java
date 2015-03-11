@@ -94,7 +94,7 @@ public class LineObjectParser {
         allObjects.add(currentObject);
         br.close();
         long time = System.nanoTime() - start;
-        System.out.printf("Took %f seconds to read lines and break using indexOf%n", time / 1e9);
+        System.out.printf("Took %f seconds to read lines", time / 1e9);
         System.out.println("Number of objects: "+ objectNumber);
         System.out.println("Number of objects in Array: " + allObjects.size());
         //System.out.println(allObjects);
