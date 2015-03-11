@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 
 public class LineObjectParser {
 	
-	static String FILE = "mito.nff";
 	static String FILE2 = "Microtubules.wimp";
 	static String FILE3 = "Microtubules_large.wimp";
 	//static String REGEX = "\\s+ \\d+ \\s+\\d+\\.*\\d+.*";

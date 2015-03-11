@@ -18,6 +18,9 @@ public class Test {
 	public static void main(String[] args) throws IOException {
 		LineObjectParser lineParser = new LineObjectParser(null);
 		lineParser.parse();
+		
+		TriangleObjectParser trParser = new TriangleObjectParser(null);
+		trParser.parse();
      }
 
 }
