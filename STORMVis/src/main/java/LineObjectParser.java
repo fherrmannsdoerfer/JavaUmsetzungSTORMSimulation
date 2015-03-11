@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jzy3d.maths.Coord3d;
+
 
 public class LineObjectParser {
 	
@@ -14,7 +16,9 @@ public class LineObjectParser {
 	//static String REGEX = "\\s+ \\d+ \\s+\\d+\\.*\\d+.*";
 	static String REGEX = "\\s+\\d+\\s+\\d+\\.*\\d+.*";
 	
-	List<ArrayList<Point>> allObjects = new ArrayList<ArrayList<Point>>();
+	public List<ArrayList<Coord3d>> allObjects = new ArrayList<ArrayList<Coord3d>>();
+	public int objectNumber = 0;
+	public int pointNumber = 0;
 		
 	public LineObjectParser(String path) {
 		
@@ -25,16 +29,15 @@ public class LineObjectParser {
         BufferedReader br = new BufferedReader(new FileReader(FILE2));
         String line;
         List<String> words = new ArrayList<String>();
-        int objectNumber = 0;
         jregex.Pattern pattern = new jregex.Pattern(REGEX);
-        ArrayList<Point> currentObject = new ArrayList<Point>();
+        ArrayList<Coord3d> currentObject = new ArrayList<Coord3d>();
         while ((line = br.readLine()) != null) {
             words.clear();
             jregex.Matcher m = pattern.matcher(line);
             if (line.contains("Object #:")) {
             	if(objectNumber!= 0) {
             		allObjects.add(currentObject);
-            		currentObject = new ArrayList<Point>();
+            		currentObject = new ArrayList<Coord3d>();
             	}
             	objectNumber++;
             	continue;
@@ -73,8 +76,10 @@ public class LineObjectParser {
         	    	coordinates.remove(0);
         	    }
                 
-                Point p = new Point(Float.parseFloat(coordinates.get(0)),Float.parseFloat(coordinates.get(1)),Float.parseFloat(coordinates.get(2)));
+                //Point p = new Point(Float.parseFloat(coordinates.get(0)),Float.parseFloat(coordinates.get(1)),Float.parseFloat(coordinates.get(2)));
+                Coord3d p = new Coord3d(Float.parseFloat(coordinates.get(0)),Float.parseFloat(coordinates.get(1)),Float.parseFloat(coordinates.get(2)));
                 currentObject.add(p);
+                pointNumber++;
 //                for (int i = 0; i < 3;i++) {
 //                	System.out.println(point[i]);
 //                }
