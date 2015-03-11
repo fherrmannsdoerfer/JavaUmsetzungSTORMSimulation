@@ -2,13 +2,14 @@ import java.awt.event.MouseWheelEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
+import javax.media.opengl.GL;
 
 import org.jzy3d.analysis.AbstractAnalysis;
-import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.factories.AWTChartComponentFactory;
 import org.jzy3d.colors.Color;
 import org.jzy3d.maths.BoundingBox3d;
+import org.jzy3d.maths.Coord2d;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.Scale;
 import org.jzy3d.plot3d.primitives.AbstractDrawable;
@@ -18,30 +19,31 @@ import org.jzy3d.plot3d.primitives.Sphere;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.lights.Light;
 import org.jzy3d.plot3d.rendering.view.View;
+import org.jzy3d.plot3d.transform.Rotate;
+import org.jzy3d.plot3d.transform.Transform;
+import org.jzy3d.plot3d.transform.Translate;
 import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
 import org.jzy3d.plot3d.primitives.Point;
 
 public class ScatterDemo extends AbstractAnalysis{
 	
 	static boolean SHOWSPHERES = false;
-	static boolean LIGHTON = false;
-	
+	static boolean LIGHTON = false;	
 		
 	public void init() throws IOException{
 		LineObjectParser lineParser = new LineObjectParser(null);
 		lineParser.parse();
         
 		List<AbstractDrawable> sphereList = new ArrayList<AbstractDrawable>();
-		List<AbstractDrawable> lineList = new ArrayList<AbstractDrawable>();
-		List<List<AbstractDrawable>> separateLines = new ArrayList<List<AbstractDrawable>>();
-		
+		List<LineStrip> lineList = new ArrayList<LineStrip>();
 		Coord3d[] points = new Coord3d[lineParser.pointNumber];
         Color[] colors = new Color[lineParser.pointNumber];
 		int i = 0;
-		boolean first = true;
-		Point point1 = null, point2 = null;
         for(ArrayList<Coord3d> obj : lineParser.allObjects) {
-        	boolean ALLOBJECTS = (lineParser.allObjects.indexOf(obj) == 0 || (lineParser.allObjects.indexOf(obj)) == 1 ) && true;
+        	boolean ALLOBJECTS = (lineParser.allObjects.indexOf(obj) == 0) && true;
+        	LineStrip strip = new LineStrip();
+    		strip.setWidth(2.f);
+    		strip.setWireframeColor(Color.BLACK);
         	for(Coord3d coord : obj) {
         		points[i] = coord;
         		float a = 1.f;
@@ -49,46 +51,13 @@ public class ScatterDemo extends AbstractAnalysis{
         		if(SHOWSPHERES) {
         			sphereList.add(addSphere(points[i], colors[i], 3.f, 5));
         		}
-        		/*
-        		if(first && ALLOBJECTS) {
-        			lineList = new ArrayList<AbstractDrawable>();
-        			point1 = new Point(points[i]);
-        			first = false;
-        		}
-        		else if (!first && ALLOBJECTS){
-        			point2 = new Point(points[i]);
-        			first = true;
-        			LineStrip strip = new LineStrip(point1,point2);
-        			strip.setWireframeColor(Color.BLACK);
-        			strip.setWidth(4.f);
-        			lineList.add(strip);
-        		}
-        		*/
+        		strip.add(new Point(coord));
         		i++;
-        	}//        	separateLines.add(lineList);
-        	//lineList.clear();
-        	int c = 0;
-        	for(Coord3d coord : obj) {
-        		points[c] = coord;
-        		if(!obj.get(obj.size()-1).equals(coord) && ALLOBJECTS) {
-        			lineList = new ArrayList<AbstractDrawable>();
-        			point1 = new Point(points[c]);
-            		point2 = new Point(points[c+1]);
-            		LineStrip strip = new LineStrip(point1,point2);
-        			strip.setWireframeColor(Color.BLACK);
-        			strip.setWidth(1.f);
-        			lineList.add(strip);
-        		}    
-        		c++;
         	}
-//        	List<AbstractDrawable> copy = new ArrayList<AbstractDrawable>();
-//        	copy.addAll(lineList);
-//        	separateLines.add(copy);
-//        	lineList.clear();
+        	lineList.add(strip);
         }
-                
         Scatter scatter = new Scatter(points, colors, 5.f);
-        chart = AWTChartComponentFactory.chart(Quality.Nicest, "awt");
+        chart = AWTChartComponentFactory.chart(Quality.Fastest, "awt");
         
         if(SHOWSPHERES) {
         	chart.getScene().add(sphereList);
@@ -96,29 +65,29 @@ public class ScatterDemo extends AbstractAnalysis{
         else {
         	chart.getScene().add(scatter);
         }
-        
-        
-        for(List<AbstractDrawable> linesOfObject : separateLines) {
-        	chart.getScene().add(linesOfObject);
+                
+        // jzy3d does not throw an exception when there is a line with 0 points, but does not load the coordinate system
+        for (LineStrip line : lineList) {
+        	if(line.getPoints().size() != 0) {
+        		chart.getScene().getGraph().add(line);
+        	}
         }
-        
-        //chart.getScene().add(lineList);
-        
+                
         System.out.println("Line list elements: " + lineList.size());
         
-        
+         
         if(LIGHTON) {
         	Light light = chart.addLight(new Coord3d(500f, 500f, 2500f));
         	light.setRepresentationRadius(100);
         	light.setAmbiantColor(new Color(1f, 0,0));
         	//light.setDiffuseColor(new Color((255.f/255.f), 0, 0));
-        }
+        }        
         
         ZoomController cont = new ZoomController();
         chart.addController(cont);
         System.out.println(chart.getControllers());
         System.out.println("Drawing " + lineParser.pointNumber + " points.");
-        
+        //View.current().rotate(new Coord2d(100,100), true);
     }
 	
 	
@@ -174,7 +143,6 @@ public class ScatterDemo extends AbstractAnalysis{
 		s.setWireframeDisplayed(true);
 		s.setWireframeWidth(1);
 		s.setFaceDisplayed(true);
-		// s.setMaterialAmbiantReflection(materialAmbiantReflection)
 		return s;
 	}
 	
