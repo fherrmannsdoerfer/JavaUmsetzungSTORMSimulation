@@ -43,9 +43,9 @@ public class ScatterDemo extends AbstractAnalysis {
 	
 	static boolean SHOWSPHERES = false;
 	static boolean SHOWLINES = false;
-	static boolean LIGHTON = false;	
+	static boolean LIGHTON = true;	
 	static boolean TRIANGLES = true;
-	static boolean FRAMES = true;
+	static boolean FRAMES = false;
 		
 	public void init() throws IOException{
 	
@@ -139,8 +139,8 @@ public class ScatterDemo extends AbstractAnalysis {
             comp.setWireframeDisplayed(true);
         }
         else {
-        	Color factor = new Color(1, 1, 0, 0.0f);
-            comp.setColor(factor);
+        	Color factor = new Color(1, 1, 0, 0.65f);
+            //comp.setColor(factor);
         	comp.setWireframeDisplayed(false);
         }
         comp.setWireframeColor(Color.BLACK);
@@ -159,7 +159,7 @@ public class ScatterDemo extends AbstractAnalysis {
         System.out.println("Line list elements: " + lineList.size());
         
         ZoomController cont = new ZoomController();
-        //chart.addController(cont);
+        chart.addController(cont);
         System.out.println(chart.getControllers());
         System.out.println("Drawing " + lineParser.pointNumber + " points.");
         //View.current().rotate(new Coord2d(100,100), true);
