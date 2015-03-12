@@ -1,14 +1,32 @@
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.io.IOException;
 
+import javax.swing.JComponent;
+
 import org.jzy3d.analysis.AnalysisLauncher;
+import org.jzy3d.bridge.swing.FrameSwing;
+import org.jzy3d.chart.Chart;
+import org.jzy3d.maths.Rectangle;
 
 
-public class Test {
+public class Test extends FrameSwing {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param args
 	 * @throws Exception 
 	 */
+	
+	public Test() {
+
+//        initUI();
+    }
+	
 	
 	
 	public static void main(String[] args) throws Exception {
@@ -17,6 +35,21 @@ public class Test {
 		AnalysisLauncher.open(new ScatterDemo());
 //		TriangleObjectParser trParser = new TriangleObjectParser(null);
 //		trParser.parse();
+//	        
+//                Test ex = new Test();
+//                ex.setVisible(true);
      }
+	
+//	private void initUI() {
+//        setTitle("Simple example");
+//        setSize(300, 200);
+//        setLocationRelativeTo(null);
+//        setDefaultCloseOperation(EXIT_ON_CLOSE);
+//        
+//		ScatterDemo demo = new ScatterDemo();
+//        
+//		Chart chart = demo.createChart();
+//		add((JComponent)chart.getCanvas(), BorderLayout.CENTER);
+//    }
 
 }

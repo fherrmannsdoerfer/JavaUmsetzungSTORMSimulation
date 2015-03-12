@@ -6,6 +6,7 @@ import java.util.List;
 import javax.media.opengl.GL;
 
 import org.jzy3d.analysis.AbstractAnalysis;
+import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.factories.AWTChartComponentFactory;
 import org.jzy3d.colors.Color;
 import org.jzy3d.colors.ColorMapper;
@@ -30,11 +31,12 @@ import org.jzy3d.plot3d.transform.Transform;
 import org.jzy3d.plot3d.transform.Translate;
 import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
 import org.jzy3d.plot3d.primitives.Point;
+import org.jzy3d.chart.factories.IChartComponentFactory.Toolkit;
 
 import com.jogamp.graph.geom.Triangle;
 import com.jogamp.graph.geom.Vertex;
 
-public class ScatterDemo extends AbstractAnalysis{
+public class ScatterDemo extends AbstractAnalysis {
 	
 	static String FILE2 = "Microtubules.wimp";
 	static String FILE3 = "Microtubules_large.wimp";
@@ -46,14 +48,30 @@ public class ScatterDemo extends AbstractAnalysis{
 	static boolean FRAMES = true;
 		
 	public void init() throws IOException{
-
+	
+	}
+	
+	public Chart getChart() {
 		long startTime = System.nanoTime();
 		LineObjectParser lineParser = new LineObjectParser(FILE2);
-		lineParser.parse();
+		try {
+			lineParser.parse();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
 		trParser.limit = 0;
-		trParser.parse();
+		try {
+			trParser.parse();
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
 		List<AbstractDrawable> sphereList = new ArrayList<AbstractDrawable>();
 		List<LineStrip> lineList = new ArrayList<LineStrip>();
@@ -80,7 +98,8 @@ public class ScatterDemo extends AbstractAnalysis{
         	lineList.add(strip);
         }
         Scatter scatter = new Scatter(points, colors, 3.f);
-        chart = AWTChartComponentFactory.chart(Quality.Advanced, getCanvasType());
+        Chart chart;
+        chart = AWTChartComponentFactory.chart(Quality.Advanced, Toolkit.awt.name());
         //chart.setAxeDisplayed(false);
         
         if(SHOWSPHERES) {
@@ -140,12 +159,13 @@ public class ScatterDemo extends AbstractAnalysis{
         System.out.println("Line list elements: " + lineList.size());
         
         ZoomController cont = new ZoomController();
-        chart.addController(cont);
+        //chart.addController(cont);
         System.out.println(chart.getControllers());
         System.out.println("Drawing " + lineParser.pointNumber + " points.");
         //View.current().rotate(new Coord2d(100,100), true);
         long stop = System.nanoTime();
         System.out.println("Total startup time: " + (stop-startTime)/1e9 +" s");
+		return chart;
     }
 	
 	
@@ -186,9 +206,6 @@ public class ScatterDemo extends AbstractAnalysis{
             View.current().shoot(); 
 		}
 	}
-	
-	
-	
 	protected Sphere addSphere(Coord3d c, Color color, float radius,
 			int slicing) {
 		c = c.set(c.x, c.y, c.z*10);
