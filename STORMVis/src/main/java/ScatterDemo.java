@@ -8,13 +8,18 @@ import javax.media.opengl.GL;
 import org.jzy3d.analysis.AbstractAnalysis;
 import org.jzy3d.chart.factories.AWTChartComponentFactory;
 import org.jzy3d.colors.Color;
+import org.jzy3d.colors.ColorMapper;
+import org.jzy3d.colors.colormaps.ColorMapRBG;
+import org.jzy3d.colors.colormaps.ColorMapRainbow;
 import org.jzy3d.maths.BoundingBox3d;
 import org.jzy3d.maths.Coord2d;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.Scale;
 import org.jzy3d.plot3d.primitives.AbstractDrawable;
 import org.jzy3d.plot3d.primitives.LineStrip;
+import org.jzy3d.plot3d.primitives.Polygon;
 import org.jzy3d.plot3d.primitives.Scatter;
+import org.jzy3d.plot3d.primitives.Shape;
 import org.jzy3d.plot3d.primitives.Sphere;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.lights.Light;
@@ -24,6 +29,9 @@ import org.jzy3d.plot3d.transform.Transform;
 import org.jzy3d.plot3d.transform.Translate;
 import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
 import org.jzy3d.plot3d.primitives.Point;
+
+import com.jogamp.graph.geom.Triangle;
+import com.jogamp.graph.geom.Vertex;
 
 public class ScatterDemo extends AbstractAnalysis{
 	
@@ -64,7 +72,7 @@ public class ScatterDemo extends AbstractAnalysis{
         	lineList.add(strip);
         }
         Scatter scatter = new Scatter(points, colors, 3.f);
-        chart = AWTChartComponentFactory.chart(Quality.Fastest, "awt");
+        chart = AWTChartComponentFactory.chart(Quality.Advanced, "awt");
         
         if(SHOWSPHERES) {
         	chart.getScene().add(sphereList);
@@ -79,10 +87,28 @@ public class ScatterDemo extends AbstractAnalysis{
         		chart.getScene().getGraph().add(line);
         	}
         }
-                
+        
         System.out.println("Line list elements: " + lineList.size());
         
-         
+        /*
+        List<Polygon> polygons = new ArrayList<Polygon>();
+        Polygon p = new Polygon();
+        p.add(new Point(new Coord3d(0,0,0)));
+        p.add(new Point(new Coord3d(0,100,100)));
+        p.add(new Point(new Coord3d(0,100,200)));
+        polygons.add(p);
+        Shape surface = new Shape(polygons);
+        
+        Color factor = new Color(1, 1, 1, 0.0f);
+//        ColorMapper mapper = new ColorMapper(new ColorMapRBG(), surface
+//            .getBounds().getZmin(), surface.getBounds().getZmax(), factor);
+        //surface.setColorMapper(mapper);
+        //surface.setColorMapper(new ColorMapper(new ColorMapRBG(), surface.getBounds().getZmin(), surface.getBounds().getZmax(), new Color(0, 0, 0, 0)));
+        surface.setWireframeDisplayed(true);
+        surface.setWireframeColor(org.jzy3d.colors.Color.BLACK);
+        surface.setColor(factor);
+        chart.getScene().getGraph().add(surface);
+        */
         if(LIGHTON) {
         	Light light = chart.addLight(new Coord3d(500f, 500f, 2500f));
         	light.setRepresentationRadius(100);
