@@ -16,6 +16,7 @@ import org.jzy3d.maths.Coord2d;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.Scale;
 import org.jzy3d.plot3d.primitives.AbstractDrawable;
+import org.jzy3d.plot3d.primitives.CompileableComposite;
 import org.jzy3d.plot3d.primitives.LineStrip;
 import org.jzy3d.plot3d.primitives.Polygon;
 import org.jzy3d.plot3d.primitives.Scatter;
@@ -42,6 +43,7 @@ public class ScatterDemo extends AbstractAnalysis{
 	static boolean SHOWLINES = false;
 	static boolean LIGHTON = false;	
 	static boolean TRIANGLES = true;
+	static boolean FRAMES = true;
 		
 	public void init() throws IOException{
 
@@ -50,7 +52,7 @@ public class ScatterDemo extends AbstractAnalysis{
 		lineParser.parse();
 		
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 10000;
+		trParser.limit = 0;
 		trParser.parse();
         
 		List<AbstractDrawable> sphereList = new ArrayList<AbstractDrawable>();
@@ -79,7 +81,7 @@ public class ScatterDemo extends AbstractAnalysis{
         }
         Scatter scatter = new Scatter(points, colors, 3.f);
         chart = AWTChartComponentFactory.chart(Quality.Advanced, getCanvasType());
-        
+        //chart.setAxeDisplayed(false);
         
         if(SHOWSPHERES) {
         	chart.getScene().getGraph().add(sphereList);
@@ -96,22 +98,38 @@ public class ScatterDemo extends AbstractAnalysis{
         	}
         }
        
-        int parts = 1;
+        int parts = 2;
+        //List<CompileableComposite> list1 = new ArrayList<CompileableComposite>();
+        CompileableComposite comp = new CompileableComposite();
         for (int part = 0; part < parts; part++) {
-        	List<Polygon> list1 = new ArrayList<Polygon>();
             for (int c = (int) (part * trParser.allTriangles.size()/parts); c < (int) ((part* trParser.allTriangles.size() + trParser.allTriangles.size())/parts); c++) {
-            	list1.add(trParser.allTriangles.get(c));
+            	comp.add(trParser.allTriangles.get(c));
             }
-            Shape surface = new Shape(list1);
-            Color factor = new Color(1, 0, 0, 0.0f);
-            surface.setWireframeDisplayed(true);
-            surface.setWireframeWidth(0.01f);
-            surface.setWireframeColor(org.jzy3d.colors.Color.BLACK);
-            surface.setColor(factor);
-            if(TRIANGLES) chart.getScene().getGraph().add(surface);
+//            Shape surface = new Shape(comp);
+//            Color factor = new Color(1, 0, 0, 0.0f);
+//            surface.setWireframeDisplayed(true);
+//            surface.setWireframeWidth(0.01f);
+//            surface.setWireframeColor(org.jzy3d.colors.Color.BLACK);
+//            surface.setColor(factor);
+//            if(TRIANGLES) chart.getScene().getGraph().add(surface,false);
         }
         
-                
+        if(FRAMES) {
+        	Color factor = new Color(1, 1, 0, 0.0f);
+            comp.setColor(factor);
+            comp.setWireframeDisplayed(true);
+        }
+        else {
+        	Color factor = new Color(1, 1, 0, 0.0f);
+            comp.setColor(factor);
+        	comp.setWireframeDisplayed(false);
+        }
+        comp.setWireframeColor(Color.BLACK);
+        comp.setWireframeWidth(0.00001f);
+        comp.setColorMapper(null);
+        if(TRIANGLES) chart.getScene().getGraph().add(comp,false);
+        chart.render();
+        
         if(LIGHTON) {
         	Light light = chart.addLight(new Coord3d(500f, 500f, 2500f));
         	light.setRepresentationRadius(100);

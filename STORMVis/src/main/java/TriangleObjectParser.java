@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.media.opengl.GL;
+
 import org.jzy3d.colors.Color;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.primitives.Point;
 
 import org.jzy3d.plot3d.primitives.Polygon;
+import org.jzy3d.plot3d.rendering.compat.GLES2CompatUtils;
 
 
 public class TriangleObjectParser {
@@ -30,10 +33,17 @@ public class TriangleObjectParser {
         String line;
         List<String> words = new ArrayList<String>();
         int objectNumber = 0;
+        boolean all = false;
         allTriangles  = new ArrayList<Polygon>();
         while ((line = br.readLine()) != null) {
-            if (line.contains("pp 3") && objectNumber < limit) {
-            	Polygon newTriangle = new Polygon();
+    		if(limit == 0) {
+    			all = true;
+    		}
+    		else {
+    			all = objectNumber < limit;
+    		}
+            if (line.contains("pp 3") && all) {
+            	Polygon newTriangle = newTriangle();
             	objectNumber++;
             	line = br.readLine();
             	//System.out.println("Current line: " + objectNumber);
@@ -61,12 +71,15 @@ public class TriangleObjectParser {
                     		coordinates.add(s);
                     	}
                     }
-                    Point newPoint = new Point(new Coord3d(Float.parseFloat(coordinates.get(0)), Float.parseFloat(coordinates.get(1)), Float.parseFloat(coordinates.get(2))), Color.BLACK);
+                    Coord3d saveCoord = new Coord3d(Float.parseFloat(coordinates.get(0)), Float.parseFloat(coordinates.get(1)), Float.parseFloat(coordinates.get(2)));
+                    Color color = new Color(saveCoord.x/255.f, saveCoord.y/255.f, 1-saveCoord.z/255.f, 1.f);
+                    Point newPoint = new Point(saveCoord, color);
                     newTriangle.add(newPoint);
                     if (i != 2) {
                     	line = br.readLine();
                     }
             	}
+            	//newTriangle.setWireframeColor(Color.BLACK);
             	allTriangles.add(newTriangle);
             }
         }
@@ -75,4 +88,65 @@ public class TriangleObjectParser {
         System.out.println("Took " + time / 1e9 + "s to parse and save triangles");
         System.out.println("Number of tr.: " + objectNumber);
 	}
+	
+	
+	protected Polygon newTriangle() {
+		return new Polygon() {
+			@Override
+            protected void begin(GL gl) {
+				if (gl.isGL2()) {
+					gl.getGL2().glBegin(GL.GL_TRIANGLES);
+				} else {
+					GLES2CompatUtils.glBegin(GL.GL_TRIANGLES);
+				}
+			}
+
+			/**
+			 * Override default to use a line strip to draw wire, so that the
+			 * shared adjacent triangle side is not drawn.
+			 */
+			@Override
+            protected void callPointForWireframe(GL gl) {
+				if (gl.isGL2()) {
+					gl.getGL2().glColor4f(wfcolor.r, wfcolor.g, wfcolor.b,
+							wfcolor.a);
+					gl.glLineWidth(wfwidth);
+
+					beginWireWithLineStrip(gl); // <
+					for (Point p : points) {
+						gl.getGL2().glVertex3f(p.xyz.x, p.xyz.y, p.xyz.z);
+					}
+					end(gl);
+				} else {
+					GLES2CompatUtils.glColor4f(wfcolor.r, wfcolor.g,
+							wfcolor.b, wfcolor.a);
+					gl.glLineWidth(wfwidth);
+
+					beginWireWithLineStrip(gl); // <
+					for (Point p : points) {
+						GLES2CompatUtils.glVertex3f(p.xyz.x, p.xyz.y,
+								p.xyz.z);
+					}
+					end(gl);
+				}
+			}
+
+			protected void beginWireWithLineStrip(GL gl) {
+				if (gl.isGL2()) {
+					gl.getGL2().glBegin(GL.GL_LINE_STRIP);
+				} else {
+					GLES2CompatUtils.glBegin(GL.GL_LINE_STRIP);
+				}
+			}
+
+		};
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 }
