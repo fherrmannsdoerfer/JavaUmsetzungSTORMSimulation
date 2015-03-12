@@ -43,9 +43,14 @@ public class ScatterDemo extends AbstractAnalysis{
 	static boolean LIGHTON = false;	
 		
 	public void init() throws IOException{
+
 		long startTime = System.nanoTime();
 		LineObjectParser lineParser = new LineObjectParser(FILE2);
-		lineParser.parse();
+//		lineParser.parse();
+		
+		TriangleObjectParser trParser = new TriangleObjectParser(null);
+		trParser.limit = 100000;
+		trParser.parse();
         
 		List<AbstractDrawable> sphereList = new ArrayList<AbstractDrawable>();
 		List<LineStrip> lineList = new ArrayList<LineStrip>();
@@ -72,14 +77,16 @@ public class ScatterDemo extends AbstractAnalysis{
         	lineList.add(strip);
         }
         Scatter scatter = new Scatter(points, colors, 3.f);
-        chart = AWTChartComponentFactory.chart(Quality.Advanced, "awt");
+        chart = AWTChartComponentFactory.chart(Quality.Advanced, getCanvasType());
+        
         
         if(SHOWSPHERES) {
         	chart.getScene().add(sphereList);
         }
         else {
-        	chart.getScene().add(scatter);
+        	//chart.getScene().add(scatter);
         }
+        
                 
         // jzy3d does not throw an exception when there is a line with 0 points, but does not load the coordinate system
         for (LineStrip line : lineList) {
@@ -87,34 +94,35 @@ public class ScatterDemo extends AbstractAnalysis{
         		chart.getScene().getGraph().add(line);
         	}
         }
+       
+        int parts = 1;
+        for (int part = 0; part < parts; part++) {
+        	List<Polygon> list1 = new ArrayList<Polygon>();
+//        	System.out.println("part: " + (double) part/parts);
+//        	System.out.println((int) (part * trParser.allTriangles.size()/parts));
+//        	System.out.println((int) (part/parts * trParser.allTriangles.size() + trParser.allTriangles.size()/parts));
+            for (int c = (int) (part * trParser.allTriangles.size()/parts); c < (int) ((part* trParser.allTriangles.size() + trParser.allTriangles.size())/parts); c++) {
+            	list1.add(trParser.allTriangles.get(c));
+//            	System.out.println(c);
+            }
+            Shape surface = new Shape(list1);
+            Color factor = new Color(1, 0, 0, 0.0f);
+            surface.setWireframeDisplayed(true);
+            surface.setWireframeWidth(0.01f);
+            surface.setWireframeColor(org.jzy3d.colors.Color.BLACK);
+            surface.setColor(factor);
+            chart.getScene().getGraph().add(surface);
+        }
         
-        System.out.println("Line list elements: " + lineList.size());
-        
-        /*
-        List<Polygon> polygons = new ArrayList<Polygon>();
-        Polygon p = new Polygon();
-        p.add(new Point(new Coord3d(0,0,0)));
-        p.add(new Point(new Coord3d(0,100,100)));
-        p.add(new Point(new Coord3d(0,100,200)));
-        polygons.add(p);
-        Shape surface = new Shape(polygons);
-        
-        Color factor = new Color(1, 1, 1, 0.0f);
-//        ColorMapper mapper = new ColorMapper(new ColorMapRBG(), surface
-//            .getBounds().getZmin(), surface.getBounds().getZmax(), factor);
-        //surface.setColorMapper(mapper);
-        //surface.setColorMapper(new ColorMapper(new ColorMapRBG(), surface.getBounds().getZmin(), surface.getBounds().getZmax(), new Color(0, 0, 0, 0)));
-        surface.setWireframeDisplayed(true);
-        surface.setWireframeColor(org.jzy3d.colors.Color.BLACK);
-        surface.setColor(factor);
-        chart.getScene().getGraph().add(surface);
-        */
+                
         if(LIGHTON) {
         	Light light = chart.addLight(new Coord3d(500f, 500f, 2500f));
         	light.setRepresentationRadius(100);
         	light.setAmbiantColor(new Color(1f, 0,0));
         	//light.setDiffuseColor(new Color((255.f/255.f), 0, 0));
         }        
+        
+        System.out.println("Line list elements: " + lineList.size());
         
         ZoomController cont = new ZoomController();
         chart.addController(cont);

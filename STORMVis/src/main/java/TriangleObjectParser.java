@@ -5,11 +5,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jzy3d.colors.Color;
+import org.jzy3d.maths.Coord3d;
+import org.jzy3d.plot3d.primitives.Point;
+
+import org.jzy3d.plot3d.primitives.Polygon;
+
 
 public class TriangleObjectParser {
 	
 	static String FILE = "mito.nff";
-	static String REGEX = "\\d+\\s+\\d+\\.*\\d+.*";
+	static String FILE_S = "mito_small.nff";	
+	public List<Polygon> allTriangles;
+	
+	public int limit;
 	
 	public TriangleObjectParser(String path) {
 		
@@ -21,69 +30,49 @@ public class TriangleObjectParser {
         String line;
         List<String> words = new ArrayList<String>();
         int objectNumber = 0;
-        jregex.Pattern pattern = new jregex.Pattern(REGEX);
-        ArrayList<Point> currentObject = new ArrayList<Point>();
+        allTriangles  = new ArrayList<Polygon>();
         while ((line = br.readLine()) != null) {
-            words.clear();
-            jregex.Matcher m = pattern.matcher(line);
-            if (line.contains("pp 3")) {
-            	if(objectNumber!= 0) {
-            		//allObjects.add(currentObject);
-            		currentObject = new ArrayList<Point>();
-            	}
+            if (line.contains("pp 3") && objectNumber < limit) {
+            	Polygon newTriangle = new Polygon();
             	objectNumber++;
-            	continue;
+            	line = br.readLine();
+            	//System.out.println("Current line: " + objectNumber);
+            	for (int i = 0; i < 3; i++) {
+            		words.clear();
+            		//System.out.println("Current line: " + currentNumberLine);
+            		int pos = 0,end;
+                	//System.out.println(line);
+                	//printMatches(line, "\\d+\\.*\\d+");
+                	//line = line.replaceFirst("\\s+", "");
+                	//System.out.println(line);
+                	            	
+                    while ((end = line.indexOf(' ', pos)) >= 0) {
+                        words.add(line.substring(pos,end));
+                        pos = end + 1;
+                    }
+                    //System.out.println(words);
+                    List<String> coordinates = new ArrayList<String>();
+                    for(String s : words) {
+                    	if(s.isEmpty()) {
+                    		continue;
+                    	}
+                    	else {
+                    		//System.out.println(s);
+                    		coordinates.add(s);
+                    	}
+                    }
+                    Point newPoint = new Point(new Coord3d(Float.parseFloat(coordinates.get(0)), Float.parseFloat(coordinates.get(1)), Float.parseFloat(coordinates.get(2))), Color.BLACK);
+                    newTriangle.add(newPoint);
+                    if (i != 2) {
+                    	line = br.readLine();
+                    }
+            	}
+            	allTriangles.add(newTriangle);
             }
-            else if (objectNumber > 0 && m.matches()) {
-            	int pos = 0,end;
-            	//System.out.println(line);
-            	//printMatches(line, "\\d+\\.*\\d+");
-            	//line = line.replaceFirst("\\s+", "");
-            	//System.out.println(line);
-            	            	
-                while ((end = line.indexOf(' ', pos)) >= 0) {
-                    words.add(line.substring(pos,end));
-                    pos = end + 1;
-                }
-                
-//                for(int i = 0; i<line.length(); i++) {
-//                	end = line.indexOf(' ', i);
-//                	words.add(line.substring(i,end));
-//                    i = end+1;
-//                }
-                // strange failure with for loop
-                
-                //System.out.println(words);
-                List<String> coordinates = new ArrayList<String>();
-                for(String s : words) {
-                	if(s.isEmpty()) {
-                		continue;
-                	}
-                	else {
-                		//System.out.println(s);
-                		coordinates.add(s);
-                	}
-                }
-                if (coordinates.size() > 3) {
-        	    	coordinates.remove(0);
-        	    }
-                
-                Point p = new Point(Float.parseFloat(coordinates.get(0)),Float.parseFloat(coordinates.get(1)),Float.parseFloat(coordinates.get(2)));
-                currentObject.add(p);
-//                for (int i = 0; i < 3;i++) {
-//                	System.out.println(point[i]);
-//                }
-                //System.out.println(coordinates);
-            }
-            else {
-            	continue;
-            }
-            // words.
-            //System.out.println(words);
         }
-        //allObjects.add(currentObject);
         br.close();
         long time = System.nanoTime() - start;
-        System.out.println(time / 1e9);
+        System.out.println("Took " + time / 1e9 + "s to parse and save triangles");
+        System.out.println("Number of tr.: " + objectNumber);
 	}
 }
