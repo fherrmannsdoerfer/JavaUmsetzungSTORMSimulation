@@ -39,17 +39,18 @@ public class ScatterDemo extends AbstractAnalysis{
 	static String FILE3 = "Microtubules_large.wimp";
 	
 	static boolean SHOWSPHERES = false;
-	static boolean SHOWLINES = true;
+	static boolean SHOWLINES = false;
 	static boolean LIGHTON = false;	
+	static boolean TRIANGLES = true;
 		
 	public void init() throws IOException{
 
 		long startTime = System.nanoTime();
 		LineObjectParser lineParser = new LineObjectParser(FILE2);
-//		lineParser.parse();
+		lineParser.parse();
 		
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 100000;
+		trParser.limit = 10000;
 		trParser.parse();
         
 		List<AbstractDrawable> sphereList = new ArrayList<AbstractDrawable>();
@@ -60,7 +61,7 @@ public class ScatterDemo extends AbstractAnalysis{
         for(ArrayList<Coord3d> obj : lineParser.allObjects) {
         	boolean ALLOBJECTS = (lineParser.allObjects.indexOf(obj) == 0) || true;
         	LineStrip strip = new LineStrip();
-    		strip.setWidth(2.f);
+    		strip.setWidth(1.f);
     		strip.setWireframeColor(Color.BLACK);
         	for(Coord3d coord : obj) {
         		points[i] = coord;
@@ -81,10 +82,10 @@ public class ScatterDemo extends AbstractAnalysis{
         
         
         if(SHOWSPHERES) {
-        	chart.getScene().add(sphereList);
+        	chart.getScene().getGraph().add(sphereList);
         }
-        else {
-        	//chart.getScene().add(scatter);
+        else if(!TRIANGLES){
+        	chart.getScene().getGraph().add(scatter);
         }
         
                 
@@ -98,12 +99,8 @@ public class ScatterDemo extends AbstractAnalysis{
         int parts = 1;
         for (int part = 0; part < parts; part++) {
         	List<Polygon> list1 = new ArrayList<Polygon>();
-//        	System.out.println("part: " + (double) part/parts);
-//        	System.out.println((int) (part * trParser.allTriangles.size()/parts));
-//        	System.out.println((int) (part/parts * trParser.allTriangles.size() + trParser.allTriangles.size()/parts));
             for (int c = (int) (part * trParser.allTriangles.size()/parts); c < (int) ((part* trParser.allTriangles.size() + trParser.allTriangles.size())/parts); c++) {
             	list1.add(trParser.allTriangles.get(c));
-//            	System.out.println(c);
             }
             Shape surface = new Shape(list1);
             Color factor = new Color(1, 0, 0, 0.0f);
@@ -111,7 +108,7 @@ public class ScatterDemo extends AbstractAnalysis{
             surface.setWireframeWidth(0.01f);
             surface.setWireframeColor(org.jzy3d.colors.Color.BLACK);
             surface.setColor(factor);
-            chart.getScene().getGraph().add(surface);
+            if(TRIANGLES) chart.getScene().getGraph().add(surface);
         }
         
                 
