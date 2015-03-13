@@ -43,9 +43,9 @@ public class ScatterDemo extends AbstractAnalysis {
 	
 	static boolean SHOWSPHERES = false;
 	static boolean SHOWLINES = false;
-	static boolean LIGHTON = false;	
+	static boolean LIGHTON = true;	
 	static boolean TRIANGLES = true;
-	static boolean FRAMES = true;
+	static boolean FRAMES = false;
 		
 	public void init() throws IOException{
 	
@@ -62,7 +62,7 @@ public class ScatterDemo extends AbstractAnalysis {
 		}
 		
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 0;
+		trParser.limit = 100000;
 		try {
 			trParser.parse();
 		} catch (NumberFormatException e) {
@@ -97,9 +97,9 @@ public class ScatterDemo extends AbstractAnalysis {
         	}
         	lineList.add(strip);
         }
-        Scatter scatter = new Scatter(points, colors, 3.f);
+        Scatter scatter = new Scatter(points, colors, 5.f);
         Chart chart;
-        chart = AWTChartComponentFactory.chart(Quality.Advanced, Toolkit.awt.name());
+        chart = AWTChartComponentFactory.chart(Quality.Nicest, Toolkit.awt.name());
         //chart.setAxeDisplayed(false);
         
         if(SHOWSPHERES) {
@@ -139,7 +139,7 @@ public class ScatterDemo extends AbstractAnalysis {
             comp.setWireframeDisplayed(true);
         }
         else {
-        	Color factor = new Color(1, 1, 0, 0.0f);
+        	Color factor = new Color(1, 1, 0, 0.65f);
             comp.setColor(factor);
         	comp.setWireframeDisplayed(false);
         }

@@ -22,6 +22,9 @@ public class Test extends FrameSwing {
 	 * @throws Exception 
 	 */
 	
+	static String FILE2 = "Microtubules.wimp";
+	static String FILE3 = "Microtubules_large.wimp";
+	
 	public Test() {
 
 //        initUI();
@@ -30,7 +33,7 @@ public class Test extends FrameSwing {
 	
 	
 	public static void main(String[] args) throws Exception {
-//		LineObjectParser lineParser = new LineObjectParser(null);
+//		LineObjectParser lineParser = new LineObjectParser(FILE3);
 //		lineParser.parse();
 		AnalysisLauncher.open(new ScatterDemo());
 //		TriangleObjectParser trParser = new TriangleObjectParser(null);
