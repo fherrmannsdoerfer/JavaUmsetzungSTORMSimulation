@@ -43,15 +43,10 @@ public class ScatterDemo extends AbstractAnalysis {
 	
 	static boolean SHOWSPHERES = false;
 	static boolean SHOWLINES = false;
-<<<<<<< HEAD
 	static boolean LIGHTON = true;	
 	static boolean TRIANGLES = true;
 	static boolean FRAMES = true;
-=======
-	static boolean LIGHTON = false;	
-	static boolean TRIANGLES = false;
-	static boolean FRAMES = false;
->>>>>>> e062bda0b5abd320b128ef563e807d268e8c70b0
+	
 		
 	public void init() throws IOException{
 	
@@ -68,7 +63,7 @@ public class ScatterDemo extends AbstractAnalysis {
 		}
 		
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 10000;
+		trParser.limit = 0;
 		try {
 			trParser.parse();
 		} catch (NumberFormatException e) {
@@ -103,12 +98,9 @@ public class ScatterDemo extends AbstractAnalysis {
         	}
         	lineList.add(strip);
         }
-<<<<<<< HEAD
         Scatter scatter = new Scatter(points, colors, 5.f);
-        Chart chart;
+        //Chart chart;
         chart = AWTChartComponentFactory.chart(Quality.Nicest, Toolkit.awt.name());
-=======
-        Scatter scatter = new Scatter(points, colors, 3.f);
         
         CompileableComposite compPoints1 = new CompileableComposite();
         /*for(Coord3d p : points) {
@@ -122,7 +114,6 @@ public class ScatterDemo extends AbstractAnalysis {
         chart = AWTChartComponentFactory.chart(Quality.Nicest, Toolkit.awt.name());
         chart.getView().setBackgroundColor(Color.BLACK);
         chart.getAxeLayout().setMainColor(Color.WHITE);
->>>>>>> e062bda0b5abd320b128ef563e807d268e8c70b0
         //chart.setAxeDisplayed(false);
         
         /*
@@ -183,7 +174,7 @@ public class ScatterDemo extends AbstractAnalysis {
         
         if(FRAMES) {
         	Color factor = new Color(1, 1, 0, 0.0f);
-            comp.setColor(factor);
+        	comp.setColor(factor);
             comp.setWireframeDisplayed(true);
         }
         else {
