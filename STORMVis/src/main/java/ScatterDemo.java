@@ -53,7 +53,7 @@ public class ScatterDemo extends AbstractAnalysis {
 	
 	public Chart getChart() {
 		long startTime = System.nanoTime();
-		LineObjectParser lineParser = new LineObjectParser(FILE3);
+		LineObjectParser lineParser = new LineObjectParser(FILE2);
 		try {
 			lineParser.parse();
 		} catch (IOException e) {
@@ -100,14 +100,17 @@ public class ScatterDemo extends AbstractAnalysis {
         Scatter scatter = new Scatter(points, colors, 3.f);
         
         CompileableComposite compPoints1 = new CompileableComposite();
-        for(Coord3d p : points) {
+        /*for(Coord3d p : points) {
         	compPoints1.add(new Point(p, new Color(p.x/255.f,p.y/255.f,p.z/255.f,1.f)));
-        }
+        }*/
         
+        compPoints1.add(scatter);
         
         
         Chart chart;
         chart = AWTChartComponentFactory.chart(Quality.Nicest, Toolkit.awt.name());
+        chart.getView().setBackgroundColor(Color.BLACK);
+        chart.getAxeLayout().setMainColor(Color.WHITE);
         //chart.setAxeDisplayed(false);
         
         /*
@@ -138,8 +141,8 @@ public class ScatterDemo extends AbstractAnalysis {
         	chart.getScene().getGraph().add(sphereList);
         }
         else if(!TRIANGLES){
-        	//chart.getScene().getGraph().add(scatter);
-        	chart.getScene().getGraph().add(compPoints1,false);
+        	//chart.getScene().getGraph().add(scatter,false);
+        	chart.getScene().getGraph().add(compPoints,false);
         }
         chart.render();
                 
