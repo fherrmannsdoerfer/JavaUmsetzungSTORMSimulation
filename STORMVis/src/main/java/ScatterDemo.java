@@ -43,8 +43,8 @@ public class ScatterDemo extends AbstractAnalysis {
 	
 	static boolean SHOWSPHERES = false;
 	static boolean SHOWLINES = false;
-	static boolean LIGHTON = true;	
-	static boolean TRIANGLES = true;
+	static boolean LIGHTON = false;	
+	static boolean TRIANGLES = false;
 	static boolean FRAMES = false;
 		
 	public void init() throws IOException{
@@ -53,7 +53,7 @@ public class ScatterDemo extends AbstractAnalysis {
 	
 	public Chart getChart() {
 		long startTime = System.nanoTime();
-		LineObjectParser lineParser = new LineObjectParser(FILE2);
+		LineObjectParser lineParser = new LineObjectParser(FILE3);
 		try {
 			lineParser.parse();
 		} catch (IOException e) {
@@ -62,7 +62,7 @@ public class ScatterDemo extends AbstractAnalysis {
 		}
 		
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 0;
+		trParser.limit = 10000;
 		try {
 			trParser.parse();
 		} catch (NumberFormatException e) {
@@ -81,7 +81,7 @@ public class ScatterDemo extends AbstractAnalysis {
         for(ArrayList<Coord3d> obj : lineParser.allObjects) {
         	boolean ALLOBJECTS = (lineParser.allObjects.indexOf(obj) == 0) || true;
         	LineStrip strip = new LineStrip();
-    		strip.setWidth(1.f);
+    		strip.setWidth(2.f);
     		strip.setWireframeColor(Color.BLACK);
         	for(Coord3d coord : obj) {
         		points[i] = coord;
@@ -99,7 +99,7 @@ public class ScatterDemo extends AbstractAnalysis {
         }
         Scatter scatter = new Scatter(points, colors, 3.f);
         Chart chart;
-        chart = AWTChartComponentFactory.chart(Quality.Advanced, Toolkit.awt.name());
+        chart = AWTChartComponentFactory.chart(Quality.Fastest, Toolkit.awt.name());
         //chart.setAxeDisplayed(false);
         
         if(SHOWSPHERES) {
