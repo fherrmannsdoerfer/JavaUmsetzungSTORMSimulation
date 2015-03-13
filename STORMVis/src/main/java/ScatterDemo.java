@@ -45,7 +45,7 @@ public class ScatterDemo extends AbstractAnalysis {
 	static boolean SHOWLINES = false;
 	static boolean LIGHTON = true;	
 	static boolean TRIANGLES = true;
-	static boolean FRAMES = false;
+	static boolean FRAMES = true;
 		
 	public void init() throws IOException{
 	
@@ -62,7 +62,7 @@ public class ScatterDemo extends AbstractAnalysis {
 		}
 		
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 100000;
+		trParser.limit = 0;
 		try {
 			trParser.parse();
 		} catch (NumberFormatException e) {
@@ -140,11 +140,7 @@ public class ScatterDemo extends AbstractAnalysis {
         }
         else {
         	Color factor = new Color(1, 1, 0, 0.65f);
-<<<<<<< HEAD
-            comp.setColor(factor);
-=======
             //comp.setColor(factor);
->>>>>>> 87acdbbbfa01f9d95310ea5d866c0d4afddc5c32
         	comp.setWireframeDisplayed(false);
         }
         comp.setWireframeColor(Color.BLACK);
