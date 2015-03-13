@@ -98,17 +98,50 @@ public class ScatterDemo extends AbstractAnalysis {
         	lineList.add(strip);
         }
         Scatter scatter = new Scatter(points, colors, 3.f);
+        
+        CompileableComposite compPoints1 = new CompileableComposite();
+        for(Coord3d p : points) {
+        	compPoints1.add(new Point(p, new Color(p.x/255.f,p.y/255.f,p.z/255.f,1.f)));
+        }
+        
+        
+        
         Chart chart;
-        chart = AWTChartComponentFactory.chart(Quality.Fastest, Toolkit.awt.name());
+        chart = AWTChartComponentFactory.chart(Quality.Nicest, Toolkit.awt.name());
         //chart.setAxeDisplayed(false);
+        
+        /*
+         * Points from STORM Simulation 
+         * 
+         */
+        STORMObjectParser stParser = new STORMObjectParser();
+        try {
+			stParser.parse();
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        System.out.println("Storm point number: "+stParser.allPoints.size());
+        CompileableComposite compPoints = new CompileableComposite();
+        for(Point p : stParser.allPoints) {
+        	compPoints.add(p);
+        }
+        
+        /*
+         * 
+         */
         
         if(SHOWSPHERES) {
         	chart.getScene().getGraph().add(sphereList);
         }
         else if(!TRIANGLES){
-        	chart.getScene().getGraph().add(scatter);
+        	//chart.getScene().getGraph().add(scatter);
+        	chart.getScene().getGraph().add(compPoints1,false);
         }
-        
+        chart.render();
                 
         // jzy3d does not throw an exception when there is a line with 0 points, but does not load the coordinate system
         for (LineStrip line : lineList) {
