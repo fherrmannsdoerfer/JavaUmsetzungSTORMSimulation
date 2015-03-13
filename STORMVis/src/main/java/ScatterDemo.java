@@ -140,7 +140,11 @@ public class ScatterDemo extends AbstractAnalysis {
         }
         else {
         	Color factor = new Color(1, 1, 0, 0.65f);
+<<<<<<< HEAD
             comp.setColor(factor);
+=======
+            //comp.setColor(factor);
+>>>>>>> 87acdbbbfa01f9d95310ea5d866c0d4afddc5c32
         	comp.setWireframeDisplayed(false);
         }
         comp.setWireframeColor(Color.BLACK);
@@ -159,7 +163,7 @@ public class ScatterDemo extends AbstractAnalysis {
         System.out.println("Line list elements: " + lineList.size());
         
         ZoomController cont = new ZoomController();
-        //chart.addController(cont);
+        chart.addController(cont);
         System.out.println(chart.getControllers());
         System.out.println("Drawing " + lineParser.pointNumber + " points.");
         //View.current().rotate(new Coord2d(100,100), true);
