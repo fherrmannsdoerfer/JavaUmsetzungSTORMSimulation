@@ -42,7 +42,7 @@ public class STORMCalculator {
 		
 	}
 	
-	public startCalculation() {
+	public void startCalculation() {
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
 		trParser.limit = 0;
 		try {
@@ -54,6 +54,12 @@ public class STORMCalculator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Calc.getMatrix(trParser.primitives);
+	}
+	
+	public void doSimulation() {
+		boolean isSurfaceData = true;
+		
 	}
 	
 }

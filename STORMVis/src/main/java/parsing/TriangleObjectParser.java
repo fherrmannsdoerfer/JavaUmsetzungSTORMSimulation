@@ -21,7 +21,7 @@ public class TriangleObjectParser {
 	static String FILE = "mito.nff";
 	static String FILE_S = "mito_small.nff";	
 	public List<Polygon> allTriangles;
-	
+	public List<float[][]> primitives;
 	public int limit;
 	
 	public TriangleObjectParser(String path) {
@@ -34,8 +34,9 @@ public class TriangleObjectParser {
         String line;
         List<String> words = new ArrayList<String>();
         int objectNumber = 0;
-        boolean all = false;
+        boolean all = true;
         allTriangles  = new ArrayList<Polygon>();
+        primitives = new ArrayList<float[][]>();
         while ((line = br.readLine()) != null) {
     		if(limit == 0) {
     			all = true;
@@ -45,6 +46,7 @@ public class TriangleObjectParser {
     		}
             if (line.contains("pp 3") && all) {
             	Polygon newTriangle = newTriangle();
+            	float[][] primTR = new float[3][3];
             	objectNumber++;
             	line = br.readLine();
             	//System.out.println("Current line: " + objectNumber);
@@ -76,12 +78,16 @@ public class TriangleObjectParser {
                     Color color = new Color(saveCoord.x/255.f, saveCoord.y/255.f, 1-saveCoord.z/255.f, 1.f);
                     Point newPoint = new Point(saveCoord, color);
                     newTriangle.add(newPoint);
+                    primTR[i][0] = saveCoord.x;
+                    primTR[i][1] = saveCoord.y;
+                    primTR[i][2] = saveCoord.z;
                     if (i != 2) {
                     	line = br.readLine();
                     }
             	}
             	//newTriangle.setWireframeColor(Color.BLACK);
             	allTriangles.add(newTriangle);
+            	primitives.add(primTR);
             }
         }
         br.close();

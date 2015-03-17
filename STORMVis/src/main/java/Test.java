@@ -9,6 +9,8 @@ import org.jzy3d.bridge.swing.FrameSwing;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.maths.Rectangle;
 
+import calc.STORMCalculator;
+
 
 public class Test extends FrameSwing {
 
@@ -35,12 +37,14 @@ public class Test extends FrameSwing {
 	public static void main(String[] args) throws Exception {
 //		LineObjectParser lineParser = new LineObjectParser(FILE3);
 //		lineParser.parse();
-		AnalysisLauncher.open(new ScatterDemo());
+//		AnalysisLauncher.open(new ScatterDemo());
 //		TriangleObjectParser trParser = new TriangleObjectParser(null);
 //		trParser.parse();
 //	        
 //                Test ex = new Test();
 //                ex.setVisible(true);
+		STORMCalculator calc = new STORMCalculator();
+		calc.startCalculation();
      }
 	
 //	private void initUI() {
