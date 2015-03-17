@@ -35,9 +35,11 @@ public class Test extends FrameSwing {
 //	        
 //                Test ex = new Test();
 //                ex.setVisible(true);
-//		float[][] m = {{2,0,1},{0,2,0},{0,0,1}};
+		float[][] m = {{1,2,3},{0,1,0},{2,1,0}};
+		float[][] m2 = {{0,4,0},{1,2,5},{0,1,1}};
 //		float[] vec = {1,3,1};
 //		Calc.printVector(Calc.applyMatrix(m, vec));
+		//Calc.print2dMatrix(Calc.matrixMultiply(m, m2));
 		STORMCalculator calc = new STORMCalculator();
 		calc.startCalculation();
      }

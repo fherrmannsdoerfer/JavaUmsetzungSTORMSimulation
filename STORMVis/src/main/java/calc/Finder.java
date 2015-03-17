@@ -129,11 +129,11 @@ public class Finder {
 	        float[] v = Calc.getCross(unityVec,targetVec);
 	        float s = Calc.getNorm(v);
 	        float c = Calc.getDot(unityVec, targetVec);
-	        //vx = [0,-v(3), v(2);v(3),0,-v(1);-v(2),v(1),0];
-	        //R = [1,0,0;0,1,0;0,0,1]+vx+vx*vx*(1-c)/s^2;
+	        float[][] vx = {{0,-v[3], v[2]},{v[3],0,-v[1]},{-v[2],v[1],0}};
+	        float[][] R = {{1,0,0},{0,1,0},{0,0,1}}; //+vx+vx*vx*(1-c)/s^2;
 	        //rotVec = R*vec; 
 	        
-	        float[][] vx = new float[3][3];
+	        rotVec = Calc.applyMatrix(R, vec);
 		}
 		return rotVec;
 	}

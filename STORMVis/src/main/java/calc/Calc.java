@@ -175,4 +175,19 @@ public class Calc {
 		return result;
 	}
 	
+	public static float[][] matrixMultiply(float[][] m1, float[][] m2) {
+		float[][] result = new float[m1.length][m1.length];
+		for (int i = 0; i < m1.length;i++) {
+			for (int j = 0; j < m1.length; j++) {
+				float sum = 0;
+				for (int c = 0; c < m1.length; c++) {
+					sum += m1[i][c]*m2[c][j];
+				}
+				System.out.println("Sum: "+sum);
+				result[i][j] = sum;
+			}
+		}
+		return result;
+	}
+	
 }
