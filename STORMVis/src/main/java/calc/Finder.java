@@ -2,6 +2,9 @@ package calc;
 
 import java.util.List;
 
+import org.javatuples.Pair;
+
+
 public class Finder {
 	
 	public static void findAntibodiesTri(List<float[][]> trList, float bspsnm, float pabs,float loa,float aoa,float doc,float nocpsmm,float docpsnm) {
@@ -9,11 +12,46 @@ public class Finder {
 		float[] areas = Calc.getAreas(triangles);
 		int numberOfFluorophores = (int) Math.floor(Calc.sum(areas)*bspsnm*pabs);
 		System.out.println("fluorophore  number: "+ numberOfFluorophores);
-		getRandomTriangles(areas, numberOfFluorophores);
+		Pair<float[][],int[]> basePointPair = findBasePoints(numberOfFluorophores, triangles, areas);
+		Calc.print2dMatrix(basePointPair.getValue0());
 	}
 	
-	public static void findBasePoints() {
+	public static Pair<float[][],int[]> findBasePoints(int nbrFluorophores,float[][][] tr,float[] areas) {
+		float[][] points = new float[nbrFluorophores][3];
+		float[][] vec1 = new float[tr.length][3];
+		float[][] vec2 = new float[tr.length][3];
 		
+		for (int i = 0; i < tr.length; i++) {
+			
+			vec1[i][0] = tr[i][1][0] - tr[i][0][0];
+			vec1[i][1] = tr[i][1][1] - tr[i][0][1];
+			vec1[i][2] = tr[i][1][2] - tr[i][0][2];
+
+			vec2[i][0] = tr[i][2][0] - tr[i][0][0];
+			vec2[i][1] = tr[i][2][1] - tr[i][0][1];
+			vec2[i][2] = tr[i][2][2] - tr[i][0][2];
+		}	
+		int[] idx = getRandomTriangles(areas, nbrFluorophores);
+		
+		for (int f = 0; f < nbrFluorophores; f++) {
+			while(true) {
+				double randx = Math.random();
+				double randy = Math.random();
+				
+				for (int i = 0; i < 3; i++) {
+					points[f][i] = tr[idx[f]][0][i] + (float) randx*vec1[idx[f]][i] + (float) randy*vec2[idx[i]][i];
+				}
+				
+				if ((randx + randy)<1) {
+				//                figure
+				//                plot3(triang(idx(i),:,1),triang(idx(i),:,2),triang(idx(i),:,3))
+				//                hold on
+				//                plot3(p(1),p(2),p(3),'r*')
+				}
+				else break;
+			}
+		}
+		return new Pair<float[][], int[]>(points, idx);
 	}
 	
 	public static int[] getRandomTriangles(float[] areas, int nbrFluorophores) {
@@ -61,6 +99,6 @@ public class Finder {
 	    	System.out.println(idx[i]);
 	    }
 	    System.out.println("length idx: "+ idx.length);
-		return null;
+		return idx;
 	}
 }

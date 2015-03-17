@@ -31,6 +31,7 @@ public class Calc {
 	}
 	
 	public static void printMatrix(float[][][] array) {
+		System.out.println("-- matrix --");
 		int size = array.length;
 		System.out.println("total size: "+size);
 		for (int i = 0; i<size; i++) {
@@ -46,10 +47,24 @@ public class Calc {
 	}
 	
 	public static void printVector(float[] vec) {
+		System.out.println("-- vector --");
 		for(int i = 0; i<vec.length;i++) {
 			System.out.println(vec[i]);
 		}
 		System.out.println("");
+	}
+	
+	public static void print2dMatrix(float[][] array) {
+		System.out.println("-- matrix --");
+		int size = array.length;
+		System.out.println("total size: "+size);
+		for (int j = 0; j<3;j++) {
+			for(int c = 0; c<3;c++) {
+				System.out.print(array[j][c]+" ");
+			}
+			System.out.print("\n");
+		}
+		System.out.print("\n");
 	}
 	
 	public static float[] getAreas(float[][][] tr) {
