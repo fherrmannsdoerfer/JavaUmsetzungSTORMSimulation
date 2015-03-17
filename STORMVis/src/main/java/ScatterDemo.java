@@ -33,6 +33,10 @@ import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
 import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.chart.factories.IChartComponentFactory.Toolkit;
 
+import parsing.LineObjectParser;
+import parsing.STORMObjectParser;
+import parsing.TriangleObjectParser;
+
 import com.jogamp.graph.geom.Triangle;
 import com.jogamp.graph.geom.Vertex;
 

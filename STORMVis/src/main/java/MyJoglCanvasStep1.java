@@ -15,6 +15,8 @@ import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 
+import parsing.TriangleObjectParser;
+
 import com.jogamp.opengl.util.FPSAnimator;
 
 
