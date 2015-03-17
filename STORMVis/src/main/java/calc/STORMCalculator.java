@@ -69,6 +69,7 @@ public class STORMCalculator {
 	public void doSimulation() {
 		try{
 			Pair<float[][],float[][]> p = Finder.findAntibodiesTri(trList, bspsnm, pabs, loa, (float) aoa, doc, nocpsmm, docpsnm);
+			System.out.println("Antibodies found");
 		}
 		catch(Exception e) {
 			e.printStackTrace();

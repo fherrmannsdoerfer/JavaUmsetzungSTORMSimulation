@@ -61,8 +61,11 @@ public class Finder {
 		for(int i = 0; i < basepoints.length; i++) {
 			float[] vec = Calc.getVectorTri(aoa,loa);
 			float[] normTri = Calc.getCross(vec1[idx[i]],vec2[idx[i]]);
-			findRotation(vec, normTri);
+			float[] finVec = findRotation(vec, normTri);
+			ep[i] = Calc.vectorAddition(basepoints[i], finVec);
 		}
+//		System.out.println("EP");
+//		Calc.print2dMatrix(ep);
 		System.out.println("Rotations completed");
 		return ep;
 	}

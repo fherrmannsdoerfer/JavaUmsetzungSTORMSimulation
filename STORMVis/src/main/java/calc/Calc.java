@@ -58,7 +58,7 @@ public class Calc {
 		System.out.println("-- matrix --");
 		int size = array.length;
 		System.out.println("total size: "+size);
-		for (int j = 0; j<3;j++) {
+		for (int j = 0; j<size;j++) {
 			for(int c = 0; c<3;c++) {
 				System.out.print(array[j][c]+" ");
 			}
@@ -111,6 +111,14 @@ public class Calc {
 			normVec[c] = vec[c]/norm;
 		}
 		return normVec;
+	}
+	
+	public static float[] vectorAddition(float[] m1, float[] m2) {
+		float[] result = new float[m1.length];
+		for (int i = 0; i < m1.length;i++) {
+				result[i] = m1[i] + m2[i];
+		}
+		return result;
 	}
 	
 	
@@ -198,6 +206,7 @@ public class Calc {
 		}
 		return result;
 	}
+	
 	
 	public static float[][] matrixDivide(float[][] m1, float div) {
 		float[][] result = new float[m1.length][m1.length];

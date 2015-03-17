@@ -28,7 +28,7 @@ public class TriangleObjectParser {
 	
 	public void parse() throws NumberFormatException, IOException {
 		long start = System.nanoTime();
-        BufferedReader br = new BufferedReader(new FileReader(FILE));
+        BufferedReader br = new BufferedReader(new FileReader(FILE_S));
         String line;
         List<String> words = new ArrayList<String>();
         int objectNumber = 0;
