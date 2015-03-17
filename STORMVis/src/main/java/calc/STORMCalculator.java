@@ -2,6 +2,7 @@ package calc;
 
 
 import java.io.IOException;
+import java.util.List;
 
 import parsing.TriangleObjectParser;
 
@@ -15,7 +16,7 @@ public class STORMCalculator {
 	static String outputname = "/Users/maximilianscheurer/git/STORM/STORMVis/out.txt";
 	
 	//rng(5);	
-    float lengthOfAntibodies = 1.f; 	//length of both antibodies combined
+    float loa = 1.f; 	//length of both antibodies combined
     double aoa = 90/180*Math.PI;		 //angle of antibody
     //bspnm = 1.65; 					//binding sites per nm  //for microtubules with only alpha tubuli stained it should be like 13/8 1.65
     float bspnm = 1/2.75f;
@@ -35,8 +36,10 @@ public class STORMCalculator {
     float docpsnm = 0.01f; //denstiy of clusters in antibodies per square nm
     float bd = 50/10000/10000; //blinking density in number fluorophores per square nm
     
-    float bspsnm = 10/600; 
+    float bspsnm = 10/600.f; 
     //.0159/2; //binding sites per square nanometer
+    
+    List<float[][]> trList;
 	
 	public STORMCalculator() {
 		
@@ -54,12 +57,12 @@ public class STORMCalculator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Calc.getMatrix(trParser.primitives);
+		trList = trParser.primitives;
+		doSimulation();
 	}
 	
 	public void doSimulation() {
-		boolean isSurfaceData = true;
-		
+		Finder.findAntibodiesTri(trList, bspsnm, pabs, loa, (float) aoa, doc, nocpsmm, docpsnm);
 	}
 	
 }

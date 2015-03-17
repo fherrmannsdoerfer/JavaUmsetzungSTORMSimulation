@@ -25,10 +25,8 @@ public class Calc {
 				trMatrix[j][i][2] = p[i][2];
 			}
 		}
-		//printMatrix(trMatrix);
 		long time = System.nanoTime() - start;
-		System.out.println("Converting to new matrix form: " + time/1e9);
-		getAreas(trMatrix);
+		System.out.println("Converting to new matrix form: " + time/1e9 +"s");
 		return trMatrix;
 	}
 	
@@ -71,8 +69,7 @@ public class Calc {
 			areas[i] = (float) (getNorm(getCross(vec1,vec2))*0.5);
 		}
 		long time = System.nanoTime() - start;
-		System.out.println("Calculating all areas: " + time/1e9);
-		//printVector(areas);
+		System.out.println("Calculating all areas: " + time/1e9+"s");
 		return areas;
 	}
 	
@@ -100,6 +97,14 @@ public class Calc {
 		v1 = null;
 		v2 = null;
 		return result;
+	}
+	
+	public static float sum(float[] array) {
+		float sum = 0;
+		for (int i = 0;i < array.length;i++) {
+			sum += array[i];
+		}
+		return sum;
 	}
 	
 }
