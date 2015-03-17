@@ -2,7 +2,10 @@ package calc;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.javatuples.Pair;
 
 import parsing.TriangleObjectParser;
 
@@ -62,7 +65,13 @@ public class STORMCalculator {
 	}
 	
 	public void doSimulation() {
-		Finder.findAntibodiesTri(trList, bspsnm, pabs, loa, (float) aoa, doc, nocpsmm, docpsnm);
+		try{
+			Pair<float[][],float[][]> p = Finder.findAntibodiesTri(trList, bspsnm, pabs, loa, (float) aoa, doc, nocpsmm, docpsnm);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
 	}
 	
 }

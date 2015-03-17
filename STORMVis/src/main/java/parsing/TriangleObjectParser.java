@@ -1,6 +1,5 @@
 package parsing;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import javax.media.opengl.GL;
 import org.jzy3d.colors.Color;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.primitives.Point;
-
 import org.jzy3d.plot3d.primitives.Polygon;
 import org.jzy3d.plot3d.rendering.compat.GLES2CompatUtils;
 

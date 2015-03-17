@@ -1,6 +1,4 @@
 import java.awt.BorderLayout;
-import java.awt.Polygon;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

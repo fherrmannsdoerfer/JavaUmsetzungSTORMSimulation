@@ -3,42 +3,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.media.opengl.GL;
-
 import org.jzy3d.analysis.AbstractAnalysis;
 import org.jzy3d.chart.Chart;
+import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
 import org.jzy3d.chart.factories.AWTChartComponentFactory;
+import org.jzy3d.chart.factories.IChartComponentFactory.Toolkit;
 import org.jzy3d.colors.Color;
-import org.jzy3d.colors.ColorMapper;
-import org.jzy3d.colors.colormaps.ColorMapRBG;
-import org.jzy3d.colors.colormaps.ColorMapRainbow;
 import org.jzy3d.maths.BoundingBox3d;
-import org.jzy3d.maths.Coord2d;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.Scale;
 import org.jzy3d.plot3d.primitives.AbstractDrawable;
 import org.jzy3d.plot3d.primitives.CompileableComposite;
 import org.jzy3d.plot3d.primitives.LineStrip;
-import org.jzy3d.plot3d.primitives.Polygon;
+import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.Scatter;
-import org.jzy3d.plot3d.primitives.Shape;
 import org.jzy3d.plot3d.primitives.Sphere;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.lights.Light;
 import org.jzy3d.plot3d.rendering.view.View;
-import org.jzy3d.plot3d.transform.Rotate;
-import org.jzy3d.plot3d.transform.Transform;
-import org.jzy3d.plot3d.transform.Translate;
-import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
-import org.jzy3d.plot3d.primitives.Point;
-import org.jzy3d.chart.factories.IChartComponentFactory.Toolkit;
 
 import parsing.LineObjectParser;
 import parsing.STORMObjectParser;
 import parsing.TriangleObjectParser;
-
-import com.jogamp.graph.geom.Triangle;
-import com.jogamp.graph.geom.Vertex;
 
 public class ScatterDemo extends AbstractAnalysis {
 	
@@ -182,7 +168,7 @@ public class ScatterDemo extends AbstractAnalysis {
             comp.setWireframeDisplayed(true);
         }
         else {
-        	Color factor = new Color(1, 1, 0, 0.65f);
+        	//Color factor = new Color(1, 1, 0, 0.65f);
             //comp.setColor(factor);
         	comp.setWireframeDisplayed(false);
         }

@@ -3,7 +3,7 @@ import java.util.List;
 
 import javax.vecmath.Vector3d;
 
-import org.jzy3d.plot3d.primitives.Polygon;
+import org.javatuples.Pair;
 
 public class Calc { 
 
@@ -96,6 +96,24 @@ public class Calc {
 		return (vec[0]*vec2[0]+vec[1]*vec2[1]+vec[2]*vec2[2]);
 	}
 	
+	public static float[] getNegativeVec(float[] vec) {
+		float[] negVec = new float[vec.length];
+		for(int c = 0; c < vec.length;c++) {
+			negVec[c] = -vec[c];
+		}
+		return negVec;
+	}
+	
+	public static float[] scaleToOne(float[] vec) {
+		float[] normVec = new float[vec.length];
+		float norm = getNorm(vec);
+		for(int c = 0; c < vec.length;c++) {
+			normVec[c] = vec[c]/norm;
+		}
+		return normVec;
+	}
+	
+	
 	public static float[] getCross(float[] vec1,float[] vec2) {
 		Vector3d v1 = new Vector3d();
 		v1.x = (double) vec1[0];
@@ -120,6 +138,41 @@ public class Calc {
 			sum += array[i];
 		}
 		return sum;
+	}
+	
+	public static Pair<float[][],float[][]> getVertices(float[][][] tr) {
+		float[][] vec1 = new float[tr.length][3];
+		float[][] vec2 = new float[tr.length][3];
+		
+		for (int i = 0; i < tr.length; i++) {
+			vec1[i][0] = tr[i][1][0] - tr[i][0][0];
+			vec1[i][1] = tr[i][1][1] - tr[i][0][1];
+			vec1[i][2] = tr[i][1][2] - tr[i][0][2];
+
+			vec2[i][0] = tr[i][2][0] - tr[i][0][0];
+			vec2[i][1] = tr[i][2][1] - tr[i][0][1];
+			vec2[i][2] = tr[i][2][2] - tr[i][0][2];
+		}	
+		return new Pair<float[][], float[][]>(vec1,vec2);
+	}
+	
+	public static float[] getVectorTri(float aoa, float length) {
+		double alpha = Math.random()*2*Math.PI;
+		double x = Math.cos(aoa)*Math.cos(alpha);
+		double z = Math.sin(aoa);
+		double y = Math.cos(aoa)*Math.sin(alpha);
+		float[] vec = {(float) (x*length),(float) (y*length),(float) (z*length)};
+		return vec;
+	}
+	
+	public static float[] applyMatrix(float[][] m, float[] vec) {
+		float[] result = new float[vec.length];
+		for (int i = 0; i < m.length;i++) {
+			for (int j = 0; j < m.length; j++) {
+				result[i] += vec[j]*m[i][j];
+			}
+		}
+		return result;
 	}
 	
 }

@@ -1,14 +1,6 @@
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.io.IOException;
-
-import javax.swing.JComponent;
-
-import org.jzy3d.analysis.AnalysisLauncher;
 import org.jzy3d.bridge.swing.FrameSwing;
-import org.jzy3d.chart.Chart;
-import org.jzy3d.maths.Rectangle;
 
+import calc.Calc;
 import calc.STORMCalculator;
 
 
@@ -43,6 +35,9 @@ public class Test extends FrameSwing {
 //	        
 //                Test ex = new Test();
 //                ex.setVisible(true);
+//		float[][] m = {{2,0,1},{0,2,0},{0,0,1}};
+//		float[] vec = {1,3,1};
+//		Calc.printVector(Calc.applyMatrix(m, vec));
 		STORMCalculator calc = new STORMCalculator();
 		calc.startCalculation();
      }

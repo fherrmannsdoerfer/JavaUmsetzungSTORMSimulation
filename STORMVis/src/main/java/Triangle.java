@@ -1,13 +1,9 @@
 import javax.media.opengl.GL;
-import javax.media.opengl.glu.GLU;
 
 import org.jzy3d.plot3d.primitives.AbstractComposite;
-import org.jzy3d.plot3d.primitives.AbstractDrawable;
 import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.Polygon;
 import org.jzy3d.plot3d.rendering.compat.GLES2CompatUtils;
-import org.jzy3d.plot3d.rendering.view.Camera;
-import org.jzy3d.plot3d.transform.Transform;
 
 
 public class Triangle extends AbstractComposite {
