@@ -49,6 +49,7 @@ public class STORMCalculator {
 	}
 	
 	public void startCalculation() {
+		long start = System.nanoTime();
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
 		trParser.limit = 0;
 		try {
@@ -62,6 +63,7 @@ public class STORMCalculator {
 		}
 		trList = trParser.primitives;
 		doSimulation();
+		System.out.println("Whole parsing, converting and simulation time: "+ (System.nanoTime()-start)/1e9 +"s");
 	}
 	
 	public void doSimulation() {

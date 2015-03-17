@@ -39,7 +39,7 @@ public class Test extends FrameSwing {
 		float[][] m2 = {{0,4,0},{1,2,5},{0,1,1}};
 //		float[] vec = {1,3,1};
 //		Calc.printVector(Calc.applyMatrix(m, vec));
-		//Calc.print2dMatrix(Calc.matrixMultiply(m, m2));
+		//Calc.print2dMatrix(Calc.matrixAddition(m, m2));
 		STORMCalculator calc = new STORMCalculator();
 		calc.startCalculation();
      }

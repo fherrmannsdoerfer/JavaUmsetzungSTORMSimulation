@@ -183,11 +183,29 @@ public class Calc {
 				for (int c = 0; c < m1.length; c++) {
 					sum += m1[i][c]*m2[c][j];
 				}
-				System.out.println("Sum: "+sum);
 				result[i][j] = sum;
 			}
 		}
 		return result;
 	}
 	
+	public static float[][] matrixAddition(float[][] m1, float[][] m2) {
+		float[][] result = new float[m1.length][m1.length];
+		for (int i = 0; i < m1.length;i++) {
+			for (int j = 0; j < m1.length; j++) {
+				result[i][j] = m1[i][j] + m2[i][j];
+			}
+		}
+		return result;
+	}
+	
+	public static float[][] matrixDivide(float[][] m1, float div) {
+		float[][] result = new float[m1.length][m1.length];
+		for (int i = 0; i < m1.length;i++) {
+			for (int j = 0; j < m1.length; j++) {
+				result[i][j] = m1[i][j]/div;
+			}
+		}
+		return result;
+	}
 }

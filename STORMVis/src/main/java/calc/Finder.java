@@ -17,7 +17,7 @@ public class Finder {
 			return null;
 		}
 		Pair<float[][],int[]> basePointPair = findBasePoints((int) Math.ceil(numberOfFluorophores * (1-doc)), triangles, areas);
-		Calc.print2dMatrix(basePointPair.getValue0());
+//		Calc.print2dMatrix(basePointPair.getValue0());
 		float[][] basepoints = basePointPair.getValue0();
 		int[] idx = basePointPair.getValue1();
 		float[][] ep = getEndpoints(basepoints, triangles, idx, loa, aoa);
@@ -61,7 +61,9 @@ public class Finder {
 		for(int i = 0; i < basepoints.length; i++) {
 			float[] vec = Calc.getVectorTri(aoa,loa);
 			float[] normTri = Calc.getCross(vec1[idx[i]],vec2[idx[i]]);
+			findRotation(vec, normTri);
 		}
+		System.out.println("Rotations completed");
 		return ep;
 	}
 	
@@ -106,10 +108,10 @@ public class Finder {
 	    		}
 	    	}
 	    }
-	    for(int i = 0; i < idx.length; i++) {
-	    	System.out.println(idx[i]);
-	    }
-	    System.out.println("length idx: "+ idx.length);
+//	    for(int i = 0; i < idx.length; i++) {
+//	    	System.out.println(idx[i]);
+//	    }
+//	    System.out.println("length idx: "+ idx.length);
 		return idx;
 	}
 	
@@ -129,11 +131,15 @@ public class Finder {
 	        float[] v = Calc.getCross(unityVec,targetVec);
 	        float s = Calc.getNorm(v);
 	        float c = Calc.getDot(unityVec, targetVec);
-	        float[][] vx = {{0,-v[3], v[2]},{v[3],0,-v[1]},{-v[2],v[1],0}};
-	        float[][] R = {{1,0,0},{0,1,0},{0,0,1}}; //+vx+vx*vx*(1-c)/s^2;
-	        //rotVec = R*vec; 
-	        
+	        float[][] vx = {{0,-v[2], v[1]},{v[2],0,-v[0]},{-v[1],v[0],0}};
+	        float[][] R = {{1,0,0},{0,1,0},{0,0,1}}; //+vx+ // vx*vx*(1-c)/s^2;
+	        R = Calc.matrixAddition(R, vx);
+	        float[][] vxSquared = Calc.matrixMultiply(vx, vx);
+	        vxSquared = Calc.matrixDivide(vxSquared,(float) ((float) (1-c)/(Math.pow(s, 2))));
+	        R = Calc.matrixAddition(R, vxSquared);
+	        //Calc.print2dMatrix(R);
 	        rotVec = Calc.applyMatrix(R, vec);
+	        //Calc.printVector(rotVec);
 		}
 		return rotVec;
 	}
