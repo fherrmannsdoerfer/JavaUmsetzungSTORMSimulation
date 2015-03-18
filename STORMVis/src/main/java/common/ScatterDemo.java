@@ -143,7 +143,7 @@ public class ScatterDemo extends AbstractAnalysis {
         }
         else if(!TRIANGLES){
         	//chart.getScene().getGraph().add(scatter,false);
-        	chart.getScene().getGraph().add(compPoints,false);
+        	chart.getScene().getGraph().add(compPoints1,false);
         }
         chart.render();
                 
