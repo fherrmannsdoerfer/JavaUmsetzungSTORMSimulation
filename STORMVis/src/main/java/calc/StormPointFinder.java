@@ -1,5 +1,6 @@
 package calc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +35,7 @@ public class StormPointFinder {
         	x = 0;
         	y = 0;
         	z = 0;
-        	System.out.println("No coordinates to append");
+        	System.out.println("No coordinates to append.");
         }
         else {
         	listEndPoints = appendLine(listEndPoints, new float[]{x,y,z});
@@ -48,16 +49,36 @@ public class StormPointFinder {
 			int[] idx = new int[listEndPoints.length]; 
 			for (int i = 0; i<listEndPoints.length;i++) {
 				idx[i] = (int) Math.abs(Math.floor(randn() * fpab+fpab));
-				System.out.println(idx[i]);
+				System.out.println("idx: " + idx[i]);
 			}
 //			idx(idx==0) = 1;
-			float[][] listEndPointsAugmented = null;
+			List<float[]> listEndPointsAugmented = new ArrayList<float[]>();
 			for (int i=0; i < max(idx);i++) {
-//					alteredPoints = listEndPoints(idx>=i,:);
-//			alteredPoints = alteredPoints+randn(size(alteredPoints))*3;
-//			listEndPointsAugmented = [listEndPointsAugmented;alteredPoints];
+				System.out.println("i: "+i);
+				List<float[]> alteredPoints = new ArrayList<float[]>();
+				for (int k = 0; k < idx.length; k++) {
+					if(idx[k]>=i) {
+						alteredPoints.add(listEndPoints[k]);
+					}
+				}
+				System.out.println("alt. point size: "+ alteredPoints.size());
+				
+				float[][] altPoints = toFloatArray(alteredPoints);
+				Calc.print2dMatrix(altPoints);
+				
+				for (int c = 0; c < altPoints.length; c++) {
+					for (int u = 0; u < altPoints[0].length; u++) {
+						altPoints[c][u] = altPoints[c][u] + randn()*3;
+					}
+				}
+				
+				for (int p = 0; p < altPoints.length; p++) {
+					listEndPointsAugmented.add(altPoints[p]);
+				}
 			}
-//			listEndPoints = listEndPointsAugmented;
+			listEndPoints = toFloatArray(listEndPointsAugmented);
+			System.out.println("--- List End Points ---");
+			Calc.print2dMatrix(listEndPoints);
 		}   
 		
 	}
@@ -90,11 +111,19 @@ public class StormPointFinder {
 		return m;
 	}
 	
+	public static float[][] toFloatArray(List<float[]> f) {
+		float[][] result = new float[f.size()][f.get(0).length];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = f.get(i);
+		}
+		return result;
+	}
+	
 	// Normally distributed rnd numbers
 	public static float randn() {
 		double result = generator.nextGaussian();
 		//System.out.println("rnd: " + result);
 		return (float) result;
 	}
-	
+		
 }
