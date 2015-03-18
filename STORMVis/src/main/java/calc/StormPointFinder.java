@@ -11,7 +11,7 @@ import org.apache.commons.lang3.ArrayUtils;
 public class StormPointFinder {
 	private static Random generator = new Random(System.currentTimeMillis());
 	
-	public static void findStormPoints(float[][] listEndPoints, float abpf, float sxy, float sz, float bd, float fpab, boolean background ) {
+	public static float[][] findStormPoints(float[][] listEndPoints, float abpf, float sxy, float sz, float bd, float fpab, boolean background ) {
 		float[][] stormPoints = null;
 		//idxF = []; %idxF contains the information to which structure the fluorophore belongs
 	    //idxST = []; %idxST contains the information to which structure each localization belongs
@@ -94,7 +94,9 @@ public class StormPointFinder {
 		}
 		
 		float[][] stormPointsTemp = null;
-		
+		List<float[][]> allStormPoints = new ArrayList<float[][]>();
+//		System.out.println("floor: "+ Math.floor(max(nbrBlinkingEvents)));
+		int pointCounter = 0;
 		for (int i = 1; i <= Math.floor(max(nbrBlinkingEvents)); i++) {
 			List<Integer> idxArray = new ArrayList<Integer>();
 			int countOne = 0;
@@ -135,11 +137,54 @@ public class StormPointFinder {
 //			System.out.println("dim(y): " + y.length);
 //			System.out.println("dim(z): " + z.length);
 //			System.out.println("---");
-		}
-		if (stormPointsTemp.length != 0) {
-			
+//			System.out.println("stormpoints length: "+ stormPointsTemp.length);
+			pointCounter += stormPointsTemp.length;
+			allStormPoints.add(stormPointsTemp);
 		}
 		
+		stormPoints = mergeArrays(allStormPoints);
+		System.out.println("All storm points: " + stormPoints.length + " vs counter: " + pointCounter);
+//		Calc.print2dMatrix(stormPoints);
+		if (stormPoints.length != 0) {
+			float fluorophoresPerFrame = (max(stormPoints,0) -min(stormPoints,0)) *(max(stormPoints,1)-min(stormPoints,1)) *bd;
+			System.out.println("ffpf: "+ fluorophoresPerFrame);
+			if(fluorophoresPerFrame < 1) {
+				fluorophoresPerFrame = 1;
+			}
+			
+			float[] frameNumberCol = new float[stormPoints.length];
+			int max = (int) Math.ceil(stormPoints.length/fluorophoresPerFrame);
+			System.out.println("Max: "+max);
+			for (int i = 0; i < stormPoints.length; i++) {
+				frameNumberCol[i] = randInt(0, max);
+			}
+			stormPoints = appendColumn(stormPoints, frameNumberCol);
+			Calc.print2dMatrix(stormPoints);
+			// TODO: boolean or integer?
+			boolean mergedPSFs = true;
+	        float psfwidth = 200;
+	        float affectingFactor = 2;
+	        if(mergedPSFs) {
+	        	int maxInFrameNumbers = (int) max(stormPoints,4); 
+	        	for (int i = 1; i <= maxInFrameNumbers; i++) {
+	        		
+	        	}
+	        }
+		}
+		
+		return null;
+	}
+	
+	public static float[][] mergeArrays(List<float[][]> list) {
+		float[][] result = new float[list.get(0).length][list.get(0)[0].length];
+		result = list.get(0);
+		for(int i = 1; i < list.size(); i++) {
+			float[][] current = list.get(i);
+			for (int k = 0; k < current.length; k++) {
+				result = appendLine(result, current[k]);
+			}
+		}
+		return result;
 	}
 	
 	public static float min(float[][] f, int coord) {
@@ -176,6 +221,20 @@ public class StormPointFinder {
 		return m;
 	}
 	
+	public static float[][] appendColumn(float[][] m, float[] col) {
+		m = Calc.transpose(m);
+		float[][] copy = new float[m.length+1][m[0].length];
+    	System.arraycopy(m, 0, copy, 0, m.length);
+    	copy[m.length] = col;
+    	m = Calc.transpose(copy);
+		return m;
+	}
+	
+	public static float[] getColumn(float[][] m, int col) {
+		m = Calc.transpose(m);
+		return m[col];
+	}
+	
 	public static float[][] toFloatArray(List<float[]> f) {
 		float[][] result = new float[f.size()][f.get(0).length];
 		for (int i = 0; i < result.length; i++) {
@@ -189,6 +248,19 @@ public class StormPointFinder {
 		double result = generator.nextGaussian();
 		//System.out.println("rnd: " + result);
 		return (float) result;
+	}
+	
+	public static int randInt(int min, int max) {
+
+	    // NOTE: Usually this should be a field rather than a method
+	    // variable so that it is not re-seeded every call.
+	    Random rand = new Random();
+
+	    // nextInt is normally exclusive of the top value,
+	    // so add 1 to make it inclusive
+	    int randomNum = rand.nextInt((max - min) + 1) + min;
+
+	    return randomNum;
 	}
 		
 }

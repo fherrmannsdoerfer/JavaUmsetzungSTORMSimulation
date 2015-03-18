@@ -40,9 +40,15 @@ public class Test extends FrameSwing {
 		float[][] m = {{1,2,3},{0,1,0},{2,1,0}};
 		float[][] m2 = {{0,4,0},{1,2,5},{0,1,1}};
 		//Calc.print2dMatrix(Calc.transpose(m));
-//		float[] vec = {1,3,1};
+		float[] vec = {1,3};
+		float[] vec2 = {1,-3};
+//		Calc.printVector(Calc.difference(vec, vec2));
+//		System.out.println("norm: " + Calc.getNorm(vec));
 //		Calc.printVector(Calc.applyMatrix(m, vec));
 		//Calc.print2dMatrix(Calc.matrixAddition(m, m2));
+		
+		float[][] mx = {{1,0},{2,2},{3,1}};
+//		Calc.print2dMatrix(Calc.pairwiseDistance(mx, mx));
 		STORMCalculator calc = new STORMCalculator();
 		calc.startCalculation();
      }

@@ -57,9 +57,10 @@ public class Calc {
 	public static void print2dMatrix(float[][] array) {
 		System.out.println("-- matrix --");
 		int size = array.length;
+		int size2 = array[0].length;
 		System.out.println("total size: "+size);
 		for (int j = 0; j<size;j++) {
-			for(int c = 0; c<3;c++) {
+			for(int c = 0; c<size2;c++) {
 				System.out.print(array[j][c]+" ");
 			}
 			System.out.print("\n");
@@ -89,7 +90,11 @@ public class Calc {
 	}
 	
 	public static float getNorm(float[] vec) {
-		return (float) Math.sqrt(Math.pow(vec[0], 2)+Math.pow(vec[1], 2)+Math.pow(vec[2], 2));
+		float sum = 0;
+		for (int i = 0; i < vec.length; i++) {
+			sum += Math.pow(vec[i], 2);
+		}
+		return (float) Math.sqrt(sum);
 	}
 	
 	public static float getDot(float[] vec, float[] vec2) {
@@ -137,6 +142,14 @@ public class Calc {
 		float[] result = {(float) v1.x,(float) v1.y,(float) v1.z};
 		v1 = null;
 		v2 = null;
+		return result;
+	}
+	
+	public static float[] difference(float[] v1, float[] v2) {
+		float[] result = new float[v1.length];
+		for(int i = 0; i < v1.length; i++) {
+			result[i] = v2[i]- v1[i];
+		}
 		return result;
 	}
 	
@@ -229,6 +242,19 @@ public class Calc {
         }
         return result;
     }
+	
+	public static float[][] pairwiseDistance(float[][] m1, float[][] m2) {
+		float[][] result = new float[m1.length][m1.length];
+		for(int i = 0; i < m1.length; i++) {
+			for(int j = 0; j < m1.length; j ++) {
+				float[] vec1 = m1[i];
+				float[] vec2 = m2[j];
+				float difference = getNorm(difference(vec1, vec2));
+				result[i][j] = difference;
+			}
+		}
+		return result;
+	}
 	
 	public static float rand(float high) {
 		return (float) (Math.random() * high);
