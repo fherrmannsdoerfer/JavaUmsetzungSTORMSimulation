@@ -46,14 +46,17 @@ public class StormPointFinder {
 		
 		if (fpab != 1) {
 			int[] idx = new int[listEndPoints.length]; 
-//			abs(floor(randn(size(listEndPoints,1),1)*fpab+fpab));
+			for (int i = 0; i<listEndPoints.length;i++) {
+				idx[i] = (int) Math.abs(Math.floor(randn() * fpab+fpab));
+				System.out.println(idx[i]);
+			}
 //			idx(idx==0) = 1;
-//			listEndPointsAugmented=[];
-//			for i=1:max(idx)
+			float[][] listEndPointsAugmented = null;
+			for (int i=0; i < max(idx);i++) {
 //					alteredPoints = listEndPoints(idx>=i,:);
 //			alteredPoints = alteredPoints+randn(size(alteredPoints))*3;
 //			listEndPointsAugmented = [listEndPointsAugmented;alteredPoints];
-//			end
+			}
 //			listEndPoints = listEndPointsAugmented;
 		}   
 		
@@ -73,6 +76,12 @@ public class StormPointFinder {
 		return min.floatValue();
 	}
 	
+	public static float max(int[] f) {
+		List<Integer> list = Arrays.asList(ArrayUtils.toObject(f));
+		Integer min = Collections.max(list);
+		return min.intValue();
+	}
+	
 	public static float[][] appendLine(float[][] m, float[] line) {
 		float[][] copy = new float[m.length+1][m[0].length];
     	System.arraycopy(m, 0, copy, 0, m.length);
@@ -83,7 +92,9 @@ public class StormPointFinder {
 	
 	// Normally distributed rnd numbers
 	public static float randn() {
-		return (float) generator.nextGaussian();
+		double result = generator.nextGaussian();
+		//System.out.println("rnd: " + result);
+		return (float) result;
 	}
 	
 }
