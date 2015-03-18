@@ -67,14 +67,19 @@ public class STORMCalculator {
 	}
 	
 	public void doSimulation() {
+		float[][] ep = null;
 		try{
 			Pair<float[][],float[][]> p = Finder.findAntibodiesTri(trList, bspsnm, pabs, loa, (float) aoa, doc, nocpsmm, docpsnm);
+			ep = p.getValue1();
 			System.out.println("Antibodies found");
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
+		
+		Calc.print2dMatrix(ep);
+		StormPointFinder.findStormPoints(ep, abpf, sxy, sz, bd, fpab, true);
 	}
 	
 }

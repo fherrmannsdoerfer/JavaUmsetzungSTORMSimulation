@@ -217,4 +217,20 @@ public class Calc {
 		}
 		return result;
 	}
+	
+	public static float[][] transpose(float[][] original) {
+		float[][] result = new float[original[0].length][original.length];
+        if (original.length > 0) {
+            for (int i = 0; i < original[0].length; i++) {
+                for (int j = 0; j < original.length; j++) {
+                    result[i][j] = original[j][i];
+                }
+            }
+        }
+        return result;
+    }
+	
+	public static float rand(float high) {
+		return (float) (Math.random() * high);
+	}
 }
