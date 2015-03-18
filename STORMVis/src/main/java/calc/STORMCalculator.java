@@ -83,6 +83,7 @@ public class STORMCalculator {
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
+		/*
 		Coord3d[] allObjects = new Coord3d[ep.length];
 		Color[] colors = new Color[ep.length];
 		for (int i = 0; i < ep.length; i++) {
@@ -94,9 +95,9 @@ public class STORMCalculator {
 		demo.stormColors = colors;
 		demo.stormPoints = allObjects;
 		AnalysisLauncher.open(demo);
-		
+		*/
 		//Calc.print2dMatrix(ep);
-		//StormPointFinder.findStormPoints(ep, abpf, sxy, sz, bd, fpab, true);
+		StormPointFinder.findStormPoints(ep, abpf, sxy, sz, bd, fpab, true);
 	}
 	
 }

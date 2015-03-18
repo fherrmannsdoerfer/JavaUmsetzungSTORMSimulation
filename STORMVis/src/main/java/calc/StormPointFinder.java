@@ -40,7 +40,7 @@ public class StormPointFinder {
         else {
         	listEndPoints = appendLine(listEndPoints, new float[]{x,y,z});
         }
-        System.out.println("x: "+x+" | y: "+y +" | z: "+z);
+        //System.out.println("x: "+x+" | y: "+y +" | z: "+z);
         Calc.print2dMatrix(listEndPoints);
     	}
 		
@@ -82,8 +82,63 @@ public class StormPointFinder {
 			}
 			listEndPoints = toFloatArray(listEndPointsAugmented);
 			System.out.println("--- List End Points ---");
-			Calc.print2dMatrix(listEndPoints);
+			//Calc.print2dMatrix(listEndPoints);
 		}   
+		
+		float[] nbrBlinkingEvents = new float[listEndPoints.length];
+		for (int i = 0; i < listEndPoints.length; i++) {
+			nbrBlinkingEvents[i] = (float) (randn() * Math.sqrt(abpf) + abpf);
+			if(nbrBlinkingEvents[i] < 0) {
+				nbrBlinkingEvents[i] = 0;
+			}
+		}
+		
+		float[][] stormPointsTemp = null;
+		
+		for (int i = 1; i <= Math.floor(max(nbrBlinkingEvents)); i++) {
+			List<Integer> idxArray = new ArrayList<Integer>();
+			int countOne = 0;
+			for (int j = 0; j < nbrBlinkingEvents.length; j++) {
+				if(nbrBlinkingEvents[j] >= i) {
+					idxArray.add(new Integer(j));
+					countOne++;
+				}
+			}
+//			System.out.println(countOne);
+//			System.out.println(idxArray.size());
+			float[] x = new float[countOne];
+			float[] y = new float[countOne];
+			float[] z = new float[countOne];
+			
+			float[][] listEndPointsTranspose = Calc.transpose(listEndPoints);
+			
+			for (int k = 0; k < idxArray.size(); k++) {
+				x[k] = listEndPointsTranspose[0][idxArray.get(k).intValue()] + randn()*sxy;
+				y[k] = listEndPointsTranspose[1][idxArray.get(k).intValue()] + randn()*sxy;
+				z[k] = listEndPointsTranspose[2][idxArray.get(k).intValue()] + randn()*sz;
+			}
+			
+			// TODO: intensity distribution
+			stormPointsTemp = new float[x.length][4];
+			float[] intensities = new float[x.length];
+			for(int b = 0; b < x.length; b++) {
+				intensities[b] = 1.f;
+			}
+			
+			for(int j = 0; j < x.length; j++) {
+				stormPointsTemp[j][0] = x[j];
+				stormPointsTemp[j][1] = y[j];
+				stormPointsTemp[j][2] = z[j];
+				stormPointsTemp[j][3] = intensities[j];
+			}
+//			System.out.println("dim(x): " + x.length);
+//			System.out.println("dim(y): " + y.length);
+//			System.out.println("dim(z): " + z.length);
+//			System.out.println("---");
+		}
+		if (stormPointsTemp.length != 0) {
+			
+		}
 		
 	}
 	
@@ -105,6 +160,12 @@ public class StormPointFinder {
 		List<Integer> list = Arrays.asList(ArrayUtils.toObject(f));
 		Integer min = Collections.max(list);
 		return min.intValue();
+	}
+	
+	public static float max(float[] f) {
+		List<Float> list = Arrays.asList(ArrayUtils.toObject(f));
+		Float max = Collections.max(list);
+		return max.floatValue();
 	}
 	
 	public static float[][] appendLine(float[][] m, float[] line) {

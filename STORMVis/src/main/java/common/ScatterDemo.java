@@ -59,6 +59,7 @@ public class ScatterDemo extends AbstractAnalysis {
 		
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
 		trParser.limit = 0;
+		
 		try {
 			trParser.parse();
 		} catch (NumberFormatException e) {
@@ -98,7 +99,8 @@ public class ScatterDemo extends AbstractAnalysis {
         	scatter = new Scatter(stormPoints, stormColors, 5.f);
         }
         //Chart chart;
-        chart = AWTChartComponentFactory.chart(Quality.Nicest, Toolkit.awt.name());
+        Quality q = Quality.Nicest;
+        chart = AWTChartComponentFactory.chart(q, Toolkit.awt.name());
         
         CompileableComposite compPoints1 = new CompileableComposite();
         /*for(Coord3d p : points) {
@@ -106,7 +108,6 @@ public class ScatterDemo extends AbstractAnalysis {
         }*/
         
         compPoints1.add(scatter);
-        
         
         Chart chart;
         chart = AWTChartComponentFactory.chart(Quality.Nicest, Toolkit.awt.name());
@@ -153,7 +154,7 @@ public class ScatterDemo extends AbstractAnalysis {
         		chart.getScene().getGraph().add(line);
         	}
         }
-       
+        
         int parts = 2;
         //List<CompileableComposite> list1 = new ArrayList<CompileableComposite>();
         CompileableComposite comp = new CompileableComposite();
