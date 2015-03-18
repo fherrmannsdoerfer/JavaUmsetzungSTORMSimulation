@@ -7,7 +7,7 @@ import org.javatuples.Pair;
 
 
 public class Finder {
-	
+	// fluorophore = binding site
 	public static Pair<float[][],float[][]> findAntibodiesTri(List<float[][]> trList, float bspsnm, float pabs,float loa,float aoa,float doc,float nocpsmm,float docpsnm) {
 		float[][][] triangles = Calc.getMatrix(trList);
 		float[] areas = Calc.getAreas(triangles);
@@ -41,11 +41,7 @@ public class Finder {
 				}
 				
 				if ((randx + randy)<1) {
-					// remove ?
-					//                figure
-					//                plot3(triang(idx(i),:,1),triang(idx(i),:,2),triang(idx(i),:,3))
-					//                hold on
-					//                plot3(p(1),p(2),p(3),'r*')
+					// remove ? // edit <=
 				}
 				else break;
 			}

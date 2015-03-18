@@ -1,3 +1,4 @@
+package common;
 
 public class Point {
 	public float x;

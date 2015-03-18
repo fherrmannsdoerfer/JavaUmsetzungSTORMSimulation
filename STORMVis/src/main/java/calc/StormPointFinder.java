@@ -27,15 +27,15 @@ public class StormPointFinder {
         float zmax = max(listEndPoints, 2);
         int numberOfIncorrectLocalizations = (int) Math.floor(ilpmm3*(xmax-xmin)/1e3*(ymax-ymin)/1e3*(zmax-zmin)/1e3);
         System.out.println("noil:" + numberOfIncorrectLocalizations);
-        // x,y,z multidimensional?
+        // x,y,z multidimensional!!! // TODO: fix!
         float x = Calc.rand(numberOfIncorrectLocalizations) * (xmax -xmin) + xmin;
         float y = Calc.rand(numberOfIncorrectLocalizations) * (ymax -ymin) + ymin;
         float z = Calc.rand(numberOfIncorrectLocalizations) * (zmax -zmin) + zmin;
         if(numberOfIncorrectLocalizations == 0) {
-        	x = 0;
-        	y = 0;
-        	z = 0;
-        	System.out.println("No coordinates to append.");
+        		x = 0;
+        		y = 0;
+        		z = 0;
+        		System.out.println("No coordinates to append.");
         }
         else {
         	listEndPoints = appendLine(listEndPoints, new float[]{x,y,z});
@@ -51,9 +51,13 @@ public class StormPointFinder {
 				idx[i] = (int) Math.abs(Math.floor(randn() * fpab+fpab));
 				System.out.println("idx: " + idx[i]);
 			}
-//			idx(idx==0) = 1;
+			for (int i = 0; i < idx.length; i++) {
+				if(idx[i] == 0) {
+					idx[i] = 1;
+				}
+			}
 			List<float[]> listEndPointsAugmented = new ArrayList<float[]>();
-			for (int i=0; i < max(idx);i++) {
+			for (int i=1; i <= max(idx);i++) {
 				System.out.println("i: "+i);
 				List<float[]> alteredPoints = new ArrayList<float[]>();
 				for (int k = 0; k < idx.length; k++) {

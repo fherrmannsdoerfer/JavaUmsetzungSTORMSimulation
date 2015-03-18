@@ -1,3 +1,4 @@
+package common;
 import java.awt.event.MouseWheelEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,11 +34,15 @@ public class ScatterDemo extends AbstractAnalysis {
 	
 	static boolean SHOWSPHERES = false;
 	static boolean SHOWLINES = false;
-	static boolean LIGHTON = true;	
-	static boolean TRIANGLES = true;
-	static boolean FRAMES = true;
+	static boolean LIGHTON = false;	
+	static boolean TRIANGLES = false;
+	static boolean FRAMES = false;
 	
-		
+	static boolean STORM = true;
+	
+	public Coord3d[] stormPoints;
+	public Color[] stormColors;
+	
 	public void init() throws IOException{
 	
 	}
@@ -89,6 +94,9 @@ public class ScatterDemo extends AbstractAnalysis {
         	lineList.add(strip);
         }
         Scatter scatter = new Scatter(points, colors, 5.f);
+        if(STORM) {
+        	scatter = new Scatter(stormPoints, stormColors, 5.f);
+        }
         //Chart chart;
         chart = AWTChartComponentFactory.chart(Quality.Nicest, Toolkit.awt.name());
         

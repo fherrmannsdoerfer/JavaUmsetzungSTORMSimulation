@@ -1,3 +1,4 @@
+package common;
 import javax.media.opengl.GL;
 
 import org.jzy3d.plot3d.primitives.AbstractComposite;

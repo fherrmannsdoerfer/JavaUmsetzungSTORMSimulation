@@ -6,7 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.javatuples.Pair;
+import org.jzy3d.analysis.AbstractAnalysis;
+import org.jzy3d.analysis.AnalysisLauncher;
+import org.jzy3d.colors.Color;
+import org.jzy3d.maths.Coord3d;
+import org.jzy3d.plot3d.primitives.Scatter;
 
+import common.ScatterDemo;
 import parsing.TriangleObjectParser;
 
 public class STORMCalculator {
@@ -48,7 +54,7 @@ public class STORMCalculator {
 		
 	}
 	
-	public void startCalculation() {
+	public void startCalculation() throws Exception {
 		long start = System.nanoTime();
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
 		trParser.limit = 0;
@@ -66,7 +72,7 @@ public class STORMCalculator {
 		System.out.println("Whole parsing, converting and simulation time: "+ (System.nanoTime()-start)/1e9 +"s");
 	}
 	
-	public void doSimulation() {
+	public void doSimulation() throws Exception {
 		float[][] ep = null;
 		try{
 			Pair<float[][],float[][]> p = Finder.findAntibodiesTri(trList, bspsnm, pabs, loa, (float) aoa, doc, nocpsmm, docpsnm);
@@ -77,9 +83,20 @@ public class STORMCalculator {
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
+		Coord3d[] allObjects = new Coord3d[ep.length];
+		Color[] colors = new Color[ep.length];
+		for (int i = 0; i < ep.length; i++) {
+			Coord3d coord = new Coord3d(ep[i][0], ep[i][1], ep[i][2]);
+			allObjects[i] = coord;
+			colors[i] = new Color(coord.x/255.f, coord.y/255.f, coord.z/255.f, 1.f);
+		}
+		ScatterDemo demo = new ScatterDemo();
+		demo.stormColors = colors;
+		demo.stormPoints = allObjects;
+		AnalysisLauncher.open(demo);
 		
-		Calc.print2dMatrix(ep);
-		StormPointFinder.findStormPoints(ep, abpf, sxy, sz, bd, fpab, true);
+		//Calc.print2dMatrix(ep);
+		//StormPointFinder.findStormPoints(ep, abpf, sxy, sz, bd, fpab, true);
 	}
 	
 }
