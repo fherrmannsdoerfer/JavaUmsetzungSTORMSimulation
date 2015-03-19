@@ -94,7 +94,7 @@ public class ScatterDemo extends AbstractAnalysis {
         	}
         	lineList.add(strip);
         }
-        Scatter scatter = new Scatter(points, colors, 5.f);
+        Scatter scatter = new Scatter(points, colors, 2.f);
         if(STORM) {
         	scatter = new Scatter(stormPoints, stormColors, 2.f);
         }
