@@ -152,7 +152,7 @@ public class StormPointFinder {
 		if (stormPoints.length != 0) {
 			float fluorophoresPerFrame = (max(stormPoints,0) -min(stormPoints,0)) *(max(stormPoints,1)-min(stormPoints,1)) *bd;
 //			System.out.println("ffpf: "+ fluorophoresPerFrame);
-//			fluorophoresPerFrame = 50.f;
+			fluorophoresPerFrame = 1000.f;
 			if(fluorophoresPerFrame < 1 || fluorophoresPerFrame == Float.NaN) {
 				fluorophoresPerFrame = 1;
 			}
@@ -273,11 +273,17 @@ public class StormPointFinder {
 	    				}
 	    				*/
 	    				
-	    				
+	    				System.out.println("Start removing");
+	    				List<float[]> lines2Remove = new ArrayList<float[]>();
 	    				for (int j = 0; j < locations.size(); j++) {
 	    					int line = idxArray.get(locations.get(j)[0]);
-	    					stormPointsArrayList.remove(line);
+	    					lines2Remove.add(stormPointsArrayList.get(line));
 	    				}
+	    				System.out.println("removeAll");
+	    				for(int j = 0; j < lines2Remove.size(); j++) {
+	    					stormPointsArrayList.remove(lines2Remove.get(j));
+	    				}
+	    				System.out.println("End removing");
 	    				
 //	    				System.out.println("Deleting");
 //	    				stormPoints = removeDeletedLines(stormPoints); // old
