@@ -19,12 +19,12 @@ public class StormPointFinder {
 		
 		if (background) { //unspecific labeling
         float ilpmm3 = 50; //incorrect localizations per micrometer ^3
-        float xmin = min(listEndPoints, 0);
-        float xmax = max(listEndPoints, 0);
-        float ymin = min(listEndPoints, 1);
-        float ymax = max(listEndPoints, 1);
-        float zmin = min(listEndPoints, 2);
-        float zmax = max(listEndPoints, 2);
+        float xmin = Calc.min(listEndPoints, 0);
+        float xmax = Calc.max(listEndPoints, 0);
+        float ymin = Calc.min(listEndPoints, 1);
+        float ymax = Calc.max(listEndPoints, 1);
+        float zmin = Calc.min(listEndPoints, 2);
+        float zmax = Calc.max(listEndPoints, 2);
         int numberOfIncorrectLocalizations = (int) Math.floor(ilpmm3*(xmax-xmin)/1e3*(ymax-ymin)/1e3*(zmax-zmin)/1e3);
         System.out.println("noil:" + numberOfIncorrectLocalizations);
         // x,y,z multidimensional!!! // TODO: fix!
@@ -38,7 +38,7 @@ public class StormPointFinder {
         		System.out.println("No coordinates to append.");
         }
         else {
-        	listEndPoints = appendLine(listEndPoints, new float[]{x,y,z});
+        	listEndPoints = Calc.appendLine(listEndPoints, new float[]{x,y,z});
         }
         //System.out.println("x: "+x+" | y: "+y +" | z: "+z);
         Calc.print2dMatrix(listEndPoints);
@@ -48,7 +48,7 @@ public class StormPointFinder {
 		if (fpab != 1) {
 			int[] idx = new int[listEndPoints.length]; 
 			for (int i = 0; i<listEndPoints.length;i++) {
-				idx[i] = (int) Math.abs(Math.floor(randn() * fpab+fpab));
+				idx[i] = (int) Math.abs(Math.floor(Calc.randn() * fpab+fpab));
 //				System.out.println("idx: " + idx[i]);
 			}
 			for (int i = 0; i < idx.length; i++) {
@@ -57,7 +57,7 @@ public class StormPointFinder {
 				}
 			}
 			List<float[]> listEndPointsAugmented = new ArrayList<float[]>();
-			for (int i=1; i <= max(idx);i++) {
+			for (int i=1; i <= Calc.max(idx);i++) {
 //				System.out.println("i: "+i);
 				List<float[]> alteredPoints = new ArrayList<float[]>();
 				for (int k = 0; k < idx.length; k++) {
@@ -67,12 +67,12 @@ public class StormPointFinder {
 				}
 //				System.out.println("alt. point size: "+ alteredPoints.size());
 				
-				float[][] altPoints = toFloatArray(alteredPoints);
+				float[][] altPoints = Calc.toFloatArray(alteredPoints);
 //				Calc.print2dMatrix(altPoints);
 				
 				for (int c = 0; c < altPoints.length; c++) {
 					for (int u = 0; u < altPoints[0].length; u++) {
-						altPoints[c][u] = altPoints[c][u] + randn()*3;
+						altPoints[c][u] = altPoints[c][u] + Calc.randn()*3;
 					}
 				}
 				
@@ -80,7 +80,7 @@ public class StormPointFinder {
 					listEndPointsAugmented.add(altPoints[p]);
 				}
 			}
-			listEndPoints = toFloatArray(listEndPointsAugmented);
+			listEndPoints = Calc.toFloatArray(listEndPointsAugmented);
 			System.out.println("--- List End Points ---");
 			//Calc.print2dMatrix(listEndPoints);
 		}   
@@ -88,7 +88,7 @@ public class StormPointFinder {
 		float[] nbrBlinkingEvents = new float[listEndPoints.length];
 		System.out.println("blinking event number:" + nbrBlinkingEvents);
 		for (int i = 0; i < listEndPoints.length; i++) {
-			nbrBlinkingEvents[i] = (float) (randn() * Math.sqrt(abpf) + abpf);
+			nbrBlinkingEvents[i] = (float) (Calc.randn() * Math.sqrt(abpf) + abpf);
 			if(nbrBlinkingEvents[i] < 0) {
 				nbrBlinkingEvents[i] = 0;
 			}
@@ -97,9 +97,9 @@ public class StormPointFinder {
 		System.out.println("Start creating stPoints");
 		float[][] stormPointsTemp = null;
 		List<float[]> allStormPoints = new ArrayList<float[]>();
-		System.out.println("floor: "+ Math.floor(max(nbrBlinkingEvents)));
+		System.out.println("floor: "+ Math.floor(Calc.max(nbrBlinkingEvents)));
 		int pointCounter = 0;
-		for (int i = 1; i <= Math.floor(max(nbrBlinkingEvents)); i++) {
+		for (int i = 1; i <= Math.floor(Calc.max(nbrBlinkingEvents)); i++) {
 			List<Integer> idxArray = new ArrayList<Integer>();
 			int countOne = 0;
 			for (int j = 0; j < nbrBlinkingEvents.length; j++) {
@@ -117,9 +117,9 @@ public class StormPointFinder {
 			float[][] listEndPointsTranspose = Calc.transpose(listEndPoints);
 			
 			for (int k = 0; k < idxArray.size(); k++) {
-				x[k] = listEndPointsTranspose[0][idxArray.get(k).intValue()] + randn()*sxy;
-				y[k] = listEndPointsTranspose[1][idxArray.get(k).intValue()] + randn()*sxy;
-				z[k] = listEndPointsTranspose[2][idxArray.get(k).intValue()] + randn()*sz;
+				x[k] = listEndPointsTranspose[0][idxArray.get(k).intValue()] + Calc.randn()*sxy;
+				y[k] = listEndPointsTranspose[1][idxArray.get(k).intValue()] + Calc.randn()*sxy;
+				z[k] = listEndPointsTranspose[2][idxArray.get(k).intValue()] + Calc.randn()*sz;
 			}
 			
 			// TODO: intensity distribution
@@ -146,17 +146,17 @@ public class StormPointFinder {
 //			allStormPoints.add(stormPointsTemp);
 		}
 		System.out.println("Merging arrays: "+ allStormPoints.size());
-		stormPoints = toFloatArray(allStormPoints);
+		stormPoints = Calc.toFloatArray(allStormPoints);
 		System.out.println("All storm points: " + stormPoints.length + " vs counter: " + pointCounter);
 //		Calc.print2dMatrix(stormPoints);
 		if (stormPoints.length != 0) {
-			System.out.println(max(stormPoints,0) -min(stormPoints,0));
-			System.out.println(max(stormPoints,1) -min(stormPoints,1));
-			System.out.println(max(stormPoints,0) +" | "+ min(stormPoints,0));
-			System.out.println(max(stormPoints,1) +" | " +min(stormPoints,1));
-			float fluorophoresPerFrame = (max(stormPoints,0) -min(stormPoints,0)) *(max(stormPoints,1)-min(stormPoints,1)) *bd;
+			System.out.println(Calc.max(stormPoints,0) -Calc.min(stormPoints,0));
+			System.out.println(Calc.max(stormPoints,1) -Calc.min(stormPoints,1));
+			System.out.println(Calc.max(stormPoints,0) +" | "+ Calc.min(stormPoints,0));
+			System.out.println(Calc.max(stormPoints,1) +" | " +Calc.min(stormPoints,1));
+			float fluorophoresPerFrame = (Calc.max(stormPoints,0) -Calc.min(stormPoints,0)) *(Calc.max(stormPoints,1)-Calc.min(stormPoints,1)) *bd;
 //			System.out.println("ffpf: "+ fluorophoresPerFrame);
-			fluorophoresPerFrame = 20.f;
+//			fluorophoresPerFrame = 60.f;
 			if(fluorophoresPerFrame < 1 || fluorophoresPerFrame == Float.NaN) {
 				fluorophoresPerFrame = 1;
 			}
@@ -165,9 +165,9 @@ public class StormPointFinder {
 			int max = (int) Math.ceil(stormPoints.length/fluorophoresPerFrame);
 			System.out.println("Max: "+max);
 			for (int i = 0; i < stormPoints.length; i++) {
-				frameNumberCol[i] = randInt(0, max);
+				frameNumberCol[i] = Calc.randInt(0, max);
 			}
-			stormPoints = appendColumn(stormPoints, frameNumberCol);
+			stormPoints = Calc.appendColumn(stormPoints, frameNumberCol);
 			
 			/*
 			 * tryout: creating arraylist to append lines faster
@@ -186,12 +186,14 @@ public class StormPointFinder {
 	        float psfwidth = 200;
 	        float affectingFactor = 2;
 	        if(mergedPSFs) {
-	        	int maxInFrameNumbers = (int) max(stormPoints,4); 
+	        	int maxInFrameNumbers = (int) Calc.max(stormPoints,4); 
+	        	System.out.println("maxInFrameNumbers: " + maxInFrameNumbers);
 	        	for (int i = 1; i <= maxInFrameNumbers; i++) {
+	        		long start = System.nanoTime();
 //	        		System.out.println("progress: i = " + i);
 	        		List<Integer> idxArray = new ArrayList<Integer>();
 	    			int countOne = 0;
-	    			float[] col = getColumn(stormPoints, 4);
+	    			float[] col = Calc.getColumn(stormPoints, 4);
 //	    			Calc.printVector(col);
 //	    			System.out.println("Check1");
 	    			for (int j = 0; j < stormPoints.length; j++) {
@@ -269,7 +271,7 @@ public class StormPointFinder {
 //	    				System.out.println("Length before merge: " + stormPoints.length);
 	    				
 	    				// old
-	    				System.out.println("Start deleting");
+//	    				System.out.println("Start deleting");
 	    				for (int j = 0; j < locations.size(); j++) {
 	    					int line = idxArray.get(locations.get(j)[0]);
 	    					for (int c = 0; c < stormPoints[line].length; c++) {
@@ -277,8 +279,8 @@ public class StormPointFinder {
 	    					}
 	    				}
 //	    				stormPointsArrayList = 
-	    				stormPoints = removeDeletedLines(stormPoints);
-	    				System.out.println("end deleting");
+	    				stormPoints = Calc.removeDeletedLines(stormPoints);
+//	    				System.out.println("end deleting");
 	    				
 	    				stormPointsArrayList.clear();
 	    				for(int k = 0; k < stormPoints.length; k++) {
@@ -307,7 +309,7 @@ public class StormPointFinder {
 //	    					System.out.println("k: "+k);
 	    					stormPointsArrayList.add(meanCoords[k]);
 	    				}
-	    				stormPoints = toFloatArray(stormPointsArrayList);
+	    				stormPoints = Calc.toFloatArray(stormPointsArrayList);
 //	    				System.out.println("Adding finished");
 //	    				Calc.print2dMatrix(stormPoints);
 //	    				System.out.println("Length after merge: " + stormPoints.length);
@@ -316,6 +318,7 @@ public class StormPointFinder {
 	    			else {
 	    				continue;
 	    			}
+	    			System.out.println("Runtime " + i + " = " + (System.nanoTime()-start)/1e9);
 	        	}
 	        }
 		}
@@ -338,91 +341,6 @@ public class StormPointFinder {
 		return result;
 	}
 	*/ 
-	public static float min(float[][] f, int coord) {
-		f = Calc.transpose(f);
-		List<Float> list = Arrays.asList(ArrayUtils.toObject(f[coord]));
-		Float min = Collections.min(list);
-		return min.floatValue();
-	}
 	
-	public static float max(float[][] f, int coord) {
-		f = Calc.transpose(f);
-		List<Float> list = Arrays.asList(ArrayUtils.toObject(f[coord]));
-		Float min = Collections.max(list);
-		return min.floatValue();
-	}
-	
-	public static float max(int[] f) {
-		List<Integer> list = Arrays.asList(ArrayUtils.toObject(f));
-		Integer min = Collections.max(list);
-		return min.intValue();
-	}
-	
-	public static float max(float[] f) {
-		List<Float> list = Arrays.asList(ArrayUtils.toObject(f));
-		Float max = Collections.max(list);
-		return max.floatValue();
-	}
-	
-	public static float[][] appendLine(float[][] m, float[] line) {
-		float[][] copy = new float[m.length+1][m[0].length];
-    	System.arraycopy(m, 0, copy, 0, m.length);
-    	copy[m.length] = line;
-    	m = copy;
-		return m;
-	}
-	
-	public static float[][] appendColumn(float[][] m, float[] col) {
-		m = Calc.transpose(m);
-		float[][] copy = new float[m.length+1][m[0].length];
-    	System.arraycopy(m, 0, copy, 0, m.length);
-    	copy[m.length] = col;
-    	m = Calc.transpose(copy);
-		return m;
-	}
-	
-	public static float[][] removeDeletedLines(float[][] m) {
-		List<float[]> list = new ArrayList<float[]>();
-		for (int i = 0; i < m.length; i++) {
-			if(m[i][0] != -1 && m[i][1] != -1) {
-				list.add(m[i]);
-			}
-		}
-		float[][] result = toFloatArray(list);
-		return result;
-	}
-	
-	public static float[] getColumn(float[][] m, int col) {
-		m = Calc.transpose(m);
-		return m[col];
-	}
-	
-	public static float[][] toFloatArray(List<float[]> f) {
-		float[][] result = new float[f.size()][f.get(0).length];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = f.get(i);
-		}
-		return result;
-	}
-	
-	// Normally distributed rnd numbers
-	public static float randn() {
-		double result = generator.nextGaussian();
-		//System.out.println("rnd: " + result);
-		return (float) result;
-	}
-	
-	public static int randInt(int min, int max) {
-
-	    // NOTE: Usually this should be a field rather than a method
-	    // variable so that it is not re-seeded every call.
-	    Random rand = new Random();
-
-	    // nextInt is normally exclusive of the top value,
-	    // so add 1 to make it inclusive
-	    int randomNum = rand.nextInt((max - min) + 1) + min;
-
-	    return randomNum;
-	}
 		
 }

@@ -1,8 +1,13 @@
 package calc;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import javax.vecmath.Vector3d;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.javatuples.Pair;
 
 public class Calc { 
@@ -269,4 +274,98 @@ public class Calc {
 	public static float rand(float high) {
 		return (float) (Math.random() * high);
 	}
+	
+	/*
+	 * STORM helper
+	 * 
+	 */
+	
+	public static float min(float[][] f, int coord) {
+		f = Calc.transpose(f);
+		List<Float> list = Arrays.asList(ArrayUtils.toObject(f[coord]));
+		Float min = Collections.min(list);
+		return min.floatValue();
+	}
+	
+	public static float max(float[][] f, int coord) {
+		f = Calc.transpose(f);
+		List<Float> list = Arrays.asList(ArrayUtils.toObject(f[coord]));
+		Float min = Collections.max(list);
+		return min.floatValue();
+	}
+	
+	public static float max(int[] f) {
+		List<Integer> list = Arrays.asList(ArrayUtils.toObject(f));
+		Integer min = Collections.max(list);
+		return min.intValue();
+	}
+	
+	public static float max(float[] f) {
+		List<Float> list = Arrays.asList(ArrayUtils.toObject(f));
+		Float max = Collections.max(list);
+		return max.floatValue();
+	}
+	
+	public static float[][] appendLine(float[][] m, float[] line) {
+		float[][] copy = new float[m.length+1][m[0].length];
+    	System.arraycopy(m, 0, copy, 0, m.length);
+    	copy[m.length] = line;
+    	m = copy;
+		return m;
+	}
+	
+	public static float[][] appendColumn(float[][] m, float[] col) {
+		m = Calc.transpose(m);
+		float[][] copy = new float[m.length+1][m[0].length];
+    	System.arraycopy(m, 0, copy, 0, m.length);
+    	copy[m.length] = col;
+    	m = Calc.transpose(copy);
+		return m;
+	}
+	
+	public static float[][] removeDeletedLines(float[][] m) {
+		List<float[]> list = new ArrayList<float[]>();
+		for (int i = 0; i < m.length; i++) {
+			if(m[i][0] != -1 && m[i][1] != -1) {
+				list.add(m[i]);
+			}
+		}
+		float[][] result = toFloatArray(list);
+		return result;
+	}
+	
+	public static float[] getColumn(float[][] m, int col) {
+		m = Calc.transpose(m);
+		return m[col];
+	}
+	
+	public static float[][] toFloatArray(List<float[]> f) {
+		float[][] result = new float[f.size()][f.get(0).length];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = f.get(i);
+		}
+		return result;
+	}
+	
+	private static Random generator = new Random(System.currentTimeMillis());
+	// Normally distributed rnd numbers
+	public static float randn() {
+		double result = generator.nextGaussian();
+		//System.out.println("rnd: " + result);
+		return (float) result;
+	}
+	
+	public static int randInt(int min, int max) {
+
+	    // NOTE: Usually this should be a field rather than a method
+	    // variable so that it is not re-seeded every call.
+	    Random rand = new Random();
+
+	    // nextInt is normally exclusive of the top value,
+	    // so add 1 to make it inclusive
+	    int randomNum = rand.nextInt((max - min) + 1) + min;
+
+	    return randomNum;
+	}
+	
 }

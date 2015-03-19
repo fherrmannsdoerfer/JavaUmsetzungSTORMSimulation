@@ -22,6 +22,7 @@ import org.jzy3d.plot3d.primitives.Sphere;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.lights.Light;
 import org.jzy3d.plot3d.rendering.view.View;
+import org.jzy3d.plot3d.rendering.view.modes.CameraMode;
 
 import parsing.LineObjectParser;
 import parsing.STORMObjectParser;
@@ -101,7 +102,6 @@ public class ScatterDemo extends AbstractAnalysis {
         //Chart chart;
         Quality q = Quality.Nicest;
         chart = AWTChartComponentFactory.chart(q, Toolkit.awt.name());
-        
         CompileableComposite compPoints1 = new CompileableComposite();
         /*for(Coord3d p : points) {
         	compPoints1.add(new Point(p, new Color(p.x/255.f,p.y/255.f,p.z/255.f,1.f)));
