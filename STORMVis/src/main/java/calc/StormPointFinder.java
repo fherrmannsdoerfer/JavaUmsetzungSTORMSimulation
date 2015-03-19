@@ -150,9 +150,13 @@ public class StormPointFinder {
 		System.out.println("All storm points: " + stormPoints.length + " vs counter: " + pointCounter);
 //		Calc.print2dMatrix(stormPoints);
 		if (stormPoints.length != 0) {
+			System.out.println(max(stormPoints,0) -min(stormPoints,0));
+			System.out.println(max(stormPoints,1) -min(stormPoints,1));
+			System.out.println(max(stormPoints,0) +" | "+ min(stormPoints,0));
+			System.out.println(max(stormPoints,1) +" | " +min(stormPoints,1));
 			float fluorophoresPerFrame = (max(stormPoints,0) -min(stormPoints,0)) *(max(stormPoints,1)-min(stormPoints,1)) *bd;
 //			System.out.println("ffpf: "+ fluorophoresPerFrame);
-			fluorophoresPerFrame = 1000.f;
+			fluorophoresPerFrame = 20.f;
 			if(fluorophoresPerFrame < 1 || fluorophoresPerFrame == Float.NaN) {
 				fluorophoresPerFrame = 1;
 			}
@@ -264,15 +268,25 @@ public class StormPointFinder {
 	    				// deleting line with 
 //	    				System.out.println("Length before merge: " + stormPoints.length);
 	    				
-	    				/* old
+	    				// old
+	    				System.out.println("Start deleting");
 	    				for (int j = 0; j < locations.size(); j++) {
 	    					int line = idxArray.get(locations.get(j)[0]);
 	    					for (int c = 0; c < stormPoints[line].length; c++) {
 	    						stormPoints[line][c] = -1;
 	    					}
 	    				}
-	    				*/
+//	    				stormPointsArrayList = 
+	    				stormPoints = removeDeletedLines(stormPoints);
+	    				System.out.println("end deleting");
 	    				
+	    				stormPointsArrayList.clear();
+	    				for(int k = 0; k < stormPoints.length; k++) {
+	    					stormPointsArrayList.add(stormPoints[k]);
+	    				}
+//	    				System.out.println("end merging");
+	    				
+	    				/*
 	    				System.out.println("Start removing");
 	    				List<float[]> lines2Remove = new ArrayList<float[]>();
 	    				for (int j = 0; j < locations.size(); j++) {
@@ -284,7 +298,7 @@ public class StormPointFinder {
 	    					stormPointsArrayList.remove(lines2Remove.get(j));
 	    				}
 	    				System.out.println("End removing");
-	    				
+	    				*/
 //	    				System.out.println("Deleting");
 //	    				stormPoints = removeDeletedLines(stormPoints); // old
 //	    				System.out.println("Adding merged");
@@ -368,7 +382,6 @@ public class StormPointFinder {
 	}
 	
 	public static float[][] removeDeletedLines(float[][] m) {
-//		float[][] result = new float[m.length-number][5];
 		List<float[]> list = new ArrayList<float[]>();
 		for (int i = 0; i < m.length; i++) {
 			if(m[i][0] != -1 && m[i][1] != -1) {
