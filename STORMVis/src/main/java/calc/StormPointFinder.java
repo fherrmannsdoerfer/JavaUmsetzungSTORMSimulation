@@ -58,17 +58,17 @@ public class StormPointFinder {
 			}
 			List<float[]> listEndPointsAugmented = new ArrayList<float[]>();
 			for (int i=1; i <= max(idx);i++) {
-				System.out.println("i: "+i);
+//				System.out.println("i: "+i);
 				List<float[]> alteredPoints = new ArrayList<float[]>();
 				for (int k = 0; k < idx.length; k++) {
 					if(idx[k]>=i) {
 						alteredPoints.add(listEndPoints[k]);
 					}
 				}
-				System.out.println("alt. point size: "+ alteredPoints.size());
+//				System.out.println("alt. point size: "+ alteredPoints.size());
 				
 				float[][] altPoints = toFloatArray(alteredPoints);
-				Calc.print2dMatrix(altPoints);
+//				Calc.print2dMatrix(altPoints);
 				
 				for (int c = 0; c < altPoints.length; c++) {
 					for (int u = 0; u < altPoints[0].length; u++) {
@@ -95,7 +95,7 @@ public class StormPointFinder {
 		
 		System.out.println("Start creating stPoints");
 		float[][] stormPointsTemp = null;
-		List<float[][]> allStormPoints = new ArrayList<float[][]>();
+		List<float[]> allStormPoints = new ArrayList<float[]>();
 		System.out.println("floor: "+ Math.floor(max(nbrBlinkingEvents)));
 		int pointCounter = 0;
 		for (int i = 1; i <= Math.floor(max(nbrBlinkingEvents)); i++) {
@@ -133,23 +133,25 @@ public class StormPointFinder {
 				stormPointsTemp[j][1] = y[j];
 				stormPointsTemp[j][2] = z[j];
 				stormPointsTemp[j][3] = intensities[j];
+				allStormPoints.add(stormPointsTemp[j]);
+				pointCounter++;
 			}
 //			System.out.println("dim(x): " + x.length);
 //			System.out.println("dim(y): " + y.length);
 //			System.out.println("dim(z): " + z.length);
 //			System.out.println("---");
 //			System.out.println("stormpoints length: "+ stormPointsTemp.length);
-			pointCounter += stormPointsTemp.length;
-			allStormPoints.add(stormPointsTemp);
+//			pointCounter += stormPointsTemp.length;
+//			allStormPoints.add(stormPointsTemp);
 		}
 		System.out.println("Merging arrays: "+ allStormPoints.size());
-		stormPoints = mergeArrays(allStormPoints);
+		stormPoints = toFloatArray(allStormPoints);
 		System.out.println("All storm points: " + stormPoints.length + " vs counter: " + pointCounter);
 //		Calc.print2dMatrix(stormPoints);
 		if (stormPoints.length != 0) {
 			float fluorophoresPerFrame = (max(stormPoints,0) -min(stormPoints,0)) *(max(stormPoints,1)-min(stormPoints,1)) *bd;
 			System.out.println("ffpf: "+ fluorophoresPerFrame);
-			if(fluorophoresPerFrame < 1) {
+			if(fluorophoresPerFrame < 1 || fluorophoresPerFrame == Float.NaN) {
 				fluorophoresPerFrame = 1;
 			}
 			
@@ -160,7 +162,7 @@ public class StormPointFinder {
 				frameNumberCol[i] = randInt(0, max);
 			}
 			stormPoints = appendColumn(stormPoints, frameNumberCol);
-			Calc.print2dMatrix(stormPoints);
+//			Calc.print2dMatrix(stormPoints);
 			// TODO: boolean or integer?
 			boolean mergedPSFs = true;
 	        float psfwidth = 200;
@@ -178,7 +180,7 @@ public class StormPointFinder {
 	    					countOne++;
 	    				}
 	    			}
-	    			System.out.println("i: "+ i + " | idx array count: " + idxArray.size());
+//	    			System.out.println("i: "+ i + " | idx array count: " + idxArray.size());
 	    			float[][] stormXY = new float[idxArray.size()][2];
 	    			for (int h = 0; h < idxArray.size(); h++) {
 	    				stormXY[h][0] = stormPoints[idxArray.get(h).intValue()][0];
@@ -186,7 +188,7 @@ public class StormPointFinder {
 	    			}
 	    			float[][] dists = null;
 	    			if(stormXY.length !=0) {
-	    				Calc.print2dMatrix(stormXY);
+//	    				Calc.print2dMatrix(stormXY);
 	    				dists = Calc.pairwiseDistance(stormXY, stormXY);
 //	    				Calc.print2dMatrix(dists);
 	    				dists = Calc.addToLowerTriangle(dists, 9e9f);
@@ -202,7 +204,7 @@ public class StormPointFinder {
 	    						}
 	    					}
 	    				}
-	    				System.out.println("length: "+ locations.size());
+//	    				System.out.println("length: "+ locations.size());
 	    				// a = line , b = column
 	    				
 	    				// Find elements where psfwidth < distance < affecting factor *psfwidth
@@ -211,16 +213,23 @@ public class StormPointFinder {
 	    					for (int b = 0; b < dists.length; b++) {
 	    						if(dists[a][b] > psfwidth && dists[a][b] < affectingFactor*psfwidth) {
 	    							locations2.add(new int[]{a,b});
-	    							System.out.println("2--   a|b : " + a + " | " + b);
+//	    							System.out.println("2--   a|b : " + a + " | " + b);
 	    						}
 	    					}
 	    				}
 	    				
+	    				float[][] meanCoords = new float[locations.size()][5];
+	    				// j line in locations file, k = column (x,y,z,I,fn)
+	    				for (int j = 0; j < locations.size(); j++) {
+	    					for (int k = 0; k < 5; k++) {
+	    						meanCoords[j][k] = stormPoints[idxArray.get(locations.get(j)[0])][k] + stormPoints[idxArray.get(locations.get(j)[1])][k]; 
+//	    						System.out.println("bla2: "+ idxArray.get(locations.get(j)[0]));
+	    					}
+	    				}
 	    				
-	    				
-	    				
-	    				
-	    				
+	    				if(meanCoords.length != 0) {
+	    					Calc.print2dMatrix(meanCoords);
+	    				}
 	    				
 	    			}
 	    			else {
@@ -233,6 +242,7 @@ public class StormPointFinder {
 		return null;
 	}
 	
+	/* really slow - artifact 
 	public static float[][] mergeArrays(List<float[][]> list) {
 		float[][] result = new float[list.get(0).length][list.get(0)[0].length];
 		result = list.get(0);
@@ -246,7 +256,7 @@ public class StormPointFinder {
 		}
 		return result;
 	}
-	
+	*/ 
 	public static float min(float[][] f, int coord) {
 		f = Calc.transpose(f);
 		List<Float> list = Arrays.asList(ArrayUtils.toObject(f[coord]));
