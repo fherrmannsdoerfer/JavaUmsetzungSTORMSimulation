@@ -256,6 +256,16 @@ public class Calc {
 		return result;
 	}
 	
+	public static float[][] addToLowerTriangle(float[][] m, float add) {
+		float[][] result = m;
+		for (int i = 0; i < m.length; i++) {
+			for (int j = i; j < m.length; j ++) {
+				result[j][i] += add;
+			}
+		}
+		return m;
+	}
+	
 	public static float rand(float high) {
 		return (float) (Math.random() * high);
 	}

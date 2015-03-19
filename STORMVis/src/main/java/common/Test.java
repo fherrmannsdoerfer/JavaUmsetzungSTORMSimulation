@@ -39,6 +39,7 @@ public class Test extends FrameSwing {
 //                ex.setVisible(true);
 		float[][] m = {{1,2,3},{0,1,0},{2,1,0}};
 		float[][] m2 = {{0,4,0},{1,2,5},{0,1,1}};
+//		Calc.print2dMatrix(Calc.addToLowerTriangle(m2, 100));
 		//Calc.print2dMatrix(Calc.transpose(m));
 		float[] vec = {1,3};
 		float[] vec2 = {1,-3};
