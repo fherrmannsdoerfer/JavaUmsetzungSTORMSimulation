@@ -49,7 +49,7 @@ public class StormPointFinder {
 			int[] idx = new int[listEndPoints.length]; 
 			for (int i = 0; i<listEndPoints.length;i++) {
 				idx[i] = (int) Math.abs(Math.floor(randn() * fpab+fpab));
-				System.out.println("idx: " + idx[i]);
+//				System.out.println("idx: " + idx[i]);
 			}
 			for (int i = 0; i < idx.length; i++) {
 				if(idx[i] == 0) {
@@ -86,6 +86,7 @@ public class StormPointFinder {
 		}   
 		System.out.println("Start blinking");
 		float[] nbrBlinkingEvents = new float[listEndPoints.length];
+		System.out.println("blinking event number:" + nbrBlinkingEvents);
 		for (int i = 0; i < listEndPoints.length; i++) {
 			nbrBlinkingEvents[i] = (float) (randn() * Math.sqrt(abpf) + abpf);
 			if(nbrBlinkingEvents[i] < 0) {
@@ -200,7 +201,7 @@ public class StormPointFinder {
 	    					for (int b = 0; b < dists.length; b++) {
 	    						if(dists[a][b] < psfwidth) {
 	    							locations.add(new int[]{a,b});
-	    							System.out.println("a|b : " + a + " | " + b);
+//	    							System.out.println("a|b : " + a + " | " + b);
 	    						}
 	    					}
 	    				}
@@ -239,16 +240,22 @@ public class StormPointFinder {
 	    				 */
 	    				
 	    				// deleting line with 
-	    				System.out.println("Length before merge: " + stormPoints.length);
+//	    				System.out.println("Length before merge: " + stormPoints.length);
 	    				for (int j = 0; j < locations.size(); j++) {
 	    					int line = idxArray.get(locations.get(j)[0]);
 	    					for (int c = 0; c < stormPoints[line].length; c++) {
 	    						stormPoints[line][c] = -1;
 	    					}
 	    				}
+	    				System.out.println("Deleting");
 	    				stormPoints = removeDeletedLines(stormPoints);
+	    				System.out.println("Adding merged");
+	    				for(int k = 0; k < meanCoords.length; k++) {
+	    					System.out.println("k: "+k);
+	    					stormPoints = ArrayUtils.addAll(stormPoints, meanCoords[k]);
+	    				}
 //	    				Calc.print2dMatrix(stormPoints);
-	    				System.out.println("Length after merge: " + stormPoints.length);
+//	    				System.out.println("Length after merge: " + stormPoints.length);
 	    				
 	    			}
 	    			else {
@@ -323,10 +330,7 @@ public class StormPointFinder {
 //		float[][] result = new float[m.length-number][5];
 		List<float[]> list = new ArrayList<float[]>();
 		for (int i = 0; i < m.length; i++) {
-			if(m[i][0] == -1 && m[i][1] == -1 && m[i][2] == -1) {
-				continue;
-			}
-			else {
+			if(m[i][0] != -1 && m[i][1] != -1) {
 				list.add(m[i]);
 			}
 		}
