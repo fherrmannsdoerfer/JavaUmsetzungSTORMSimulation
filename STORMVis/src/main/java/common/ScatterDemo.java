@@ -96,7 +96,7 @@ public class ScatterDemo extends AbstractAnalysis {
         }
         Scatter scatter = new Scatter(points, colors, 5.f);
         if(STORM) {
-        	scatter = new Scatter(stormPoints, stormColors, 5.f);
+        	scatter = new Scatter(stormPoints, stormColors, 2.f);
         }
         //Chart chart;
         Quality q = Quality.Nicest;
@@ -120,20 +120,20 @@ public class ScatterDemo extends AbstractAnalysis {
          * 
          */
         STORMObjectParser stParser = new STORMObjectParser();
-        try {
-			stParser.parse();
-		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        System.out.println("Storm point number: "+stParser.allPoints.size());
-        CompileableComposite compPoints = new CompileableComposite();
-        for(Point p : stParser.allPoints) {
-        	compPoints.add(p);
-        }
+//        try {
+//			stParser.parse();
+//		} catch (NumberFormatException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//        System.out.println("Storm point number: "+stParser.allPoints.size());
+//        CompileableComposite compPoints = new CompileableComposite();
+//        for(Point p : stParser.allPoints) {
+//        	compPoints.add(p);
+//        }
         
         /*
          * 

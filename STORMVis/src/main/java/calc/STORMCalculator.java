@@ -84,7 +84,7 @@ public class STORMCalculator {
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
-		/*
+		System.out.println("ep length:" + ep.length);
 		Coord3d[] allObjects = new Coord3d[ep.length];
 		Color[] colors = new Color[ep.length];
 		for (int i = 0; i < ep.length; i++) {
@@ -96,9 +96,22 @@ public class STORMCalculator {
 		demo.stormColors = colors;
 		demo.stormPoints = allObjects;
 		AnalysisLauncher.open(demo);
-		*/
+		
 		//Calc.print2dMatrix(ep);
-		StormPointFinder.findStormPoints(ep, abpf, sxy, sz, bd, fpab, true);
+		float[][] result = StormPointFinder.findStormPoints(ep, abpf, sxy, sz, bd, fpab, true);
+		System.out.println("result length: "+ result.length);
+		Coord3d[] allObjects2 = new Coord3d[result.length];
+		Color[] colors2 = new Color[result.length];
+		for (int i = 0; i < result.length; i++) {
+			Coord3d coord = new Coord3d(result[i][0], result[i][1], result[i][2]);
+			allObjects2[i] = coord;
+			colors2[i] = new Color(coord.x/255.f, coord.y/255.f, coord.z/255.f, 1.f);
+		}
+		ScatterDemo demo2 = new ScatterDemo();
+		demo2.stormColors = colors2;
+		demo2.stormPoints = allObjects2;
+		AnalysisLauncher.open(demo2);
+		
 	}
 	
 }

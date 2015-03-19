@@ -192,7 +192,7 @@ public class StormPointFinder {
 	    				dists = Calc.pairwiseDistance(stormXY, stormXY);
 //	    				Calc.print2dMatrix(dists);
 	    				dists = Calc.addToLowerTriangle(dists, 9e9f);
-	    				Calc.print2dMatrix(dists);
+//	    				Calc.print2dMatrix(dists);
 	    				
 	    				// Find elements where distance is smaller than psfwidth
 	    				List<int[]> locations = new ArrayList<int[]>();
@@ -222,14 +222,33 @@ public class StormPointFinder {
 	    				// j line in locations file, k = column (x,y,z,I,fn)
 	    				for (int j = 0; j < locations.size(); j++) {
 	    					for (int k = 0; k < 5; k++) {
-	    						meanCoords[j][k] = stormPoints[idxArray.get(locations.get(j)[0])][k] + stormPoints[idxArray.get(locations.get(j)[1])][k]; 
+	    						meanCoords[j][k] = (stormPoints[idxArray.get(locations.get(j)[0])][k] + stormPoints[idxArray.get(locations.get(j)[1])][k])/2.f; 
 //	    						System.out.println("bla2: "+ idxArray.get(locations.get(j)[0]));
 	    					}
 	    				}
-	    				
 	    				if(meanCoords.length != 0) {
-	    					Calc.print2dMatrix(meanCoords);
+//	    					Calc.print2dMatrix(meanCoords);
 	    				}
+	    				
+	    				/*
+	    				 * Diff vec Block
+	    				 */
+	    				
+	    				/*
+	    				 * Removing single coordinates that have been merged and adding merged coords.
+	    				 */
+	    				
+	    				// deleting line with 
+	    				System.out.println("Length before merge: " + stormPoints.length);
+	    				for (int j = 0; j < locations.size(); j++) {
+	    					int line = idxArray.get(locations.get(j)[0]);
+	    					for (int c = 0; c < stormPoints[line].length; c++) {
+	    						stormPoints[line][c] = -1;
+	    					}
+	    				}
+	    				stormPoints = removeDeletedLines(stormPoints);
+//	    				Calc.print2dMatrix(stormPoints);
+	    				System.out.println("Length after merge: " + stormPoints.length);
 	    				
 	    			}
 	    			else {
@@ -239,7 +258,7 @@ public class StormPointFinder {
 	        }
 		}
 		
-		return null;
+		return stormPoints;
 	}
 	
 	/* really slow - artifact 
@@ -298,6 +317,21 @@ public class StormPointFinder {
     	copy[m.length] = col;
     	m = Calc.transpose(copy);
 		return m;
+	}
+	
+	public static float[][] removeDeletedLines(float[][] m) {
+//		float[][] result = new float[m.length-number][5];
+		List<float[]> list = new ArrayList<float[]>();
+		for (int i = 0; i < m.length; i++) {
+			if(m[i][0] == -1 && m[i][1] == -1 && m[i][2] == -1) {
+				continue;
+			}
+			else {
+				list.add(m[i]);
+			}
+		}
+		float[][] result = toFloatArray(list);
+		return result;
 	}
 	
 	public static float[] getColumn(float[][] m, int col) {
