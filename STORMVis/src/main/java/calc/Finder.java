@@ -37,7 +37,7 @@ public class Finder {
 				double randy = Math.random();
 				
 				for (int i = 0; i < 3; i++) {
-					points[f][i] = tr[idx[f]][0][i] + (float) randx*vec1[idx[f]][i] + (float) randy*vec2[idx[i]][i];
+					points[f][i] = tr[idx[f]][0][i] + (float) randx*vec1[idx[f]][i] + (float) randy*vec2[idx[f]][i];
 				}
 				
 				if ((randx + randy)<1) {

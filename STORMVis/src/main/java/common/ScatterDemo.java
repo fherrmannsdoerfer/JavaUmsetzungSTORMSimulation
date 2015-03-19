@@ -38,7 +38,7 @@ public class ScatterDemo extends AbstractAnalysis {
 	static boolean TRIANGLES = false;
 	static boolean FRAMES = false;
 	
-	static boolean STORM = true;
+	public boolean STORM = false;
 	
 	public Coord3d[] stormPoints;
 	public Color[] stormColors;
@@ -58,7 +58,7 @@ public class ScatterDemo extends AbstractAnalysis {
 		}
 		
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 0;
+		trParser.limit = 20000;
 		
 		try {
 			trParser.parse();

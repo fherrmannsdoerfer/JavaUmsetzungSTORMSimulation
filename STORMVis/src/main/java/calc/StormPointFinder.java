@@ -151,7 +151,8 @@ public class StormPointFinder {
 //		Calc.print2dMatrix(stormPoints);
 		if (stormPoints.length != 0) {
 			float fluorophoresPerFrame = (max(stormPoints,0) -min(stormPoints,0)) *(max(stormPoints,1)-min(stormPoints,1)) *bd;
-			System.out.println("ffpf: "+ fluorophoresPerFrame);
+//			System.out.println("ffpf: "+ fluorophoresPerFrame);
+//			fluorophoresPerFrame = 50.f;
 			if(fluorophoresPerFrame < 1 || fluorophoresPerFrame == Float.NaN) {
 				fluorophoresPerFrame = 1;
 			}
@@ -163,6 +164,18 @@ public class StormPointFinder {
 				frameNumberCol[i] = randInt(0, max);
 			}
 			stormPoints = appendColumn(stormPoints, frameNumberCol);
+			
+			/*
+			 * tryout: creating arraylist to append lines faster
+			 * 
+			 */
+			
+			System.out.println("Conversion started");
+			List<float[]> stormPointsArrayList = new ArrayList<float[]>();
+			for(int k = 0; k < stormPoints.length; k++) {
+				stormPointsArrayList.add(stormPoints[k]);
+			}
+			System.out.println("Conversion ended");
 //			Calc.print2dMatrix(stormPoints);
 			// TODO: boolean or integer?
 			boolean mergedPSFs = true;
@@ -171,32 +184,40 @@ public class StormPointFinder {
 	        if(mergedPSFs) {
 	        	int maxInFrameNumbers = (int) max(stormPoints,4); 
 	        	for (int i = 1; i <= maxInFrameNumbers; i++) {
+//	        		System.out.println("progress: i = " + i);
 	        		List<Integer> idxArray = new ArrayList<Integer>();
 	    			int countOne = 0;
 	    			float[] col = getColumn(stormPoints, 4);
 //	    			Calc.printVector(col);
+//	    			System.out.println("Check1");
 	    			for (int j = 0; j < stormPoints.length; j++) {
 	    				if(col[j] == i) {
 	    					idxArray.add(new Integer(j));
 	    					countOne++;
 	    				}
 	    			}
+//	    			System.out.println("Check2");
 //	    			System.out.println("i: "+ i + " | idx array count: " + idxArray.size());
 	    			float[][] stormXY = new float[idxArray.size()][2];
 	    			for (int h = 0; h < idxArray.size(); h++) {
 	    				stormXY[h][0] = stormPoints[idxArray.get(h).intValue()][0];
 	    				stormXY[h][1] = stormPoints[idxArray.get(h).intValue()][1];
 	    			}
+//	    			System.out.println("Check2.1");
 	    			float[][] dists = null;
 	    			if(stormXY.length !=0) {
 //	    				Calc.print2dMatrix(stormXY);
+//	    				System.out.println(stormXY.length);
+//	    				System.out.println("Check2.2");
 	    				dists = Calc.pairwiseDistance(stormXY, stormXY);
 //	    				Calc.print2dMatrix(dists);
+//	    				System.out.println("Check2.3");
 	    				dists = Calc.addToLowerTriangle(dists, 9e9f);
 //	    				Calc.print2dMatrix(dists);
-	    				
+//	    				System.out.println("Check3");
 	    				// Find elements where distance is smaller than psfwidth
 	    				List<int[]> locations = new ArrayList<int[]>();
+//	    				System.out.println("dists l:" + dists.length);
 	    				for (int a = 0; a < dists.length; a++) {
 	    					for (int b = 0; b < dists.length; b++) {
 	    						if(dists[a][b] < psfwidth) {
@@ -207,7 +228,7 @@ public class StormPointFinder {
 	    				}
 //	    				System.out.println("length: "+ locations.size());
 	    				// a = line , b = column
-	    				
+//	    				System.out.println("Check4");
 	    				// Find elements where psfwidth < distance < affecting factor *psfwidth
 	    				List<int[]> locations2 = new ArrayList<int[]>();
 	    				for (int a = 0; a < dists.length; a++) {
@@ -218,8 +239,9 @@ public class StormPointFinder {
 	    						}
 	    					}
 	    				}
-	    				
+//	    				System.out.println("Check5");
 	    				float[][] meanCoords = new float[locations.size()][5];
+//	    				System.out.println("loc size: " + locations.size());
 	    				// j line in locations file, k = column (x,y,z,I,fn)
 	    				for (int j = 0; j < locations.size(); j++) {
 	    					for (int k = 0; k < 5; k++) {
@@ -232,28 +254,41 @@ public class StormPointFinder {
 	    				}
 	    				
 	    				/*
-	    				 * Diff vec Block
+	    				 * 	Diff vec Block
 	    				 */
 	    				
 	    				/*
-	    				 * Removing single coordinates that have been merged and adding merged coords.
+	    				 * 	Removing single coordinates that have been merged and adding merged coords.
 	    				 */
 	    				
 	    				// deleting line with 
 //	    				System.out.println("Length before merge: " + stormPoints.length);
+	    				
+	    				/* old
 	    				for (int j = 0; j < locations.size(); j++) {
 	    					int line = idxArray.get(locations.get(j)[0]);
 	    					for (int c = 0; c < stormPoints[line].length; c++) {
 	    						stormPoints[line][c] = -1;
 	    					}
 	    				}
-	    				System.out.println("Deleting");
-	    				stormPoints = removeDeletedLines(stormPoints);
-	    				System.out.println("Adding merged");
-	    				for(int k = 0; k < meanCoords.length; k++) {
-	    					System.out.println("k: "+k);
-	    					stormPoints = ArrayUtils.addAll(stormPoints, meanCoords[k]);
+	    				*/
+	    				
+	    				
+	    				for (int j = 0; j < locations.size(); j++) {
+	    					int line = idxArray.get(locations.get(j)[0]);
+	    					stormPointsArrayList.remove(line);
 	    				}
+	    				
+//	    				System.out.println("Deleting");
+//	    				stormPoints = removeDeletedLines(stormPoints); // old
+//	    				System.out.println("Adding merged");
+//	    				System.out.println("merge coords length: " + meanCoords.length);
+	    				for(int k = 0; k < meanCoords.length; k++) {
+//	    					System.out.println("k: "+k);
+	    					stormPointsArrayList.add(meanCoords[k]);
+	    				}
+	    				stormPoints = toFloatArray(stormPointsArrayList);
+//	    				System.out.println("Adding finished");
 //	    				Calc.print2dMatrix(stormPoints);
 //	    				System.out.println("Length after merge: " + stormPoints.length);
 	    				

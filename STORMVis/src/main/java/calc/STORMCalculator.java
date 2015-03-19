@@ -57,7 +57,7 @@ public class STORMCalculator {
 	public void startCalculation() throws Exception {
 		long start = System.nanoTime();
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 0;
+		trParser.limit = 50000;
 		try {
 			trParser.parse();
 		} catch (NumberFormatException e) {
@@ -95,6 +95,8 @@ public class STORMCalculator {
 		ScatterDemo demo = new ScatterDemo();
 		demo.stormColors = colors;
 		demo.stormPoints = allObjects;
+		demo.STORM = true;
+		Coord3d vp = demo.getChart().getViewPoint();
 		AnalysisLauncher.open(demo);
 		
 		//Calc.print2dMatrix(ep);
@@ -110,6 +112,10 @@ public class STORMCalculator {
 		ScatterDemo demo2 = new ScatterDemo();
 		demo2.stormColors = colors2;
 		demo2.stormPoints = allObjects2;
+		demo2.STORM = true;
+		
+//		demo2.getChart().setViewPoint(vp);
+		
 		AnalysisLauncher.open(demo2);
 		
 	}
