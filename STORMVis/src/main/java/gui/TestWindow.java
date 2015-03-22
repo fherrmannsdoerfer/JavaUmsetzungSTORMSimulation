@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -21,14 +22,25 @@ import org.jzy3d.chart.Chart;
 import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
+
 import javax.swing.border.LineBorder;
+
 import java.awt.Color;
 import java.awt.GridLayout;
+
 import javax.swing.JTextPane;
 import javax.swing.Box;
 import javax.swing.JButton;
+
 import java.awt.CardLayout;
+
 import javax.swing.JSplitPane;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.RowSpec;
 
 public class TestWindow {
 
@@ -68,21 +80,26 @@ public class TestWindow {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 860, 633);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(new CardLayout(0, 0));
+		frame.getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("2px"),
+				ColumnSpec.decode("521px"),
+				ColumnSpec.decode("1px"),},
+			new RowSpec[] {
+				RowSpec.decode("611px"),}));
 		
 		JPanel graphPanel = new JPanel();
 		graphPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		graphPanel.add((Component) scSwing.getChart().getCanvas());
-		frame.getContentPane().add(graphPanel, "name_1427025939649765000");
+		frame.getContentPane().add(graphPanel, "1, 1, left, fill");
 		graphPanel.setLayout(new GridLayout(1, 0, 0, 0));
-		
-		JSplitPane splitPane = new JSplitPane();
-		frame.getContentPane().add(splitPane, "name_1427025974514597000");
+		graphPanel.setPreferredSize(new Dimension(600, 600));
 		
 		JPanel controlPanel = new JPanel();
-		frame.getContentPane().add(controlPanel, "name_1427025964234086000");
+		controlPanel.setLayout(null);
+		frame.getContentPane().add(controlPanel, "3, 1, left, fill");
 		
 		JButton btnNewButton = new JButton("New button");
+		btnNewButton.setBounds(5, 5, 117, 29);
 		controlPanel.add(btnNewButton);
 //		chartComponent = (javax.swing.JComponent) scSwing.getChart().getCanvas();
 	}
