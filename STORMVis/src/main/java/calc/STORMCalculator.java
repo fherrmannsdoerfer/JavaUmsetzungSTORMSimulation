@@ -21,8 +21,8 @@ public class STORMCalculator {
 	 * @param args
 	 */
 	
-	static String fileName = "/Users/maximilianscheurer/git/STORM/STORMVis/mito.nff";
-	static String outputname = "/Users/maximilianscheurer/git/STORM/STORMVis/out.txt";
+	static String fileName = "mito.nff";
+	static String outputname ="out.txt";
 	
 	//rng(5);	
     float loa = 1.f; 	//length of both antibodies combined
@@ -57,7 +57,7 @@ public class STORMCalculator {
 	public void startCalculation() throws Exception {
 		long start = System.nanoTime();
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 40000;
+		trParser.limit = 20000;
 		try {
 			trParser.parse();
 		} catch (NumberFormatException e) {
