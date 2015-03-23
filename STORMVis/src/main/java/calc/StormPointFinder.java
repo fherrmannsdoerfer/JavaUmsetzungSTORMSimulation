@@ -3,6 +3,7 @@ package calc;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -159,7 +160,7 @@ public class StormPointFinder {
 			System.out.println(Calc.max(stormPoints,1) +" | " +Calc.min(stormPoints,1));
 			float fluorophoresPerFrame = (Calc.max(stormPoints,0) -Calc.min(stormPoints,0)) *(Calc.max(stormPoints,1)-Calc.min(stormPoints,1)) *bd;
 			System.out.println("ffpf: "+ fluorophoresPerFrame);
-//			fluorophoresPerFrame = 60.f;
+//			fluorophoresPerFrame = 20.f;
 			if(fluorophoresPerFrame < 1 || fluorophoresPerFrame == Float.NaN) {
 				fluorophoresPerFrame = 1;
 			}
@@ -232,6 +233,7 @@ public class StormPointFinder {
 	    				
 	    				
 	    				// Find elements where psfwidth < distance < affecting factor *psfwidth
+	    				/*
 	    				List<int[]> locations2 = new ArrayList<int[]>();
 	    				for (int a = 0; a < dists.length; a++) {
 	    					for (int b = 0; b < dists.length; b++) {
@@ -241,6 +243,8 @@ public class StormPointFinder {
 	    						}
 	    					}
 	    				}
+	    				*/
+	    				
 	    				float[][] meanCoords = new float[locations.size()][5];
 	    				for (int j = 0; j < locations.size(); j++) {
 	    					for (int k = 0; k < 5; k++) {
@@ -257,8 +261,11 @@ public class StormPointFinder {
 	    						stormPoints[line][c] = -1;
 	    					}
 	    				}
+	    				long removeTimeStart = System.nanoTime();
 	    				stormPoints = Calc.removeDeletedLines(stormPoints);
+	    				System.out.println("deletion time: " + (System.nanoTime()-removeTimeStart)/1e9 + "s");
 	    				
+	    				long addTimeStart = System.nanoTime();
 	    				stormPointsArrayList.clear();
 	    				for(int k = 0; k < stormPoints.length; k++) {
 	    					stormPointsArrayList.add(stormPoints[k]);
@@ -269,11 +276,12 @@ public class StormPointFinder {
 	    					stormPointsArrayList.add(meanCoords[k]);
 	    				}
 	    				stormPoints = Calc.toFloatArray(stormPointsArrayList);
+	    				System.out.println("adding, mergin: " + (System.nanoTime()-addTimeStart)/1e9 + "s");
 	    			}
 	    			else {
 	    				continue;
 	    			}
-//	    			System.out.println("Runtime " + i + " = " + (System.nanoTime()-start)/1e9);
+	    			System.out.println("Runtime " + i + " = " + (System.nanoTime()-start)/1e9);
 	        	}
 	        }
 		}
