@@ -1,8 +1,10 @@
 package common;
 
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 
 public class Speed {
 
@@ -25,6 +27,8 @@ public class Speed {
 		long start = System.nanoTime();
 		run(m);
 		System.out.println("time: " + (System.nanoTime()-start)/1e9 +" s");
+		
+		
 	}
 	
 	
@@ -35,9 +39,9 @@ public class Speed {
 				list.add(m[i]);
 			}
 		}
-//		long start = System.nanoTime();
-//		float[][] result = toFloatArray(list);
-//		System.out.println("time conv: " + (System.nanoTime()-start)/1e9 +" s");
+		long start = System.nanoTime();
+		float[][] result = toFloatArray(list);
+		System.out.println("time conv: " + (System.nanoTime()-start)/1e9 +" s");
 		return null;
 	}
 	
@@ -50,10 +54,12 @@ public class Speed {
 	}
 	
 	private static void run(float[][] m) {
+		
 		for(int i = 0; i < 10000; i++) {
 			long start = System.nanoTime();
-			removeDeletedLines(m);
-//			System.out.println("time del: " + (System.nanoTime()-start)/1e9 +" s");
+//			removeDeletedLines(m);
+			
+			System.out.println("time del: " + (System.nanoTime()-start)/1e9 +" s");
 		}
 	}
 }

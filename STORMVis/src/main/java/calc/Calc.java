@@ -1,4 +1,6 @@
 package calc;
+import gnu.trove.list.array.TFloatArrayList;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -360,11 +362,11 @@ public class Calc {
 		return result;
 	}
 	
-	public static List<float[]> removeDeletedLinesToArrayList(float[][] m) {
+	public static List<float[]> removeDeletedLinesToArrayList(List<float[]> m) {
 		List<float[]> list = new ArrayList<float[]>();
-		for (int i = 0; i < m.length; i++) {
-			if(m[i][0] != -1 && m[i][1] != -1) {
-				list.add(m[i]);
+		for (int i = 0; i < m.size(); i++) {
+			if(m.get(i)[0] != -1 && m.get(i)[1] != -1) {
+				list.add(m.get(i));
 			}
 		}
 		return list;
@@ -381,6 +383,22 @@ public class Calc {
 		float[][] result = new float[f.size()][f.get(0).length];
 		for (int i = 0; i < result.length; i++) {
 			result[i] = f.get(i);
+		}
+		return result;
+	}
+	
+	public static TFloatArrayList getColumnOfArrayList(List<float[]> list, int column) {
+		TFloatArrayList result = new TFloatArrayList();
+		for(int i = 0; i < list.size(); i++) {
+			result.add(list.get(i)[column]);
+		}
+		return result;
+	}
+	
+	public static float[] getColumnOfArrayListToFloatArray(List<float[]> list, int column) {
+		float[] result = new float[list.size()];
+		for(int i = 0; i < list.size(); i++) {
+			result[i]= list.get(i)[column];
 		}
 		return result;
 	}

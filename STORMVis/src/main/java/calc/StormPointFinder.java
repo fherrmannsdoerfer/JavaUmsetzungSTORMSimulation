@@ -1,54 +1,47 @@
 package calc;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
 
-import org.apache.commons.lang3.ArrayUtils;
+import gnu.trove.list.array.TIntArrayList;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class StormPointFinder {
-	private static Random generator = new Random(System.currentTimeMillis());
 	
 	public static float[][] findStormPoints(float[][] listEndPoints, float abpf, float sxy, float sz, float bd, float fpab, boolean background ) {
 		float[][] stormPoints = null;
 		//idxF = []; %idxF contains the information to which structure the fluorophore belongs
 	    //idxST = []; %idxST contains the information to which structure each localization belongs
 		// not set in following code!
-		
 		if (background) { //unspecific labeling
-        float ilpmm3 = 50; //incorrect localizations per micrometer ^3
-        float xmin = Calc.min(listEndPoints, 0);
-        float xmax = Calc.max(listEndPoints, 0);
-        float ymin = Calc.min(listEndPoints, 1);
-        float ymax = Calc.max(listEndPoints, 1);
-        float zmin = Calc.min(listEndPoints, 2);
-        float zmax = Calc.max(listEndPoints, 2);
-        
-		System.out.println(Calc.max(listEndPoints,0) +" | "+ Calc.min(listEndPoints,0));
-		System.out.println(Calc.max(listEndPoints,1) +" | " +Calc.min(listEndPoints,1));
-        
-        
-        int numberOfIncorrectLocalizations = (int) Math.floor(ilpmm3*(xmax-xmin)/1e3*(ymax-ymin)/1e3*(zmax-zmin)/1e3);
-        System.out.println("noil:" + numberOfIncorrectLocalizations);
-        float[] x = Calc.randVector(numberOfIncorrectLocalizations, ((xmax -xmin) + xmin));
-        float[] y = Calc.randVector(numberOfIncorrectLocalizations, ((ymax -ymin) + ymin));
-        float[] z = Calc.randVector(numberOfIncorrectLocalizations, ((zmax -zmin) + zmin));
-        if(numberOfIncorrectLocalizations == 0) {
-        		System.out.println("No coordinates to append.");
-        }
-        else {
-        	for (int j = 0; j < numberOfIncorrectLocalizations; j++) {
-        		listEndPoints = Calc.appendLine(listEndPoints, new float[]{x[j],y[j],z[j]});
-        	}
-        }
+			float ilpmm3 = 50; //incorrect localizations per micrometer ^3
+			float xmin = Calc.min(listEndPoints, 0);
+			float xmax = Calc.max(listEndPoints, 0);
+			float ymin = Calc.min(listEndPoints, 1);
+			float ymax = Calc.max(listEndPoints, 1);
+			float zmin = Calc.min(listEndPoints, 2);
+			float zmax = Calc.max(listEndPoints, 2);
+
+			System.out.println(Calc.max(listEndPoints,0) +" | "+ Calc.min(listEndPoints,0));
+			System.out.println(Calc.max(listEndPoints,1) +" | "+ Calc.min(listEndPoints,1));
+
+			int numberOfIncorrectLocalizations = (int) Math.floor(ilpmm3*(xmax-xmin)/1e3*(ymax-ymin)/1e3*(zmax-zmin)/1e3);
+			System.out.println("noil:" + numberOfIncorrectLocalizations);
+			float[] x = Calc.randVector(numberOfIncorrectLocalizations, ((xmax -xmin) + xmin));
+			float[] y = Calc.randVector(numberOfIncorrectLocalizations, ((ymax -ymin) + ymin));
+			float[] z = Calc.randVector(numberOfIncorrectLocalizations, ((zmax -zmin) + zmin));
+			if(numberOfIncorrectLocalizations == 0) {
+				System.out.println("No coordinates to append.");
+			}
+			else {
+				for (int j = 0; j < numberOfIncorrectLocalizations; j++) {
+					listEndPoints = Calc.appendLine(listEndPoints, new float[]{x[j],y[j],z[j]});
+				}
+			}
         //System.out.println("x: "+x+" | y: "+y +" | z: "+z);
 //        Calc.print2dMatrix(listEndPoints);
     	}
-		
-		
 		if (fpab != 1) {
 			int[] idx = new int[listEndPoints.length]; 
 			for (int i = 0; i<listEndPoints.length;i++) {
@@ -97,7 +90,6 @@ public class StormPointFinder {
 				nbrBlinkingEvents[i] = 0;
 			}
 		}
-		
 		System.out.println("Start creating stPoints");
 		float[][] stormPointsTemp = null;
 		List<float[]> allStormPoints = new ArrayList<float[]>();
@@ -177,7 +169,6 @@ public class StormPointFinder {
 			 * tryout: creating arraylist to append lines faster
 			 * 
 			 */
-			
 			System.out.println("Conversion started");
 			List<float[]> stormPointsArrayList = new ArrayList<float[]>();
 			for(int k = 0; k < stormPoints.length; k++) {
@@ -195,12 +186,12 @@ public class StormPointFinder {
 	        	for (int i = 1; i <= maxInFrameNumbers; i++) {
 	        		long start = System.nanoTime();
 //	        		System.out.println("progress: i = " + i);
-	        		List<Integer> idxArray = new ArrayList<Integer>();
+	        		TIntArrayList idxArray = new TIntArrayList();
 	    			int countOne = 0;
-	    			float[] col = Calc.getColumn(stormPoints, 4);
+	    			float[] col = Calc.getColumnOfArrayListToFloatArray(stormPointsArrayList,4);
 //	    			Calc.printVector(col);
 //	    			System.out.println("Check1");
-	    			for (int j = 0; j < stormPoints.length; j++) {
+	    			for (int j = 0; j < stormPointsArrayList.size(); j++) {
 	    				if(col[j] == i) {
 	    					idxArray.add(new Integer(j));
 	    					countOne++;
@@ -210,8 +201,8 @@ public class StormPointFinder {
 //	    			System.out.println("i: "+ i + " | idx array count: " + idxArray.size());
 	    			float[][] stormXY = new float[idxArray.size()][2];
 	    			for (int h = 0; h < idxArray.size(); h++) {
-	    				stormXY[h][0] = stormPoints[idxArray.get(h).intValue()][0];
-	    				stormXY[h][1] = stormPoints[idxArray.get(h).intValue()][1];
+	    				stormXY[h][0] = stormPointsArrayList.get(idxArray.get(h))[0];
+	    				stormXY[h][1] = stormPointsArrayList.get(idxArray.get(h))[1];
 	    			}
 //	    			System.out.println("Check2.1");
 	    			float[][] dists = null;
@@ -231,48 +222,42 @@ public class StormPointFinder {
 	    					}
 	    				}
 	    				
-	    				
 	    				// Find elements where psfwidth < distance < affecting factor *psfwidth
-	    				/*
+	    				
 	    				List<int[]> locations2 = new ArrayList<int[]>();
 	    				for (int a = 0; a < dists.length; a++) {
 	    					for (int b = 0; b < dists.length; b++) {
 	    						if(dists[a][b] > psfwidth && dists[a][b] < affectingFactor*psfwidth) {
 	    							locations2.add(new int[]{a,b});
-	    							System.out.println("2--   a|b : " + a + " | " + b);
+//	    							System.out.println("2--   a|b : " + a + " | " + b);
 	    						}
 	    					}
 	    				}
-	    				*/
 	    				
 	    				float[][] meanCoords = new float[locations.size()][5];
 	    				for (int j = 0; j < locations.size(); j++) {
 	    					for (int k = 0; k < 5; k++) {
-	    						meanCoords[j][k] = (stormPoints[idxArray.get(locations.get(j)[0])][k] + stormPoints[idxArray.get(locations.get(j)[1])][k])/2.f; 
+	    						meanCoords[j][k] = (stormPointsArrayList.get(idxArray.get(locations.get(j)[0]))[k] + stormPointsArrayList.get(idxArray.get(locations.get(j)[1]))[k])/2.f; 
 	    					}
 	    				}
 	    				
 	    				long removeTimeStart = System.nanoTime();
 	    				for (int j = 0; j < locations.size(); j++) {
 	    					int line = idxArray.get(locations.get(j)[0]);
-	    					for (int c = 0; c < stormPoints[line].length; c++) {
-	    						stormPoints[line][c] = -1;
+	    					for (int c = 0; c < stormPointsArrayList.get(line).length; c++) {
+	    						stormPointsArrayList.get(line)[c] = -1;
 	    					}
 	    				}
-	    				List<float[]> stormPointsCleaned = Calc.removeDeletedLinesToArrayList(stormPoints);
+	    				stormPointsArrayList = Calc.removeDeletedLinesToArrayList(stormPointsArrayList);
 //	    				System.out.println("deletion time: " + (System.nanoTime()-removeTimeStart)/1e9 + "s");
-	    				
+//	    				System.out.println("Cleaned");
 	    				long addTimeStart = System.nanoTime();
-	    				stormPointsArrayList.clear();
-	    				for(int k = 0; k < stormPointsCleaned.size(); k++) {
-	    					stormPointsArrayList.add(stormPointsCleaned.get(k));
-	    				}
+//	    				stormPointsArrayList.clear();
 	    				
 	    				for(int k = 0; k < meanCoords.length; k++) {
 //	    					System.out.println("k: "+k);
 	    					stormPointsArrayList.add(meanCoords[k]);
 	    				}
-	    				stormPoints = Calc.toFloatArray(stormPointsArrayList);
 //	    				System.out.println("adding, mergin: " + (System.nanoTime()-addTimeStart)/1e9 + "s");
 	    			}
 	    			else {
@@ -281,26 +266,8 @@ public class StormPointFinder {
 	    			System.out.println("Runtime " + i + " = " + (System.nanoTime()-start)/1e9);
 	        	}
 	        }
+	        stormPoints = Calc.toFloatArray(stormPointsArrayList);
 		}
-		
 		return stormPoints;
 	}
-	
-	/* really slow - artifact 
-	public static float[][] mergeArrays(List<float[][]> list) {
-		float[][] result = new float[list.get(0).length][list.get(0)[0].length];
-		result = list.get(0);
-		for(int i = 1; i < list.size(); i++) {
-			System.out.println("merge i: " +i );
-			float[][] current = list.get(i);
-			for (int k = 0; k < current.length; k++) {
-//				System.out.println("k: "+k);
-				result = ArrayUtils.addAll(result, current[k]);
-			}
-		}
-		return result;
-	}
-	*/ 
-	
-		
 }

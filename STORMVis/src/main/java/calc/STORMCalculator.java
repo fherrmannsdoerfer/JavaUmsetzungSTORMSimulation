@@ -57,7 +57,7 @@ public class STORMCalculator {
 	public void startCalculation() throws Exception {
 		long start = System.nanoTime();
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 20000;
+		trParser.limit = 10000;
 		try {
 			trParser.parse();
 		} catch (NumberFormatException e) {
