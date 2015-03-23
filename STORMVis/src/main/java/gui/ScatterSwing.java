@@ -39,8 +39,8 @@ public class ScatterSwing {
 	
 	public static boolean SHOWLINES = false;
 	public boolean lighton = false;	
-	public static boolean TRIANGLES = false;
-	public static boolean FRAMES = false;
+	public static boolean TRIANGLES = true;
+	public static boolean FRAMES = true;
 	public boolean STORM = false;
 	
 	public Coord3d[] stormPoints;
@@ -108,7 +108,7 @@ public class ScatterSwing {
         compPoints1.add(scatter);
         
         
-        Chart chart2 = AWTChartComponentFactory.chart(Quality.Fastest, Toolkit.awt.name());
+        Chart chart2 = AWTChartComponentFactory.chart(Quality.Nicest, Toolkit.awt.name());
         chart2.getView().setBackgroundColor(Color.BLACK);
         chart2.getAxeLayout().setMainColor(Color.WHITE);
         
@@ -168,8 +168,7 @@ public class ScatterSwing {
 //            comp.setColor(factor);
         	comp.setWireframeDisplayed(false);
         }
-        comp.setWireframeColor(Color.BLACK);
-        comp.setWireframeWidth(0.00001f);
+        comp.setWireframeColor(Color.WHITE);
         comp.setColorMapper(null);
         if(TRIANGLES) chart2.getScene().getGraph().add(comp,false);
         

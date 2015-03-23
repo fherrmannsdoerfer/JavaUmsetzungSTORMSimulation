@@ -129,6 +129,7 @@ public class TestWindow {
 			}
 		});
 		controlPanel.add(chckbxLight);
+		
 	}
 
 	private class SwingAction extends AbstractAction {
