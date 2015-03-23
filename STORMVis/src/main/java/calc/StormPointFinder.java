@@ -4,6 +4,8 @@ package calc;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -183,6 +185,7 @@ public class StormPointFinder {
 	        if(mergedPSFs) {
 	        	int maxInFrameNumbers = (int) Calc.max(stormPoints,4); 
 	        	System.out.println("maxInFrameNumbers: " + maxInFrameNumbers);
+	        	long loopStart = System.nanoTime();
 	        	for (int i = 1; i <= maxInFrameNumbers; i++) {
 	        		long start = System.nanoTime();
 //	        		System.out.println("progress: i = " + i);
@@ -242,13 +245,12 @@ public class StormPointFinder {
 	    				}
 	    				
 	    				long removeTimeStart = System.nanoTime();
-	    				for (int j = 0; j < locations.size(); j++) {
-	    					int line = idxArray.get(locations.get(j)[0]);
-	    					for (int c = 0; c < stormPointsArrayList.get(line).length; c++) {
-	    						stormPointsArrayList.get(line)[c] = -1;
-	    					}
-	    				}
-	    				stormPointsArrayList = Calc.removeDeletedLinesToArrayList(stormPointsArrayList);
+	    				idxArray.sort();
+	    			    idxArray.reverse();
+	    			    for (int j = 0; j < locations.size(); j++) {
+	    			    	int line = idxArray.get(locations.get(j)[0]);
+	    			    	stormPointsArrayList.remove(line);
+	    			    }
 //	    				System.out.println("deletion time: " + (System.nanoTime()-removeTimeStart)/1e9 + "s");
 //	    				System.out.println("Cleaned");
 	    				long addTimeStart = System.nanoTime();
@@ -263,8 +265,9 @@ public class StormPointFinder {
 	    			else {
 	    				continue;
 	    			}
-	    			System.out.println("Runtime " + i + " = " + (System.nanoTime()-start)/1e9);
+//	    			System.out.println("Runtime " + i + " = " + (System.nanoTime()-start)/1e9);
 	        	}
+	        	System.out.println("Loop time total: " + (System.nanoTime()-loopStart)/1e9 +" s");
 	        }
 	        stormPoints = Calc.toFloatArray(stormPointsArrayList);
 		}
