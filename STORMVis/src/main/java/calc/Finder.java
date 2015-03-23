@@ -59,6 +59,9 @@ public class Finder {
 			float[] normTri = Calc.getCross(vec1[idx[i]],vec2[idx[i]]);
 			float[] finVec = findRotation(vec, normTri);
 			ep[i] = Calc.vectorAddition(basepoints[i], finVec);
+			if(Float.isNaN(ep[i][0]) || Float.isNaN(ep[i][1]) || Float.isNaN(ep[i][2])) {
+				System.out.println("NAN FOUND EP");
+			}
 		}
 //		System.out.println("EP");
 //		Calc.print2dMatrix(ep);
@@ -129,17 +132,25 @@ public class Finder {
 	        targetVec = Calc.scaleToOne(targetVec);
 	        float[] v = Calc.getCross(unityVec,targetVec);
 	        float s = Calc.getNorm(v);
+	        if(s == 0.0) {
+	        	return vec;
+	        }
 	        float c = Calc.getDot(unityVec, targetVec);
 	        float[][] vx = {{0,-v[2], v[1]},{v[2],0,-v[0]},{-v[1],v[0],0}};
 	        float[][] R = {{1,0,0},{0,1,0},{0,0,1}}; //+vx+ // vx*vx*(1-c)/s^2;
 	        R = Calc.matrixAddition(R, vx);
 	        float[][] vxSquared = Calc.matrixMultiply(vx, vx);
+	        if (Float.isNaN((float) ((float) (1-c)/(Math.pow(s, 2))))) {
+	        	System.out.println("div is NAN");
+	        }
 	        vxSquared = Calc.matrixDivide(vxSquared,(float) ((float) (1-c)/(Math.pow(s, 2))));
+	        
 	        R = Calc.matrixAddition(R, vxSquared);
 	        //Calc.print2dMatrix(R);
 	        rotVec = Calc.applyMatrix(R, vec);
 	        //Calc.printVector(rotVec);
 		}
+				
 		return rotVec;
 	}
 }

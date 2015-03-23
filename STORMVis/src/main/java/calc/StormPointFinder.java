@@ -25,23 +25,26 @@ public class StormPointFinder {
         float ymax = Calc.max(listEndPoints, 1);
         float zmin = Calc.min(listEndPoints, 2);
         float zmax = Calc.max(listEndPoints, 2);
+        
+		System.out.println(Calc.max(listEndPoints,0) +" | "+ Calc.min(listEndPoints,0));
+		System.out.println(Calc.max(listEndPoints,1) +" | " +Calc.min(listEndPoints,1));
+        
+        
         int numberOfIncorrectLocalizations = (int) Math.floor(ilpmm3*(xmax-xmin)/1e3*(ymax-ymin)/1e3*(zmax-zmin)/1e3);
         System.out.println("noil:" + numberOfIncorrectLocalizations);
-        // x,y,z multidimensional!!! // TODO: fix!
-        float x = Calc.rand(numberOfIncorrectLocalizations) * (xmax -xmin) + xmin;
-        float y = Calc.rand(numberOfIncorrectLocalizations) * (ymax -ymin) + ymin;
-        float z = Calc.rand(numberOfIncorrectLocalizations) * (zmax -zmin) + zmin;
+        float[] x = Calc.randVector(numberOfIncorrectLocalizations, ((xmax -xmin) + xmin));
+        float[] y = Calc.randVector(numberOfIncorrectLocalizations, ((ymax -ymin) + ymin));
+        float[] z = Calc.randVector(numberOfIncorrectLocalizations, ((zmax -zmin) + zmin));
         if(numberOfIncorrectLocalizations == 0) {
-        		x = 0;
-        		y = 0;
-        		z = 0;
         		System.out.println("No coordinates to append.");
         }
         else {
-        	listEndPoints = Calc.appendLine(listEndPoints, new float[]{x,y,z});
+        	for (int j = 0; j < numberOfIncorrectLocalizations; j++) {
+        		listEndPoints = Calc.appendLine(listEndPoints, new float[]{x[j],y[j],z[j]});
+        	}
         }
         //System.out.println("x: "+x+" | y: "+y +" | z: "+z);
-        Calc.print2dMatrix(listEndPoints);
+//        Calc.print2dMatrix(listEndPoints);
     	}
 		
 		
@@ -155,7 +158,7 @@ public class StormPointFinder {
 			System.out.println(Calc.max(stormPoints,0) +" | "+ Calc.min(stormPoints,0));
 			System.out.println(Calc.max(stormPoints,1) +" | " +Calc.min(stormPoints,1));
 			float fluorophoresPerFrame = (Calc.max(stormPoints,0) -Calc.min(stormPoints,0)) *(Calc.max(stormPoints,1)-Calc.min(stormPoints,1)) *bd;
-//			System.out.println("ffpf: "+ fluorophoresPerFrame);
+			System.out.println("ffpf: "+ fluorophoresPerFrame);
 //			fluorophoresPerFrame = 60.f;
 			if(fluorophoresPerFrame < 1 || fluorophoresPerFrame == Float.NaN) {
 				fluorophoresPerFrame = 1;
@@ -212,15 +215,9 @@ public class StormPointFinder {
 //	    			System.out.println("Check2.1");
 	    			float[][] dists = null;
 	    			if(stormXY.length !=0) {
-//	    				Calc.print2dMatrix(stormXY);
-//	    				System.out.println(stormXY.length);
-//	    				System.out.println("Check2.2");
 	    				dists = Calc.pairwiseDistance(stormXY, stormXY);
-//	    				Calc.print2dMatrix(dists);
-//	    				System.out.println("Check2.3");
 	    				dists = Calc.addToLowerTriangle(dists, 9e9f);
-//	    				Calc.print2dMatrix(dists);
-//	    				System.out.println("Check3");
+
 	    				// Find elements where distance is smaller than psfwidth
 	    				List<int[]> locations = new ArrayList<int[]>();
 //	    				System.out.println("dists l:" + dists.length);
@@ -232,9 +229,8 @@ public class StormPointFinder {
 	    						}
 	    					}
 	    				}
-//	    				System.out.println("length: "+ locations.size());
-	    				// a = line , b = column
-//	    				System.out.println("Check4");
+	    				
+	    				
 	    				// Find elements where psfwidth < distance < affecting factor *psfwidth
 	    				List<int[]> locations2 = new ArrayList<int[]>();
 	    				for (int a = 0; a < dists.length; a++) {
@@ -245,80 +241,39 @@ public class StormPointFinder {
 	    						}
 	    					}
 	    				}
-//	    				System.out.println("Check5");
 	    				float[][] meanCoords = new float[locations.size()][5];
-//	    				System.out.println("loc size: " + locations.size());
-	    				// j line in locations file, k = column (x,y,z,I,fn)
 	    				for (int j = 0; j < locations.size(); j++) {
 	    					for (int k = 0; k < 5; k++) {
 	    						meanCoords[j][k] = (stormPoints[idxArray.get(locations.get(j)[0])][k] + stormPoints[idxArray.get(locations.get(j)[1])][k])/2.f; 
-//	    						System.out.println("bla2: "+ idxArray.get(locations.get(j)[0]));
 	    					}
 	    				}
 	    				if(meanCoords.length != 0) {
 //	    					Calc.print2dMatrix(meanCoords);
 	    				}
 	    				
-	    				/*
-	    				 * 	Diff vec Block
-	    				 */
-	    				
-	    				/*
-	    				 * 	Removing single coordinates that have been merged and adding merged coords.
-	    				 */
-	    				
-	    				// deleting line with 
-//	    				System.out.println("Length before merge: " + stormPoints.length);
-	    				
-	    				// old
-//	    				System.out.println("Start deleting");
 	    				for (int j = 0; j < locations.size(); j++) {
 	    					int line = idxArray.get(locations.get(j)[0]);
 	    					for (int c = 0; c < stormPoints[line].length; c++) {
 	    						stormPoints[line][c] = -1;
 	    					}
 	    				}
-//	    				stormPointsArrayList = 
 	    				stormPoints = Calc.removeDeletedLines(stormPoints);
-//	    				System.out.println("end deleting");
 	    				
 	    				stormPointsArrayList.clear();
 	    				for(int k = 0; k < stormPoints.length; k++) {
 	    					stormPointsArrayList.add(stormPoints[k]);
 	    				}
-//	    				System.out.println("end merging");
 	    				
-	    				/*
-	    				System.out.println("Start removing");
-	    				List<float[]> lines2Remove = new ArrayList<float[]>();
-	    				for (int j = 0; j < locations.size(); j++) {
-	    					int line = idxArray.get(locations.get(j)[0]);
-	    					lines2Remove.add(stormPointsArrayList.get(line));
-	    				}
-	    				System.out.println("removeAll");
-	    				for(int j = 0; j < lines2Remove.size(); j++) {
-	    					stormPointsArrayList.remove(lines2Remove.get(j));
-	    				}
-	    				System.out.println("End removing");
-	    				*/
-//	    				System.out.println("Deleting");
-//	    				stormPoints = removeDeletedLines(stormPoints); // old
-//	    				System.out.println("Adding merged");
-//	    				System.out.println("merge coords length: " + meanCoords.length);
 	    				for(int k = 0; k < meanCoords.length; k++) {
 //	    					System.out.println("k: "+k);
 	    					stormPointsArrayList.add(meanCoords[k]);
 	    				}
 	    				stormPoints = Calc.toFloatArray(stormPointsArrayList);
-//	    				System.out.println("Adding finished");
-//	    				Calc.print2dMatrix(stormPoints);
-//	    				System.out.println("Length after merge: " + stormPoints.length);
-	    				
 	    			}
 	    			else {
 	    				continue;
 	    			}
-	    			System.out.println("Runtime " + i + " = " + (System.nanoTime()-start)/1e9);
+//	    			System.out.println("Runtime " + i + " = " + (System.nanoTime()-start)/1e9);
 	        	}
 	        }
 		}

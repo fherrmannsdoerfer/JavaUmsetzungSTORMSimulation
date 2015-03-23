@@ -127,7 +127,11 @@ public class Calc {
 		float[] result = new float[m1.length];
 		for (int i = 0; i < m1.length;i++) {
 				result[i] = m1[i] + m2[i];
+				if(Float.isNaN(m1[i]) || Float.isNaN(m2[i])) {
+					System.out.println("NAN in vector addition");
+				}
 		}
+		
 		return result;
 	}
 	
@@ -196,6 +200,9 @@ public class Calc {
 		for (int i = 0; i < m.length;i++) {
 			for (int j = 0; j < m.length; j++) {
 				result[i] += vec[j]*m[i][j];
+				if(Float.isNaN(result[i])) {
+					System.out.println("NAN in matrix multiplication");
+				}
 			}
 		}
 		return result;
@@ -275,6 +282,14 @@ public class Calc {
 		return (float) (Math.random() * high);
 	}
 	
+	public static float[] randVector(int dimension, float multiplier) {
+		float[] result = new float[dimension];
+		for(int i = 0; i < dimension; i++) {
+			result[i] = (float) Math.random() * multiplier;
+		}
+		return result;
+	}
+	
 	/*
 	 * STORM helper
 	 * 
@@ -289,9 +304,20 @@ public class Calc {
 	
 	public static float max(float[][] f, int coord) {
 		f = Calc.transpose(f);
-		List<Float> list = Arrays.asList(ArrayUtils.toObject(f[coord]));
-		Float min = Collections.max(list);
-		return min.floatValue();
+//		List<Float> list = Arrays.asList(ArrayUtils.toObject(f[coord]));
+//		Float min = Collections.max(list);
+		float[] array = f[coord];
+		float max = array[0];
+	      for (int j = 1; j < array.length; j++) {
+	          if (Float.isNaN(array[j])) {
+	        	  System.out.println("NAN FOUND!");
+	              return Float.NaN;
+	          }
+	          if (array[j] > max) {
+	              max = array[j];
+	          }
+	      }
+		return max;
 	}
 	
 	public static float max(int[] f) {

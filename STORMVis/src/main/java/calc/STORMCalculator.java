@@ -26,7 +26,7 @@ public class STORMCalculator {
 	
 	//rng(5);	
     float loa = 1.f; 	//length of both antibodies combined
-    double aoa = 90/180*Math.PI;		 //angle of antibody
+    float aoa = (float) (90./180.*Math.PI);		 //angle of antibody
     //bspnm = 1.65; 					//binding sites per nm  //for microtubules with only alpha tubuli stained it should be like 13/8 1.65
     float bspnm = 1/2.75f;
     float pabs = 0.1f; 				//part of available binding sites
@@ -43,8 +43,8 @@ public class STORMCalculator {
     float doc = 0; //degree of clustering, part of all localizations that are clustered
     float nocpsmm = 1; //number of clusters per square micrometer
     float docpsnm = 0.01f; //denstiy of clusters in antibodies per square nm
-    float bd = (float) (5*1e-7); //blinking density in number fluorophores per square nm
-    
+    float bd = (float) (3*5*1e-7); //blinking density in number fluorophores per square nm
+//    float bd = (float) (5*1e-6);
     float bspsnm = 10/600.f; 
     //.0159/2; //binding sites per square nanometer
     
@@ -57,7 +57,7 @@ public class STORMCalculator {
 	public void startCalculation() throws Exception {
 		long start = System.nanoTime();
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 20000;
+		trParser.limit = 80000;
 		try {
 			trParser.parse();
 		} catch (NumberFormatException e) {
