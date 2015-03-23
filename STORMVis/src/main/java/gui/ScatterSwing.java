@@ -32,7 +32,7 @@ import parsing.LineObjectParser;
 import parsing.STORMObjectParser;
 import parsing.TriangleObjectParser;
 
-public class ScatterSwing extends AbstractAnalysis {
+public class ScatterSwing {
 	
 	static String FILE2 = "Microtubules.wimp";
 	static String FILE3 = "Microtubules_large.wimp";
@@ -110,9 +110,9 @@ public class ScatterSwing extends AbstractAnalysis {
         compPoints1.add(scatter);
         
         
-        Chart chart = AWTChartComponentFactory.chart(Quality.Fastest, Toolkit.awt.name());
-        chart.getView().setBackgroundColor(Color.BLACK);
-        chart.getAxeLayout().setMainColor(Color.WHITE);
+        Chart chart2 = AWTChartComponentFactory.chart(Quality.Fastest, Toolkit.awt.name());
+        chart2.getView().setBackgroundColor(Color.BLACK);
+        chart2.getAxeLayout().setMainColor(Color.WHITE);
         
         
         /*
@@ -141,14 +141,14 @@ public class ScatterSwing extends AbstractAnalysis {
         
         if(!TRIANGLES){
         	//chart.getScene().getGraph().add(scatter,false);
-        	chart.getScene().getGraph().add(compPoints1,false);
+        	chart2.getScene().getGraph().add(compPoints1,false);
         }
         
         
         // jzy3d does not throw an exception when there is a line with 0 points, but does not load the coordinate system
         for (LineStrip line : lineList) {
         	if(line.getPoints().size() != 0) {
-        		chart.getScene().getGraph().add(line);
+        		chart2.getScene().getGraph().add(line);
         	}
         }
         
@@ -173,10 +173,10 @@ public class ScatterSwing extends AbstractAnalysis {
         comp.setWireframeColor(Color.BLACK);
         comp.setWireframeWidth(0.00001f);
         comp.setColorMapper(null);
-        if(TRIANGLES) chart.getScene().getGraph().add(comp,false);
+        if(TRIANGLES) chart2.getScene().getGraph().add(comp,false);
         
         if(LIGHTON) {
-        	Light light = chart.addLight(new Coord3d(500f, 500f, 2500f));
+        	Light light = chart2.addLight(new Coord3d(500f, 500f, 2500f));
         	light.setRepresentationRadius(100);
         	light.setAmbiantColor(new Color(1f, 0,0));
         }        
@@ -184,12 +184,12 @@ public class ScatterSwing extends AbstractAnalysis {
         System.out.println("Line list elements: " + lineList.size());
         
         ZoomController cont = new ZoomController();
-        chart.addController(cont);
-        System.out.println(chart.getControllers());
+        chart2.addController(cont);
+        System.out.println(chart2.getControllers());
         System.out.println("Drawing " + lineParser.pointNumber + " points.");
         long stop = System.nanoTime();
         System.out.println("Total startup time: " + (stop-startTime)/1e9 +" s");
-		return chart;
+		return chart2;
     }
 	
 	
