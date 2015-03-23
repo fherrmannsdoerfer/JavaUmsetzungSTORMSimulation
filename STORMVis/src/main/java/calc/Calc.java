@@ -360,6 +360,18 @@ public class Calc {
 		return result;
 	}
 	
+	public static List<float[]> removeDeletedLinesToArrayList(float[][] m) {
+		List<float[]> list = new ArrayList<float[]>();
+		for (int i = 0; i < m.length; i++) {
+			if(m[i][0] != -1 && m[i][1] != -1) {
+				list.add(m[i]);
+			}
+		}
+		return list;
+	}
+	
+	
+	
 	public static float[] getColumn(float[][] m, int col) {
 		m = Calc.transpose(m);
 		return m[col];

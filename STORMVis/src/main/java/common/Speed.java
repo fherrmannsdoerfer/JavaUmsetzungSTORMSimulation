@@ -16,6 +16,9 @@ public class Speed {
 		for(int i = 0; i< limit; i++) {
 			for(int j = 0; j < 5; j++) {
 				m[i][j] = (float) Math.random();
+				if(i % 1000 == 0) {
+					m[i][j] = -1;
+				}
 			}
 		}
 		
@@ -27,14 +30,15 @@ public class Speed {
 	
 	private static float[][] removeDeletedLines(float[][] m) {
 		List<float[]> list = new ArrayList<float[]>();
-		long start = System.nanoTime();
 		for (int i = 0; i < m.length; i++) {
 			if(m[i][0] != -1 && m[i][1] != -1) {
 				list.add(m[i]);
 			}
 		}
-		float[][] result = toFloatArray(list);
-		return result;
+//		long start = System.nanoTime();
+//		float[][] result = toFloatArray(list);
+//		System.out.println("time conv: " + (System.nanoTime()-start)/1e9 +" s");
+		return null;
 	}
 	
 	private static float[][] toFloatArray(List<float[]> f) {
@@ -47,7 +51,9 @@ public class Speed {
 	
 	private static void run(float[][] m) {
 		for(int i = 0; i < 10000; i++) {
-			m = removeDeletedLines(m);
+			long start = System.nanoTime();
+			removeDeletedLines(m);
+//			System.out.println("time del: " + (System.nanoTime()-start)/1e9 +" s");
 		}
 	}
 }
