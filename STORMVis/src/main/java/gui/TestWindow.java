@@ -22,6 +22,8 @@ import javax.swing.Action;
 
 import org.jzy3d.chart.Chart;
 
+import parsing.LineObjectParser;
+
 import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
@@ -137,7 +139,7 @@ public class TestWindow {
 	
 	private void proceedFileImport(File file) {
 		System.out.println("Path: " + file.getAbsolutePath());
-		DataType type;
+		DataType type = DataType.UNKNOWN;
 		try {
 			type = DataTypeDetector.getDataType(file.getAbsolutePath());
 			System.out.println(type.toString());
@@ -145,7 +147,20 @@ public class TestWindow {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
+		LineObjectParser lineParser = new LineObjectParser(file.getAbsolutePath());
+		try {
+			lineParser.parse();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		@SuppressWarnings("unused")
+		Plotter plotter = new Plotter(lineParser.allObjects, type);
 	}
+	
+	
 
 	private class SwingAction extends AbstractAction {
 		public SwingAction() {

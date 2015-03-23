@@ -46,13 +46,15 @@ public class ScatterSwing {
 	public Coord3d[] stormPoints;
 	public Color[] stormColors;
 	
-	public void init() throws IOException{
-	
+	public ScatterSwing() {
+		
 	}
 	
 	public Chart getSwingChart() {
 		System.out.println("Light: " + lighton);
 		long startTime = System.nanoTime();
+		
+		
 		LineObjectParser lineParser = new LineObjectParser(FILE2);
 		try {
 			lineParser.parse();
@@ -94,6 +96,7 @@ public class ScatterSwing {
         	}
         	lineList.add(strip);
         }
+        
         Scatter scatter = new Scatter(points, colors, 2.f);
         if(STORM) {
         	scatter = new Scatter(stormPoints, stormColors, 2.f);
