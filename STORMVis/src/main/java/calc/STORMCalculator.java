@@ -43,8 +43,8 @@ public class STORMCalculator {
     float doc = 0; //degree of clustering, part of all localizations that are clustered
     float nocpsmm = 1; //number of clusters per square micrometer
     float docpsnm = 0.01f; //denstiy of clusters in antibodies per square nm
-//    float bd = (float) (3*5*1e-7); //blinking density in number fluorophores per square nm
-    float bd = (float) (5*1e-7);
+    float bd = (float) (3*5*1e-7); //blinking density in number fluorophores per square nm
+//    float bd = (float) (5*1e-7);
     float bspsnm = 10/600.f; 
     //.0159/2; //binding sites per square nanometer
     
