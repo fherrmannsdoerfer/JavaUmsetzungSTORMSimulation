@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import java.awt.FlowLayout;
 
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
 import javax.swing.AbstractAction;
@@ -35,12 +36,19 @@ import javax.swing.JButton;
 import java.awt.CardLayout;
 
 import javax.swing.JSplitPane;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
+
+import javax.swing.JToolBar;
+
+import java.awt.event.ActionListener;
+import java.io.File;
+
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.JCheckBox;
 
 public class TestWindow {
 
@@ -48,6 +56,9 @@ public class TestWindow {
 	private final Action action = new SwingAction();
 	private JComponent chartComponent;
 	private Chart chart;
+	private final Action importFileAction = new FileImportAction();
+	private ScatterSwing scSwing;
+	private Component graphComponent;
 
 	/**
 	 * Launch the application.
@@ -76,32 +87,48 @@ public class TestWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		ScatterSwing scSwing = new ScatterSwing();
+		scSwing = new ScatterSwing();
 		frame = new JFrame();
-		frame.setBounds(100, 100, 860, 633);
+		frame.setBounds(100, 100, 888, 726);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
-				ColumnSpec.decode("2px"),
-				ColumnSpec.decode("521px"),
-				ColumnSpec.decode("1px"),},
-			new RowSpec[] {
-				RowSpec.decode("611px"),}));
 		
-		JPanel graphPanel = new JPanel();
+		
+		final JPanel graphPanel = new JPanel(new BorderLayout());
 		graphPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		graphPanel.add((Component) scSwing.getChart().getCanvas());
-		frame.getContentPane().add(graphPanel, "1, 1, left, fill");
-		graphPanel.setLayout(new GridLayout(1, 0, 0, 0));
-		graphPanel.setPreferredSize(new Dimension(600, 600));
+		graphComponent = (Component) scSwing.getSwingChart().getCanvas();
+		graphPanel.add(graphComponent);
+		
+		frame.getContentPane().add(graphPanel);
+		
+		JToolBar toolBar = new JToolBar();
+		frame.getContentPane().add(toolBar, BorderLayout.NORTH);
+		
+		JButton btnImportFile = new JButton("Import file");
+		btnImportFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnImportFile.setAction(importFileAction);
+		toolBar.add(btnImportFile);
+		btnImportFile.setText("Import file");
 		
 		JPanel controlPanel = new JPanel();
-		controlPanel.setLayout(null);
-		frame.getContentPane().add(controlPanel, "3, 1, left, fill");
+		frame.getContentPane().add(controlPanel, BorderLayout.EAST);
 		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.setBounds(5, 5, 117, 29);
-		controlPanel.add(btnNewButton);
-//		chartComponent = (javax.swing.JComponent) scSwing.getChart().getCanvas();
+		final JCheckBox chckbxLight = new JCheckBox("Light");
+		chckbxLight.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("Selected: " + chckbxLight.isSelected());
+				scSwing.LIGHTON = chckbxLight.isSelected();
+				graphComponent = (Component) scSwing.getSwingChart().getCanvas();
+				graphPanel.remove(0);
+				graphPanel.add(graphComponent);
+				graphPanel.revalidate();
+			}
+		});
+		controlPanel.add(chckbxLight);
 	}
 
 	private class SwingAction extends AbstractAction {
@@ -110,6 +137,23 @@ public class TestWindow {
 			putValue(SHORT_DESCRIPTION, "Some short description");
 		}
 		public void actionPerformed(ActionEvent e) {
+		}
+	}
+	
+	private class FileImportAction extends AbstractAction {
+		public FileImportAction() {
+			putValue(NAME, "fileImportAction");
+			putValue(SHORT_DESCRIPTION, "Some short description");
+		}
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("Choose file");
+			JFileChooser chooser = new JFileChooser();
+			int returnVal = chooser.showOpenDialog(null); //replace null with your swing container
+			File file;
+			if(returnVal == JFileChooser.APPROVE_OPTION) {     
+				file = chooser.getSelectedFile(); 
+				System.out.println("Path: " + file.getAbsolutePath());
+			}
 		}
 	}
 }

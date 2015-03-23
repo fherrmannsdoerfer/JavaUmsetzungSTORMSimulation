@@ -37,11 +37,10 @@ public class ScatterSwing extends AbstractAnalysis {
 	static String FILE2 = "Microtubules.wimp";
 	static String FILE3 = "Microtubules_large.wimp";
 	
-	static boolean SHOWSPHERES = false;
-	static boolean SHOWLINES = false;
-	static boolean LIGHTON = false;	
-	static boolean TRIANGLES = false;
-	static boolean FRAMES = false;
+	public static boolean SHOWLINES = false;
+	public boolean LIGHTON = false;	
+	public static boolean TRIANGLES = true;
+	public static boolean FRAMES = false;
 	
 	public boolean STORM = false;
 	
@@ -52,7 +51,8 @@ public class ScatterSwing extends AbstractAnalysis {
 	
 	}
 	
-	public Chart getChart() {
+	public Chart getSwingChart() {
+		System.out.println("Light: " + LIGHTON);
 		long startTime = System.nanoTime();
 		LineObjectParser lineParser = new LineObjectParser(FILE2);
 		try {
@@ -89,9 +89,6 @@ public class ScatterSwing extends AbstractAnalysis {
         		points[i] = coord;
         		float a = 1.f;
         		colors[i] = new Color(coord.x/255.f,coord.y/255.f,coord.z/255.f,a);
-        		if(SHOWSPHERES) {
-        			sphereList.add(addSphere(points[i], colors[i], 3.f, 5));
-        		}
         		if(SHOWLINES && ALLOBJECTS) {
         			strip.add(new Point(coord));
         		}
@@ -103,11 +100,9 @@ public class ScatterSwing extends AbstractAnalysis {
         if(STORM) {
         	scatter = new Scatter(stormPoints, stormColors, 2.f);
         }
-        //Chart chart;
-        Quality q = Quality.Nicest;
-        chart = AWTChartComponentFactory.chart(q, Toolkit.awt.name());
-//        chart = SwingChartComponentFactory.chart(q, Toolkit.swing.name());
+
         CompileableComposite compPoints1 = new CompileableComposite();
+        
         /*for(Coord3d p : points) {
         	compPoints1.add(new Point(p, new Color(p.x/255.f,p.y/255.f,p.z/255.f,1.f)));
         }*/
@@ -115,12 +110,10 @@ public class ScatterSwing extends AbstractAnalysis {
         compPoints1.add(scatter);
         
         
-        Chart chart;
-        chart = AWTChartComponentFactory.chart(Quality.Nicest, Toolkit.awt.name());
+        Chart chart = AWTChartComponentFactory.chart(Quality.Fastest, Toolkit.awt.name());
         chart.getView().setBackgroundColor(Color.BLACK);
         chart.getAxeLayout().setMainColor(Color.WHITE);
         
-        //chart.setAxeDisplayed(false);
         
         /*
          * Points from STORM Simulation 
@@ -146,15 +139,12 @@ public class ScatterSwing extends AbstractAnalysis {
          * 
          */
         
-        if(SHOWSPHERES) {
-        	chart.getScene().getGraph().add(sphereList);
-        }
-        else if(!TRIANGLES){
+        if(!TRIANGLES){
         	//chart.getScene().getGraph().add(scatter,false);
         	chart.getScene().getGraph().add(compPoints1,false);
         }
-        chart.render();
-                
+        
+        
         // jzy3d does not throw an exception when there is a line with 0 points, but does not load the coordinate system
         for (LineStrip line : lineList) {
         	if(line.getPoints().size() != 0) {
@@ -162,20 +152,12 @@ public class ScatterSwing extends AbstractAnalysis {
         	}
         }
         
-        int parts = 2;
-        //List<CompileableComposite> list1 = new ArrayList<CompileableComposite>();
+        int parts = 1;
         CompileableComposite comp = new CompileableComposite();
         for (int part = 0; part < parts; part++) {
             for (int c = (int) (part * trParser.allTriangles.size()/parts); c < (int) ((part* trParser.allTriangles.size() + trParser.allTriangles.size())/parts); c++) {
             	comp.add(trParser.allTriangles.get(c));
             }
-//            Shape surface = new Shape(comp);
-//            Color factor = new Color(1, 0, 0, 0.0f);
-//            surface.setWireframeDisplayed(true);
-//            surface.setWireframeWidth(0.01f);
-//            surface.setWireframeColor(org.jzy3d.colors.Color.BLACK);
-//            surface.setColor(factor);
-//            if(TRIANGLES) chart.getScene().getGraph().add(surface,false);
         }
         
         if(FRAMES) {
@@ -184,21 +166,19 @@ public class ScatterSwing extends AbstractAnalysis {
             comp.setWireframeDisplayed(true);
         }
         else {
-        	//Color factor = new Color(1, 1, 0, 0.65f);
-            //comp.setColor(factor);
+        	Color factor = new Color(1, 1, 0, 0.65f);
+//            comp.setColor(factor);
         	comp.setWireframeDisplayed(false);
         }
         comp.setWireframeColor(Color.BLACK);
         comp.setWireframeWidth(0.00001f);
         comp.setColorMapper(null);
         if(TRIANGLES) chart.getScene().getGraph().add(comp,false);
-        chart.render();
         
         if(LIGHTON) {
         	Light light = chart.addLight(new Coord3d(500f, 500f, 2500f));
         	light.setRepresentationRadius(100);
         	light.setAmbiantColor(new Color(1f, 0,0));
-        	//light.setDiffuseColor(new Color((255.f/255.f), 0, 0));
         }        
         
         System.out.println("Line list elements: " + lineList.size());
@@ -207,7 +187,6 @@ public class ScatterSwing extends AbstractAnalysis {
         chart.addController(cont);
         System.out.println(chart.getControllers());
         System.out.println("Drawing " + lineParser.pointNumber + " points.");
-        //View.current().rotate(new Coord2d(100,100), true);
         long stop = System.nanoTime();
         System.out.println("Total startup time: " + (stop-startTime)/1e9 +" s");
 		return chart;
