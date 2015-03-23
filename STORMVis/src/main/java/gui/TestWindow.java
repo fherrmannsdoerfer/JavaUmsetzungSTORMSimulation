@@ -121,7 +121,7 @@ public class TestWindow {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("Selected: " + chckbxLight.isSelected());
-				scSwing.LIGHTON = chckbxLight.isSelected();
+				scSwing.lighton = chckbxLight.isSelected();
 				graphComponent = (Component) scSwing.getSwingChart().getCanvas();
 				graphPanel.remove(0);
 				graphPanel.add(graphComponent);

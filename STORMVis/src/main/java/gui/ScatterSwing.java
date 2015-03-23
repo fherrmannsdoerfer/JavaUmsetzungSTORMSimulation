@@ -38,10 +38,9 @@ public class ScatterSwing {
 	static String FILE3 = "Microtubules_large.wimp";
 	
 	public static boolean SHOWLINES = false;
-	public boolean LIGHTON = false;	
-	public static boolean TRIANGLES = true;
+	public boolean lighton = false;	
+	public static boolean TRIANGLES = false;
 	public static boolean FRAMES = false;
-	
 	public boolean STORM = false;
 	
 	public Coord3d[] stormPoints;
@@ -52,7 +51,7 @@ public class ScatterSwing {
 	}
 	
 	public Chart getSwingChart() {
-		System.out.println("Light: " + LIGHTON);
+		System.out.println("Light: " + lighton);
 		long startTime = System.nanoTime();
 		LineObjectParser lineParser = new LineObjectParser(FILE2);
 		try {
@@ -75,7 +74,6 @@ public class ScatterSwing {
 			e.printStackTrace();
 		}
         
-		List<AbstractDrawable> sphereList = new ArrayList<AbstractDrawable>();
 		List<LineStrip> lineList = new ArrayList<LineStrip>();
 		Coord3d[] points = new Coord3d[lineParser.pointNumber];
         Color[] colors = new Color[lineParser.pointNumber];
@@ -175,17 +173,16 @@ public class ScatterSwing {
         comp.setColorMapper(null);
         if(TRIANGLES) chart2.getScene().getGraph().add(comp,false);
         
-        if(LIGHTON) {
+        
+        if(lighton) {
         	Light light = chart2.addLight(new Coord3d(500f, 500f, 2500f));
         	light.setRepresentationRadius(100);
         	light.setAmbiantColor(new Color(1f, 0,0));
         }        
-        
         System.out.println("Line list elements: " + lineList.size());
         
         ZoomController cont = new ZoomController();
         chart2.addController(cont);
-        System.out.println(chart2.getControllers());
         System.out.println("Drawing " + lineParser.pointNumber + " points.");
         long stop = System.nanoTime();
         System.out.println("Total startup time: " + (stop-startTime)/1e9 +" s");
