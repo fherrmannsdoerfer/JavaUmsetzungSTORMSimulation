@@ -20,7 +20,9 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.Action;
 
+import org.javatuples.Pair;
 import org.jzy3d.chart.Chart;
+import org.jzy3d.plot3d.primitives.Polygon;
 
 import parsing.LineObjectParser;
 
@@ -50,6 +52,7 @@ import javax.swing.JToolBar;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -147,17 +150,13 @@ public class TestWindow {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		LineObjectParser lineParser = new LineObjectParser(file.getAbsolutePath());
-		try {
-			lineParser.parse();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		Object data = ParserWrapper.parseFileOfType(file.getAbsolutePath(), type);
+		if(type.equals(DataType.NFF)) {
+			Pair<List<Polygon>, List<float[][]>> data2 = (Pair<List<Polygon>, List<float[][]>>) data;
+			data = data2.getValue0();
 		}
-		
 		@SuppressWarnings("unused")
-		Plotter plotter = new Plotter(lineParser.allObjects, type);
+		Plotter plotter = new Plotter(data, type);
 	}
 	
 	
