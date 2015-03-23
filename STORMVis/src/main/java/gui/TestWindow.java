@@ -1,5 +1,7 @@
 package gui;
 
+import gui.DataTypeDetector.DataType;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -45,6 +47,7 @@ import javax.swing.JToolBar;
 
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -131,6 +134,18 @@ public class TestWindow {
 		controlPanel.add(chckbxLight);
 		
 	}
+	
+	private void proceedFileImport(File file) {
+		System.out.println("Path: " + file.getAbsolutePath());
+		DataType type;
+		try {
+			type = DataTypeDetector.getDataType(file.getAbsolutePath());
+			System.out.println(type.toString());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
 
 	private class SwingAction extends AbstractAction {
 		public SwingAction() {
@@ -149,12 +164,15 @@ public class TestWindow {
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("Choose file");
 			JFileChooser chooser = new JFileChooser();
-			int returnVal = chooser.showOpenDialog(null); //replace null with your swing container
+			chooser.setAcceptAllFileFilterUsed(false);
+			chooser.setFileFilter(new TriangleLineFilter());
+			chooser.setFileSelectionMode(0);
+			int returnVal = chooser.showOpenDialog(frame); //replace null with your swing container
 			File file;
 			if(returnVal == JFileChooser.APPROVE_OPTION) {     
-				file = chooser.getSelectedFile(); 
-				System.out.println("Path: " + file.getAbsolutePath());
+				proceedFileImport(chooser.getSelectedFile());
 			}
 		}
 	}
+	
 }

@@ -121,7 +121,6 @@ public class Finder {
 		float[] unityVec = {0,1,0};
 		float[] rotVec = null;
 		float[] targetVec = null;
-		
 		float[] negNormVec = Calc.getNegativeVec(normVec);
 		
 		if (Arrays.equals(unityVec, normVec) || Arrays.equals(unityVec, negNormVec)) {
@@ -150,7 +149,6 @@ public class Finder {
 	        rotVec = Calc.applyMatrix(R, vec);
 	        //Calc.printVector(rotVec);
 		}
-				
 		return rotVec;
 	}
 }
