@@ -36,15 +36,13 @@ public class Plotter {
 		if((data instanceof List<?>)) {
 			if(((List<?>) data).get(0) instanceof ArrayList && dataType.equals(DataType.WIMP)) {
 				System.out.println("line data");
-				@SuppressWarnings("unchecked")
-				List<ArrayList<Coord3d>> data2 = (List<ArrayList<Coord3d>>) data;
-				data = data2;
+//				List<ArrayList<Coord3d>> data2 = (List<ArrayList<Coord3d>>) data;
+//				data = data2;
 			}
 			else if(((List<?>) data).get(0) instanceof Polygon && dataType.equals(DataType.NFF)){
 				System.out.println("triangle data");
-				@SuppressWarnings("unchecked")
-				List<Polygon> data2 = (List<Polygon>) data;
-				data = data2;
+//				List<Polygon> data2 = (List<Polygon>) data;
+//				data = data2;
 			}
 		}
 	}

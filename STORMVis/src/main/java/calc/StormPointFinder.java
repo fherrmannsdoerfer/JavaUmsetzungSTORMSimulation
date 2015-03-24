@@ -85,7 +85,6 @@ public class StormPointFinder {
 		}   
 		System.out.println("Start blinking");
 		float[] nbrBlinkingEvents = new float[listEndPoints.length];
-		System.out.println("blinking event number:" + nbrBlinkingEvents);
 		for (int i = 0; i < listEndPoints.length; i++) {
 			nbrBlinkingEvents[i] = (float) (Calc.randn() * Math.sqrt(abpf) + abpf);
 			if(nbrBlinkingEvents[i] < 0) {
@@ -155,7 +154,7 @@ public class StormPointFinder {
 			float fluorophoresPerFrame = (Calc.max(stormPoints,0) -Calc.min(stormPoints,0)) *(Calc.max(stormPoints,1)-Calc.min(stormPoints,1)) *bd;
 			System.out.println("ffpf: "+ fluorophoresPerFrame);
 //			fluorophoresPerFrame = 20.f;
-			if(fluorophoresPerFrame < 1 || fluorophoresPerFrame == Float.NaN) {
+			if(fluorophoresPerFrame < 1 || Float.isNaN(fluorophoresPerFrame)) {
 				fluorophoresPerFrame = 1;
 			}
 			
