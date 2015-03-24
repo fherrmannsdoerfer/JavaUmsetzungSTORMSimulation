@@ -13,7 +13,7 @@ import org.jzy3d.plot3d.primitives.Polygon;
 public class ParserWrapper {
 	
 	public static Object parseFileOfType(String path, DataType type) {
-		if(type.equals(DataType.NFF)) {
+		if(type.equals(DataType.TRIANGLES)) {
 			TriangleObjectParser trParser = new TriangleObjectParser(null);
 //			trParser.limit = 0;
 			try {
@@ -28,7 +28,7 @@ public class ParserWrapper {
 			Pair<List<Polygon>, List<float[][]>> pair = new Pair<List<Polygon>, List<float[][]>>(trParser.allTriangles, trParser.primitives);
 			return pair;
 		}
-		else if (type.equals(DataType.WIMP)) {
+		else if (type.equals(DataType.LINES)) {
 			LineObjectParser lineParser = new LineObjectParser(path);
 			try {
 				lineParser.parse();

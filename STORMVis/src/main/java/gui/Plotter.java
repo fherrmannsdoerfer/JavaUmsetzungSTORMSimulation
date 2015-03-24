@@ -34,12 +34,12 @@ public class Plotter {
 			throw new IllegalArgumentException("Null Pointer exception. A team of highly trained monkeys has been sent to solve this incident.");
 		}
 		if((data instanceof List<?>)) {
-			if(((List<?>) data).get(0) instanceof ArrayList && dataType.equals(DataType.WIMP)) {
+			if(((List<?>) data).get(0) instanceof ArrayList && dataType.equals(DataType.LINES)) {
 				System.out.println("line data");
 //				List<ArrayList<Coord3d>> data2 = (List<ArrayList<Coord3d>>) data;
 //				data = data2;
 			}
-			else if(((List<?>) data).get(0) instanceof Polygon && dataType.equals(DataType.NFF)){
+			else if(((List<?>) data).get(0) instanceof Polygon && dataType.equals(DataType.TRIANGLES)){
 				System.out.println("triangle data");
 //				List<Polygon> data2 = (List<Polygon>) data;
 //				data = data2;
@@ -52,7 +52,7 @@ public class Plotter {
 		chartQuality = Quality.Advanced;
 		Chart chart = AWTChartComponentFactory.chart(chartQuality, Toolkit.awt.name());
 		
-		if(dataType.equals(DataType.WIMP)) {
+		if(dataType.equals(DataType.LINES)) {
 			List<ArrayList<Coord3d>> data2 = (List<ArrayList<Coord3d>>) data;
 			List<LineStrip> lineList = new ArrayList<LineStrip>();
 			int pointNumber = 0;
@@ -75,7 +75,7 @@ public class Plotter {
 	        	lineList.add(strip);
 	        }
 		}
-		else if (dataType.equals(DataType.NFF)) {
+		else if (dataType.equals(DataType.TRIANGLES)) {
 			List<Polygon> triangles = (List<Polygon>) data;
 	        CompileableComposite comp = new CompileableComposite();
 	        for (int part = 0; part < triangles.size(); part++) {
