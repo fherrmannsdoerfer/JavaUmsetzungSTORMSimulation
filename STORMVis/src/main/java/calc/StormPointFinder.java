@@ -179,7 +179,7 @@ public class StormPointFinder {
 			System.out.println("Conversion ended");
 //			Calc.print2dMatrix(stormPoints);
 			// TODO: boolean or integer?
-			boolean mergedPSFs = true;
+			boolean mergedPSFs = false;
 	        float psfwidth = 200;
 	        float affectingFactor = 2;
 	        if(mergedPSFs) {
@@ -218,7 +218,7 @@ public class StormPointFinder {
 //	    				System.out.println("dists l:" + dists.length);
 	    				for (int a = 0; a < dists.length; a++) {
 	    					for (int b = 0; b < dists.length; b++) {
-	    						if(dists[a][b] < psfwidth) {
+	    						if(dists[a][b] < psfwidth) { // < psfwidth // TODO: !!!
 	    							locations.add(new int[]{a,b});
 //	    							System.out.println("a|b : " + a + " | " + b);
 	    						}
@@ -261,27 +261,25 @@ public class StormPointFinder {
 	    					stormPointsArrayList.get(idxArray.get(locations2.get(k)[1]))[0] = stormPointsArrayList.get(idxArray.get(locations2.get(k)[1]))[0] + add*diffVec[k][0];
 	    					stormPointsArrayList.get(idxArray.get(locations2.get(k)[1]))[1] = stormPointsArrayList.get(idxArray.get(locations2.get(k)[1]))[1] + add*diffVec[k][1];
 	    					
-	    					float[] lengthDiffVec = Calc.getLengthDiffVec(diffVec);
-//	    					Calc.printVector(lengthDiffVec);
-	    					for(int c = 0; c < diffVec.length; c++) {
-	    						float replace = (affectingFactor*psfwidth-lengthDiffVec[c])/(affectingFactor*psfwidth)*0.5f;
-	    						float newX1 = stormPointsArrayList.get(idxArray.get(locations2.get(c)[0]))[0] - replace * diffVec[c][0];
-	    						float newY1 = stormPointsArrayList.get(idxArray.get(locations2.get(c)[0]))[1] - replace * diffVec[c][1];
-	    						
-	    						float newX2 = stormPointsArrayList.get(idxArray.get(locations2.get(c)[1]))[0] + replace * diffVec[c][0];
-	    						float newY2 = stormPointsArrayList.get(idxArray.get(locations2.get(c)[1]))[1] + replace * diffVec[c][1];
-	    						
-	    						stormPointsArrayList.get(idxArray.get(locations2.get(c)[0]))[0] = newX1;
-	    						stormPointsArrayList.get(idxArray.get(locations2.get(c)[0]))[1] = newY1;
-	    						stormPointsArrayList.get(idxArray.get(locations2.get(c)[1]))[0] = newX2;
-	    						stormPointsArrayList.get(idxArray.get(locations2.get(c)[1]))[1] = newY2;
-	    					}
+//	    					float[] lengthDiffVec = Calc.getLengthDiffVec(diffVec);
+////	    					Calc.printVector(lengthDiffVec);
+//	    					for(int c = 0; c < diffVec.length; c++) {
+//	    						float replace = (affectingFactor*psfwidth-lengthDiffVec[c])/(affectingFactor*psfwidth)*0.5f;
+//	    						float newX1 = stormPointsArrayList.get(idxArray.get(locations2.get(c)[0]))[0] - replace * diffVec[c][0];
+//	    						float newY1 = stormPointsArrayList.get(idxArray.get(locations2.get(c)[0]))[1] - replace * diffVec[c][1];
+//	    						
+//	    						float newX2 = stormPointsArrayList.get(idxArray.get(locations2.get(c)[1]))[0] + replace * diffVec[c][0];
+//	    						float newY2 = stormPointsArrayList.get(idxArray.get(locations2.get(c)[1]))[1] + replace * diffVec[c][1];
+//	    						
+//	    						stormPointsArrayList.get(idxArray.get(locations2.get(c)[0]))[0] = newX1;
+//	    						stormPointsArrayList.get(idxArray.get(locations2.get(c)[0]))[1] = newY1;
+//	    						stormPointsArrayList.get(idxArray.get(locations2.get(c)[1]))[0] = newX2;
+//	    						stormPointsArrayList.get(idxArray.get(locations2.get(c)[1]))[1] = newY2;
+//	    					}
 	    				}
 	    				
 	    				
 //	    				System.out.println("diff time: " + (System.nanoTime() - diffVecTime)/1e9);
-	    				
-	    				
 	    				
 	    				long removeTimeStart = System.nanoTime();
 	    				idxArray.sort();
