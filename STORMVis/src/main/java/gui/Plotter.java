@@ -8,6 +8,7 @@ import org.jzy3d.chart.factories.AWTChartComponentFactory;
 import org.jzy3d.chart.factories.IChartComponentFactory.Toolkit;
 import org.jzy3d.colors.Color;
 import org.jzy3d.maths.Coord3d;
+import org.jzy3d.plot3d.primitives.CompileableComposite;
 import org.jzy3d.plot3d.primitives.LineStrip;
 import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.Polygon;
@@ -17,7 +18,8 @@ import gui.DataTypeDetector.DataType;
 
 public class Plotter {
 	
-	public boolean SHOWLINES;
+	public static boolean FRAMES = false;
+	public boolean SHOWLINES = false;
 	
 	public DataType dataType;
 	public Object data;
@@ -31,9 +33,6 @@ public class Plotter {
 		if (data == null || dataType == null) {
 			throw new IllegalArgumentException("Null Pointer exception. A team of highly trained monkeys has been sent to solve this incident.");
 		}
-		
-		System.out.println("class: " + ((List<?>) data).get(0).getClass().toString());
-		
 		if((data instanceof List<?>)) {
 			if(((List<?>) data).get(0) instanceof ArrayList && dataType.equals(DataType.WIMP)) {
 				System.out.println("line data");
@@ -52,13 +51,15 @@ public class Plotter {
 	
 	@SuppressWarnings("unchecked")
 	public Chart createChart() {
+		chartQuality = Quality.Advanced;
 		Chart chart = AWTChartComponentFactory.chart(chartQuality, Toolkit.awt.name());
 		
 		if(dataType.equals(DataType.WIMP)) {
 			List<ArrayList<Coord3d>> data2 = (List<ArrayList<Coord3d>>) data;
 			List<LineStrip> lineList = new ArrayList<LineStrip>();
-			Coord3d[] points = new Coord3d[lineParser.pointNumber];
-	        Color[] colors = new Color[lineParser.pointNumber];
+			int pointNumber = 0;
+			Coord3d[] points = new Coord3d[pointNumber];
+	        Color[] colors = new Color[pointNumber];
 			int i = 0;
 	        for(ArrayList<Coord3d> obj : data2) {
 	        	LineStrip strip = new LineStrip();
@@ -77,10 +78,29 @@ public class Plotter {
 	        }
 		}
 		else if (dataType.equals(DataType.NFF)) {
-			
+			List<Polygon> triangles = (List<Polygon>) data;
+	        CompileableComposite comp = new CompileableComposite();
+	        for (int part = 0; part < triangles.size(); part++) {
+	        	comp.add(triangles.get(part));
+	        }
+	        
+	        if(FRAMES) {
+	        	Color factor = new Color(1, 1, 0, 0.0f);
+	        	comp.setColor(factor);
+	            comp.setWireframeDisplayed(true);
+	        }
+	        else {
+	        	Color factor = new Color(1, 1, 0, 0.65f);
+//	            comp.setColor(factor);
+	        	comp.setWireframeDisplayed(false);
+	        }
+	        comp.setWireframeColor(Color.WHITE);
+	        comp.setColorMapper(null);
+	        chart.getScene().getGraph().add(comp,false);
 		}
-		
-		
+		chart.getView().setBackgroundColor(Color.BLACK);
+        chart.getAxeLayout().setMainColor(Color.WHITE);
+		chart.addMouseController();
 		return chart;
 	}
 	

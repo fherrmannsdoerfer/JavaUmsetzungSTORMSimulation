@@ -54,12 +54,11 @@ public class Speed {
 	}
 	
 	private static void run(float[][] m) {
-		
-		for(int i = 0; i < 10000; i++) {
-			long start = System.nanoTime();
-//			removeDeletedLines(m);
+//		long start = System.nanoTime();
+		for(int i = 0; i < 120000; i++) {
 			
-			System.out.println("time del: " + (System.nanoTime()-start)/1e9 +" s");
+			
 		}
+//		System.out.println("time del: " + (System.nanoTime()-start)/1e9 +" s");
 	}
 }

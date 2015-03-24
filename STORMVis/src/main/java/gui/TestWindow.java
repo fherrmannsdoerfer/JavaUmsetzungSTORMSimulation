@@ -67,6 +67,7 @@ public class TestWindow {
 	private final Action importFileAction = new FileImportAction();
 	private ScatterSwing scSwing;
 	private Component graphComponent;
+	private final JPanel graphPanel = new JPanel(new BorderLayout());;
 
 	/**
 	 * Launch the application.
@@ -101,7 +102,6 @@ public class TestWindow {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		
-		final JPanel graphPanel = new JPanel(new BorderLayout());
 		graphPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		graphComponent = (Component) scSwing.getSwingChart().getCanvas();
 		graphPanel.add(graphComponent);
@@ -157,6 +157,12 @@ public class TestWindow {
 		}
 		@SuppressWarnings("unused")
 		Plotter plotter = new Plotter(data, type);
+		graphPanel.removeAll();
+		graphComponent = (Component) plotter.createChart().getCanvas();
+		graphPanel.add(graphComponent);
+		graphPanel.revalidate();
+		graphPanel.repaint();
+		graphComponent.revalidate();
 	}
 	
 	
