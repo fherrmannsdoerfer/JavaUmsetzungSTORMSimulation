@@ -12,6 +12,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
 import javax.swing.AbstractAction;
@@ -57,6 +58,7 @@ import java.util.List;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JCheckBox;
+import javax.swing.SwingConstants;
 
 public class TestWindow {
 
@@ -67,7 +69,8 @@ public class TestWindow {
 	private final Action importFileAction = new FileImportAction();
 	private ScatterSwing scSwing;
 	private Component graphComponent;
-	private final JPanel graphPanel = new JPanel(new BorderLayout());;
+	private final JPanel graphPanel = new JPanel(new BorderLayout());
+	private final JLabel lblNewLabel = new JLabel("Please import data.");
 
 	/**
 	 * Launch the application.
@@ -103,10 +106,14 @@ public class TestWindow {
 		
 		
 		graphPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		graphComponent = (Component) scSwing.getSwingChart().getCanvas();
-		graphPanel.add(graphComponent);
+//		graphComponent = (Component) scSwing.getSwingChart().getCanvas();
+//		graphPanel.add(graphComponent);
 		
 		frame.getContentPane().add(graphPanel);
+		
+		
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		graphPanel.add(lblNewLabel, BorderLayout.CENTER);
 		
 		JToolBar toolBar = new JToolBar();
 		frame.getContentPane().add(toolBar, BorderLayout.NORTH);
@@ -122,6 +129,19 @@ public class TestWindow {
 		
 		JPanel controlPanel = new JPanel();
 		frame.getContentPane().add(controlPanel, BorderLayout.EAST);
+		GridBagLayout gbl_controlPanel = new GridBagLayout();
+		gbl_controlPanel.columnWidths = new int[]{117, 0};
+		gbl_controlPanel.rowHeights = new int[] {20, 20, 0};
+		gbl_controlPanel.columnWeights = new double[]{0.0, Double.MIN_VALUE};
+		gbl_controlPanel.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		controlPanel.setLayout(gbl_controlPanel);
+		
+		JButton clearButton = new JButton("Clear");
+		clearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clearView();
+			}
+		});
 		
 		final JCheckBox chckbxLight = new JCheckBox("Light");
 		chckbxLight.addActionListener(new ActionListener() {
@@ -129,14 +149,25 @@ public class TestWindow {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("Selected: " + chckbxLight.isSelected());
-				scSwing.lighton = chckbxLight.isSelected();
-				graphComponent = (Component) scSwing.getSwingChart().getCanvas();
-				graphPanel.remove(0);
-				graphPanel.add(graphComponent);
-				graphPanel.revalidate();
+//				scSwing.lighton = chckbxLight.isSelected();
+//				graphComponent = (Component) scSwing.getSwingChart().getCanvas();
+//				graphPanel.remove(0);
+//				graphPanel.add(graphComponent);
+//				graphPanel.revalidate();
 			}
 		});
-		controlPanel.add(chckbxLight);
+		GridBagConstraints gbc_chckbxLight = new GridBagConstraints();
+		gbc_chckbxLight.anchor = GridBagConstraints.NORTH;
+		gbc_chckbxLight.fill = GridBagConstraints.HORIZONTAL;
+		gbc_chckbxLight.insets = new Insets(0, 0, 5, 0);
+		gbc_chckbxLight.gridx = 0;
+		gbc_chckbxLight.gridy = 0;
+		controlPanel.add(chckbxLight, gbc_chckbxLight);
+		GridBagConstraints gbc_clearButton = new GridBagConstraints();
+		gbc_clearButton.fill = GridBagConstraints.BOTH;
+		gbc_clearButton.gridx = 0;
+		gbc_clearButton.gridy = 1;
+		controlPanel.add(clearButton, gbc_clearButton);
 		
 	}
 	
@@ -195,4 +226,11 @@ public class TestWindow {
 		}
 	}
 	
+	private void clearView() {
+		graphPanel.removeAll();
+		graphPanel.add(lblNewLabel);
+		graphPanel.revalidate();
+		graphPanel.repaint();
+	}
+
 }
