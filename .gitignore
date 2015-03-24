@@ -44,3 +44,4 @@ Thumbs.db
 *.nff
 *.wimp
 *.txt
+.idea/*
