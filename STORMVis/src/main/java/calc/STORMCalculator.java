@@ -61,7 +61,7 @@ public class STORMCalculator {
 	public void startCalculation() throws Exception {
 		long start = System.nanoTime();
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 80000;
+		trParser.limit = 0;
 		try {
 			trParser.parse();
 		} catch (NumberFormatException e) {
@@ -101,7 +101,7 @@ public class STORMCalculator {
 		demo.stormPoints = allObjects;
 		demo.STORM = true;
 		Coord3d vp = demo.getChart().getViewPoint();
-		AnalysisLauncher.open(demo);
+//		AnalysisLauncher.open(demo);
 		
 		//Calc.print2dMatrix(ep);
 		float[][] result = StormPointFinder.findStormPoints(ep, abpf, sxy, sz, bd, fpab, true);

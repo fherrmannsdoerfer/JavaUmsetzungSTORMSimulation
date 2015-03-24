@@ -203,6 +203,8 @@ public class ScatterDemo extends AbstractAnalysis {
         //View.current().rotate(new Coord2d(100,100), true);
         long stop = System.nanoTime();
         System.out.println("Total startup time: " + (stop-startTime)/1e9 +" s");
+        chart.getView().setSquared(false);
+//        chart.getView().setMaximized(true);
 		return chart;
     }
 	
@@ -235,12 +237,15 @@ public class ScatterDemo extends AbstractAnalysis {
                             scale = new org.jzy3d.maths.Scale(center, center); 
             } 
             BoundingBox3d bounds = View.current().getBounds(); 
-            bounds.setZmin((float)scale.getMin()); 
-            bounds.setZmax((float)scale.getMax()); 
-            bounds.setYmin((float)scale.getMin()); 
-            bounds.setYmax((float)scale.getMax()); 
-            bounds.setXmin((float)scale.getMin()); 
-            bounds.setXmax((float)scale.getMax()); 
+//            System.out.println(bounds);
+            BoundingBox3d newBounds = new BoundingBox3d(bounds.getXmin()*factor, bounds.getXmax()*factor, bounds.getYmin()*factor, bounds.getYmax()*factor, bounds.getZmin()*factor, bounds.getZmax()*factor);
+//            bounds.setZmin((float)scale.getMin()); 
+//            bounds.setZmax((float)scale.getMax()); 
+//            bounds.setYmin((float)scale.getMin()); 
+//            bounds.setYmax((float)scale.getMax()); 
+//            bounds.setXmin((float)scale.getMin()); 
+//            bounds.setXmax((float)scale.getMax()); 
+            View.current().setBoundManual(newBounds);
             View.current().shoot(); 
 		}
 	}

@@ -403,6 +403,15 @@ public class Calc {
 		return result;
 	}
 	
+	// only for nx2 vertices
+	public static float[] getLengthDiffVec(float[][] m) {
+		float[] result = new float[m.length];
+		for(int i = 0; i < m.length; i++) {
+			result[i] = getNorm(m[i]);
+		}
+		return result;
+	}
+	
 	private static Random generator = new Random(System.currentTimeMillis());
 	// Normally distributed rnd numbers
 	public static float randn() {
