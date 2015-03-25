@@ -1,6 +1,8 @@
 package model;
 
-public class ParameterSet {
+import java.io.Serializable;
+
+public class ParameterSet implements Serializable {
 	Float loa;	
     Float aoa; 
     Float bspnm;

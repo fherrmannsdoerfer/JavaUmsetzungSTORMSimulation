@@ -1,8 +1,14 @@
 package model;
 
+import java.io.Serializable;
+
 import gui.DataTypeDetector.DataType;
 
-public class DataSet {
+public class DataSet implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public DataType dataType;
 	public ParameterSet parameterSet;
 	public String name;

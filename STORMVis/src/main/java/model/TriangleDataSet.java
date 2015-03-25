@@ -2,7 +2,9 @@ package model;
 
 import gui.DataTypeDetector.DataType;
 
-public class TriangleDataSet extends DataSet {
+import java.io.Serializable;
+
+public class TriangleDataSet extends DataSet implements Serializable{
 
 	public TriangleDataSet(ParameterSet parameterSet) {
 		super(parameterSet);
