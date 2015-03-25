@@ -2,6 +2,8 @@ package playground;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -21,6 +23,14 @@ class ImagePanel extends JPanel {
 	private BufferedImage originalImage;
 	public float scaleFactor = 1.f;
 	public ImagePanel() throws IOException {
+		
+		addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+            	requestFocus();
+            }
+        });
+		
+		
 		try {                
 			image = ImageIO.read(new File("/Users/maximilianscheurer/Desktop/bildMitStruktur.png"));
 			originalImage = image;

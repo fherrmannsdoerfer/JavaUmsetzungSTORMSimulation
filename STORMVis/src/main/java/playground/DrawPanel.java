@@ -56,6 +56,6 @@ class DrawPanel extends JPanel {
     		g.setColor(Color.BLACK);
     		g.drawRect(squareX,squareY,squareW,squareH);
     	}
-    	start = false;
+//    	start = false;
     }  
 }

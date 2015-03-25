@@ -1,41 +1,35 @@
 package playground;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.FlowLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.JButton;
-import java.awt.GridLayout;
-import javax.swing.JTextField;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.FlowLayout;
-import javax.swing.JToggleButton;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
+import model.DataSet;
+import model.LineDataSet;
+import model.ParameterSet;
 
 public class Editor implements KeyListener {
 	
@@ -49,6 +43,7 @@ public class Editor implements KeyListener {
 	private JButton importImageButton;
 	private JButton addButton;
 	private JTextField pixelNmField;
+	private JTable dataSetTable;
 	
 	public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -64,7 +59,7 @@ public class Editor implements KeyListener {
     }
 	
 	public Editor() throws IOException {
-        JFrame f = new JFrame("Editor");
+        final JFrame f = new JFrame("Editor");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
         superPanel = new JPanel();
         myPan = new DrawPanel();
@@ -88,6 +83,24 @@ public class Editor implements KeyListener {
         });
         
         addButton = new JButton("add");
+        addButton.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				final JButton newSetButton = new JButton("Create new dataset");
+				newSetButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						System.out.println("new set & dismiss pane");
+						Window win = SwingUtilities.getWindowAncestor(newSetButton);
+			            win.setVisible(false);
+					}
+				});
+				final JComponent[] inputs = new JComponent[] {
+						new JLabel("You can either create a new data set or add your lines \n to an existing data set of the same type."),
+						newSetButton,
+				};
+				JOptionPane.showMessageDialog(null, inputs, "Save Options", JOptionPane.PLAIN_MESSAGE);
+			}
+		});
         
         JLabel lblNmpx = new JLabel("nm/px");
         
@@ -107,25 +120,42 @@ public class Editor implements KeyListener {
         JButton saveProjectButton = new JButton("save project");
         
         /*
-         * Layout
+         * DUMMY // TODO: subclass
          */
+        DataSetTableModel model = new DataSetTableModel();
+        dataSetTable = new JTable(model);
+        dataSetTable.setCellSelectionEnabled(false);
+        DataSet sample = new LineDataSet(new ParameterSet());
+        sample.setName("data sample1");
+        DataSet sample1 = new LineDataSet(new ParameterSet());
+        sample1.setName("data sample2");
+        model.addRow(sample);
+        model.addRow(sample1);
+        
+        
         GroupLayout gl_controlPanel = new GroupLayout(controlPanel);
         gl_controlPanel.setHorizontalGroup(
         	gl_controlPanel.createParallelGroup(Alignment.LEADING)
         		.addGroup(gl_controlPanel.createSequentialGroup()
         			.addContainerGap()
         			.addGroup(gl_controlPanel.createParallelGroup(Alignment.LEADING)
-        				.addComponent(deleteLastButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        				.addComponent(addButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        				.addGroup(gl_controlPanel.createSequentialGroup()
+        				.addGroup(Alignment.TRAILING, gl_controlPanel.createSequentialGroup()
         					.addGap(6)
-        					.addComponent(lblNmpx, GroupLayout.PREFERRED_SIZE, 53, GroupLayout.PREFERRED_SIZE)
-        					.addPreferredGap(ComponentPlacement.RELATED)
-        					.addComponent(pixelNmField, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE))
-        				.addComponent(importImageButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        				.addComponent(toggleClose, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        				.addComponent(saveProjectButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE))
-        			.addContainerGap())
+        					.addComponent(dataSetTable, GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+        					.addGap(12))
+        				.addGroup(gl_controlPanel.createSequentialGroup()
+        					.addGroup(gl_controlPanel.createParallelGroup(Alignment.LEADING)
+        						.addComponent(deleteLastButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        						.addComponent(addButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+        						.addGroup(gl_controlPanel.createSequentialGroup()
+        							.addGap(6)
+        							.addComponent(lblNmpx, GroupLayout.PREFERRED_SIZE, 53, GroupLayout.PREFERRED_SIZE)
+        							.addPreferredGap(ComponentPlacement.RELATED)
+        							.addComponent(pixelNmField, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE))
+        						.addComponent(importImageButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+        						.addComponent(toggleClose, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+        						.addComponent(saveProjectButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE))
+        					.addContainerGap())))
         );
         gl_controlPanel.setVerticalGroup(
         	gl_controlPanel.createParallelGroup(Alignment.LEADING)
@@ -144,7 +174,9 @@ public class Editor implements KeyListener {
         			.addComponent(toggleClose)
         			.addPreferredGap(ComponentPlacement.RELATED)
         			.addComponent(saveProjectButton)
-        			.addContainerGap(489, Short.MAX_VALUE))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addComponent(dataSetTable, GroupLayout.PREFERRED_SIZE, 166, GroupLayout.PREFERRED_SIZE)
+        			.addContainerGap(317, Short.MAX_VALUE))
         );
         controlPanel.setLayout(gl_controlPanel);
         
@@ -218,4 +250,3 @@ public class Editor implements KeyListener {
 		System.out.println("Zoom: " + zoomFactor);
 	}
 }
-
