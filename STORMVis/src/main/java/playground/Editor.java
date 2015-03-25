@@ -37,7 +37,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-public class EditorTest implements KeyListener {
+public class Editor implements KeyListener {
 	
 	private static boolean SCROLLMODE = true;
 	private JPanel superPanel;
@@ -54,7 +54,7 @@ public class EditorTest implements KeyListener {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
-					new EditorTest();
+					new Editor();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -63,7 +63,7 @@ public class EditorTest implements KeyListener {
         });
     }
 	
-	public EditorTest() throws IOException {
+	public Editor() throws IOException {
         JFrame f = new JFrame("Editor");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
         superPanel = new JPanel();
