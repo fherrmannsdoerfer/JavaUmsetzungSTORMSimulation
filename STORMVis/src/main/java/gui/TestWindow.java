@@ -182,7 +182,7 @@ public class TestWindow {
 			e1.printStackTrace();
 		}
 		Object data = ParserWrapper.parseFileOfType(file.getAbsolutePath(), type);
-		if(type.equals(DataType.NFF)) {
+		if(type.equals(DataType.TRIANGLES)) {
 			Pair<List<Polygon>, List<float[][]>> data2 = (Pair<List<Polygon>, List<float[][]>>) data;
 			data = data2.getValue0();
 		}

@@ -41,8 +41,8 @@ public class STORMCalculator {
     int[] colorEM = {0,0,0}; //color of EM data
     int[] colorSTORM = {1,0,0}; //color of STORM result
     int[] colorAB = {0,1,0}; //color of Antibody
-    float sxy = 1.f; //sigma of fitting error in xy direction
-    float sz = 1.f; //sigma of fitting error in z direction
+    float sxy = 1.0f; //sigma of fitting error in xy direction
+    float sz = 1.0f; //sigma of fitting error in z direction
     
     float doc = 0; //degree of clustering, part of all localizations that are clustered
     float nocpsmm = 1; //number of clusters per square micrometer
