@@ -58,13 +58,11 @@ public class EditorTest implements KeyListener {
 //        imgPanel.setBounds(0,0,1000,1000);
         superPanel.setPreferredSize(imgPanel.getPreferredSize());
         myPan.setPreferredSize(imgPanel.getPreferredSize());
-        superPanel.add(myPan);
-        superPanel.add(imgPanel);
         myPan.setBounds(0,0,(int) imgPanel.getPreferredSize().getWidth(),(int) imgPanel.getPreferredSize().getHeight());
-        jsp = new JScrollPane(imgPanel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        superPanel.add(jsp);
-        f.add(superPanel);
+//        jsp = new JScrollPane(imgPanel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+//                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+//        superPanel.add(jsp);
+        f.getContentPane().add(superPanel);
         f.setPreferredSize(new Dimension(1920, 1080));
         imgPanel.addKeyListener(this);
         f.pack();
@@ -76,8 +74,19 @@ public class EditorTest implements KeyListener {
     } 
 	
 	private void updateBoundsOfComponents() {
+		superPanel.removeAll();
 		superPanel.setPreferredSize(imgPanel.getPreferredSize());
+		superPanel.add(myPan);
+        superPanel.add(imgPanel);
 		myPan.setBounds(0,0,(int) imgPanel.getPreferredSize().getWidth(),(int) imgPanel.getPreferredSize().getHeight());
+		jsp = new JScrollPane(imgPanel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        superPanel.add(jsp);
+        superPanel.repaint();
+        superPanel.revalidate();
+        imgPanel.repaint();
+		imgPanel.revalidate();
+		myPan.setOpaque(false);
         imgPanel.requestFocus();
 	}
 
@@ -120,35 +129,32 @@ public class EditorTest implements KeyListener {
 				myPan.setVisible(SCROLLMODE);
 			}
 		}
+		System.out.println("Zoom: " + zoomFactor);
 	}
 
 }
 
 class MyPanel extends JPanel {
 
-    private int squareX = 0;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private int squareX = 0;
     private int squareY = 0;
     private int squareW = 10;
     private int squareH = 10;
+    private boolean start = true;
 
     public MyPanel() {
-
         setBorder(BorderFactory.createLineBorder(Color.black));
-
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-            	setOpaque(false);
                 moveSquare(e.getX(),e.getY());
                 System.out.println("x|y : " + e.getX() +" " + e.getY());
             }
         });
 
-        addMouseMotionListener(new MouseAdapter() {
-            public void mouseDragged(MouseEvent e) {
-            	setOpaque(false);
-                moveSquare(e.getX(),e.getY());
-            }
-        });
         setLayout(new BorderLayout());
     }
     
@@ -167,17 +173,25 @@ class MyPanel extends JPanel {
         return new Dimension(500,500);
     }
     
+    @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);      
-        g.setColor(Color.RED);
-        g.fillRect(squareX,squareY,squareW,squareH);
-        g.setColor(Color.BLACK);
-        g.drawRect(squareX,squareY,squareW,squareH);
+    	if(!start) {
+    		super.paintComponent(g);      
+    		g.setColor(Color.RED);
+    		g.fillRect(squareX,squareY,squareW,squareH);
+    		g.setColor(Color.BLACK);
+    		g.drawRect(squareX,squareY,squareW,squareH);
+    	}
+    	start = false;
     }  
 }
 
 class ImagePanel extends JPanel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private BufferedImage image;
 	private BufferedImage originalImage;
 	public float scaleFactor = 1.f;
