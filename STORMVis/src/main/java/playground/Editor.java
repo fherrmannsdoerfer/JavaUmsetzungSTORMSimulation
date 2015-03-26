@@ -3,7 +3,6 @@ package playground;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
@@ -15,10 +14,8 @@ import java.io.IOException;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -89,19 +86,22 @@ public class Editor implements KeyListener {
         addButton.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				final JButton newSetButton = new JButton("Create new dataset");
-				newSetButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						System.out.println("new set & dismiss pane");
-						Window win = SwingUtilities.getWindowAncestor(newSetButton);
-			            win.setVisible(false);
-					}
-				});
-				final JComponent[] inputs = new JComponent[] {
-						new JLabel("You can either create a new data set or add your lines to an existing data set of the same type."),
-						newSetButton,
-				};
-				JOptionPane.showMessageDialog(null, inputs, "Save Options", JOptionPane.PLAIN_MESSAGE);
+//				final JButton newSetButton = new JButton("Create new dataset");
+//				newSetButton.addActionListener(new ActionListener() {
+//					public void actionPerformed(ActionEvent e) {
+//						System.out.println("new set & dismiss pane");
+//						Window win = SwingUtilities.getWindowAncestor(newSetButton);
+//			            win.setVisible(false);
+//					}
+//				});
+//				final JComponent[] inputs = new JComponent[] {
+//						new JLabel("You can either create a new data set or add your lines to an existing data set of the same type."),
+//						newSetButton,
+//				};
+//				JOptionPane.showMessageDialog(null, inputs, "Save Options", JOptionPane.PLAIN_MESSAGE);
+				LineDataSet s = new LineDataSet(new ParameterSet());
+				s = drawPanel.addCurrentPointsToLineDataSet(s);
+				System.out.println("Data[0] size " + s.data.get(0).size());
 			}
 		});
         

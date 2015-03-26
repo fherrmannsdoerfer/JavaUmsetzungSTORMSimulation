@@ -10,6 +10,9 @@ import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import model.DataSet;
+import model.LineDataSet;
+
 import org.jzy3d.maths.Point2D;
 
 class DrawPanel extends JPanel {
@@ -83,4 +86,10 @@ class DrawPanel extends JPanel {
     	
 //    	start = false;
     }  
+    
+    public LineDataSet addCurrentPointsToLineDataSet(LineDataSet s) {
+    	s =  drawManager.addCurrentPointsToLineDataSet(s);
+    	return s;
+    }
+    
 }
