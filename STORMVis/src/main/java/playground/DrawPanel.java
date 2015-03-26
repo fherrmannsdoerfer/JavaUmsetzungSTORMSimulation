@@ -1,9 +1,11 @@
 package playground;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -91,7 +93,9 @@ class DrawPanel extends JPanel {
     			if(i < (transformedPoints.size()-1)) {
     				Point2D p1 = transformedPoints.get(i);
     				Point2D p2 = transformedPoints.get(i+1);
-    				g.drawLine(p1.x,p1.y,p2.x,p2.y);
+    				Graphics2D g2 = (Graphics2D) g;
+    				g2.setStroke(new BasicStroke(2.f));
+    				g2.drawLine(p1.x,p1.y,p2.x,p2.y);
     			}
     		}
     	}
