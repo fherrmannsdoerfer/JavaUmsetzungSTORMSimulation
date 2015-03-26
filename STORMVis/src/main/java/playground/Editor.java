@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
@@ -115,6 +117,13 @@ public class Editor implements KeyListener {
          */
         
         JButton deleteLastButton = new JButton("delete last point");
+        deleteLastButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				drawPanel.drawManager.removeLastPoint();
+				drawPanel.repaint();
+			}
+		});
         
         JToggleButton toggleClose = new JToggleButton("close lines");
         
@@ -198,6 +207,18 @@ public class Editor implements KeyListener {
 		drawPanel.setBounds(0,0,(int) imgPanel.getPreferredSize().getWidth(),(int) imgPanel.getPreferredSize().getHeight());
 		jsp = new JScrollPane(imgPanel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		jsp.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+			@Override
+			public void adjustmentValueChanged(AdjustmentEvent e) {
+				drawPanel.scrollOffsetY = jsp.getVerticalScrollBar().getValue();
+			}
+		});
+		jsp.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+			@Override
+			public void adjustmentValueChanged(AdjustmentEvent e) {
+				drawPanel.scrollOffsetX = jsp.getHorizontalScrollBar().getValue();
+			}
+		});
         superPanel.add(jsp);
         superPanel.repaint();
         superPanel.revalidate();

@@ -29,8 +29,6 @@ class ImagePanel extends JPanel {
             	requestFocus();
             }
         });
-		
-		
 		try {                
 			image = ImageIO.read(new File("/Users/maximilianscheurer/Desktop/bildMitStruktur.png"));
 			originalImage = image;
@@ -43,6 +41,15 @@ class ImagePanel extends JPanel {
 			System.out.println("1px = " + 1/scaleFactor + " in real life");
 			float newHeight = scaleFactor * image.getHeight();
 			image = getScaledImage(image, (int) limit, (int) newHeight);
+		}
+	}
+	
+	public void setPathAndReadImage(String path) {
+		try {                
+			image = ImageIO.read(new File(path));
+			originalImage = image;
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 	

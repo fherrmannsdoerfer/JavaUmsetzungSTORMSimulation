@@ -25,7 +25,8 @@ class DrawPanel extends JPanel {
     private boolean start = true;
     
     public DrawManager drawManager;
-    public Point2D scrollOffset;
+    public int scrollOffsetX;
+    public int scrollOffsetY;
     public float zoomFactor;
 
     public DrawPanel() {
@@ -34,11 +35,13 @@ class DrawPanel extends JPanel {
             public void mousePressed(MouseEvent e) {
 //                moveSquare(e.getX(),e.getY());
                 System.out.println("x|y : " + e.getX() +" " + e.getY());
-                drawManager.currentPoints.add(new Point2D((int) (e.getX()/zoomFactor),(int) (e.getY()/zoomFactor)));
+                drawManager.currentPoints.add(new Point2D((int) ((e.getX()+ scrollOffsetX)/zoomFactor),(int) ((e.getY()+ scrollOffsetY)/zoomFactor)));
                 repaint();
             }
         });
         zoomFactor = 1.f;
+        scrollOffsetX = 0;
+        scrollOffsetY = 0;
         drawManager = new DrawManager();
         setLayout(new BorderLayout());
     }
@@ -70,7 +73,7 @@ class DrawPanel extends JPanel {
     	
     	if(drawManager.currentPoints.size() != 0) {
     		for(Point2D drawPoint : drawManager.currentPoints) {
-    			Point2D actualPoint = new Point2D((int) (drawPoint.x*zoomFactor), (int) (drawPoint.y*zoomFactor));
+    			Point2D actualPoint = new Point2D((int) (drawPoint.x*zoomFactor) - scrollOffsetX, (int) (drawPoint.y*zoomFactor) - scrollOffsetY);
     			g.setColor(Color.RED);
     			g.fillRect(actualPoint.x,actualPoint.y,squareW,squareH);
     			g.setColor(Color.BLACK);

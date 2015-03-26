@@ -22,8 +22,9 @@ public class DrawManager {
 	}
 	
 	public void removeLastPoint() {
-		currentPoints.remove(currentPoints.size());
+		if(currentPoints.size() > 0) {
+			currentPoints.remove(currentPoints.size()-1);
+		}
 	}
-	
 	
 }
