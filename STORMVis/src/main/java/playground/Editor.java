@@ -99,14 +99,13 @@ public class Editor implements KeyListener {
 //						newSetButton,
 //				};
 //				JOptionPane.showMessageDialog(null, inputs, "Save Options", JOptionPane.PLAIN_MESSAGE);
-				LineDataSet s = new LineDataSet(new ParameterSet());
-				s = drawPanel.addCurrentPointsToLineDataSet(s);
-				System.out.println("Data[0] size " + s.data.get(0).size());
+//				LineDataSet s = new LineDataSet(new ParameterSet());
+//				s = drawPanel.addCurrentPointsToLineDataSet(s);
+//				System.out.println("Data[0] size " + s.data.get(0).size());
 			}
 		});
         
         JLabel lblNmpx = new JLabel("nm/px");
-        
         pixelNmField = new JTextField();
         pixelNmField.setHorizontalAlignment(SwingConstants.LEFT);
         pixelNmField.setText("0.0");
