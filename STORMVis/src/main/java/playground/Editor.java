@@ -35,7 +35,7 @@ public class Editor implements KeyListener {
 	
 	private static boolean SCROLLMODE = true;
 	private JPanel superPanel;
-	private DrawPanel myPan;
+	private DrawPanel drawPanel;
 	private ImagePanel imgPanel;
 	private float zoomFactor;
 	private JScrollPane jsp;
@@ -44,6 +44,7 @@ public class Editor implements KeyListener {
 	private JButton addButton;
 	private JTextField pixelNmField;
 	private JTable dataSetTable;
+	
 	
 	public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -62,15 +63,15 @@ public class Editor implements KeyListener {
         final JFrame f = new JFrame("Editor");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
         superPanel = new JPanel();
-        myPan = new DrawPanel();
-        myPan.setOpaque(false);
+        drawPanel = new DrawPanel();
+        drawPanel.setOpaque(false);
         imgPanel = new ImagePanel();
         FlowLayout flowLayout = (FlowLayout) imgPanel.getLayout();
         flowLayout.setAlignOnBaseline(true);
         imgPanel.setOpaque(true);
         superPanel.setPreferredSize(imgPanel.getPreferredSize());
-        myPan.setPreferredSize(imgPanel.getPreferredSize());
-        myPan.setBounds(0,0,(int) imgPanel.getPreferredSize().getWidth(),(int) imgPanel.getPreferredSize().getHeight());
+        drawPanel.setPreferredSize(imgPanel.getPreferredSize());
+        drawPanel.setBounds(0,0,(int) imgPanel.getPreferredSize().getWidth(),(int) imgPanel.getPreferredSize().getHeight());
         f.getContentPane().add(superPanel);
         
         controlPanel = new JPanel();
@@ -95,7 +96,7 @@ public class Editor implements KeyListener {
 					}
 				});
 				final JComponent[] inputs = new JComponent[] {
-						new JLabel("You can either create a new data set or add your lines \n to an existing data set of the same type."),
+						new JLabel("You can either create a new data set or add your lines to an existing data set of the same type."),
 						newSetButton,
 				};
 				JOptionPane.showMessageDialog(null, inputs, "Save Options", JOptionPane.PLAIN_MESSAGE);
@@ -131,7 +132,6 @@ public class Editor implements KeyListener {
         sample1.setName("data sample2");
         model.addRow(sample);
         model.addRow(sample1);
-        
         
         GroupLayout gl_controlPanel = new GroupLayout(controlPanel);
         gl_controlPanel.setHorizontalGroup(
@@ -180,7 +180,6 @@ public class Editor implements KeyListener {
         );
         controlPanel.setLayout(gl_controlPanel);
         
-        
         f.setPreferredSize(new Dimension(960, 720));
         imgPanel.addKeyListener(this);
         f.pack();
@@ -194,9 +193,9 @@ public class Editor implements KeyListener {
 		superPanel.removeAll();
 		superPanel.setPreferredSize(imgPanel.getPreferredSize());
 		superPanel.setLayout(new BorderLayout(0, 0));
-		superPanel.add(myPan);
+		superPanel.add(drawPanel);
         superPanel.add(imgPanel);
-		myPan.setBounds(0,0,(int) imgPanel.getPreferredSize().getWidth(),(int) imgPanel.getPreferredSize().getHeight());
+		drawPanel.setBounds(0,0,(int) imgPanel.getPreferredSize().getWidth(),(int) imgPanel.getPreferredSize().getHeight());
 		jsp = new JScrollPane(imgPanel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         superPanel.add(jsp);
@@ -204,7 +203,7 @@ public class Editor implements KeyListener {
         superPanel.revalidate();
         imgPanel.repaint();
 		imgPanel.revalidate();
-		myPan.setOpaque(false);
+		drawPanel.setOpaque(false);
         imgPanel.requestFocus();
 	}
 
@@ -232,7 +231,13 @@ public class Editor implements KeyListener {
 		else if(key.equals(minus)) {
 			System.out.println("zoom out");
 			zoomFactor -= 0.05f;
-			imgPanel.zoom(zoomFactor);
+			if(zoomFactor <= 0.01f) {
+				zoomFactor = 0.01f;
+				imgPanel.zoom(zoomFactor);
+			}
+			else {
+				imgPanel.zoom(zoomFactor);
+			}
 			updateBoundsOfComponents();
 		}
 		else if(key.equals(scroll)) {
@@ -240,13 +245,15 @@ public class Editor implements KeyListener {
 			System.out.println("Y: " +jsp.getVerticalScrollBar().getValue());
 			if(SCROLLMODE) {
 				SCROLLMODE = false;
-				myPan.setVisible(SCROLLMODE);
+				drawPanel.setVisible(SCROLLMODE);
 			}
 			else {
 				SCROLLMODE = true;
-				myPan.setVisible(SCROLLMODE);
+				drawPanel.setVisible(SCROLLMODE);
 			}
 		}
 		System.out.println("Zoom: " + zoomFactor);
+		drawPanel.zoomFactor = zoomFactor;
+		drawPanel.repaint();
 	}
 }
