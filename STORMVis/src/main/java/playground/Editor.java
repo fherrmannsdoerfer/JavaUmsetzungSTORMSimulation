@@ -5,7 +5,6 @@ import gui.DataTypeDetector.DataType;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +13,8 @@ import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -29,6 +30,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -51,7 +54,13 @@ public class Editor implements KeyListener {
 	private JButton addButton;
 	private JTextField pixelNmField;
 	private JTable dataSetTable;
+	private JToggleButton toggleClose;
+	private JTextField nameField = new JTextField(50);
+	private JButton newSetButton;
 	
+	private DataSetTableModel model;
+	
+	private List<DataSet> allDataSets = new ArrayList<DataSet>();
 	
 	public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -106,18 +115,12 @@ public class Editor implements KeyListener {
         addButton.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				final JButton newSetButton = new JButton("Create new dataset");
-				newSetButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						System.out.println("new set & dismiss pane");
-						Window win = SwingUtilities.getWindowAncestor(newSetButton);
-			            win.setVisible(false);
-					}
-				});
-				DataSetSelectionTableModel model = new DataSetSelectionTableModel();
-				model.selectableDataType = DataType.TRIANGLES;
-				DataSetSelectionTable selectionTable = new DataSetSelectionTable(model);
 				
+				DataSetSelectionTableModel model = new DataSetSelectionTableModel();
+//				model.selectableDataType = DataType.TRIANGLES;
+				DataSetSelectionTable selectionTable = new DataSetSelectionTable(model);
+				model.data = allDataSets;
+				/*
 				DataSet sample = new LineDataSet(new ParameterSet());
 		        sample.setName("data sample1");
 		        DataSet sample1 = new TriangleDataSet(new ParameterSet());
@@ -126,13 +129,14 @@ public class Editor implements KeyListener {
 		        sample2.setName("data sample3");
 		        model.data.add(sample);
 		        model.data.add(sample1);
-		        model.data.add(sample2);
-				
+		        model.data.add(sample2);*/
 				
 				final JComponent[] inputs = new JComponent[] {
 						new JLabel("You can either create a new data set or add your lines to an existing data set of the same type."),
 						newSetButton,
 						selectionTable,
+						new JLabel("Dataset name:"),
+						nameField,
 				};
 				JOptionPane.showMessageDialog(null, inputs, "Save Options", JOptionPane.PLAIN_MESSAGE);
 			}
@@ -157,24 +161,16 @@ public class Editor implements KeyListener {
 			}
 		});
         
-        JToggleButton toggleClose = new JToggleButton("close lines");
+        toggleClose = new JToggleButton("close lines");
         
         JButton saveProjectButton = new JButton("save project");
         
         /*
          * DUMMY // TODO: subclass
          */
-        DataSetTableModel model = new DataSetTableModel();
+        model = new DataSetTableModel();
         dataSetTable = new JTable(model);
         dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
-        DataSet sample = new LineDataSet(new ParameterSet());
-        sample.setName("data sample1");
-        DataSet sample1 = new LineDataSet(new ParameterSet());
-        sample1.setName("data sample2");
-        model.addRow(sample);
-        model.addRow(sample1);
-        model.visibleSets.add(Boolean.FALSE);
-        model.visibleSets.add(Boolean.FALSE);
         
         GroupLayout gl_controlPanel = new GroupLayout(controlPanel);
         gl_controlPanel.setHorizontalGroup(
@@ -223,6 +219,55 @@ public class Editor implements KeyListener {
         );
         controlPanel.setLayout(gl_controlPanel);
         
+        /*
+         * Textfield for new dataSet name
+         */
+        
+        nameField.getDocument().addDocumentListener(new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				System.out.println("remove changed");
+				nameFieldValueChanged();
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				System.out.println("insert changed");
+				nameFieldValueChanged();
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				nameFieldValueChanged();
+			}
+		});
+        
+        /*
+         * Button for new dataSet
+         */
+        
+        newSetButton = new JButton("Create new dataset");
+		newSetButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("new set & dismiss pane");
+				if(toggleClose.isSelected()) {
+					
+				}
+				else {
+					LineDataSet newSet = new LineDataSet(new ParameterSet());
+					newSet = drawPanel.addCurrentPointsToLineDataSet(newSet);
+					newSet.setName(nameField.getText());
+					allDataSets.add(newSet);
+					model.addRow(newSet);
+					model.visibleSets.add(Boolean.FALSE);
+					System.out.println("new set size: " + newSet.data.size());
+				}
+				Window win = SwingUtilities.getWindowAncestor(newSetButton);
+	            win.setVisible(false);
+			}
+		});
+        
         f.setPreferredSize(new Dimension(960, 720));
         imgPanel.addKeyListener(this);
         f.pack();
@@ -230,6 +275,7 @@ public class Editor implements KeyListener {
 //        zoomFactor = 1.f;
 //        imgPanel.zoom(zoomFactor);
         updateBoundsOfComponents();
+        nameFieldValueChanged();
     } 
 	
 	private void updateBoundsOfComponents() {
@@ -310,5 +356,14 @@ public class Editor implements KeyListener {
 		System.out.println("Zoom: " + zoomFactor);
 		drawPanel.zoomFactor = zoomFactor;
 		drawPanel.repaint();
+	}
+	
+	public void nameFieldValueChanged() {
+		if(nameField.getText().trim().isEmpty()) {
+			newSetButton.setEnabled(false);
+		}
+		else {
+			newSetButton.setEnabled(true);
+		}
 	}
 }
