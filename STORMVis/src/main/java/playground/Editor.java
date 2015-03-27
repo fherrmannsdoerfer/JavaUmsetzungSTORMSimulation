@@ -176,6 +176,21 @@ public class Editor implements KeyListener, TableModelListener {
 		});
         
         toggleClose = new JToggleButton("close lines");
+        toggleClose.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(toggleClose.isSelected()) {
+					drawPanel.closeCurrentLine = true;
+					drawPanel.repaint();
+					imgPanel.requestFocus();
+				}
+				else {
+					drawPanel.closeCurrentLine = false;
+					drawPanel.repaint();
+					imgPanel.requestFocus();
+				}
+			}
+		});
         
         JButton saveProjectButton = new JButton("save project");
         

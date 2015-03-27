@@ -42,6 +42,8 @@ class DrawPanel extends JPanel {
     public Color drawingColor;
     public List<DataSet> dataSetsToVisualize = new ArrayList<DataSet>();
     private List<PointDrawnListener> listeners = new ArrayList<PointDrawnListener>();
+    
+    public boolean closeCurrentLine;
 
     public DrawPanel() {
         setBorder(BorderFactory.createLineBorder(Color.black));
@@ -104,6 +106,13 @@ class DrawPanel extends JPanel {
     				g2.setStroke(new BasicStroke(2.f));
     				g2.drawLine(p1.x,p1.y,p2.x,p2.y);
     			}
+    		}
+    		if(closeCurrentLine) {
+    			Point2D p1 = transformedPoints.get(0);
+				Point2D p2 = transformedPoints.get(transformedPoints.size()-1);
+				Graphics2D g2 = (Graphics2D) g;
+				g2.setStroke(new BasicStroke(2.f));
+				g2.drawLine(p1.x,p1.y,p2.x,p2.y);
     		}
     	}
     	
