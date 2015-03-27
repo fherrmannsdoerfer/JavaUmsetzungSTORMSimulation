@@ -34,6 +34,8 @@ class DrawPanel extends JPanel {
     public int scrollOffsetX;
     public int scrollOffsetY;
     public float zoomFactor;
+    
+    private List<PointDrawnListener> listeners = new ArrayList<PointDrawnListener>();
 
     public DrawPanel() {
         setBorder(BorderFactory.createLineBorder(Color.black));
@@ -99,13 +101,23 @@ class DrawPanel extends JPanel {
     			}
     		}
     	}
-    	
+    	pointNumerChanged();
 //    	start = false;
     }  
     
     public LineDataSet addCurrentPointsToLineDataSet(LineDataSet s) {
     	s =  drawManager.addCurrentPointsToLineDataSet(s);
     	return s;
+    }
+    
+    public void addListener(PointDrawnListener pl) {
+    	listeners.add(pl);
+    }
+    
+    public void pointNumerChanged() {
+    	for(PointDrawnListener pl : listeners) {
+    		pl.pointNumberChanged();
+    	}
     }
     
 }

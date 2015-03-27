@@ -57,6 +57,7 @@ public class Editor implements KeyListener {
 	private JToggleButton toggleClose;
 	private JTextField nameField = new JTextField(50);
 	private JButton newSetButton;
+	private JButton deleteLastButton;
 	
 	private DataSetTableModel model;
 	
@@ -80,6 +81,12 @@ public class Editor implements KeyListener {
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
         superPanel = new JPanel();
         drawPanel = new DrawPanel();
+        drawPanel.addListener(new PointDrawnListener() {
+			@Override
+			public void pointNumberChanged() {
+				checkForPoints();
+			}
+		});
         drawPanel.setOpaque(false);
         imgPanel = new ImagePanel();
         FlowLayout flowLayout = (FlowLayout) imgPanel.getLayout();
@@ -152,7 +159,7 @@ public class Editor implements KeyListener {
          * Buttons
          */
         
-        JButton deleteLastButton = new JButton("delete last point");
+        deleteLastButton = new JButton("delete last point");
         deleteLastButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -261,6 +268,7 @@ public class Editor implements KeyListener {
 					allDataSets.add(newSet);
 					model.addRow(newSet);
 					model.visibleSets.add(Boolean.FALSE);
+					drawPanel.drawManager.currentPoints.clear();
 					System.out.println("new set size: " + newSet.data.size());
 				}
 				Window win = SwingUtilities.getWindowAncestor(newSetButton);
@@ -276,6 +284,7 @@ public class Editor implements KeyListener {
 //        imgPanel.zoom(zoomFactor);
         updateBoundsOfComponents();
         nameFieldValueChanged();
+        checkForPoints();
     } 
 	
 	private void updateBoundsOfComponents() {
@@ -364,6 +373,17 @@ public class Editor implements KeyListener {
 		}
 		else {
 			newSetButton.setEnabled(true);
+		}
+	}
+	
+	public void checkForPoints() {
+		if(drawPanel.drawManager.currentPoints.size() == 0) {
+			addButton.setEnabled(false);
+			deleteLastButton.setEnabled(false);
+		}
+		else {
+			addButton.setEnabled(true);
+			deleteLastButton.setEnabled(true);
 		}
 	}
 }
