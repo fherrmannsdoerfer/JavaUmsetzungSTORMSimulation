@@ -176,7 +176,7 @@ public class StormPointFinder {
 			System.out.println("Conversion ended");
 //			Calc.print2dMatrix(stormPoints);
 			// TODO: boolean or integer?
-			boolean mergedPSFs = false;
+			boolean mergedPSFs = true;
 	        float psfwidth = 200;
 	        float affectingFactor = 2;
 	        if(mergedPSFs) {

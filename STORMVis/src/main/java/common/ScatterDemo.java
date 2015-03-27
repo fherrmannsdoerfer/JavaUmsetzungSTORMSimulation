@@ -58,7 +58,7 @@ public class ScatterDemo extends AbstractAnalysis {
 		}
 		
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 20000;
+		trParser.limit = 0;
 		
 		try {
 			trParser.parse();
