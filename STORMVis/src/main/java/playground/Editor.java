@@ -141,9 +141,9 @@ public class Editor implements KeyListener {
 				final JComponent[] inputs = new JComponent[] {
 						new JLabel("You can either create a new data set or add your lines to an existing data set of the same type."),
 						newSetButton,
-						selectionTable,
 						new JLabel("Dataset name:"),
 						nameField,
+						selectionTable,
 				};
 				JOptionPane.showMessageDialog(null, inputs, "Save Options", JOptionPane.PLAIN_MESSAGE);
 			}
@@ -152,7 +152,7 @@ public class Editor implements KeyListener {
         JLabel lblNmpx = new JLabel("nm/px");
         pixelNmField = new JTextField();
         pixelNmField.setHorizontalAlignment(SwingConstants.LEFT);
-        pixelNmField.setText("0.0");
+        pixelNmField.setText("1.0");
         pixelNmField.setColumns(10);
         
         /*
@@ -172,9 +172,6 @@ public class Editor implements KeyListener {
         
         JButton saveProjectButton = new JButton("save project");
         
-        /*
-         * DUMMY // TODO: subclass
-         */
         model = new DataSetTableModel();
         dataSetTable = new JTable(model);
         dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
@@ -262,6 +259,8 @@ public class Editor implements KeyListener {
 					
 				}
 				else {
+					drawPanel.drawManager.ratio = Float.parseFloat(pixelNmField.getText());
+					System.out.println("ratio on save: " + drawPanel.drawManager.ratio);
 					LineDataSet newSet = new LineDataSet(new ParameterSet());
 					newSet = drawPanel.addCurrentPointsToLineDataSet(newSet);
 					newSet.setName(nameField.getText());
@@ -269,6 +268,7 @@ public class Editor implements KeyListener {
 					model.addRow(newSet);
 					model.visibleSets.add(Boolean.FALSE);
 					drawPanel.drawManager.currentPoints.clear();
+					drawPanel.repaint();
 					System.out.println("new set size: " + newSet.data.size());
 				}
 				Window win = SwingUtilities.getWindowAncestor(newSetButton);
