@@ -32,18 +32,17 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 import model.DataSet;
 import model.LineDataSet;
 import model.ParameterSet;
-import model.TriangleDataSet;
 
 public class Editor implements KeyListener, TableModelListener {
 	
@@ -129,19 +128,8 @@ public class Editor implements KeyListener, TableModelListener {
 			public void actionPerformed(ActionEvent e) {
 				
 				DataSetSelectionTableModel model = new DataSetSelectionTableModel();
-//				model.selectableDataType = DataType.TRIANGLES;
 				DataSetSelectionTable selectionTable = new DataSetSelectionTable(model);
 				model.data = allDataSets;
-				/*
-				DataSet sample = new LineDataSet(new ParameterSet());
-		        sample.setName("data sample1");
-		        DataSet sample1 = new TriangleDataSet(new ParameterSet());
-		        sample1.setName("data sample2");
-		        DataSet sample2 = new LineDataSet(new ParameterSet());
-		        sample2.setName("data sample3");
-		        model.data.add(sample);
-		        model.data.add(sample1);
-		        model.data.add(sample2);*/
 				
 				final JComponent[] inputs = new JComponent[] {
 						new JLabel("You can either create a new data set or add your lines to an existing data set of the same type."),
@@ -157,6 +145,13 @@ public class Editor implements KeyListener, TableModelListener {
         
         JLabel lblNmpx = new JLabel("nm/px");
         pixelNmField = new JTextField();
+        pixelNmField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				drawPanel.drawManager.ratio = Float.parseFloat(pixelNmField.getText());
+				drawPanel.repaint();
+			}
+		});
         pixelNmField.setHorizontalAlignment(SwingConstants.LEFT);
         pixelNmField.setText("1.0");
         pixelNmField.setColumns(10);
@@ -193,7 +188,6 @@ public class Editor implements KeyListener, TableModelListener {
 		});
         
         JButton saveProjectButton = new JButton("save project");
-        
         model = new DataSetTableModel();
         dataSetTable = new JTable(model);
         dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
@@ -307,10 +301,6 @@ public class Editor implements KeyListener, TableModelListener {
 					model.visibleSets.add(Boolean.FALSE);
 					model.data.add(newSet);
 					drawPanel.drawManager.currentPoints.clear();
-					
-					// TODO: conditional
-					drawPanel.dataSetsToVisualize = allDataSets;
-					
 					drawPanel.repaint();
 					System.out.println("new set size: " + newSet.data.size());
 					model.fireTableDataChanged();
@@ -326,8 +316,7 @@ public class Editor implements KeyListener, TableModelListener {
         imgPanel.addKeyListener(this);
         f.pack();
         f.setVisible(true);
-//        zoomFactor = 1.f;
-//        imgPanel.zoom(zoomFactor);
+
         drawPanel.drawingColor = currentDrawingColor;
         updateBoundsOfComponents();
         nameFieldValueChanged();
@@ -365,28 +354,25 @@ public class Editor implements KeyListener, TableModelListener {
 	}
 
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 	}
 
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 
 	}
 
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
 		String plus = "+";
 		String minus = "-";
 		String scroll = "s";
 		String key = String.valueOf(e.getKeyChar());
 		if(key.equals(plus)) {
-			System.out.println("zoom in");
 			zoomFactor += 0.05f;
 			imgPanel.zoom(zoomFactor);
 			updateBoundsOfComponents();
 		}
 		else if(key.equals(minus)) {
-			System.out.println("zoom out");
 			zoomFactor -= 0.05f;
 			if(zoomFactor <= 0.01f) {
 				zoomFactor = 0.01f;
@@ -409,10 +395,13 @@ public class Editor implements KeyListener, TableModelListener {
 				drawPanel.setVisible(SCROLLMODE);
 			}
 		}
-		System.out.println("Zoom: " + zoomFactor);
 		drawPanel.zoomFactor = zoomFactor;
 		drawPanel.repaint();
 	}
+	
+	/*
+	 *  "Helper methods"
+	 */
 	
 	public void nameFieldValueChanged() {
 		if(nameField.getText().trim().isEmpty()) {
@@ -445,6 +434,10 @@ public class Editor implements KeyListener, TableModelListener {
 		drawPanel.repaint();
 		imgPanel.requestFocus();
 	}
+	
+	/*
+	 * Table Listener method
+	 */
 
 	@Override
 	public void tableChanged(TableModelEvent e) {

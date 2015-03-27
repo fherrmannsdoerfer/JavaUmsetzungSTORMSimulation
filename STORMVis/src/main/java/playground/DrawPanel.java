@@ -49,8 +49,7 @@ class DrawPanel extends JPanel {
         setBorder(BorderFactory.createLineBorder(Color.black));
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-//                moveSquare(e.getX(),e.getY());
-                System.out.println("x|y : " + e.getX() +" " + e.getY());
+//                System.out.println("x|y : " + e.getX() +" " + e.getY());
                 drawManager.currentPoints.add(new Point2D((int) ((e.getX()+ scrollOffsetX)/zoomFactor),(int) ((e.getY()+ scrollOffsetY)/zoomFactor)));
                 repaint();
             }
@@ -62,30 +61,10 @@ class DrawPanel extends JPanel {
         setLayout(new BorderLayout());
     }
     
-    private void moveSquare(int x, int y) {
-        int OFFSET = 1;
-        if ((squareX!=x) || (squareY!=y)) {
-            repaint(squareX,squareY,squareW+OFFSET,squareH+OFFSET);
-            squareX=x;
-            squareY=y;
-            repaint(squareX,squareY,squareW+OFFSET,squareH+OFFSET);
-        } 
-    }
-    
-    public Dimension getPreferredSize() {
-        return new Dimension(500,500);
-    }
-    
     @Override
     protected void paintComponent(Graphics g) {
     	super.paintComponent(g);
-//    	if(!start) {
-//    		super.paintComponent(g);      
-//    		g.setColor(Color.RED);
-//    		g.fillRect(squareX,squareY,squareW,squareH);
-//    		g.setColor(Color.BLACK);
-//    		g.drawRect(squareX,squareY,squareW,squareH);
-//    	}
+    	// draw square exactly on mouse location
     	int offset = -5;
     	if(drawManager.currentPoints.size() != 0) {
     		List<Point2D> transformedPoints = new ArrayList<Point2D>();
