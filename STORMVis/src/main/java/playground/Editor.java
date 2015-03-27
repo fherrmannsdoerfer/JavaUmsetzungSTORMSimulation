@@ -1,5 +1,7 @@
 package playground;
 
+import gui.TriangleLineFilter;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -9,11 +11,13 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.io.IOException;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -79,6 +83,18 @@ public class Editor implements KeyListener {
         importImageButton = new JButton("Import Image");
         importImageButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		System.out.println("import image");
+    			JFileChooser chooser = new JFileChooser();
+    			chooser.setAcceptAllFileFilterUsed(false);
+    			chooser.setFileFilter(new ImageFileFilter());
+    			chooser.setFileSelectionMode(0);
+    			int returnVal = chooser.showOpenDialog(f); //replace null with your swing container
+    			if(returnVal == JFileChooser.APPROVE_OPTION) { 
+    				imgPanel.setPathAndReadImage(chooser.getSelectedFile().getAbsolutePath());
+    				zoomFactor = 1.f;
+    		        imgPanel.zoom(zoomFactor);
+    		        updateBoundsOfComponents();
+    			}
         	}
         });
         
@@ -192,8 +208,8 @@ public class Editor implements KeyListener {
         imgPanel.addKeyListener(this);
         f.pack();
         f.setVisible(true);
-        zoomFactor = 1.f;
-        imgPanel.zoom(zoomFactor);
+//        zoomFactor = 1.f;
+//        imgPanel.zoom(zoomFactor);
         updateBoundsOfComponents();
     } 
 	

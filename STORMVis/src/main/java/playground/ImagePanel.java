@@ -29,19 +29,19 @@ class ImagePanel extends JPanel {
             	requestFocus();
             }
         });
-		try {                
-			image = ImageIO.read(new File("/Users/maximilianscheurer/Desktop/bildMitStruktur.png"));
-			originalImage = image;
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		float limit = 1000.f;
-		if (image.getWidth() > limit) {
-			scaleFactor = limit/image.getWidth();
-			System.out.println("1px = " + 1/scaleFactor + " in real life");
-			float newHeight = scaleFactor * image.getHeight();
-			image = getScaledImage(image, (int) limit, (int) newHeight);
-		}
+//		try {   
+//			image = ImageIO.read(new File("/Users/maximilianscheurer/Desktop/bildMitStruktur.png"));
+//			originalImage = image;
+//		} catch (IOException ex) {
+//			ex.printStackTrace();
+//		}
+//		float limit = 1000.f;
+//		if (image.getWidth() > limit) {
+//			scaleFactor = limit/image.getWidth();
+//			System.out.println("1px = " + 1/scaleFactor + " in real life");
+//			float newHeight = scaleFactor * image.getHeight();
+//			image = getScaledImage(image, (int) limit, (int) newHeight);
+//		}
 	}
 	
 	public void setPathAndReadImage(String path) {
@@ -51,10 +51,25 @@ class ImagePanel extends JPanel {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+		float limit = 1000.f;
+		if (image.getWidth() > limit) {
+			scaleFactor = limit/image.getWidth();
+			System.out.println("1px = " + 1/scaleFactor + " in real life");
+			float newHeight = scaleFactor * image.getHeight();
+			try {
+				image = getScaledImage(image, (int) limit, (int) newHeight);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public Dimension getPreferredSize() {
-        return new Dimension(image.getWidth(),image.getHeight());
+		if(image != null) {
+			return new Dimension(image.getWidth(),image.getHeight());
+		}
+		return new Dimension(0,0);
     }
 	
 	public void zoom(float scale) {
