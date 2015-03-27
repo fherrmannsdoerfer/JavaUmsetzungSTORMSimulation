@@ -302,6 +302,7 @@ public class Editor implements KeyListener, TableModelListener {
 				}
 				Window win = SwingUtilities.getWindowAncestor(newSetButton);
 	            win.setVisible(false);
+	            nameField.setText("");
 	            imgPanel.requestFocus();
 			}
 		});
