@@ -34,6 +34,8 @@ import javax.swing.JToggleButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -43,7 +45,7 @@ import model.LineDataSet;
 import model.ParameterSet;
 import model.TriangleDataSet;
 
-public class Editor implements KeyListener {
+public class Editor implements KeyListener, TableModelListener {
 	
 	private static boolean SCROLLMODE = true;
 	private JPanel superPanel;
@@ -149,6 +151,7 @@ public class Editor implements KeyListener {
 						selectionTable,
 				};
 				JOptionPane.showMessageDialog(null, inputs, "Save Options", JOptionPane.PLAIN_MESSAGE);
+				imgPanel.requestFocus();
 			}
 		});
         
@@ -168,6 +171,7 @@ public class Editor implements KeyListener {
 			public void actionPerformed(ActionEvent e) {
 				drawPanel.drawManager.removeLastPoint();
 				drawPanel.repaint();
+				imgPanel.requestFocus();
 			}
 		});
         
@@ -178,7 +182,7 @@ public class Editor implements KeyListener {
         model = new DataSetTableModel();
         dataSetTable = new JTable(model);
         dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
-        
+        model.addTableModelListener(this);
         JButton btnChooseColor = new JButton("choose color");
         btnChooseColor.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
@@ -251,13 +255,11 @@ public class Editor implements KeyListener {
 			
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				System.out.println("remove changed");
 				nameFieldValueChanged();
 			}
 			
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				System.out.println("insert changed");
 				nameFieldValueChanged();
 			}
 			
@@ -285,15 +287,22 @@ public class Editor implements KeyListener {
 					newSet = drawPanel.addCurrentPointsToLineDataSet(newSet);
 					newSet.setName(nameField.getText());
 					newSet.setColor(currentDrawingColor);
+					newSet.setDataType(DataType.LINES);
 					allDataSets.add(newSet);
-					model.addRow(newSet);
 					model.visibleSets.add(Boolean.FALSE);
+					model.data.add(newSet);
 					drawPanel.drawManager.currentPoints.clear();
+					
+					// TODO: conditional
+					drawPanel.dataSetsToVisualize = allDataSets;
+					
 					drawPanel.repaint();
 					System.out.println("new set size: " + newSet.data.size());
+					model.fireTableDataChanged();
 				}
 				Window win = SwingUtilities.getWindowAncestor(newSetButton);
 	            win.setVisible(false);
+	            imgPanel.requestFocus();
 			}
 		});
         
@@ -407,5 +416,23 @@ public class Editor implements KeyListener {
 			addButton.setEnabled(true);
 			deleteLastButton.setEnabled(true);
 		}
+	}
+	
+	public void setSelectedListsForDrawing() {
+		List<DataSet> sets = new ArrayList<DataSet>();
+		for(int i = 0; i < model.data.size(); i++) {
+			if(model.visibleSets.get(i) == Boolean.TRUE) {
+				sets.add(model.data.get(i));
+			}
+		}
+		drawPanel.dataSetsToVisualize = sets;
+		drawPanel.repaint();
+		imgPanel.requestFocus();
+	}
+
+	@Override
+	public void tableChanged(TableModelEvent e) {
+		// TODO Auto-generated method stub
+		setSelectedListsForDrawing();
 	}
 }

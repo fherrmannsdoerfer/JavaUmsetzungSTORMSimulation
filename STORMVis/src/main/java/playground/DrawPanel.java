@@ -1,5 +1,7 @@
 package playground;
 
+import gui.DataTypeDetector.DataType;
+
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -14,8 +16,10 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import model.DataSet;
 import model.LineDataSet;
 
+import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.Point2D;
 
 class DrawPanel extends JPanel {
@@ -36,7 +40,7 @@ class DrawPanel extends JPanel {
     public float zoomFactor;
     
     public Color drawingColor;
-    
+    public List<DataSet> dataSetsToVisualize = new ArrayList<DataSet>();
     private List<PointDrawnListener> listeners = new ArrayList<PointDrawnListener>();
 
     public DrawPanel() {
@@ -80,10 +84,9 @@ class DrawPanel extends JPanel {
 //    		g.setColor(Color.BLACK);
 //    		g.drawRect(squareX,squareY,squareW,squareH);
 //    	}
-    	
+    	int offset = -5;
     	if(drawManager.currentPoints.size() != 0) {
     		List<Point2D> transformedPoints = new ArrayList<Point2D>();
-    		int offset = -5;
     		for(Point2D drawPoint : drawManager.currentPoints) {
     			Point2D actualPoint = new Point2D((int) (drawPoint.x*zoomFactor) - scrollOffsetX, (int) (drawPoint.y*zoomFactor) - scrollOffsetY);
     			transformedPoints.add(actualPoint);
@@ -103,6 +106,39 @@ class DrawPanel extends JPanel {
     			}
     		}
     	}
+    	
+    	if(dataSetsToVisualize.size() != 0) {
+    		float ratio = drawManager.ratio;
+    		for(DataSet s : dataSetsToVisualize) {
+    			if(s.getDataType() == DataType.LINES) {
+    				System.out.println("lines");
+    				LineDataSet set = (LineDataSet) s;
+    				for(ArrayList<Coord3d> obj : set.data) {
+    					List<Point2D> transformedPoints = new ArrayList<Point2D>();
+    					for(int i = 0; i < obj.size(); i++) {
+    						Coord3d coord = obj.get(i);
+    						Point2D actualPoint = new Point2D((int) (coord.x*zoomFactor/ratio) - scrollOffsetX, (int) (coord.y*zoomFactor/ratio) - scrollOffsetY);
+    		    			transformedPoints.add(actualPoint);
+    		    			g.setColor(s.color);
+    		    			g.fillRect(actualPoint.x+offset,actualPoint.y+offset,squareW,squareH);
+    		    			g.setColor(Color.BLACK);
+    		    			g.drawRect(actualPoint.x+offset,actualPoint.y+offset,squareW,squareH);
+    					}
+    					for(int i = 0; i < transformedPoints.size(); i++) {
+    		    			g.setColor(s.color);
+    		    			if(i < (transformedPoints.size()-1)) {
+    		    				Point2D p1 = transformedPoints.get(i);
+    		    				Point2D p2 = transformedPoints.get(i+1);
+    		    				Graphics2D g2 = (Graphics2D) g;
+    		    				g2.setStroke(new BasicStroke(2.f));
+    		    				g2.drawLine(p1.x,p1.y,p2.x,p2.y);
+    		    			}
+    		    		}
+    				}
+    			}
+    		}
+    	}
+    	
     	pointNumerChanged();
 //    	start = false;
     }  
