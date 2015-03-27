@@ -1,4 +1,4 @@
-package playground;
+package editor;
 
 import java.io.File;
 

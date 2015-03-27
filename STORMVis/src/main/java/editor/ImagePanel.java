@@ -1,4 +1,4 @@
-package playground;
+package editor;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
