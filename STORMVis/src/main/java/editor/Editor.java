@@ -43,6 +43,7 @@ import javax.swing.event.TableModelListener;
 import model.DataSet;
 import model.LineDataSet;
 import model.ParameterSet;
+import model.TriangleDataSet;
 
 public class Editor implements KeyListener, TableModelListener {
 	
@@ -284,13 +285,23 @@ public class Editor implements KeyListener, TableModelListener {
         newSetButton = new JButton("Create new dataset");
 		newSetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("new set & dismiss pane");
-				if(toggleClose.isSelected()) {
-					
+				drawPanel.drawManager.ratio = Float.parseFloat(pixelNmField.getText());
+				System.out.println("ratio on save: " + drawPanel.drawManager.ratio);
+				if(toggleClose.isSelected()) { // lines closed: triangles generated
+                    TriangleDataSet newSet = new TriangleDataSet(new ParameterSet());
+                    newSet = drawPanel.addCurrentPointsToTriangleDataSet(newSet);
+                    newSet.setName(nameField.getText());
+                    newSet.setColor(currentDrawingColor);
+                    newSet.setDataType(DataType.TRIANGLES);
+                    allDataSets.add(newSet);
+                    model.visibleSets.add(Boolean.FALSE);
+                    model.data.add(newSet);
+                    drawPanel.drawManager.currentPoints.clear();
+                    drawPanel.repaint();
+                    System.out.println("new set size tr. : " + newSet.drawableTriangles.size());
+                    model.fireTableDataChanged();
 				}
-				else {
-					drawPanel.drawManager.ratio = Float.parseFloat(pixelNmField.getText());
-					System.out.println("ratio on save: " + drawPanel.drawManager.ratio);
+				else { // lines open: line object generated
 					LineDataSet newSet = new LineDataSet(new ParameterSet());
 					newSet = drawPanel.addCurrentPointsToLineDataSet(newSet);
 					newSet.setName(nameField.getText());

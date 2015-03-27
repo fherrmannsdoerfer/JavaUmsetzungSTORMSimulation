@@ -17,9 +17,12 @@ import javax.swing.JPanel;
 
 import model.DataSet;
 import model.LineDataSet;
+import model.TriangleDataSet;
 
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.Point2D;
+import org.jzy3d.plot3d.primitives.Point;
+import org.jzy3d.plot3d.primitives.Polygon;
 
 class DrawPanel extends JPanel {
 
@@ -117,24 +120,52 @@ class DrawPanel extends JPanel {
     		    				g2.drawLine(p1.x,p1.y,p2.x,p2.y);
     		    			}
     		    		}
-    					transformedPoints = null;
+    				}
+    			}
+    			else if (s.getDataType() == DataType.TRIANGLES) {
+    				TriangleDataSet set = (TriangleDataSet) s;
+    				for(Polygon p : set.drawableTriangles) {
+    					List<Coord3d> xyLayerCoords = new ArrayList<Coord3d>();
+    					for(Point point : p.getPoints()) {
+    						Coord3d coord = point.getCoord();
+    						if(coord.z == 0) {
+    							xyLayerCoords.add(coord);
+    						}
+    					}
+    					if(xyLayerCoords.size() > 1) {
+    						Coord3d p1 = xyLayerCoords.get(0);
+    						Coord3d p2 = xyLayerCoords.get(1);
+    						Point2D actualPoint1 = new Point2D((int) (p1.x*zoomFactor/ratio) - scrollOffsetX, (int) (p1.y*zoomFactor/ratio) - scrollOffsetY);
+    						Point2D actualPoint2 = new Point2D((int) (p2.x*zoomFactor/ratio) - scrollOffsetX, (int) (p2.y*zoomFactor/ratio) - scrollOffsetY);
+    						g.setColor(s.color);
+    						g.fillRect(actualPoint1.x+offset,actualPoint1.y+offset,squareW,squareH);
+    						g.fillRect(actualPoint2.x+offset,actualPoint2.y+offset,squareW,squareH);
+    						Graphics2D g2 = (Graphics2D) g;
+    						g2.setStroke(new BasicStroke(2.f));
+    						g2.drawLine(actualPoint1.x,actualPoint1.y,actualPoint2.x,actualPoint2.y);
+    					}
     				}
     			}
     		}
     	}
-    	pointNumerChanged();
+    	pointNumberChanged();
     }  
     
     public LineDataSet addCurrentPointsToLineDataSet(LineDataSet s) {
     	s =  drawManager.addCurrentPointsToLineDataSet(s);
     	return s;
     }
+
+    public TriangleDataSet addCurrentPointsToTriangleDataSet(TriangleDataSet s) {
+        s = drawManager.addCurrentPointsToTriangleDataSet(s);
+        return s;
+    }
     
     public void addListener(PointDrawnListener pl) {
     	listeners.add(pl);
     }
     
-    public void pointNumerChanged() {
+    public void pointNumberChanged() {
     	for(PointDrawnListener pl : listeners) {
     		pl.pointNumberChanged();
     	}
