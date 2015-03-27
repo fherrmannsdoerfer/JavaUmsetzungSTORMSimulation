@@ -35,6 +35,8 @@ class DrawPanel extends JPanel {
     public int scrollOffsetY;
     public float zoomFactor;
     
+    public Color drawingColor;
+    
     private List<PointDrawnListener> listeners = new ArrayList<PointDrawnListener>();
 
     public DrawPanel() {
@@ -85,13 +87,13 @@ class DrawPanel extends JPanel {
     		for(Point2D drawPoint : drawManager.currentPoints) {
     			Point2D actualPoint = new Point2D((int) (drawPoint.x*zoomFactor) - scrollOffsetX, (int) (drawPoint.y*zoomFactor) - scrollOffsetY);
     			transformedPoints.add(actualPoint);
-    			g.setColor(Color.RED);
+    			g.setColor(drawingColor);
     			g.fillRect(actualPoint.x+offset,actualPoint.y+offset,squareW,squareH);
     			g.setColor(Color.BLACK);
     			g.drawRect(actualPoint.x+offset,actualPoint.y+offset,squareW,squareH);
     		}
     		for(int i = 0; i < transformedPoints.size(); i++) {
-    			g.setColor(Color.RED);
+    			g.setColor(drawingColor);
     			if(i < (transformedPoints.size()-1)) {
     				Point2D p1 = transformedPoints.get(i);
     				Point2D p2 = transformedPoints.get(i+1);

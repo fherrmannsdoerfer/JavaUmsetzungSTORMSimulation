@@ -3,6 +3,7 @@ package playground;
 import gui.DataTypeDetector.DataType;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Window;
@@ -19,6 +20,7 @@ import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -62,6 +64,7 @@ public class Editor implements KeyListener {
 	private DataSetTableModel model;
 	
 	private List<DataSet> allDataSets = new ArrayList<DataSet>();
+	private Color currentDrawingColor = Color.RED;
 	
 	public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -176,17 +179,27 @@ public class Editor implements KeyListener {
         dataSetTable = new JTable(model);
         dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
         
+        JButton btnChooseColor = new JButton("choose color");
+        btnChooseColor.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		currentDrawingColor = JColorChooser.showDialog(f, "Choose drawing color", currentDrawingColor);
+        		drawPanel.drawingColor = currentDrawingColor;
+        		drawPanel.repaint();
+        		imgPanel.requestFocus();
+        	}
+        });
+        
         GroupLayout gl_controlPanel = new GroupLayout(controlPanel);
         gl_controlPanel.setHorizontalGroup(
         	gl_controlPanel.createParallelGroup(Alignment.LEADING)
         		.addGroup(gl_controlPanel.createSequentialGroup()
         			.addContainerGap()
         			.addGroup(gl_controlPanel.createParallelGroup(Alignment.LEADING)
-        				.addGroup(Alignment.TRAILING, gl_controlPanel.createSequentialGroup()
+        				.addGroup(gl_controlPanel.createSequentialGroup()
         					.addGap(6)
         					.addComponent(dataSetTable, GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
-        					.addGap(12))
-        				.addGroup(gl_controlPanel.createSequentialGroup()
+        					.addContainerGap())
+        				.addGroup(Alignment.TRAILING, gl_controlPanel.createSequentialGroup()
         					.addGroup(gl_controlPanel.createParallelGroup(Alignment.LEADING)
         						.addComponent(deleteLastButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         						.addComponent(addButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
@@ -196,8 +209,13 @@ public class Editor implements KeyListener {
         							.addPreferredGap(ComponentPlacement.RELATED)
         							.addComponent(pixelNmField, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE))
         						.addComponent(importImageButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        						.addComponent(toggleClose, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        						.addComponent(saveProjectButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE))
+        						.addComponent(toggleClose, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE))
+        					.addContainerGap())
+        				.addGroup(gl_controlPanel.createSequentialGroup()
+        					.addComponent(saveProjectButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+        					.addContainerGap())
+        				.addGroup(gl_controlPanel.createSequentialGroup()
+        					.addComponent(btnChooseColor, GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
         					.addContainerGap())))
         );
         gl_controlPanel.setVerticalGroup(
@@ -216,10 +234,12 @@ public class Editor implements KeyListener {
         			.addPreferredGap(ComponentPlacement.RELATED)
         			.addComponent(toggleClose)
         			.addPreferredGap(ComponentPlacement.RELATED)
-        			.addComponent(saveProjectButton)
+        			.addComponent(btnChooseColor)
         			.addPreferredGap(ComponentPlacement.RELATED)
         			.addComponent(dataSetTable, GroupLayout.PREFERRED_SIZE, 166, GroupLayout.PREFERRED_SIZE)
-        			.addContainerGap(317, Short.MAX_VALUE))
+        			.addPreferredGap(ComponentPlacement.UNRELATED)
+        			.addComponent(saveProjectButton)
+        			.addContainerGap(282, Short.MAX_VALUE))
         );
         controlPanel.setLayout(gl_controlPanel);
         
@@ -264,6 +284,7 @@ public class Editor implements KeyListener {
 					LineDataSet newSet = new LineDataSet(new ParameterSet());
 					newSet = drawPanel.addCurrentPointsToLineDataSet(newSet);
 					newSet.setName(nameField.getText());
+					newSet.setColor(currentDrawingColor);
 					allDataSets.add(newSet);
 					model.addRow(newSet);
 					model.visibleSets.add(Boolean.FALSE);
@@ -282,6 +303,7 @@ public class Editor implements KeyListener {
         f.setVisible(true);
 //        zoomFactor = 1.f;
 //        imgPanel.zoom(zoomFactor);
+        drawPanel.drawingColor = currentDrawingColor;
         updateBoundsOfComponents();
         nameFieldValueChanged();
         checkForPoints();

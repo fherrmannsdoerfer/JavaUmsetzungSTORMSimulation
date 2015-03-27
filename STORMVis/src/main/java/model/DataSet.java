@@ -1,8 +1,9 @@
 package model;
 
-import java.io.Serializable;
-
 import gui.DataTypeDetector.DataType;
+
+import java.awt.Color;
+import java.io.Serializable;
 
 public class DataSet implements Serializable {
 	/**
@@ -12,10 +13,12 @@ public class DataSet implements Serializable {
 	public DataType dataType;
 	public ParameterSet parameterSet;
 	public String name;
+	public Color color;
 	
 	public DataSet(ParameterSet parameterSet) {
 		super();
 		this.parameterSet = parameterSet;
+		this.color = Color.red;
 	}
 	
 	public DataSet(ParameterSet parameterSet, String name) {
@@ -47,5 +50,15 @@ public class DataSet implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+	
+	
 	
 }
