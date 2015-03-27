@@ -73,7 +73,6 @@ public class Editor implements KeyListener, TableModelListener {
                 try {
 					new Editor();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} 
             }
@@ -112,7 +111,7 @@ public class Editor implements KeyListener, TableModelListener {
     			chooser.setAcceptAllFileFilterUsed(false);
     			chooser.setFileFilter(new ImageFileFilter());
     			chooser.setFileSelectionMode(0);
-    			int returnVal = chooser.showOpenDialog(f); //replace null with your swing container
+    			int returnVal = chooser.showOpenDialog(f);
     			if(returnVal == JFileChooser.APPROVE_OPTION) { 
     				imgPanel.setPathAndReadImage(chooser.getSelectedFile().getAbsolutePath());
     				zoomFactor = 1.f;

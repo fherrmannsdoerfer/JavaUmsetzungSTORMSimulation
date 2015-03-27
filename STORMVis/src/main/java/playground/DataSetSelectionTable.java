@@ -2,7 +2,6 @@ package playground;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
@@ -19,9 +18,7 @@ public class DataSetSelectionTable extends JTable {
 	}
 
 	@Override
-	public Component prepareRenderer(TableCellRenderer renderer, int row,
-			int column) {
-		// TODO Auto-generated method stub
+	public Component prepareRenderer(TableCellRenderer renderer, int row,int column) {
 		Component c = super.prepareRenderer(renderer, row, column);
 		if (!isCellSelectable(row, column)) {
 			c.setBackground(Color.LIGHT_GRAY);

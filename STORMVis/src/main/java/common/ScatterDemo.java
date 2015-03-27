@@ -22,7 +22,6 @@ import org.jzy3d.plot3d.primitives.Sphere;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.lights.Light;
 import org.jzy3d.plot3d.rendering.view.View;
-import org.jzy3d.plot3d.rendering.view.modes.CameraMode;
 
 import parsing.LineObjectParser;
 import parsing.STORMObjectParser;

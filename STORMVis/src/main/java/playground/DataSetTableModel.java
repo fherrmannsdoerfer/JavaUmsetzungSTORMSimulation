@@ -41,7 +41,6 @@ class DataSetTableModel extends AbstractTableModel {
 	
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		// TODO Auto-generated method stub
 		if(columnIndex == 1) {
 			return Boolean.class;
 		}
@@ -76,17 +75,10 @@ class DataSetTableModel extends AbstractTableModel {
 		fireTableDataChanged();
 	}
 
-	//	 public void insertData(Object[] values){
-	//		 data.add(new Vector());
-	//		 for(int i =0; i<values.length; i++){
-	//			 ((Vector) data.get(data.size()-1)).add(values[i]);
-	//		 }
-	//		 fireTableDataChanged();
-	//	 }
-
 	public void removeRow(int row){
 		data.remove(row);
 		fireTableDataChanged();
 	}
+	
 }
 

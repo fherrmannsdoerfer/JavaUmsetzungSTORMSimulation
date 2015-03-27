@@ -1,14 +1,15 @@
 package gui;
 
+import gui.DataTypeDetector.DataType;
+
 import java.io.IOException;
 import java.util.List;
 
-import parsing.LineObjectParser;
-import parsing.TriangleObjectParser;
-import gui.DataTypeDetector.DataType;
-
 import org.javatuples.Pair;
 import org.jzy3d.plot3d.primitives.Polygon;
+
+import parsing.LineObjectParser;
+import parsing.TriangleObjectParser;
 
 public class ParserWrapper {
 	

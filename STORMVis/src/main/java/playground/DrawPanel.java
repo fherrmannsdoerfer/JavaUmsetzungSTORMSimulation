@@ -5,7 +5,6 @@ import gui.DataTypeDetector.DataType;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
@@ -28,11 +27,10 @@ class DrawPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int squareX = 0;
-    private int squareY = 0;
+	
+	// Width and Height of the box' point
     private int squareW = 10;
     private int squareH = 10;
-    private boolean start = true;
     
     public DrawManager drawManager;
     public int scrollOffsetX;
@@ -49,7 +47,6 @@ class DrawPanel extends JPanel {
         setBorder(BorderFactory.createLineBorder(Color.black));
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-//                System.out.println("x|y : " + e.getX() +" " + e.getY());
                 drawManager.currentPoints.add(new Point2D((int) ((e.getX()+ scrollOffsetX)/zoomFactor),(int) ((e.getY()+ scrollOffsetY)/zoomFactor)));
                 repaint();
             }
@@ -109,7 +106,6 @@ class DrawPanel extends JPanel {
     		    			g.setColor(s.color);
     		    			g.fillRect(actualPoint.x+offset,actualPoint.y+offset,squareW,squareH);
     		    			g.setColor(Color.BLACK);
-//    		    			g.drawRect(actualPoint.x+offset,actualPoint.y+offset,squareW,squareH);
     					}
     					for(int i = 0; i < transformedPoints.size(); i++) {
     		    			g.setColor(s.color);
@@ -126,9 +122,7 @@ class DrawPanel extends JPanel {
     			}
     		}
     	}
-    	
     	pointNumerChanged();
-//    	start = false;
     }  
     
     public LineDataSet addCurrentPointsToLineDataSet(LineDataSet s) {

@@ -1,23 +1,17 @@
 package calc;
 
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.javatuples.Pair;
-import org.jzy3d.analysis.AbstractAnalysis;
 import org.jzy3d.analysis.AnalysisLauncher;
 import org.jzy3d.colors.Color;
 import org.jzy3d.maths.Coord3d;
-import org.jzy3d.plot3d.primitives.Scatter;
+
+import parsing.TriangleObjectParser;
 
 import common.ScatterDemo;
-import parsing.TriangleObjectParser;
 
 public class STORMCalculator {
 

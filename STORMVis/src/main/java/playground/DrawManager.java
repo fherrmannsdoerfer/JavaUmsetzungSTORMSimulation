@@ -1,11 +1,8 @@
 package playground;
 
-import gui.DataTypeDetector.DataType;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import model.DataSet;
 import model.LineDataSet;
 
 import org.jzy3d.maths.Coord3d;
@@ -47,4 +44,5 @@ public class DrawManager {
 		}
 		return line;
 	}
+	
 }
