@@ -149,13 +149,14 @@ public class Editor implements KeyListener {
          */
         DataSetTableModel model = new DataSetTableModel();
         dataSetTable = new JTable(model);
-        dataSetTable.setCellSelectionEnabled(false);
         DataSet sample = new LineDataSet(new ParameterSet());
         sample.setName("data sample1");
         DataSet sample1 = new LineDataSet(new ParameterSet());
         sample1.setName("data sample2");
         model.addRow(sample);
         model.addRow(sample1);
+        model.visibleSets.add(Boolean.FALSE);
+        model.visibleSets.add(Boolean.FALSE);
         
         GroupLayout gl_controlPanel = new GroupLayout(controlPanel);
         gl_controlPanel.setHorizontalGroup(

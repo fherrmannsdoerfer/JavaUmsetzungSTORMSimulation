@@ -13,9 +13,10 @@ class DataSetTableModel extends AbstractTableModel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private String[] columnNames = {"Dataset"};
+	private String[] columnNames = {"Dataset", "Visible"};
 
 	public List<DataSet> data = new ArrayList<DataSet>();
+	public List<Boolean> visibleSets = new ArrayList<Boolean>();
 
 	public int getColumnCount() {
 		return columnNames.length;
@@ -26,20 +27,43 @@ class DataSetTableModel extends AbstractTableModel {
 	}
 
 	public Object getValueAt(int row, int col) {
-		return data.get(row).getName();
+		if(col == 0) {
+			return data.get(row).getName();
+		}
+		else {
+			return visibleSets.get(row);
+		}
 	}
 
 	public String getColumnName(int col){
 		return columnNames[col];
 	}
+	
+	@Override
+	public Class<?> getColumnClass(int columnIndex) {
+		// TODO Auto-generated method stub
+		if(columnIndex == 1) {
+			return Boolean.class;
+		}
+		return super.getColumnClass(columnIndex);
+	}
 
 
-	public void setValueAt(DataSet value, int row, int col){
-		data.set(row,value);
-		fireTableCellUpdated(row,col);
+	public void setValueAt(Object value, int row, int col){
+		if(col == 0) {
+			data.set(row,(DataSet) value);
+			fireTableCellUpdated(row,col);
+		}
+		else {
+			visibleSets.set(row, (Boolean) value);
+			fireTableCellUpdated(row,col);
+		}
 	}
 
 	public boolean isCellEditable(int row, int col){
+		if(col == 1) {
+			return true;
+		}
 		return false;
 	}
 	
