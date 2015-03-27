@@ -111,7 +111,6 @@ class DrawPanel extends JPanel {
     		float ratio = drawManager.ratio;
     		for(DataSet s : dataSetsToVisualize) {
     			if(s.getDataType() == DataType.LINES) {
-    				System.out.println("lines");
     				LineDataSet set = (LineDataSet) s;
     				for(ArrayList<Coord3d> obj : set.data) {
     					List<Point2D> transformedPoints = new ArrayList<Point2D>();
@@ -122,7 +121,7 @@ class DrawPanel extends JPanel {
     		    			g.setColor(s.color);
     		    			g.fillRect(actualPoint.x+offset,actualPoint.y+offset,squareW,squareH);
     		    			g.setColor(Color.BLACK);
-    		    			g.drawRect(actualPoint.x+offset,actualPoint.y+offset,squareW,squareH);
+//    		    			g.drawRect(actualPoint.x+offset,actualPoint.y+offset,squareW,squareH);
     					}
     					for(int i = 0; i < transformedPoints.size(); i++) {
     		    			g.setColor(s.color);
@@ -134,6 +133,7 @@ class DrawPanel extends JPanel {
     		    				g2.drawLine(p1.x,p1.y,p2.x,p2.y);
     		    			}
     		    		}
+    					transformedPoints = null;
     				}
     			}
     		}
