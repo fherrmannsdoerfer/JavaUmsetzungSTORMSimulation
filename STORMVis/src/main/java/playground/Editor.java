@@ -149,6 +149,7 @@ public class Editor implements KeyListener {
          */
         DataSetTableModel model = new DataSetTableModel();
         dataSetTable = new JTable(model);
+        dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
         DataSet sample = new LineDataSet(new ParameterSet());
         sample.setName("data sample1");
         DataSet sample1 = new LineDataSet(new ParameterSet());
