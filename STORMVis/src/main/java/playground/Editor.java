@@ -114,15 +114,18 @@ public class Editor implements KeyListener {
 					}
 				});
 				DataSetSelectionTableModel model = new DataSetSelectionTableModel();
-				model.selectableDataType = DataType.LINES;
+				model.selectableDataType = DataType.TRIANGLES;
 				DataSetSelectionTable selectionTable = new DataSetSelectionTable(model);
 				
-				DataSet sample = new TriangleDataSet(new ParameterSet());
+				DataSet sample = new LineDataSet(new ParameterSet());
 		        sample.setName("data sample1");
-		        DataSet sample1 = new LineDataSet(new ParameterSet());
+		        DataSet sample1 = new TriangleDataSet(new ParameterSet());
 		        sample1.setName("data sample2");
-		        model.addRow(sample);
-		        model.addRow(sample1);
+		        DataSet sample2 = new LineDataSet(new ParameterSet());
+		        sample2.setName("data sample3");
+		        model.data.add(sample);
+		        model.data.add(sample1);
+		        model.data.add(sample2);
 				
 				
 				final JComponent[] inputs = new JComponent[] {

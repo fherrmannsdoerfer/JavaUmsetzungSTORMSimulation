@@ -37,20 +37,6 @@ class DataSetSelectionTableModel extends AbstractTableModel {
 		return columnNames[col];
 	}
 	
-	@Override
-	public Class<?> getColumnClass(int columnIndex) {
-		// TODO Auto-generated method stub
-		if(columnIndex == 1) {
-			return Boolean.class;
-		}
-		return super.getColumnClass(columnIndex);
-	}
-
-
-	public void setValueAt(Object value, int row, int col){
-		data.set(row,(DataSet) value);
-		fireTableCellUpdated(row,col);
-	}
 
 	public boolean isCellEditable(int row, int col){
 		return false;
@@ -58,27 +44,13 @@ class DataSetSelectionTableModel extends AbstractTableModel {
 	
 	public boolean isCellSelectable(int row, int col) {
 		if(data.get(row).dataType == selectableDataType) {
+			System.out.println("selectable");
 			return true;
 		}
-		return false;
-	}
-	
-	public void addRow(DataSet set) {
-		data.add(set);
-		fireTableDataChanged();
-	}
-
-	//	 public void insertData(Object[] values){
-	//		 data.add(new Vector());
-	//		 for(int i =0; i<values.length; i++){
-	//			 ((Vector) data.get(data.size()-1)).add(values[i]);
-	//		 }
-	//		 fireTableDataChanged();
-	//	 }
-
-	public void removeRow(int row){
-		data.remove(row);
-		fireTableDataChanged();
-	}
+		else {
+			System.out.println("not selectable");
+			return false;
+		}
+	}	
 }
 
