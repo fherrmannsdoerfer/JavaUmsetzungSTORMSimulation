@@ -130,12 +130,19 @@ public class Editor implements KeyListener, TableModelListener {
 				DataSetSelectionTableModel model = new DataSetSelectionTableModel();
 				DataSetSelectionTable selectionTable = new DataSetSelectionTable(model);
 				model.data = allDataSets;
+				if(toggleClose.isSelected()) {
+					model.selectableDataType = DataType.TRIANGLES;
+				}
+				else {
+					model.selectableDataType = DataType.LINES;
+				}
 				
 				final JComponent[] inputs = new JComponent[] {
 						new JLabel("You can either create a new data set or add your lines to an existing data set of the same type."),
 						newSetButton,
 						new JLabel("Dataset name:"),
 						nameField,
+						new JLabel("Existing datasets:"),
 						selectionTable,
 				};
 				JOptionPane.showMessageDialog(null, inputs, "Save Options", JOptionPane.PLAIN_MESSAGE);
