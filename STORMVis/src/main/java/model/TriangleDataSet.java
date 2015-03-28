@@ -61,4 +61,16 @@ public class TriangleDataSet extends DataSet implements Serializable{
     public void setPrimitives(List<float[][]> primitives) {
         this.primitives = primitives;
     }
+    
+    public void logPoints(){
+    	for(Polygon p : drawableTriangles) {
+    		Coord3d c1 = p.get(0).xyz;
+    		Coord3d c2 = p.get(1).xyz;
+    		Coord3d c3 = p.get(2).xyz;
+    		System.out.println("pp 3");
+    		System.out.println(c1.x +" " + c1.y + " " + c1.z + "  ");
+    		System.out.println(c2.x +" " + c2.y + " " + c2.z + "  ");
+    		System.out.println(c3.x +" " + c3.y + " " + c3.z + "  ");
+    	}
+    }
 }

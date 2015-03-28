@@ -71,7 +71,7 @@ public class TestWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		scSwing = new ScatterSwing();
+//		scSwing = new ScatterSwing();
 		frame = new JFrame();
 		frame.setBounds(100, 100, 888, 726);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -10,7 +10,7 @@ import javax.vecmath.Point3d;
 
 import org.jzy3d.maths.Coord3d;
 
-public class LineDataSetSerializable extends DataSet implements Serializable {
+public class LineDataSetSerializable extends LineDataSet implements Serializable {
 
 	public List<ArrayList<Point3d>> data = new ArrayList<ArrayList<Point3d>>();
 	

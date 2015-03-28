@@ -36,6 +36,7 @@ public class FileManager {
 				TriangleDataSetSerializable serial = new TriangleDataSetSerializable(set.parameterSet, (TriangleDataSet) set);
 				serial.setDataType(DataType.TRIANGLES);
 				p.dataSets.set(p.dataSets.indexOf(set), serial);
+				((TriangleDataSet) set).logPoints();
 			}
 		}
 		
@@ -61,7 +62,7 @@ public class FileManager {
 		)
 		{
 			p = (Project) input.readObject();
-			
+			System.out.println(input);
 		}
 		catch(ClassNotFoundException ex){
 		}

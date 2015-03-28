@@ -15,7 +15,7 @@ public class ParserWrapper {
 	
 	public static Object parseFileOfType(String path, DataType type) {
 		if(type.equals(DataType.TRIANGLES)) {
-			TriangleObjectParser trParser = new TriangleObjectParser(null);
+			TriangleObjectParser trParser = new TriangleObjectParser(path);
 //			trParser.limit = 0;
 			try {
 				trParser.parse();
