@@ -21,6 +21,8 @@ import model.LineDataSet;
 import model.LineDataSetSerializable;
 import model.ParameterSet;
 import model.Project;
+import model.TriangleDataSet;
+import model.TriangleDataSetSerializable;
 
 public class FileManager {
 	
@@ -28,6 +30,11 @@ public class FileManager {
 		for(DataSet set : p.dataSets) {
 			if(set.dataType == DataType.LINES) {
 				LineDataSetSerializable serial = new LineDataSetSerializable(set.parameterSet, (LineDataSet) set);
+				p.dataSets.set(p.dataSets.indexOf(set), serial);
+			}
+			else if(set.dataType == DataType.TRIANGLES) {
+				TriangleDataSetSerializable serial = new TriangleDataSetSerializable(set.parameterSet, (TriangleDataSet) set);
+				serial.setDataType(DataType.TRIANGLES);
 				p.dataSets.set(p.dataSets.indexOf(set), serial);
 			}
 		}
@@ -64,6 +71,10 @@ public class FileManager {
 		for(DataSet set : p.dataSets) {
 			if(set.dataType == DataType.LINES) {
 				LineDataSet serial = new LineDataSet(set.parameterSet, (LineDataSetSerializable) set);
+				p.dataSets.set(p.dataSets.indexOf(set), serial);
+			}
+			else if(set.dataType == DataType.TRIANGLES) {
+				TriangleDataSet serial = new TriangleDataSet(set.parameterSet, (TriangleDataSetSerializable) set);
 				p.dataSets.set(p.dataSets.indexOf(set), serial);
 			}
 		}

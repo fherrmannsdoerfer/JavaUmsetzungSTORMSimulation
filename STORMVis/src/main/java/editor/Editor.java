@@ -135,7 +135,7 @@ public class Editor implements KeyListener, TableModelListener {
 				
 				final DataSetSelectionTableModel model = new DataSetSelectionTableModel();
 				final DataSetSelectionTable selectionTable = new DataSetSelectionTable(model);
-				model.data = allDataSets;
+				model.data.addAll(allDataSets);
 				if(toggleClose.isSelected()) {
 					model.selectableDataType = DataType.TRIANGLES;
 				}
@@ -298,7 +298,7 @@ public class Editor implements KeyListener, TableModelListener {
 					for(DataSet s : allDataSets) {
 						model.visibleSets.add(Boolean.FALSE);
 					}
-					model.data = p.dataSets;
+					model.data.addAll(p.dataSets);
 					drawPanel.repaint();
 					imgPanel.setImageFromRecoveredProject(p.getOriginalImage().getImage());
 					zoomFactor = 1.f;
@@ -401,7 +401,6 @@ public class Editor implements KeyListener, TableModelListener {
                     model.data.add(newSet);
                     drawPanel.drawManager.currentPoints.clear();
                     drawPanel.repaint();
-                    System.out.println("new set size tr. : " + newSet.drawableTriangles.size());
                     model.fireTableDataChanged();
 				}
 				else { // lines open: line object generated
@@ -410,12 +409,13 @@ public class Editor implements KeyListener, TableModelListener {
 					newSet.setName(nameField.getText());
 					newSet.setColor(currentDrawingColor);
 					newSet.setDataType(DataType.LINES);
+					System.out.println("all:" + allDataSets.size());
 					allDataSets.add(newSet);
 					model.visibleSets.add(Boolean.FALSE);
 					model.data.add(newSet);
 					drawPanel.drawManager.currentPoints.clear();
 					drawPanel.repaint();
-					System.out.println("new set size: " + newSet.data.size());
+					System.out.println("all2:" + allDataSets.size());
 					model.fireTableDataChanged();
 				}
 				Window win = SwingUtilities.getWindowAncestor(newSetButton);
