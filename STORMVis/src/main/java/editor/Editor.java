@@ -1,6 +1,7 @@
 package editor;
 
 import gui.DataTypeDetector.DataType;
+import inout.FileManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -45,6 +46,7 @@ import javax.swing.event.TableModelListener;
 import model.DataSet;
 import model.LineDataSet;
 import model.ParameterSet;
+import model.Project;
 import model.TriangleDataSet;
 
 public class Editor implements KeyListener, TableModelListener {
@@ -69,6 +71,8 @@ public class Editor implements KeyListener, TableModelListener {
 	
 	private List<DataSet> allDataSets = new ArrayList<DataSet>();
 	private Color currentDrawingColor = Color.RED;
+	
+	private static String EXTENSION = ".storm";
 	
 	public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -234,6 +238,28 @@ public class Editor implements KeyListener, TableModelListener {
 		});
         
         JButton saveProjectButton = new JButton("save project");
+        saveProjectButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int returnValue = fc.showSaveDialog(f);
+				if(returnValue == JFileChooser.APPROVE_OPTION) {
+					String path = fc.getSelectedFile().getAbsolutePath();
+					String name = fc.getSelectedFile().getName();
+					if (!path.endsWith(EXTENSION)) {
+					    path += EXTENSION;
+					}
+					if(name.endsWith(EXTENSION)){
+						name = name.substring(name.length()-6, name.length()-1);
+					}
+					System.out.println("Path to write project: " + path);
+					System.out.println("project name: " + name);
+					Project p = new Project(name, allDataSets);
+					FileManager.writeProjectToFile(p, path);
+				}
+			}
+		});
+        
         model = new DataSetTableModel();
         dataSetTable = new JTable(model);
         dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
@@ -248,34 +274,54 @@ public class Editor implements KeyListener, TableModelListener {
         	}
         });
         
+        JButton loadProjectButton = new JButton("load project");
+        loadProjectButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setFileFilter(new ProjectFileFilter());
+				fc.setFileSelectionMode(0);
+				int returnValue = fc.showOpenDialog(f);
+				if(returnValue == JFileChooser.APPROVE_OPTION) {
+					String path = fc.getSelectedFile().getAbsolutePath();
+					Project p = FileManager.openProjectFromFile(path);
+					allDataSets.clear();
+					model.data.clear();
+					model.visibleSets.clear();
+					allDataSets = p.dataSets;
+					for(DataSet s : allDataSets) {
+						model.visibleSets.add(Boolean.FALSE);
+					}
+					model.data = p.dataSets;
+					drawPanel.repaint();
+	        		imgPanel.requestFocus();
+				}
+			}
+		});
+        
         GroupLayout gl_controlPanel = new GroupLayout(controlPanel);
         gl_controlPanel.setHorizontalGroup(
         	gl_controlPanel.createParallelGroup(Alignment.LEADING)
         		.addGroup(gl_controlPanel.createSequentialGroup()
         			.addContainerGap()
         			.addGroup(gl_controlPanel.createParallelGroup(Alignment.LEADING)
+        				.addGroup(Alignment.TRAILING, gl_controlPanel.createSequentialGroup()
+        					.addGap(6)
+        					.addComponent(dataSetTable, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE))
+        				.addComponent(deleteLastButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        				.addComponent(addButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
         				.addGroup(gl_controlPanel.createSequentialGroup()
         					.addGap(6)
-        					.addComponent(dataSetTable, GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
-        					.addContainerGap())
-        				.addGroup(Alignment.TRAILING, gl_controlPanel.createSequentialGroup()
-        					.addGroup(gl_controlPanel.createParallelGroup(Alignment.LEADING)
-        						.addComponent(deleteLastButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        						.addComponent(addButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        						.addGroup(gl_controlPanel.createSequentialGroup()
-        							.addGap(6)
-        							.addComponent(lblNmpx, GroupLayout.PREFERRED_SIZE, 53, GroupLayout.PREFERRED_SIZE)
-        							.addPreferredGap(ComponentPlacement.RELATED)
-        							.addComponent(pixelNmField, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE))
-        						.addComponent(importImageButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        						.addComponent(toggleClose, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE))
-        					.addContainerGap())
-        				.addGroup(gl_controlPanel.createSequentialGroup()
-        					.addComponent(saveProjectButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        					.addContainerGap())
-        				.addGroup(gl_controlPanel.createSequentialGroup()
-        					.addComponent(btnChooseColor, GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
-        					.addContainerGap())))
+        					.addComponent(lblNmpx, GroupLayout.PREFERRED_SIZE, 53, GroupLayout.PREFERRED_SIZE)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(pixelNmField, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE))
+        				.addComponent(importImageButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+        				.addComponent(toggleClose, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+        				.addComponent(saveProjectButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+        				.addComponent(btnChooseColor, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+        				.addComponent(loadProjectButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE))
+        			.addContainerGap())
         );
         gl_controlPanel.setVerticalGroup(
         	gl_controlPanel.createParallelGroup(Alignment.LEADING)
@@ -298,7 +344,9 @@ public class Editor implements KeyListener, TableModelListener {
         			.addComponent(dataSetTable, GroupLayout.PREFERRED_SIZE, 166, GroupLayout.PREFERRED_SIZE)
         			.addPreferredGap(ComponentPlacement.UNRELATED)
         			.addComponent(saveProjectButton)
-        			.addContainerGap(282, Short.MAX_VALUE))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addComponent(loadProjectButton)
+        			.addContainerGap(241, Short.MAX_VALUE))
         );
         controlPanel.setLayout(gl_controlPanel);
         
