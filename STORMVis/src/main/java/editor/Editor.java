@@ -237,29 +237,6 @@ public class Editor implements KeyListener, TableModelListener {
 			}
 		});
         
-        JButton saveProjectButton = new JButton("save project");
-        saveProjectButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				int returnValue = fc.showSaveDialog(f);
-				if(returnValue == JFileChooser.APPROVE_OPTION) {
-					String path = fc.getSelectedFile().getAbsolutePath();
-					String name = fc.getSelectedFile().getName();
-					if (!path.endsWith(EXTENSION)) {
-					    path += EXTENSION;
-					}
-					if(name.endsWith(EXTENSION)){
-						name = name.substring(name.length()-6, name.length()-1);
-					}
-					System.out.println("Path to write project: " + path);
-					System.out.println("project name: " + name);
-					Project p = new Project(name, allDataSets);
-					FileManager.writeProjectToFile(p, path);
-				}
-			}
-		});
-        
         model = new DataSetTableModel();
         dataSetTable = new JTable(model);
         dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
@@ -273,6 +250,34 @@ public class Editor implements KeyListener, TableModelListener {
         		imgPanel.requestFocus();
         	}
         });
+        
+        /*
+         * Save and load
+         */
+        
+        JButton saveProjectButton = new JButton("save project");
+        saveProjectButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int returnValue = fc.showSaveDialog(f);
+				if(returnValue == JFileChooser.APPROVE_OPTION) {
+					String path = fc.getSelectedFile().getAbsolutePath();
+					String name = fc.getSelectedFile().getName();
+					if (!path.endsWith(EXTENSION)) {
+					    path += EXTENSION;
+					}
+					if(name.endsWith(EXTENSION)){
+						name = name.substring(0, name.length()-6);
+					}
+					System.out.println("Path to write project: " + path);
+					System.out.println("project name: " + name);
+					Project p = new Project(name, allDataSets);
+					p.setOriginalImage(new SerializableImage(imgPanel.getOriginalImage()));
+					FileManager.writeProjectToFile(p, path);
+				}
+			}
+		});
         
         JButton loadProjectButton = new JButton("load project");
         loadProjectButton.addActionListener(new ActionListener() {
@@ -295,7 +300,11 @@ public class Editor implements KeyListener, TableModelListener {
 					}
 					model.data = p.dataSets;
 					drawPanel.repaint();
-	        		imgPanel.requestFocus();
+					imgPanel.setImageFromRecoveredProject(p.getOriginalImage().getImage());
+					zoomFactor = 1.f;
+					imgPanel.scaleFactor = zoomFactor;
+					imgPanel.zoom(zoomFactor);
+					updateBoundsOfComponents();
 				}
 			}
 		});

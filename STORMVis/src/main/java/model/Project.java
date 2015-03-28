@@ -1,12 +1,17 @@
 package model;
 
+import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import editor.SerializableImage;
+
 public class Project implements Serializable {
 	public String projectName;
 	public List<DataSet> dataSets;
+	
+	public SerializableImage originalImage;
 	
 	public String getProjectName() {
 		return projectName;
@@ -36,4 +41,13 @@ public class Project implements Serializable {
 		this.projectName = "new project";
 		this.dataSets = new ArrayList<DataSet>();
 	}
+	
+	public SerializableImage getOriginalImage() {
+		return originalImage;
+	}
+	public void setOriginalImage(SerializableImage originalImage) {
+		this.originalImage = originalImage;
+	}
+	
+	
 }

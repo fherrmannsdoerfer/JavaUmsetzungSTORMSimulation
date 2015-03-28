@@ -51,6 +51,26 @@ class ImagePanel extends JPanel {
 		}
 	}
 	
+	public BufferedImage getOriginalImage() {
+		return originalImage;
+	}
+	
+	public void setImageFromRecoveredProject(BufferedImage img) {
+		image = img;
+		originalImage = image;
+		float limit = 1000.f;
+		if (image.getWidth() > limit) {
+			scaleFactor = limit/image.getWidth();
+			System.out.println("1px = " + 1/scaleFactor + " in real life");
+			float newHeight = scaleFactor * image.getHeight();
+			try {
+				image = getScaledImage(image, (int) limit, (int) newHeight);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public Dimension getPreferredSize() {
 		if(image != null) {
 			return new Dimension(image.getWidth(),image.getHeight());
