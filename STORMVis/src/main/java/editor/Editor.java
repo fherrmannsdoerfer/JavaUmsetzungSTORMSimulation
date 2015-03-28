@@ -13,6 +13,8 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -127,8 +129,8 @@ public class Editor implements KeyListener, TableModelListener {
 			
 			public void actionPerformed(ActionEvent e) {
 				
-				DataSetSelectionTableModel model = new DataSetSelectionTableModel();
-				DataSetSelectionTable selectionTable = new DataSetSelectionTable(model);
+				final DataSetSelectionTableModel model = new DataSetSelectionTableModel();
+				final DataSetSelectionTable selectionTable = new DataSetSelectionTable(model);
 				model.data = allDataSets;
 				if(toggleClose.isSelected()) {
 					model.selectableDataType = DataType.TRIANGLES;
@@ -136,6 +138,43 @@ public class Editor implements KeyListener, TableModelListener {
 				else {
 					model.selectableDataType = DataType.LINES;
 				}
+				
+				selectionTable.addMouseListener(new MouseAdapter() {
+		        	  public void mouseClicked(MouseEvent e) {
+		        	    if (e.getClickCount() == 2) {
+		        	      JTable target = (JTable)e.getSource();
+		        	      int row = target.getSelectedRow();
+		        	      int column = target.getSelectedColumn();
+		        	      boolean selectable = model.isCellSelectable(row, column);
+		        	      if(selectable) {
+		        	    	  if(model.selectableDataType == DataType.LINES) {
+		        	    		  LineDataSet set = (LineDataSet) model.data.get(row);
+		        	    		  set = drawPanel.addCurrentPointsToLineDataSet(set);
+		        	    		  allDataSets.set(row, set);
+		        	    		  model.data.set(row, set);
+		        	    		  drawPanel.drawManager.currentPoints.clear();
+		        	    		  drawPanel.repaint();
+		        	    		  model.fireTableDataChanged();
+		        	    	  }
+		        	    	  else if (model.selectableDataType == DataType.TRIANGLES) {
+		        	    		  TriangleDataSet set = (TriangleDataSet) model.data.get(row);
+		        	    		  set = drawPanel.addCurrentPointsToTriangleDataSet(set);
+		        	    		  allDataSets.set(row, set);
+		        	    		  model.data.set(row, set);
+		        	    		  drawPanel.drawManager.currentPoints.clear();
+		        	    		  drawPanel.repaint();
+		        	    		  model.fireTableDataChanged();
+		        	    	  }
+		        	    	  Window win = SwingUtilities.getWindowAncestor(selectionTable);
+		        	    	  win.setVisible(false);
+		        	    	  nameField.setText("");
+		        	    	  toggleClose.setSelected(false);
+		        	    	  drawPanel.closeCurrentLine = false;
+		        	    	  imgPanel.requestFocus();
+		        	      }
+		        	    }
+		        	  }
+		        	});
 				
 				final JComponent[] inputs = new JComponent[] {
 						new JLabel("You can either create a new data set or add your lines to an existing data set of the same type."),
@@ -326,6 +365,7 @@ public class Editor implements KeyListener, TableModelListener {
 	            win.setVisible(false);
 	            nameField.setText("");
 	            toggleClose.setSelected(false);
+	            drawPanel.closeCurrentLine = false;
 	            imgPanel.requestFocus();
 			}
 		});
