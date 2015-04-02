@@ -2,63 +2,35 @@ package gui;
 
 import gui.DataTypeDetector.DataType;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-
-import java.awt.FlowLayout;
-
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.JToggleButton;
-import javax.swing.AbstractAction;
-
-import java.awt.event.ActionEvent;
-
-import javax.swing.Action;
-
-import org.javatuples.Pair;
-import org.jzy3d.chart.Chart;
-import org.jzy3d.plot3d.primitives.Polygon;
-
-import parsing.LineObjectParser;
-
-import javax.swing.JPanel;
-
 import java.awt.BorderLayout;
-
-import javax.swing.border.LineBorder;
-
 import java.awt.Color;
-import java.awt.GridLayout;
-
-import javax.swing.JTextPane;
-import javax.swing.Box;
-import javax.swing.JButton;
-
-import java.awt.CardLayout;
-
-import javax.swing.JSplitPane;
-
-import java.awt.GridBagLayout;
+import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-
-import javax.swing.JToolBar;
-
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import javax.swing.JSlider;
-import javax.swing.JTextField;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
+
+import org.javatuples.Pair;
+import org.jzy3d.chart.Chart;
+import org.jzy3d.plot3d.primitives.Polygon;
 
 public class TestWindow {
 
@@ -99,7 +71,7 @@ public class TestWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		scSwing = new ScatterSwing();
+//		scSwing = new ScatterSwing();
 		frame = new JFrame();
 		frame.setBounds(100, 100, 888, 726);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

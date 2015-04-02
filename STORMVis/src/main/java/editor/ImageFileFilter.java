@@ -1,4 +1,4 @@
-package playground;
+package editor;
 
 import java.io.File;
 
@@ -8,7 +8,6 @@ public class ImageFileFilter extends FileFilter {
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
 		return "Images";
 	}
 	

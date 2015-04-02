@@ -1,23 +1,17 @@
 package calc;
 
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.javatuples.Pair;
-import org.jzy3d.analysis.AbstractAnalysis;
 import org.jzy3d.analysis.AnalysisLauncher;
 import org.jzy3d.colors.Color;
 import org.jzy3d.maths.Coord3d;
-import org.jzy3d.plot3d.primitives.Scatter;
+
+import parsing.TriangleObjectParser;
 
 import common.ScatterDemo;
-import parsing.TriangleObjectParser;
 
 public class STORMCalculator {
 
@@ -60,7 +54,8 @@ public class STORMCalculator {
 	
 	public void startCalculation() throws Exception {
 		long start = System.nanoTime();
-		TriangleObjectParser trParser = new TriangleObjectParser(null);
+		String path = "/Users/maximilianscheurer/ex.nff";
+		TriangleObjectParser trParser = new TriangleObjectParser(path);
 		trParser.limit = 0;
 		try {
 			trParser.parse();
@@ -96,11 +91,11 @@ public class STORMCalculator {
 			allObjects[i] = coord;
 			colors[i] = new Color(coord.x/255.f, coord.y/255.f, coord.z/255.f, 1.f);
 		}
-		ScatterDemo demo = new ScatterDemo();
-		demo.stormColors = colors;
-		demo.stormPoints = allObjects;
-		demo.STORM = true;
-		Coord3d vp = demo.getChart().getViewPoint();
+//		ScatterDemo demo = new ScatterDemo();
+//		demo.stormColors = colors;
+//		demo.stormPoints = allObjects;
+//		demo.STORM = true;
+//		Coord3d vp = demo.getChart().getViewPoint();
 //		AnalysisLauncher.open(demo);
 		
 		//Calc.print2dMatrix(ep);

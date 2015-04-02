@@ -1,4 +1,4 @@
-package playground;
+package editor;
 
 import gui.DataTypeDetector.DataType;
 
@@ -37,20 +37,18 @@ class DataSetSelectionTableModel extends AbstractTableModel {
 		return columnNames[col];
 	}
 	
-
 	public boolean isCellEditable(int row, int col){
 		return false;
 	}
 	
 	public boolean isCellSelectable(int row, int col) {
 		if(data.get(row).dataType == selectableDataType) {
-			System.out.println("selectable");
 			return true;
 		}
 		else {
-			System.out.println("not selectable");
 			return false;
 		}
 	}	
+	
 }
 

@@ -1,5 +1,7 @@
 package gui;
 
+import gui.DataTypeDetector.DataType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +15,6 @@ import org.jzy3d.plot3d.primitives.LineStrip;
 import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.Polygon;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
-
-import gui.DataTypeDetector.DataType;
 
 public class Plotter {
 	

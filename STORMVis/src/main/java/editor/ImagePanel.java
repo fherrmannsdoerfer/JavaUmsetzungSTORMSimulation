@@ -1,4 +1,4 @@
-package playground;
+package editor;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -29,19 +29,6 @@ class ImagePanel extends JPanel {
             	requestFocus();
             }
         });
-//		try {   
-//			image = ImageIO.read(new File("/Users/maximilianscheurer/Desktop/bildMitStruktur.png"));
-//			originalImage = image;
-//		} catch (IOException ex) {
-//			ex.printStackTrace();
-//		}
-//		float limit = 1000.f;
-//		if (image.getWidth() > limit) {
-//			scaleFactor = limit/image.getWidth();
-//			System.out.println("1px = " + 1/scaleFactor + " in real life");
-//			float newHeight = scaleFactor * image.getHeight();
-//			image = getScaledImage(image, (int) limit, (int) newHeight);
-//		}
 	}
 	
 	public void setPathAndReadImage(String path) {
@@ -59,7 +46,26 @@ class ImagePanel extends JPanel {
 			try {
 				image = getScaledImage(image, (int) limit, (int) newHeight);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public BufferedImage getOriginalImage() {
+		return originalImage;
+	}
+	
+	public void setImageFromRecoveredProject(BufferedImage img) {
+		image = img;
+		originalImage = image;
+		float limit = 1000.f;
+		if (image.getWidth() > limit) {
+			scaleFactor = limit/image.getWidth();
+			System.out.println("1px = " + 1/scaleFactor + " in real life");
+			float newHeight = scaleFactor * image.getHeight();
+			try {
+				image = getScaledImage(image, (int) limit, (int) newHeight);
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -76,7 +82,6 @@ class ImagePanel extends JPanel {
 		try {
 			image=getScaledImage(originalImage, (int) (originalImage.getWidth()*scale),(int) (originalImage.getHeight()*scale));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		repaint();
@@ -85,7 +90,7 @@ class ImagePanel extends JPanel {
 	@Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(image, 0, 0, null); // see javadoc for more info on the parameters            
+        g.drawImage(image, 0, 0, null);           
     }
 	
 	public static BufferedImage getScaledImage(BufferedImage image, int width, int height) throws IOException {

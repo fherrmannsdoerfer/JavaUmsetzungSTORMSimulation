@@ -21,14 +21,18 @@ public class TriangleObjectParser {
 	public List<Polygon> allTriangles;
 	public List<float[][]> primitives;
 	public int limit;
+	public String path;
 	
 	public TriangleObjectParser(String path) {
-		
+		this.path = path;
+		if(path == null) {
+			this.path = FILE;
+		}
 	}
 	
 	public void parse() throws NumberFormatException, IOException {
 		long start = System.nanoTime();
-        BufferedReader br = new BufferedReader(new FileReader(FILE));
+        BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
         List<String> words = new ArrayList<String>();
         int objectNumber = 0;

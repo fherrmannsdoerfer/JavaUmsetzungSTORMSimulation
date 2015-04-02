@@ -1,5 +1,7 @@
 package inout;
 
+import gui.DataTypeDetector.DataType;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
@@ -15,48 +17,69 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.DataSet;
+import model.LineDataSet;
+import model.LineDataSetSerializable;
 import model.ParameterSet;
 import model.Project;
+import model.TriangleDataSet;
+import model.TriangleDataSetSerializable;
 
 public class FileManager {
-	public static void main(String... aArguments) {
-
-		List<Project> projects = new ArrayList<Project>();
-		
-		Project p = new Project();
-		p.setProjectName("ouput project");
-		DataSet s = new DataSet(new ParameterSet());
-		s.setName("output set");
-		p.addDataSet(s);
-		projects.add(p);
-		//serialize the List
-		try (
-			OutputStream file = new FileOutputStream("test.storm");
-			OutputStream buffer = new BufferedOutputStream(file);
-			ObjectOutput output = new ObjectOutputStream(buffer);
-		)
-		{
-			output.writeObject(projects);
-		}  
-		catch(IOException ex){
-
+	
+	public static void writeProjectToFile(Project p, String path) {
+		for(DataSet set : p.dataSets) {
+			if(set.dataType == DataType.LINES) {
+				LineDataSetSerializable serial = new LineDataSetSerializable(set.parameterSet, (LineDataSet) set);
+				p.dataSets.set(p.dataSets.indexOf(set), serial);
+			}
+			else if(set.dataType == DataType.TRIANGLES) {
+				TriangleDataSetSerializable serial = new TriangleDataSetSerializable(set.parameterSet, (TriangleDataSet) set);
+				serial.setDataType(DataType.TRIANGLES);
+				p.dataSets.set(p.dataSets.indexOf(set), serial);
+				((TriangleDataSet) set).logPoints();
+			}
 		}
-
+		
+		try (
+				OutputStream file = new FileOutputStream(path);
+				OutputStream buffer = new BufferedOutputStream(file);
+				ObjectOutput output = new ObjectOutputStream(buffer);
+				)
+				{
+			output.writeObject(p);
+				}  
+		catch(IOException ex){
+			ex.printStackTrace();
+		}
+	}
+	
+	public static Project openProjectFromFile(String path) {
+		Project p = null;
 		try(
-				InputStream file = new FileInputStream("test.storm");
+				InputStream file = new FileInputStream(path);
 				InputStream buffer = new BufferedInputStream(file);
 				ObjectInput input = new ObjectInputStream (buffer);
 		)
 		{
-			List<Project> recoveredQuarks = (List<Project>) input.readObject();
-			for(Project quark: recoveredQuarks){
-				System.out.println("Recovered Project: " + quark.getProjectName());
-				System.out.println("data: " + quark.getDataSets().get(0).getName());
-			}
+			p = (Project) input.readObject();
+			System.out.println(input);
 		}
 		catch(ClassNotFoundException ex){
 		}
 		catch(IOException ex){
 		}
+		
+		for(DataSet set : p.dataSets) {
+			if(set.dataType == DataType.LINES) {
+				LineDataSet serial = new LineDataSet(set.parameterSet, (LineDataSetSerializable) set);
+				p.dataSets.set(p.dataSets.indexOf(set), serial);
+			}
+			else if(set.dataType == DataType.TRIANGLES) {
+				TriangleDataSet serial = new TriangleDataSet(set.parameterSet, (TriangleDataSetSerializable) set);
+				p.dataSets.set(p.dataSets.indexOf(set), serial);
+			}
+		}
+		
+		return p;
 	}
 } 

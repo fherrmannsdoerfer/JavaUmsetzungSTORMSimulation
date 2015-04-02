@@ -4,8 +4,6 @@ package calc;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -178,7 +176,7 @@ public class StormPointFinder {
 			System.out.println("Conversion ended");
 //			Calc.print2dMatrix(stormPoints);
 			// TODO: boolean or integer?
-			boolean mergedPSFs = false;
+			boolean mergedPSFs = true;
 	        float psfwidth = 200;
 	        float affectingFactor = 2;
 	        if(mergedPSFs) {

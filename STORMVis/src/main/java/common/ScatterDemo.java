@@ -22,7 +22,6 @@ import org.jzy3d.plot3d.primitives.Sphere;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 import org.jzy3d.plot3d.rendering.lights.Light;
 import org.jzy3d.plot3d.rendering.view.View;
-import org.jzy3d.plot3d.rendering.view.modes.CameraMode;
 
 import parsing.LineObjectParser;
 import parsing.STORMObjectParser;
@@ -59,7 +58,7 @@ public class ScatterDemo extends AbstractAnalysis {
 		}
 		
 		TriangleObjectParser trParser = new TriangleObjectParser(null);
-		trParser.limit = 20000;
+		trParser.limit = 0;
 		
 		try {
 			trParser.parse();
