@@ -1,9 +1,13 @@
 package playground;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Panel;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -12,11 +16,14 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+/*! Sketch of GUI */
 
 public class SketchGui extends JFrame {
 
@@ -63,9 +70,9 @@ public class SketchGui extends JFrame {
 		setBounds(100, 100, 288, 970);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
+//		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+		contentPane.setPreferredSize(new Dimension(288, 970));
 		Box verticalBox = Box.createVerticalBox();
 		verticalBox.setName("");
 		verticalBox.setFont(new Font("Dialog", Font.ITALIC, 89));
@@ -421,5 +428,16 @@ public class SketchGui extends JFrame {
 		dtrpnHierListeMit.setText("Hier Liste mit datasets einfuegen");
 		dtrpnHierListeMit.setBounds(12, 27, 240, 139);
 		contentPane.add(dtrpnHierListeMit);
+		
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(contentPane);
+		JScrollPane jsp = new JScrollPane(contentPane);
+		panel.add(jsp);
+		jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		getContentPane().add(panel);
+//		getContentPane().add(jsp);
+//		add(contentPane);
+//		panel.add(jsp);
+//		setContentPane(panel);
 	}
 }
