@@ -1,5 +1,7 @@
 package playground;
 
+import inout.FileManager;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -7,10 +9,15 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -26,7 +33,11 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import editor.*;
+import model.DataSet;
+import model.Project;
+import editor.DataSetTableModel;
+import editor.ProjectFileFilter;
+
 
 /**
  * @brief Sketch of GUI 
@@ -60,6 +71,11 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private final JLabel loadDataLabel = new JLabel("Please import data.");
 	private JTable dataSetTable;
 	private DataSetTableModel model;
+	
+	/**
+	 * contains all current dataSets (displayed in table)
+	 */
+	private List<DataSet> allDataSets = new ArrayList<DataSet>();
 
 	/**
 	 * Launch the application.
@@ -472,6 +488,28 @@ public class SketchGui extends JFrame implements TableModelListener {
 		
 		JButton importProjectButton = new JButton("Import project");
 		toolBar.add(importProjectButton);
+		importProjectButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setFileFilter(new ProjectFileFilter());
+				fc.setFileSelectionMode(0);
+				int returnValue = fc.showOpenDialog(getContentPane());
+				if(returnValue == JFileChooser.APPROVE_OPTION) {
+					String path = fc.getSelectedFile().getAbsolutePath();
+					Project p = FileManager.openProjectFromFile(path);
+					allDataSets.clear();
+					model.data.clear();
+					model.visibleSets.clear();
+					allDataSets = p.dataSets;
+					for(DataSet s : allDataSets) {
+						model.visibleSets.add(Boolean.FALSE);
+					}
+					model.data.addAll(p.dataSets);
+				}
+			}
+		});
 		
 		JButton saveProjectButton = new JButton("Save project");
 		toolBar.add(saveProjectButton);
@@ -479,7 +517,6 @@ public class SketchGui extends JFrame implements TableModelListener {
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 }
