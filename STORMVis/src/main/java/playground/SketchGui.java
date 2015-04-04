@@ -1,13 +1,12 @@
 package playground;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Panel;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
+import java.awt.LayoutManager;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -18,12 +17,20 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-/*! Sketch of GUI */
+/**
+ * @brief Sketch of GUI 
+ * 
+ * This is the main program that implements both plotter and calculator for STORM simulation.
+ * It can load new data from the editor or parse files on the file system.
+ * 
+ * 
+ */
 
 public class SketchGui extends JFrame {
 
@@ -44,6 +51,8 @@ public class SketchGui extends JFrame {
 	private JTextField colorBField;
 	private JTextField colorRField;
 	private JTextField colorGField;
+	
+	private final JLabel loadDataLabel = new JLabel("Please import data.");
 
 	/**
 	 * Launch the application.
@@ -67,7 +76,8 @@ public class SketchGui extends JFrame {
 	public SketchGui() {
 		int fontSize = 16;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 288, 970);
+//		setBounds(100, 100, 288, 970);
+		setBounds(100, 100, 1000, 726);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 //		setContentPane(contentPane);
@@ -434,10 +444,15 @@ public class SketchGui extends JFrame {
 		JScrollPane jsp = new JScrollPane(contentPane);
 		panel.add(jsp);
 		jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		getContentPane().add(panel);
-//		getContentPane().add(jsp);
-//		add(contentPane);
-//		panel.add(jsp);
-//		setContentPane(panel);
+		getContentPane().add(panel, BorderLayout.EAST);
+		
+		JPanel plotPanel = new JPanel((LayoutManager) null);
+		plotPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
+		getContentPane().add(plotPanel, BorderLayout.CENTER);
+		plotPanel.setLayout(new BorderLayout());
+		
+		loadDataLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		plotPanel.add(loadDataLabel, BorderLayout.CENTER);
+		
 	}
 }
