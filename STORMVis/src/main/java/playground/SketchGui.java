@@ -22,6 +22,9 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.JToolBar;
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
 
 /**
  * @brief Sketch of GUI 
@@ -53,6 +56,7 @@ public class SketchGui extends JFrame {
 	private JTextField colorGField;
 	
 	private final JLabel loadDataLabel = new JLabel("Please import data.");
+	private JTable dataSetTable;
 
 	/**
 	 * Launch the application.
@@ -434,14 +438,13 @@ public class SketchGui extends JFrame {
 		visButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		verticalBox.add(visButton);
 		
-		JEditorPane dtrpnHierListeMit = new JEditorPane();
-		dtrpnHierListeMit.setText("Hier Liste mit datasets einfuegen");
-		dtrpnHierListeMit.setBounds(12, 27, 240, 139);
-		contentPane.add(dtrpnHierListeMit);
-		
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(contentPane);
 		JScrollPane jsp = new JScrollPane(contentPane);
+		
+		dataSetTable = new JTable((TableModel) null);
+		dataSetTable.setBounds(12, 12, 240, 166);
+		contentPane.add(dataSetTable);
 		panel.add(jsp);
 		jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		getContentPane().add(panel, BorderLayout.EAST);
@@ -453,6 +456,9 @@ public class SketchGui extends JFrame {
 		
 		loadDataLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		plotPanel.add(loadDataLabel, BorderLayout.CENTER);
+		
+		JToolBar toolBar = new JToolBar();
+		getContentPane().add(toolBar, BorderLayout.NORTH);
 		
 	}
 }

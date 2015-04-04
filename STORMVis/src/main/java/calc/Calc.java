@@ -37,6 +37,11 @@ public class Calc {
 		return trMatrix;
 	}
 	
+	/**
+	 * 
+	 * @param array - 3d matrix
+	 * prints a 3d matrix, iteration by "page"
+	 */
 	public static void printMatrix(float[][][] array) {
 		System.out.println("-- matrix --");
 		int size = array.length;
@@ -53,6 +58,12 @@ public class Calc {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param vec - vector
+	 * prints the column/row vector
+	 */
+	
 	public static void printVector(float[] vec) {
 		System.out.println("-- vector --");
 		for(int i = 0; i<vec.length;i++) {
@@ -60,6 +71,12 @@ public class Calc {
 		}
 		System.out.println("");
 	}
+	
+	/**
+	 * 
+	 * @param array - 2d matrix
+	 * prints the rows and columns of a 2d matrix
+	 */
 	
 	public static void print2dMatrix(float[][] array) {
 		System.out.println("-- matrix --");
@@ -74,6 +91,12 @@ public class Calc {
 		}
 		System.out.print("\n");
 	}
+	
+	/**
+	 * 
+	 * @param tr - 3d matrix with triangles
+	 * @return area of all triangles
+	 */
 	
 	public static float[] getAreas(float[][][] tr) {
 		long start = System.nanoTime();
@@ -96,6 +119,12 @@ public class Calc {
 		return areas;
 	}
 	
+	/**
+	 * 
+	 * @param vec
+	 * @return |vec|
+	 */
+	
 	public static float getNorm(float[] vec) {
 		float sum = 0;
 		for (int i = 0; i < vec.length; i++) {
@@ -104,9 +133,22 @@ public class Calc {
 		return (float) Math.sqrt(sum);
 	}
 	
+	/**
+	 * 
+	 * @param vec
+	 * @param vec2
+	 * @return vec * vec2
+	 */
+	
 	public static float getDot(float[] vec, float[] vec2) {
 		return (vec[0]*vec2[0]+vec[1]*vec2[1]+vec[2]*vec2[2]);
 	}
+	
+	/**
+	 * 
+	 * @param vec
+	 * @return -vec
+	 */
 	
 	public static float[] getNegativeVec(float[] vec) {
 		float[] negVec = new float[vec.length];
@@ -115,6 +157,11 @@ public class Calc {
 		}
 		return negVec;
 	}
+	
+	/**
+	 * @param vec
+	 * @return vec/|vec|
+	 */
 	
 	public static float[] scaleToOne(float[] vec) {
 		float[] normVec = new float[vec.length];
@@ -125,6 +172,12 @@ public class Calc {
 		return normVec;
 	}
 	
+	/**	
+	 * 
+	 * @param m1
+	 * @param m2
+	 * @return m1 + m2
+	 */
 	public static float[] vectorAddition(float[] m1, float[] m2) {
 		float[] result = new float[m1.length];
 		for (int i = 0; i < m1.length;i++) {
@@ -137,7 +190,12 @@ public class Calc {
 		return result;
 	}
 	
-	
+	/**
+	 * 
+	 * @param vec1 
+	 * @param vec2
+	 * @return vec1 x vec2
+	 */
 	public static float[] getCross(float[] vec1,float[] vec2) {
 		Vector3d v1 = new Vector3d();
 		v1.x = (double) vec1[0];
@@ -156,6 +214,12 @@ public class Calc {
 		return result;
 	}
 	
+	/**
+	 * 
+	 * @param v1 - first vector
+	 * @param v2 - second vector
+	 * @return difference between both vertices
+	 */
 	public static float[] difference(float[] v1, float[] v2) {
 		float[] result = new float[v1.length];
 		for(int i = 0; i < v1.length; i++) {
