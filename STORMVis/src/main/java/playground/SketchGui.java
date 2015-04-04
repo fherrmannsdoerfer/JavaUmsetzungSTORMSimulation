@@ -11,20 +11,22 @@ import java.awt.LayoutManager;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.JToolBar;
-import javax.swing.JTable;
-import javax.swing.table.TableModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
+import editor.*;
 
 /**
  * @brief Sketch of GUI 
@@ -35,7 +37,7 @@ import javax.swing.table.TableModel;
  * 
  */
 
-public class SketchGui extends JFrame {
+public class SketchGui extends JFrame implements TableModelListener {
 
 	private JPanel contentPane;
 	private JTextField radiusOfFilamentsField;
@@ -57,6 +59,7 @@ public class SketchGui extends JFrame {
 	
 	private final JLabel loadDataLabel = new JLabel("Please import data.");
 	private JTable dataSetTable;
+	private DataSetTableModel model;
 
 	/**
 	 * Launch the application.
@@ -442,7 +445,11 @@ public class SketchGui extends JFrame {
 		panel.add(contentPane);
 		JScrollPane jsp = new JScrollPane(contentPane);
 		
-		dataSetTable = new JTable((TableModel) null);
+		model = new DataSetTableModel();
+        dataSetTable = new JTable(model);
+        dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
+        model.addTableModelListener(this);
+        
 		dataSetTable.setBounds(12, 12, 240, 166);
 		contentPane.add(dataSetTable);
 		panel.add(jsp);
@@ -459,6 +466,20 @@ public class SketchGui extends JFrame {
 		
 		JToolBar toolBar = new JToolBar();
 		getContentPane().add(toolBar, BorderLayout.NORTH);
+		
+		JButton importFileButton = new JButton("Import file");
+		toolBar.add(importFileButton);
+		
+		JButton importProjectButton = new JButton("Import project");
+		toolBar.add(importProjectButton);
+		
+		JButton saveProjectButton = new JButton("Save project");
+		toolBar.add(saveProjectButton);
+	}
+
+	@Override
+	public void tableChanged(TableModelEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 }
