@@ -11,6 +11,8 @@ import java.awt.Font;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -507,12 +509,37 @@ public class SketchGui extends JFrame implements TableModelListener {
 						model.visibleSets.add(Boolean.FALSE);
 					}
 					model.data.addAll(p.dataSets);
+					model.fireTableDataChanged();
 				}
 			}
 		});
 		
+		configureTableListener();
+		
 		JButton saveProjectButton = new JButton("Save project");
 		toolBar.add(saveProjectButton);
+	}
+
+	/**
+	 * Configures the mouse listener for the dataset table. 
+	 * When a line is clicked, its ParameterSet is loaded to the configuration panel.
+	 */
+	private void configureTableListener() {
+		// TODO Auto-generated method stub
+		dataSetTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 1) {
+	        	      JTable target = (JTable)e.getSource();
+	        	      int row = target.getSelectedRow();
+	        	      int column = target.getSelectedColumn();
+	        	      System.out.println("row/col :" + row + " | " + column);
+	        	      if(column == 0) {
+	        	    	  
+	        	      }
+				}
+			}
+		});
+	
 	}
 
 	@Override
