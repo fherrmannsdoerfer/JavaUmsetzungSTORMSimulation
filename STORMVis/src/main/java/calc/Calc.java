@@ -21,6 +21,12 @@ public class Calc {
 		
 	}
 	
+	/**
+	 * @brief converts ArrayList with float[][] to float[][][] (containing triangles)
+	 * @param triangles
+	 * @return triangles as 3d-matrix
+	 */
+	
 	public static float[][][] getMatrix(List<float[][]> triangles) {
 		long start = System.nanoTime();
 		float[][][] trMatrix = new float[triangles.size()][3][3];
@@ -33,7 +39,7 @@ public class Calc {
 			}
 		}
 		long time = System.nanoTime() - start;
-		System.out.println("Converting to new matrix form: " + time/1e9 +"s");
+//		System.out.println("Converting to new matrix form: " + time/1e9 +"s");
 		return trMatrix;
 	}
 	
@@ -228,6 +234,11 @@ public class Calc {
 		return result;
 	}
 	
+	/**
+	 * 
+	 * @param array
+	 * @return sum of array elements
+	 */
 	public static float sum(float[] array) {
 		float sum = 0;
 		for (int i = 0;i < array.length;i++) {
@@ -235,6 +246,14 @@ public class Calc {
 		}
 		return sum;
 	}
+	
+	/**
+	 * @brief triangle vertices
+	 * 
+	 * Calculates and returns the border vertices of every triangle in tr
+	 * @param tr
+	 * @return Pair with first and second border vertex
+	 */
 	
 	public static Pair<float[][],float[][]> getVertices(float[][][] tr) {
 		float[][] vec1 = new float[tr.length][3];
@@ -252,6 +271,12 @@ public class Calc {
 		return new Pair<float[][], float[][]>(vec1,vec2);
 	}
 	
+	/**
+	 * @param aoa
+	 * @param length
+	 * @return vector with antibodie angle and length
+	 */
+	
 	public static float[] getVectorTri(float aoa, float length) {
 		double alpha = Math.random()*2*Math.PI;
 		double x = Math.cos(aoa)*Math.cos(alpha);
@@ -261,6 +286,12 @@ public class Calc {
 		return vec;
 	}
 	
+	/**
+	 * Matrix multiplication
+	 * @param m
+	 * @param vec
+	 * @return m x vec
+	 */
 	public static float[] applyMatrix(float[][] m, float[] vec) {
 		float[] result = new float[vec.length];
 		for (int i = 0; i < m.length;i++) {
@@ -273,6 +304,13 @@ public class Calc {
 		}
 		return result;
 	}
+	
+	/**
+	 * Simple matrix multiplication
+	 * @param m1
+	 * @param m2
+	 * @return m1 x m2
+	 */
 	
 	public static float[][] matrixMultiply(float[][] m1, float[][] m2) {
 		float[][] result = new float[m1.length][m1.length];
@@ -288,6 +326,13 @@ public class Calc {
 		return result;
 	}
 	
+	/**
+	 * Matrix addition
+	 * @param m1
+	 * @param m2
+	 * @return m1 + m2
+	 */
+	
 	public static float[][] matrixAddition(float[][] m1, float[][] m2) {
 		float[][] result = new float[m1.length][m1.length];
 		for (int i = 0; i < m1.length;i++) {
@@ -297,6 +342,13 @@ public class Calc {
 		}
 		return result;
 	}
+	
+	/**
+	 * Division of matrix by real number
+	 * @param m1
+	 * @param div
+	 * @return m1/div
+	 */
 	
 	
 	public static float[][] matrixDivide(float[][] m1, float div) {
@@ -309,6 +361,12 @@ public class Calc {
 		return result;
 	}
 	
+	/**
+	 * Transpose matrix
+	 * @param original
+	 * @return original^t
+	 */
+	
 	public static float[][] transpose(float[][] original) {
 		float[][] result = new float[original[0].length][original.length];
         if (original.length > 0) {
@@ -320,6 +378,14 @@ public class Calc {
         }
         return result;
     }
+	
+	/**
+	 * 
+	 * Distances of all vertices in m1 and m2 (used for mergePSF)
+	 * @param m1
+	 * @param m2
+	 * @return distance
+	 */
 	
 	public static float[][] pairwiseDistance(float[][] m1, float[][] m2) {
 		float[][] result = new float[m1.length][m1.length];
@@ -334,6 +400,13 @@ public class Calc {
 		return result;
 	}
 	
+	/**
+	 * Addition of add to lower triangle of an n x n matrix m
+	 * @param m
+	 * @param add
+	 * @return m(lower triangle) + add
+	 */
+	
 	public static float[][] addToLowerTriangle(float[][] m, float add) {
 		float[][] result = m;
 		for (int i = 0; i < m.length; i++) {
@@ -344,9 +417,22 @@ public class Calc {
 		return m;
 	}
 	
+	/**
+	 * Random number generator
+	 * @param high
+	 * @return float in [0,high];
+	 */
+	
 	public static float rand(float high) {
 		return (float) (Math.random() * high);
 	}
+	
+	/**
+	 * Random vector multiplied with multiplier
+	 * @param dimension
+	 * @param multiplier
+	 * @return random Vector * multiplier
+	 */
 	
 	public static float[] randVector(int dimension, float multiplier) {
 		float[] result = new float[dimension];
@@ -361,12 +447,26 @@ public class Calc {
 	 * 
 	 */
 	
+	/**
+	 * 
+	 * @param f - matrix
+	 * @param coord - x,y,z = 0,1,2 etc.
+	 * @return minimum in f
+	 */
+	
 	public static float min(float[][] f, int coord) {
 		f = Calc.transpose(f);
 		List<Float> list = Arrays.asList(ArrayUtils.toObject(f[coord]));
 		Float min = Collections.min(list);
 		return min.floatValue();
 	}
+	
+	/**
+	 * 
+	 * @param f - matrix 
+	 * @param coord - x,y,z, etc.
+	 * @return
+	 */
 	
 	public static float max(float[][] f, int coord) {
 		f = Calc.transpose(f);
@@ -398,6 +498,13 @@ public class Calc {
 		return max.floatValue();
 	}
 	
+	/**
+	 * 
+	 * @param m - initial matrix
+	 * @param line - new line
+	 * @return m with appended line
+	 */
+	
 	public static float[][] appendLine(float[][] m, float[] line) {
 		float[][] copy = new float[m.length+1][m[0].length];
     	System.arraycopy(m, 0, copy, 0, m.length);
@@ -405,6 +512,13 @@ public class Calc {
     	m = copy;
 		return m;
 	}
+	
+	/**
+	 * 
+	 * @param m - initial matrix
+	 * @param col - new column
+	 * @return m with appended col
+	 */
 	
 	public static float[][] appendColumn(float[][] m, float[] col) {
 		m = Calc.transpose(m);
@@ -480,20 +594,12 @@ public class Calc {
 	// Normally distributed rnd numbers
 	public static float randn() {
 		double result = generator.nextGaussian();
-		//System.out.println("rnd: " + result);
 		return (float) result;
 	}
 	
 	public static int randInt(int min, int max) {
-
-	    // NOTE: Usually this should be a field rather than a method
-	    // variable so that it is not re-seeded every call.
 	    Random rand = new Random();
-
-	    // nextInt is normally exclusive of the top value,
-	    // so add 1 to make it inclusive
 	    int randomNum = rand.nextInt((max - min) + 1) + min;
-
 	    return randomNum;
 	}
 	
