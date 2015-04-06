@@ -4,11 +4,15 @@ import gui.DataTypeDetector.DataType;
 
 import java.awt.Color;
 import java.io.Serializable;
+/**
+ * 
+ * @author maxscheurer
+ * @brief Superclass for all DataSets
+ * All other dataSets inherit from DataSets
+ */
 
 public class DataSet implements Serializable {
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	public DataType dataType;
 	public ParameterSet parameterSet;

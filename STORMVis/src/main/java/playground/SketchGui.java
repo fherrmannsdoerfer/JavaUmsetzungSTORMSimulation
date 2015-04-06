@@ -36,6 +36,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import model.DataSet;
+import model.ParameterSet;
 import model.Project;
 import editor.DataSetTableModel;
 import editor.ProjectFileFilter;
@@ -70,7 +71,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private JTextField colorRField;
 	private JTextField colorGField;
 	
-	private final JLabel loadDataLabel = new JLabel("Please import data.");
+	private final JLabel loadDataLabel = new JLabel("Please import data or select a representation.");
 	private JTable dataSetTable;
 	private DataSetTableModel model;
 	
@@ -534,14 +535,40 @@ public class SketchGui extends JFrame implements TableModelListener {
 	        	      int column = target.getSelectedColumn();
 	        	      System.out.println("row/col :" + row + " | " + column);
 	        	      if(column == 0) {
-	        	    	  
+	        	    	  loadParameterSetOfRow(row);
 	        	      }
 				}
 			}
 		});
 	
 	}
-
+	
+	/**
+	 * Loads the parameter set of the selected row into the configuration panel 
+	 * @param row - row clicked in dataSetTable
+	 *
+	 */
+	
+	private void loadParameterSetOfRow(int row) {
+		ParameterSet set = allDataSets.get(row).parameterSet;
+//		set.loa;	     
+//		set.aoa;       
+//		set.bspnm;     
+//		set.pabs; 		
+//		set.abpf;		 
+		radiusOfFilamentsField.setText(set.rof.toString());		 
+//		set.fpab;      
+//		set.colorEM;   
+//		set.colorSTORM;
+//		set.colorAB;   
+		locPrecisionXYField.setText(set.sxy.toString());       
+		locPrecisionZField.setText(set.sz.toString());        
+//		set.doc;       
+//		set.nocpsmm;   
+//		set.docpsnm;   
+//		set.bd;        
+//		set.bspsnm;  
+	}
 	@Override
 	public void tableChanged(TableModelEvent e) {
 		
