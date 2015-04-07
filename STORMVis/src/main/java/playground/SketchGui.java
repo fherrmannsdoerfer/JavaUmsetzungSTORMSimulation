@@ -571,7 +571,6 @@ public class SketchGui extends JFrame implements TableModelListener {
 		model.data.add(data);
 		model.visibleSets.add(Boolean.FALSE);
 		model.fireTableDataChanged();
-		
 //		Plotter plotter = new Plotter(data, type);
 //		graphPanel.removeAll();
 //		graphComponent = (Component) plotter.createChart().getCanvas();
