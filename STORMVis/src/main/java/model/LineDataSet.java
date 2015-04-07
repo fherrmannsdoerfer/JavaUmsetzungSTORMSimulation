@@ -13,6 +13,8 @@ import org.jzy3d.maths.Coord3d;
 public class LineDataSet extends DataSet implements Serializable{
 	
 	public List<ArrayList<Coord3d>> data = new ArrayList<ArrayList<Coord3d>>();
+	public Integer pointNumber;
+	public Integer objectNumber;
 	
 	public LineDataSet(ParameterSet parameterSet) {
 		super(parameterSet);

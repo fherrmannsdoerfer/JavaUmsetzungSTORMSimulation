@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +40,17 @@ import javax.swing.event.TableModelListener;
 import model.DataSet;
 import model.ParameterSet;
 import model.Project;
+
+import org.javatuples.Pair;
+import org.jzy3d.plot3d.primitives.Polygon;
+
 import editor.DataSetTableModel;
 import editor.ProjectFileFilter;
+import gui.DataTypeDetector;
+import gui.DataTypeDetector.DataType;
+import gui.ParserWrapper;
+import gui.Plotter;
+import gui.TriangleLineFilter;
 
 
 /**
@@ -74,6 +85,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private final JLabel loadDataLabel = new JLabel("Please import data or select a representation.");
 	private JTable dataSetTable;
 	private DataSetTableModel model;
+	private Plot3D plot;
 	
 	/**
 	 * contains all current dataSets (displayed in table)
@@ -488,6 +500,20 @@ public class SketchGui extends JFrame implements TableModelListener {
 		
 		JButton importFileButton = new JButton("Import file");
 		toolBar.add(importFileButton);
+		importFileButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setAcceptAllFileFilterUsed(false);
+				chooser.setFileFilter(new TriangleLineFilter());
+				chooser.setFileSelectionMode(0);
+				int returnVal = chooser.showOpenDialog(getContentPane()); //replace null with your swing container
+				File file;
+				if(returnVal == JFileChooser.APPROVE_OPTION) {     
+					proceedFileImport(chooser.getSelectedFile());
+				}
+			}
+		});
 		
 		JButton importProjectButton = new JButton("Import project");
 		toolBar.add(importProjectButton);
@@ -515,10 +541,44 @@ public class SketchGui extends JFrame implements TableModelListener {
 			}
 		});
 		
+		plot = new Plot3D();
 		configureTableListener();
 		
 		JButton saveProjectButton = new JButton("Save project");
 		toolBar.add(saveProjectButton);
+	}
+	
+	
+	private void proceedFileImport(File file) {
+		System.out.println("Path: " + file.getAbsolutePath());
+		DataType type = DataType.UNKNOWN;
+		try {
+			type = DataTypeDetector.getDataType(file.getAbsolutePath());
+			System.out.println(type.toString());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		DataSet data = ParserWrapper.parseFileOfType(file.getAbsolutePath(), type);
+		if(data.dataType.equals(DataType.TRIANGLES)) {
+			System.out.println("Triangles parsed correctly.");
+		}
+		else if(type.equals(DataType.LINES)) {
+			System.out.println("Lines parsed correctly.");
+		}
+		data.setName(file.getName());
+		allDataSets.add(data);
+		model.data.add(data);
+		model.visibleSets.add(Boolean.FALSE);
+		model.fireTableDataChanged();
+		
+//		Plotter plotter = new Plotter(data, type);
+//		graphPanel.removeAll();
+//		graphComponent = (Component) plotter.createChart().getCanvas();
+//		graphPanel.add(graphComponent);
+//		graphPanel.revalidate();
+//		graphPanel.repaint();
+//		graphComponent.revalidate();
 	}
 
 	/**
@@ -569,6 +629,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 //		set.bd;        
 //		set.bspsnm;  
 	}
+	
 	@Override
 	public void tableChanged(TableModelEvent e) {
 		

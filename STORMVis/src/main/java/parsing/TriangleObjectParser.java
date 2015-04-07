@@ -7,6 +7,9 @@ import java.util.List;
 
 import javax.media.opengl.GL;
 
+import model.ParameterSet;
+import model.TriangleDataSet;
+
 import org.jzy3d.colors.Color;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.primitives.Point;
@@ -151,6 +154,16 @@ public class TriangleObjectParser {
 		};
 	}
 	
+	/**
+	 * Packs the parsed triangle list into a new TriangleDataSet
+	 * @return
+	 */
+	public TriangleDataSet wrapParsedObjectsToTriangleDataSet() {
+		TriangleDataSet set = new TriangleDataSet(new ParameterSet());
+		set.drawableTriangles = allTriangles;
+		set.primitives = primitives;
+		return set;
+	}
 	
 	
 	
