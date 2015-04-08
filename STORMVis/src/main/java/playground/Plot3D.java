@@ -55,50 +55,69 @@ public class Plot3D {
 			if(set.dataType == DataType.LINES) {
 				LineDataSet lines = (LineDataSet) set;
 				
-				int pointNumber = 0;
-				// TODO: count point number in editor!
-				if(lines.pointNumber == null || lines.pointNumber.intValue() == 0) {
-					for(ArrayList<Coord3d> list : lines.data) {
-						pointNumber += list.size();
+				// Check if EM should be shown
+				if(lines.getParameterSet().emVisibility == Boolean.TRUE) {
+					int pointNumber = 0;
+					// TODO: count point number in editor?!
+					if(lines.pointNumber == null || lines.pointNumber.intValue() == 0) {
+						for(ArrayList<Coord3d> list : lines.data) {
+							pointNumber += list.size();
+						}
 					}
+					else {
+						pointNumber = lines.pointNumber.intValue();
+					}
+					Coord3d[] points = new Coord3d[pointNumber];
+			        Color[] colors = new Color[pointNumber];
+			        
+			        List<LineStrip> lineList = new ArrayList<LineStrip>();
+					int i = 0;
+			        for(ArrayList<Coord3d> obj : lines.data) {
+			        	LineStrip strip = new LineStrip();
+			    		strip.setWidth(2.f);
+			    		strip.setWireframeColor(Color.WHITE);
+			        	for(Coord3d coord : obj) {
+			        		points[i] = coord;
+			        		float a = 1.f;
+			        		// TODO: use for multiple colors
+//			        		colors[i] = new Color(coord.x/255.f,coord.y/255.f,coord.z/255.f,a);
+			        		colors[i] = new Color(lines.getParameterSet().getEmColor().getRed(), lines.getParameterSet().getEmColor().getGreen(), lines.getParameterSet().getEmColor().getBlue(),a);
+			        		if(showLines) {
+			        			strip.add(new Point(coord));
+			        		}
+			        		i++;
+			        	}
+			        	lineList.add(strip);
+			        }
+			        CompileableComposite comp = new CompileableComposite();
+			        float pointSize = lines.getParameterSet().pointSize;
+			        Scatter scatter = new Scatter(points, colors, pointSize);
+			        for (LineStrip line : lineList) {
+			        	if(line.getPoints().size() != 0) {
+			        		chart.getScene().getGraph().add(line);
+			        	}
+			        }
+			        comp.add(scatter);
+			        chart.getScene().getGraph().add(comp);
 				}
-				else {
-					pointNumber = lines.pointNumber.intValue();
+				
+				// Check if ABs should be displayed
+				if(lines.getParameterSet().antibodyVisibility == Boolean.TRUE) {
+					System.out.println("show ABs (lines)");
 				}
-				Coord3d[] points = new Coord3d[pointNumber];
-		        Color[] colors = new Color[pointNumber];
-		        
-		        List<LineStrip> lineList = new ArrayList<LineStrip>();
-				int i = 0;
-		        for(ArrayList<Coord3d> obj : lines.data) {
-		        	LineStrip strip = new LineStrip();
-		    		strip.setWidth(2.f);
-		    		strip.setWireframeColor(Color.WHITE);
-		        	for(Coord3d coord : obj) {
-		        		points[i] = coord;
-		        		float a = 1.f;
-		        		colors[i] = new Color(coord.x/255.f,coord.y/255.f,coord.z/255.f,a);
-		        		if(showLines) {
-		        			strip.add(new Point(coord));
-		        		}
-		        		i++;
-		        	}
-		        	lineList.add(strip);
-		        }
-		        CompileableComposite comp = new CompileableComposite();
-		        Scatter scatter = new Scatter(points, colors, 2.f);
-		        for (LineStrip line : lineList) {
-		        	if(line.getPoints().size() != 0) {
-		        		chart.getScene().getGraph().add(line);
-		        	}
-		        }
-		        comp.add(scatter);
-		        chart.getScene().getGraph().add(comp);
+				
+				// Check if STORM should be displayed
+				if(lines.getParameterSet().stormVisibility == Boolean.TRUE) {
+					System.out.println("show storm (lines)");
+				}
+				
 			}
 			else if(set.dataType == DataType.TRIANGLES) {
+				float a = 1.f;
 				TriangleDataSet triangles = (TriangleDataSet) set;
 				CompileableComposite comp = new CompileableComposite();
 				comp.add(triangles.drawableTriangles);
+				comp.setColor(new Color(triangles.getParameterSet().getEmColor().getRed(), triangles.getParameterSet().getEmColor().getGreen(), triangles.getParameterSet().getEmColor().getBlue(),a));
 				comp.setWireframeDisplayed(false);
 				comp.setWireframeColor(Color.BLACK);
 		        comp.setWireframeWidth(0.00001f);

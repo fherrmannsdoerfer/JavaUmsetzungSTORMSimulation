@@ -1,5 +1,6 @@
 package model;
 
+import java.awt.Color;
 import java.io.Serializable;
 
 public class ParameterSet implements Serializable {
@@ -26,11 +27,22 @@ public class ParameterSet implements Serializable {
     public Boolean stormVisibility;
     public Boolean antibodyVisibility;
     
+    public Float ilpmm3;
+	public Float psfwidth;
+	public Boolean mergedPSF;
+	
+	public Float pointSize;
+	
+	public Color emColor;
+	public Color stormColor;
+	public Color antibodyColor;
+    
     
 	public ParameterSet(Float loa, Float aoa, Float bspnm, Float pabs,
 			Float abpf, Float rof, Float fpab, int[] colorEM, int[] colorSTORM,
 			int[] colorAB, Float sxy, Float sz, Float doc, Float nocpsmm,
-			Float docpsnm, Float bd, Float bspsnm, Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility) {
+			Float docpsnm, Float bd, Float bspsnm, Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility, Float ilpmm3, Float psfwidth, Boolean mergedPSF, Float pointSize
+			, Color emColor, Color stormColor, Color antibodyColor) {
 		super();
 		this.loa = loa;
 		this.aoa = aoa;
@@ -49,11 +61,22 @@ public class ParameterSet implements Serializable {
 		this.docpsnm = docpsnm;
 		this.bd = bd;
 		this.bspsnm = bspsnm;
+		
 		this.generalVisibility = generalVisibility; 
 		this.emVisibility = emVisibility;      
 		this.stormVisibility = stormVisibility;   
 		this.antibodyVisibility = antibodyVisibility;
 		
+		this.ilpmm3 = ilpmm3;
+		this.psfwidth = psfwidth;
+		
+		this.mergedPSF = mergedPSF;
+		
+		this.pointSize = pointSize;
+		
+		this.emColor = emColor;          
+		this.stormColor = stormColor;       
+		this.antibodyColor = antibodyColor;    
 	} 
     
     public ParameterSet() {
@@ -80,36 +103,281 @@ public class ParameterSet implements Serializable {
 		this.emVisibility = Boolean.FALSE;      
 		this.stormVisibility = Boolean.FALSE;   
 		this.antibodyVisibility = Boolean.FALSE;
+		
+		this.ilpmm3 = new Float(50.f);
+		this.psfwidth = new Float(200.f);
+		
+		this.mergedPSF = Boolean.FALSE;
+		
+		this.pointSize = new Float(2.f);
+		
+		/**
+		 * default colors for visualization
+		 */
+		this.emColor = Color.RED;
+		this.stormColor = Color.BLUE;
+		this.antibodyColor = Color.GREEN;
+		
     }
+
+	public Float getLoa() {
+		return loa;
+	}
+
+	public void setLoa(Float loa) {
+		this.loa = loa;
+	}
+
+	public Float getAoa() {
+		return aoa;
+	}
+
+	public void setAoa(Float aoa) {
+		this.aoa = aoa;
+	}
+
+	public Float getBspnm() {
+		return bspnm;
+	}
+
+	public void setBspnm(Float bspnm) {
+		this.bspnm = bspnm;
+	}
+
+	public Float getPabs() {
+		return pabs;
+	}
+
+	public void setPabs(Float pabs) {
+		this.pabs = pabs;
+	}
+
+	public Float getAbpf() {
+		return abpf;
+	}
+
+	public void setAbpf(Float abpf) {
+		this.abpf = abpf;
+	}
+
+	public Float getRof() {
+		return rof;
+	}
+
+	public void setRof(Float rof) {
+		this.rof = rof;
+	}
+
+	public Float getFpab() {
+		return fpab;
+	}
+
+	public void setFpab(Float fpab) {
+		this.fpab = fpab;
+	}
+
+	public int[] getColorEM() {
+		return colorEM;
+	}
+
+	public void setColorEM(int[] colorEM) {
+		this.colorEM = colorEM;
+	}
+
+	public int[] getColorSTORM() {
+		return colorSTORM;
+	}
+
+	public void setColorSTORM(int[] colorSTORM) {
+		this.colorSTORM = colorSTORM;
+	}
+
+	public int[] getColorAB() {
+		return colorAB;
+	}
+
+	public void setColorAB(int[] colorAB) {
+		this.colorAB = colorAB;
+	}
+
+	public Float getSxy() {
+		return sxy;
+	}
+
+	public void setSxy(Float sxy) {
+		this.sxy = sxy;
+	}
+
+	public Float getSz() {
+		return sz;
+	}
+
+	public void setSz(Float sz) {
+		this.sz = sz;
+	}
+
+	public Float getDoc() {
+		return doc;
+	}
+
+	public void setDoc(Float doc) {
+		this.doc = doc;
+	}
+
+	public Float getNocpsmm() {
+		return nocpsmm;
+	}
+
+	public void setNocpsmm(Float nocpsmm) {
+		this.nocpsmm = nocpsmm;
+	}
+
+	public Float getDocpsnm() {
+		return docpsnm;
+	}
+
+	public void setDocpsnm(Float docpsnm) {
+		this.docpsnm = docpsnm;
+	}
+
+	public Float getBd() {
+		return bd;
+	}
+
+	public void setBd(Float bd) {
+		this.bd = bd;
+	}
+
+	public Float getBspsnm() {
+		return bspsnm;
+	}
+
+	public void setBspsnm(Float bspsnm) {
+		this.bspsnm = bspsnm;
+	}
+
+	public Boolean getGeneralVisibility() {
+		return generalVisibility;
+	}
+
+	public void setGeneralVisibility(Boolean generalVisibility) {
+		this.generalVisibility = generalVisibility;
+	}
+
+	public Boolean getEmVisibility() {
+		return emVisibility;
+	}
+
+	public void setEmVisibility(Boolean emVisibility) {
+		this.emVisibility = emVisibility;
+	}
+
+	public Boolean getStormVisibility() {
+		return stormVisibility;
+	}
+
+	public void setStormVisibility(Boolean stormVisibility) {
+		this.stormVisibility = stormVisibility;
+	}
+
+	public Boolean getAntibodyVisibility() {
+		return antibodyVisibility;
+	}
+
+	public void setAntibodyVisibility(Boolean antibodyVisibility) {
+		this.antibodyVisibility = antibodyVisibility;
+	}
+
+	public Float getIlpmm3() {
+		return ilpmm3;
+	}
+
+	public void setIlpmm3(Float ilpmm3) {
+		this.ilpmm3 = ilpmm3;
+	}
+
+	public Float getPsfwidth() {
+		return psfwidth;
+	}
+
+	public void setPsfwidth(Float psfwidth) {
+		this.psfwidth = psfwidth;
+	}
+
+	public Boolean getMergedPSF() {
+		return mergedPSF;
+	}
+
+	public void setMergedPSF(Boolean mergedPSF) {
+		this.mergedPSF = mergedPSF;
+	}
+
+	public Float getPointSize() {
+		return pointSize;
+	}
+
+	public void setPointSize(Float pointSize) {
+		this.pointSize = pointSize;
+	}
+
+	public Color getEmColor() {
+		return emColor;
+	}
+
+	public void setEmColor(Color emColor) {
+		this.emColor = emColor;
+	}
+
+	public Color getStormColor() {
+		return stormColor;
+	}
+
+	public void setStormColor(Color stormColor) {
+		this.stormColor = stormColor;
+	}
+
+	public Color getAntibodyColor() {
+		return antibodyColor;
+	}
+
+	public void setAntibodyColor(Color antibodyColor) {
+		this.antibodyColor = antibodyColor;
+	}
+	
+	
     
     /**
      * 
      * @return default parameterSet with hard-coded values
      */
-    public static ParameterSet defaultParameterSet() {
-    	Float loa = new Float(1.f); 	
-        Float aoa = new Float((float) (90./180.*Math.PI));
-        Float bspnm = new Float(1/2.75f);
-        Float pabs = new Float(0.1f); 				
-        Float abpf = new Float(14);		
-        Float rof = new Float(3.5f);		
-        Float fpab = new Float(1.5f); 
-        int[] colorEM = new int[]{0,0,0}; 
-        int[] colorSTORM = new int[]{1,0,0};
-        int[] colorAB = new int[]{0,1,0}; 
-        Float sxy = new Float(1.0f); 
-        Float sz = new Float(1.0f); 
-        Float doc = new Float(0.f); 
-        Float nocpsmm = new Float(1.f); 
-        Float docpsnm = new Float(0.01f);
-        Float bd = new Float((float) (3*5*1e-7));
-        Float bspsnm = new Float(10/600.f); 
-        
-        Boolean generalVisibility = Boolean.FALSE; 
-        Boolean emVisibility = Boolean.FALSE;      
-        Boolean stormVisibility = Boolean.FALSE;   
-        Boolean antibodyVisibility = Boolean.FALSE;
-    	return new ParameterSet(loa, aoa, bspnm,pabs, abpf, rof, fpab, colorEM, colorSTORM, colorAB, sxy, sz, doc, nocpsmm, docpsnm, bd, bspsnm, generalVisibility, emVisibility, stormVisibility, antibodyVisibility);
-    }
+//    public static ParameterSet defaultParameterSet() {
+//    	Float loa = new Float(1.f); 	
+//        Float aoa = new Float((float) (90./180.*Math.PI));
+//        Float bspnm = new Float(1/2.75f);
+//        Float pabs = new Float(0.1f); 				
+//        Float abpf = new Float(14);		
+//        Float rof = new Float(3.5f);		
+//        Float fpab = new Float(1.5f); 
+//        int[] colorEM = new int[]{0,0,0}; 
+//        int[] colorSTORM = new int[]{1,0,0};
+//        int[] colorAB = new int[]{0,1,0}; 
+//        Float sxy = new Float(1.0f); 
+//        Float sz = new Float(1.0f); 
+//        Float doc = new Float(0.f); 
+//        Float nocpsmm = new Float(1.f); 
+//        Float docpsnm = new Float(0.01f);
+//        Float bd = new Float((float) (3*5*1e-7));
+//        Float bspsnm = new Float(10/600.f); 
+//        
+//        Boolean generalVisibility = Boolean.FALSE; 
+//        Boolean emVisibility = Boolean.FALSE;      
+//        Boolean stormVisibility = Boolean.FALSE;   
+//        Boolean antibodyVisibility = Boolean.FALSE;
+//        
+//        Float ilpmm3 = new Float(50.f);
+//    	return new ParameterSet(loa, aoa, bspnm,pabs, abpf, rof, fpab, colorEM, colorSTORM, colorAB, sxy, sz, doc, nocpsmm, docpsnm, bd, bspsnm, generalVisibility, emVisibility, stormVisibility, antibodyVisibility,ilpmm3);
+//    }
+    
+    
     
 }

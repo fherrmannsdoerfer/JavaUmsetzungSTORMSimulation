@@ -36,6 +36,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.text.JTextComponent;
 
 import model.DataSet;
 import model.ParameterSet;
@@ -626,8 +627,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		radiusOfFilamentsField.setText(set.rof.toString()); //rof                                                                                         
 		labelingEfficiencyField.setText(set.pabs.toString()); //pabs                                                                                       
 		meanAngleField.setText(set.aoa.toString()); //aoa     
-		// TODO: add to parameterSet
-//		backgroundLabelField.setText(set.sxy.toString()); //ilpmm3 aus StormPointFinder                                                                   
+		backgroundLabelField.setText(set.ilpmm3.toString()); //ilpmm3 aus StormPointFinder                                                                   
 		labelLengthField.setText(set.sxy.toString()); //loa                                                                                               
 		fluorophoresPerLabelField.setText(set.fpab.toString()); //fpab                                                                                     
 		averageBlinkingNumberField.setText(set.abpf.toString()); //abpf
@@ -635,11 +635,10 @@ public class SketchGui extends JFrame implements TableModelListener {
 //		averagePhotonOutputField.setText(set.sxy.toString());                                                                                             
 		locPrecisionXYField.setText(set.sxy.toString()); //sxy                                                                                            
 		locPrecisionZField.setText(set.sz.toString()); //sz   
-		// TODO: add to parameterSet
-//		psfSizeField.setText(set.sxy.toString()); //psfwidth aus StormPointFinder                                                                         
+		psfSizeField.setText(set.psfwidth.toString()); //psfwidth aus StormPointFinder                                                                         
 		epitopeDensityField.setText(set.bspnm.toString()); //bspnm oder bspsnm je nachdem ob Linien oder Dreiecke
-		// TODO: add to parameterSet
-//		pointSizeField.setText(set.sxy.toString()); //das muesste der Parameter a aus Plotter new Color(coord.x/255.f,coord.y/255.f,coord.z/255.f,a); sein
+		pointSizeField.setText(set.sxy.toString());
+		
 		// TODO: colors!                                                                                                         
 	}
 	
