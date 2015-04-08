@@ -24,7 +24,11 @@ public class Plot3D {
 
 	public List<DataSet> dataSets = new ArrayList<DataSet>();
 	public Quality chartQuality;
-	public boolean showLines = false;
+	
+	/**
+	 * select whether lines should be displayed
+	 */
+	public boolean showLines = true;
 	
 	public Plot3D() {
 		

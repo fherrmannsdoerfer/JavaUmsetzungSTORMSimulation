@@ -20,10 +20,17 @@ public class ParameterSet implements Serializable {
     public Float docpsnm;
     public Float bd;
     public Float bspsnm;
+    
+    public Boolean generalVisibility;
+    public Boolean emVisibility;
+    public Boolean stormVisibility;
+    public Boolean antibodyVisibility;
+    
+    
 	public ParameterSet(Float loa, Float aoa, Float bspnm, Float pabs,
 			Float abpf, Float rof, Float fpab, int[] colorEM, int[] colorSTORM,
 			int[] colorAB, Float sxy, Float sz, Float doc, Float nocpsmm,
-			Float docpsnm, Float bd, Float bspsnm) {
+			Float docpsnm, Float bd, Float bspsnm, Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility) {
 		super();
 		this.loa = loa;
 		this.aoa = aoa;
@@ -42,6 +49,11 @@ public class ParameterSet implements Serializable {
 		this.docpsnm = docpsnm;
 		this.bd = bd;
 		this.bspsnm = bspsnm;
+		this.generalVisibility = generalVisibility; 
+		this.emVisibility = emVisibility;      
+		this.stormVisibility = stormVisibility;   
+		this.antibodyVisibility = antibodyVisibility;
+		
 	} 
     
     public ParameterSet() {
@@ -63,6 +75,11 @@ public class ParameterSet implements Serializable {
         this.docpsnm = new Float(0.01f);
         this.bd = new Float((float) (3*5*1e-7));
         this.bspsnm = new Float(10/600.f);
+        
+        this.generalVisibility = Boolean.FALSE; 
+		this.emVisibility = Boolean.FALSE;      
+		this.stormVisibility = Boolean.FALSE;   
+		this.antibodyVisibility = Boolean.FALSE;
     }
     
     /**
@@ -87,7 +104,12 @@ public class ParameterSet implements Serializable {
         Float docpsnm = new Float(0.01f);
         Float bd = new Float((float) (3*5*1e-7));
         Float bspsnm = new Float(10/600.f); 
-    	return new ParameterSet(loa, aoa, bspnm,pabs, abpf, rof, fpab, colorEM, colorSTORM, colorAB, sxy, sz, doc, nocpsmm, docpsnm, bd, bspsnm);
+        
+        Boolean generalVisibility = Boolean.FALSE; 
+        Boolean emVisibility = Boolean.FALSE;      
+        Boolean stormVisibility = Boolean.FALSE;   
+        Boolean antibodyVisibility = Boolean.FALSE;
+    	return new ParameterSet(loa, aoa, bspnm,pabs, abpf, rof, fpab, colorEM, colorSTORM, colorAB, sxy, sz, doc, nocpsmm, docpsnm, bd, bspsnm, generalVisibility, emVisibility, stormVisibility, antibodyVisibility);
     }
     
 }
