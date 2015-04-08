@@ -65,20 +65,20 @@ import gui.TriangleLineFilter;
 public class SketchGui extends JFrame implements TableModelListener {
 
 	private JPanel contentPane;
-	private JTextField radiusOfFilamentsField;
-	private JTextField labelingEfficiencyField;
-	private JTextField meanAngleField;
-	private JTextField backgroundLabelField;
-	private JTextField labelLengthField;
-	private JTextField fluorophoresPerLabelField;
-	private JTextField averageBlinkingNumberField;
+	private JTextField radiusOfFilamentsField; //rof
+	private JTextField labelingEfficiencyField; //pabs
+	private JTextField meanAngleField; //aoa
+	private JTextField backgroundLabelField; //ilpmm3 aus StormPointFinder
+	private JTextField labelLengthField; //loa
+	private JTextField fluorophoresPerLabelField; //fpab
+	private JTextField averageBlinkingNumberField; //abpf
 	private JTextField averagePhotonOutputField;
-	private JTextField locPrecisionXYField;
-	private JTextField locPrecisionZField;
-	private JTextField psfSizeField;
-	private JTextField epitopeDensityField;
-	private JTextField pointSizeField;
-	private JTextField colorBField;
+	private JTextField locPrecisionXYField; //sxy
+	private JTextField locPrecisionZField; //sz
+	private JTextField psfSizeField; //psfwidth aus StormPointFinder
+	private JTextField epitopeDensityField; //bspnm oder bspsnm je nachdem ob Linien oder Dreiecke
+	private JTextField pointSizeField; //das muesste der Parameter a aus Plotter new Color(coord.x/255.f,coord.y/255.f,coord.z/255.f,a); sein
+	private JTextField colorBField; // das sind die entsprechenden Farben aus der vorherigen Zeile
 	private JTextField colorRField;
 	private JTextField colorGField;
 	
