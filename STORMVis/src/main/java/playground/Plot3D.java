@@ -57,6 +57,7 @@ public class Plot3D {
 				
 				// Check if EM should be shown
 				if(lines.getParameterSet().emVisibility == Boolean.TRUE) {
+					System.out.println("Show lines EM");
 					int pointNumber = 0;
 					// TODO: count point number in editor?!
 					if(lines.pointNumber == null || lines.pointNumber.intValue() == 0) {
@@ -115,14 +116,26 @@ public class Plot3D {
 			else if(set.dataType == DataType.TRIANGLES) {
 				float a = 1.f;
 				TriangleDataSet triangles = (TriangleDataSet) set;
-				CompileableComposite comp = new CompileableComposite();
-				comp.add(triangles.drawableTriangles);
-				comp.setColor(new Color(triangles.getParameterSet().getEmColor().getRed(), triangles.getParameterSet().getEmColor().getGreen(), triangles.getParameterSet().getEmColor().getBlue(),a));
-				comp.setWireframeDisplayed(false);
-				comp.setWireframeColor(Color.BLACK);
-		        comp.setWireframeWidth(0.00001f);
-		        comp.setColorMapper(null);
-				chart.getScene().getGraph().add(comp);
+				if(triangles.getParameterSet().emVisibility == Boolean.TRUE) {
+					System.out.println("Show triangles EM");
+					CompileableComposite comp = new CompileableComposite();
+					comp.add(triangles.drawableTriangles);
+					comp.setColor(new Color(triangles.getParameterSet().getEmColor().getRed(), triangles.getParameterSet().getEmColor().getGreen(), triangles.getParameterSet().getEmColor().getBlue(),a));
+					comp.setWireframeDisplayed(false);
+					comp.setWireframeColor(Color.BLACK);
+			        comp.setWireframeWidth(0.00001f);
+			        comp.setColorMapper(null);
+					chart.getScene().getGraph().add(comp);
+				}
+				
+				if(triangles.getParameterSet().antibodyVisibility == Boolean.TRUE) {
+					System.out.println("show ABs (tr)");
+				}
+				
+				// Check if STORM should be displayed
+				if(triangles.getParameterSet().stormVisibility == Boolean.TRUE) {
+					System.out.println("show storm (tr)");
+				}
 			}
 		}
 		

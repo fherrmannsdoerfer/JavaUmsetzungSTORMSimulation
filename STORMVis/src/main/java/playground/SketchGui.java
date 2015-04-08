@@ -646,6 +646,10 @@ public class SketchGui extends JFrame implements TableModelListener {
 		epitopeDensityField.setText(set.bspnm.toString()); //bspnm oder bspsnm je nachdem ob Linien oder Dreiecke
 		pointSizeField.setText(set.pointSize.toString());
 		
+		showAntibodiesBox.setSelected(set.getAntibodyVisibility());
+		showEmBox.setSelected(set.getEmVisibility());
+		showStormPointsBox.setSelected(set.getStormVisibility());
+		
 		// TODO: colors!                                                                                                         
 	}
 	
@@ -674,6 +678,9 @@ public class SketchGui extends JFrame implements TableModelListener {
 		setSelectedListsForDrawing();
 	}
 	
+	/**
+	 * Checks which data sets are generally visible and creates a new Plot3D with the dataSets
+	 */
 	public void setSelectedListsForDrawing() {
 		List<DataSet> sets = new ArrayList<DataSet>();
 		for(int i = 0; i < model.data.size(); i++) {
@@ -685,7 +692,6 @@ public class SketchGui extends JFrame implements TableModelListener {
 				allDataSets.get(i).getParameterSet().setGeneralVisibility(Boolean.FALSE);
 			}
 		}
-		
 		model.data.clear();
 		model.data.addAll(allDataSets);
 		
