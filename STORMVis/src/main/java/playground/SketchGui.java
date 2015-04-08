@@ -386,6 +386,12 @@ public class SketchGui extends JFrame implements TableModelListener {
 		JButton calcButton = new JButton("calculate");
 		calcButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		calcButton.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		calcButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				calculate();
+			}
+		});
 		verticalBox.add(calcButton);
 		
 		Box verticalBox_6 = Box.createVerticalBox();
@@ -472,6 +478,12 @@ public class SketchGui extends JFrame implements TableModelListener {
 		
 		JButton visButton = new JButton("visualize");
 		visButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		visButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				visualize();
+			}
+		});
 		verticalBox.add(visButton);
 		
 		JPanel panel = new JPanel(new BorderLayout());
@@ -615,11 +627,24 @@ public class SketchGui extends JFrame implements TableModelListener {
 	}
 	
 	/**
+	 * invoked by visualize button
+	 */
+	private void visualize() {
+		
+	}
+	
+	/**
+	 * invoked by calculate button
+	 */
+	private void calculate() {
+		
+	}
+	
+	/**
 	 * Loads the parameter set of the selected row into the configuration panel 
 	 * @param row - row clicked in dataSetTable
 	 *
 	 */
-	
 	private void loadParameterSetOfRow(int row) {
 		ParameterSet set = allDataSets.get(row).parameterSet;
 //		set.loa;	     

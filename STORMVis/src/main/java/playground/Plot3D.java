@@ -82,8 +82,6 @@ public class Plot3D {
 		        	lineList.add(strip);
 		        }
 		        CompileableComposite comp = new CompileableComposite();
-//		        comp.add(lineList);
-//		        chart.getScene().getGraph().add(comp);
 		        Scatter scatter = new Scatter(points, colors, 2.f);
 		        for (LineStrip line : lineList) {
 		        	if(line.getPoints().size() != 0) {
