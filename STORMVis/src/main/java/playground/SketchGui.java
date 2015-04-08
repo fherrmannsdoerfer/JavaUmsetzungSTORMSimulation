@@ -8,7 +8,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -21,6 +20,7 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -36,21 +36,15 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.text.JTextComponent;
 
 import model.DataSet;
 import model.ParameterSet;
 import model.Project;
-
-import org.javatuples.Pair;
-import org.jzy3d.plot3d.primitives.Polygon;
-
 import editor.DataSetTableModel;
 import editor.ProjectFileFilter;
 import gui.DataTypeDetector;
 import gui.DataTypeDetector.DataType;
 import gui.ParserWrapper;
-import gui.Plotter;
 import gui.TriangleLineFilter;
 
 
@@ -100,6 +94,9 @@ public class SketchGui extends JFrame implements TableModelListener {
 	 * contains all current dataSets (displayed in table)
 	 */
 	private List<DataSet> allDataSets = new ArrayList<DataSet>();
+	private JButton emColorButton;
+	private JButton antibodyColorButton;
+	private JButton stormColorButton;
 
 	/**
 	 * Launch the application.
@@ -124,7 +121,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		int fontSize = 16;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		setBounds(100, 100, 288, 970);
-		setBounds(100, 100, 1200, 900);
+		setBounds(100, 100, 1200, 1000);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 //		setContentPane(contentPane);
@@ -420,33 +417,6 @@ public class SketchGui extends JFrame implements TableModelListener {
 		pointSizeField.setColumns(5);
 		horizontalBox_16.add(pointSizeField);
 		
-		Box horizontalBox_17 = Box.createHorizontalBox();
-		verticalBox_6.add(horizontalBox_17);
-		
-		JLabel lblColorRgb = new JLabel("color rgb");
-		horizontalBox_17.add(lblColorRgb);
-		
-		Component horizontalGlue_3 = Box.createHorizontalGlue();
-		horizontalBox_17.add(horizontalGlue_3);
-		
-		colorRField = new JTextField();
-		colorRField.setMinimumSize(new Dimension(6, 10));
-		colorRField.setMaximumSize(new Dimension(60, 22));
-		colorRField.setColumns(3);
-		horizontalBox_17.add(colorRField);
-		
-		colorGField = new JTextField();
-		colorGField.setMinimumSize(new Dimension(6, 10));
-		colorGField.setMaximumSize(new Dimension(60, 22));
-		colorGField.setColumns(3);
-		horizontalBox_17.add(colorGField);
-		
-		colorBField = new JTextField();
-		colorBField.setMinimumSize(new Dimension(6, 10));
-		colorBField.setMaximumSize(new Dimension(60, 22));
-		colorBField.setColumns(3);
-		horizontalBox_17.add(colorBField);
-		
 		Box horizontalBox_18 = Box.createHorizontalBox();
 		verticalBox_6.add(horizontalBox_18);
 		
@@ -455,6 +425,17 @@ public class SketchGui extends JFrame implements TableModelListener {
 		
 		Component horizontalGlue_7 = Box.createHorizontalGlue();
 		horizontalBox_18.add(horizontalGlue_7);
+		
+		stormColorButton = new JButton("");
+		stormColorButton.setPreferredSize(new Dimension(40,20));
+		stormColorButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				allDataSets.get(currentRow).getParameterSet().setStormColor(JColorChooser.showDialog(getContentPane(), "Choose color for Storm points", allDataSets.get(currentRow).getParameterSet().getStormColor()));
+				updateButtonColors();
+			}
+		});
+		horizontalBox_18.add(stormColorButton);
 		
 		showStormPointsBox = new JCheckBox("");
 		horizontalBox_18.add(showStormPointsBox);
@@ -468,6 +449,17 @@ public class SketchGui extends JFrame implements TableModelListener {
 		Component horizontalGlue_12 = Box.createHorizontalGlue();
 		horizontalBox_20.add(horizontalGlue_12);
 		
+		antibodyColorButton = new JButton("");
+		antibodyColorButton.setPreferredSize(new Dimension(40,20));
+		antibodyColorButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				allDataSets.get(currentRow).getParameterSet().setAntibodyColor(JColorChooser.showDialog(getContentPane(), "Choose color for antibodies", allDataSets.get(currentRow).getParameterSet().getAntibodyColor()));
+				updateButtonColors();
+			}
+		});
+		horizontalBox_20.add(antibodyColorButton);
+		
 		showAntibodiesBox = new JCheckBox("");
 		horizontalBox_20.add(showAntibodiesBox);
 		
@@ -479,6 +471,17 @@ public class SketchGui extends JFrame implements TableModelListener {
 		
 		Component horizontalGlue_23 = Box.createHorizontalGlue();
 		horizontalBox_21.add(horizontalGlue_23);
+		
+		emColorButton = new JButton("");
+		emColorButton.setPreferredSize(new Dimension(40, 20));
+		emColorButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				allDataSets.get(currentRow).getParameterSet().setEmColor(JColorChooser.showDialog(getContentPane(), "Choose color for EM", allDataSets.get(currentRow).getParameterSet().getEmColor()));
+				updateButtonColors();
+			}
+		});
+		horizontalBox_21.add(emColorButton);
 		
 		showEmBox = new JCheckBox("");
 		horizontalBox_21.add(showEmBox);
@@ -565,6 +568,12 @@ public class SketchGui extends JFrame implements TableModelListener {
 		plot = new Plot3D();
 		configureTableListener();
 		
+		JButton openEditorButton = new JButton("Open editor");
+		toolBar.add(openEditorButton);
+		
+		Component horizontalGlue_24 = Box.createHorizontalGlue();
+		toolBar.add(horizontalGlue_24);
+		
 		JButton saveProjectButton = new JButton("Save project");
 		toolBar.add(saveProjectButton);
 	}
@@ -650,7 +659,26 @@ public class SketchGui extends JFrame implements TableModelListener {
 		showEmBox.setSelected(set.getEmVisibility());
 		showStormPointsBox.setSelected(set.getStormVisibility());
 		
-		// TODO: colors!                                                                                                         
+		emColorButton.setBackground(set.getEmColor());
+		stormColorButton.setBackground(set.getStormColor());
+		antibodyColorButton.setBackground(set.getAntibodyColor());
+		
+		
+		emColorButton.setOpaque(true);
+		stormColorButton.setOpaque(true);
+		antibodyColorButton.setOpaque(true);
+	}
+	
+	private void updateButtonColors() {
+		ParameterSet set = allDataSets.get(currentRow).parameterSet;
+		emColorButton.setBackground(set.getEmColor());
+		stormColorButton.setBackground(set.getStormColor());
+		antibodyColorButton.setBackground(set.getAntibodyColor());
+		
+		
+		emColorButton.setOpaque(true);
+		stormColorButton.setOpaque(true);
+		antibodyColorButton.setOpaque(true);
 	}
 	
 	/**
@@ -670,6 +698,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		
 		allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
 		
+		
 		setSelectedListsForDrawing();
 	}
 	
@@ -682,6 +711,8 @@ public class SketchGui extends JFrame implements TableModelListener {
 	 * Checks which data sets are generally visible and creates a new Plot3D with the dataSets
 	 */
 	public void setSelectedListsForDrawing() {
+		plot = null;
+		plot = new Plot3D();
 		List<DataSet> sets = new ArrayList<DataSet>();
 		for(int i = 0; i < model.data.size(); i++) {
 			if(model.visibleSets.get(i) == Boolean.TRUE) {

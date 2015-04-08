@@ -82,7 +82,7 @@ public class Plot3D {
 			        		float a = 1.f;
 			        		// TODO: use for multiple colors
 //			        		colors[i] = new Color(coord.x/255.f,coord.y/255.f,coord.z/255.f,a);
-			        		colors[i] = new Color(lines.getParameterSet().getEmColor().getRed(), lines.getParameterSet().getEmColor().getGreen(), lines.getParameterSet().getEmColor().getBlue(),a);
+			        		colors[i] = new Color(lines.getParameterSet().getEmColor().getRed()/255.f, lines.getParameterSet().getEmColor().getGreen()/255.f, lines.getParameterSet().getEmColor().getBlue()/255.f,a);
 			        		if(showLines) {
 			        			strip.add(new Point(coord));
 			        		}
