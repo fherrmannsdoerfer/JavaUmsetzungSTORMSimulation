@@ -86,6 +86,8 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private JTable dataSetTable;
 	private DataSetTableModel model;
 	private Plot3D plot;
+	private JPanel plotPanel;
+	private Component graphComponent;
 	
 	/**
 	 * contains all current dataSets (displayed in table)
@@ -487,7 +489,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		getContentPane().add(panel, BorderLayout.EAST);
 		
-		JPanel plotPanel = new JPanel((LayoutManager) null);
+		plotPanel = new JPanel(new BorderLayout());
 		plotPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		getContentPane().add(plotPanel, BorderLayout.CENTER);
 		plotPanel.setLayout(new BorderLayout());
@@ -537,6 +539,15 @@ public class SketchGui extends JFrame implements TableModelListener {
 					}
 					model.data.addAll(p.dataSets);
 					model.fireTableDataChanged();
+					
+					// TODO: replace with clean implementation (booleans)
+					plot.addAllDataSets(allDataSets);
+					plotPanel.removeAll();
+					graphComponent = (Component) plot.createChart().getCanvas();
+					plotPanel.add(graphComponent);
+					plotPanel.revalidate();
+					plotPanel.repaint();
+					graphComponent.revalidate();
 				}
 			}
 		});
@@ -572,11 +583,12 @@ public class SketchGui extends JFrame implements TableModelListener {
 		model.visibleSets.add(Boolean.FALSE);
 		model.fireTableDataChanged();
 //		Plotter plotter = new Plotter(data, type);
-//		graphPanel.removeAll();
-//		graphComponent = (Component) plotter.createChart().getCanvas();
-//		graphPanel.add(graphComponent);
-//		graphPanel.revalidate();
-//		graphPanel.repaint();
+//		plot.addAllDataSets(allDataSets);
+//		plotPanel.removeAll();
+//		graphComponent = (Component) plot.createChart().getCanvas();
+//		plotPanel.add(graphComponent);
+//		plotPanel.revalidate();
+//		plotPanel.repaint();
 //		graphComponent.revalidate();
 	}
 
