@@ -3,23 +3,23 @@ package model;
 import java.io.Serializable;
 
 public class ParameterSet implements Serializable {
-	Float loa;	
-    Float aoa; 
-    Float bspnm;
-    Float pabs; 				
-    Float abpf;		
-    Float rof;		
-    Float fpab; 
-    int[] colorEM; 
-    int[] colorSTORM;
-    int[] colorAB; 
-    Float sxy; 
-    Float sz; 
-    Float doc; 
-    Float nocpsmm; 
-    Float docpsnm;
-    Float bd;
-    Float bspsnm;
+	public Float loa;	
+    public Float aoa; 
+    public Float bspnm;
+    public Float pabs; 				
+    public Float abpf;		
+    public Float rof;		
+    public Float fpab; 
+    public int[] colorEM; 
+    public int[] colorSTORM;
+    public int[] colorAB; 
+    public Float sxy; 
+    public Float sz; 
+    public Float doc; 
+    public Float nocpsmm; 
+    public Float docpsnm;
+    public Float bd;
+    public Float bspsnm;
 	public ParameterSet(Float loa, Float aoa, Float bspnm, Float pabs,
 			Float abpf, Float rof, Float fpab, int[] colorEM, int[] colorSTORM,
 			int[] colorAB, Float sxy, Float sz, Float doc, Float nocpsmm,
@@ -65,6 +65,10 @@ public class ParameterSet implements Serializable {
         this.bspsnm = new Float(10/600.f);
     }
     
+    /**
+     * 
+     * @return default parameterSet with hard-coded values
+     */
     public static ParameterSet defaultParameterSet() {
     	Float loa = new Float(1.f); 	
         Float aoa = new Float((float) (90./180.*Math.PI));
@@ -85,4 +89,5 @@ public class ParameterSet implements Serializable {
         Float bspsnm = new Float(10/600.f); 
     	return new ParameterSet(loa, aoa, bspnm,pabs, abpf, rof, fpab, colorEM, colorSTORM, colorAB, sxy, sz, doc, nocpsmm, docpsnm, bd, bspsnm);
     }
+    
 }

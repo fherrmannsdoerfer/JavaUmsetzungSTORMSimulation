@@ -15,12 +15,21 @@ public class TriangleDataSetSerializable extends TriangleDataSet implements Seri
 	private static final long serialVersionUID = 1L;
 	public List<SerializablePolygon> data = new ArrayList<SerializablePolygon>();
 	
+	/**
+	 * @param parameterSet - parameters
+	 * 
+	 */
 	public TriangleDataSetSerializable(ParameterSet parameterSet) {
 		super(parameterSet);
 		this.dataType = DataType.TRIANGLES;
 		// TODO Auto-generated constructor stub
 	}
 	
+	/**
+	 * @param parameterSet - parameters
+	 * @param set - non-serializable TriangleDataSet
+	 * @return serializable dataset with triangles
+	 */
 	public TriangleDataSetSerializable(ParameterSet parameterSet, TriangleDataSet set) {
 		super(parameterSet);
 		this.dataType = DataType.TRIANGLES;

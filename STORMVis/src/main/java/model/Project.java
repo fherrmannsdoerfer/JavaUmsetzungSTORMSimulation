@@ -1,11 +1,18 @@
 package model;
 
 import java.awt.image.BufferedImage;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import editor.SerializableImage;
+
+/**
+*
+* Wraps both DataSets and a project name, including an image if the project was created
+* with the editor.
+*/
 
 public class Project implements Serializable {
 	public String projectName;

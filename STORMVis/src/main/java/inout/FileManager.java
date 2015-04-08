@@ -23,7 +23,12 @@ import model.ParameterSet;
 import model.Project;
 import model.TriangleDataSet;
 import model.TriangleDataSetSerializable;
-
+/**
+ * 
+ * @author maxscheurer
+ * @brief import/export .storm
+ * Import and export of .storm-files, including serialization
+ */
 public class FileManager {
 	
 	public static void writeProjectToFile(Project p, String path) {
@@ -55,18 +60,18 @@ public class FileManager {
 	
 	public static Project openProjectFromFile(String path) {
 		Project p = null;
-		try(
-				InputStream file = new FileInputStream(path);
-				InputStream buffer = new BufferedInputStream(file);
-				ObjectInput input = new ObjectInputStream (buffer);
-		)
-		{
+		try{
+			InputStream file = new FileInputStream(path);
+			InputStream buffer = new BufferedInputStream(file);
+			ObjectInput input = new ObjectInputStream (buffer);
 			p = (Project) input.readObject();
 			System.out.println(input);
 		}
 		catch(ClassNotFoundException ex){
+			ex.printStackTrace();
 		}
 		catch(IOException ex){
+			ex.printStackTrace();
 		}
 		
 		for(DataSet set : p.dataSets) {

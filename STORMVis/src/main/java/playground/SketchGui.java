@@ -1,24 +1,68 @@
 package playground;
 
+import inout.FileManager;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
+import model.DataSet;
+import model.ParameterSet;
+import model.Project;
+
+import org.javatuples.Pair;
+import org.jzy3d.plot3d.primitives.Polygon;
+
+import editor.DataSetTableModel;
+import editor.ProjectFileFilter;
+import gui.DataTypeDetector;
+import gui.DataTypeDetector.DataType;
+import gui.ParserWrapper;
+import gui.Plotter;
+import gui.TriangleLineFilter;
 
 
-public class SketchGui extends JFrame {
+/**
+ * @brief Sketch of GUI 
+ * 
+ * This is the main program that implements both plotter and calculator for STORM simulation.
+ * It can load new data from the editor or parse files on the file system.
+ * 
+ * 
+ */
+
+public class SketchGui extends JFrame implements TableModelListener {
 
 	private JPanel contentPane;
 	private JTextField radiusOfFilamentsField;
@@ -37,6 +81,18 @@ public class SketchGui extends JFrame {
 	private JTextField colorBField;
 	private JTextField colorRField;
 	private JTextField colorGField;
+	
+	private final JLabel loadDataLabel = new JLabel("Please import data or select a representation.");
+	private JTable dataSetTable;
+	private DataSetTableModel model;
+	private Plot3D plot;
+	private JPanel plotPanel;
+	private Component graphComponent;
+	
+	/**
+	 * contains all current dataSets (displayed in table)
+	 */
+	private List<DataSet> allDataSets = new ArrayList<DataSet>();
 
 	/**
 	 * Launch the application.
@@ -60,12 +116,13 @@ public class SketchGui extends JFrame {
 	public SketchGui() {
 		int fontSize = 16;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 288, 970);
+//		setBounds(100, 100, 288, 970);
+		setBounds(100, 100, 1000, 726);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
+//		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+		contentPane.setPreferredSize(new Dimension(288, 970));
 		Box verticalBox = Box.createVerticalBox();
 		verticalBox.setName("");
 		verticalBox.setFont(new Font("Dialog", Font.ITALIC, 89));
@@ -417,9 +474,175 @@ public class SketchGui extends JFrame {
 		visButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		verticalBox.add(visButton);
 		
-		JEditorPane dtrpnHierListeMit = new JEditorPane();
-		dtrpnHierListeMit.setText("Hier Liste mit datasets einfuegen");
-		dtrpnHierListeMit.setBounds(12, 27, 240, 139);
-		contentPane.add(dtrpnHierListeMit);
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(contentPane);
+		JScrollPane jsp = new JScrollPane(contentPane);
+		
+		model = new DataSetTableModel();
+        dataSetTable = new JTable(model);
+        dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
+        model.addTableModelListener(this);
+        
+		dataSetTable.setBounds(12, 12, 240, 166);
+		contentPane.add(dataSetTable);
+		panel.add(jsp);
+		jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		getContentPane().add(panel, BorderLayout.EAST);
+		
+		plotPanel = new JPanel(new BorderLayout());
+		plotPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
+		getContentPane().add(plotPanel, BorderLayout.CENTER);
+		plotPanel.setLayout(new BorderLayout());
+		
+		loadDataLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		plotPanel.add(loadDataLabel, BorderLayout.CENTER);
+		
+		JToolBar toolBar = new JToolBar();
+		getContentPane().add(toolBar, BorderLayout.NORTH);
+		
+		JButton importFileButton = new JButton("Import file");
+		toolBar.add(importFileButton);
+		importFileButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setAcceptAllFileFilterUsed(false);
+				chooser.setFileFilter(new TriangleLineFilter());
+				chooser.setFileSelectionMode(0);
+				int returnVal = chooser.showOpenDialog(getContentPane()); //replace null with your swing container
+				File file;
+				if(returnVal == JFileChooser.APPROVE_OPTION) {     
+					proceedFileImport(chooser.getSelectedFile());
+				}
+			}
+		});
+		
+		JButton importProjectButton = new JButton("Import project");
+		toolBar.add(importProjectButton);
+		importProjectButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setFileFilter(new ProjectFileFilter());
+				fc.setFileSelectionMode(0);
+				int returnValue = fc.showOpenDialog(getContentPane());
+				if(returnValue == JFileChooser.APPROVE_OPTION) {
+					String path = fc.getSelectedFile().getAbsolutePath();
+					Project p = FileManager.openProjectFromFile(path);
+					allDataSets.clear();
+					model.data.clear();
+					model.visibleSets.clear();
+					allDataSets = p.dataSets;
+					for(DataSet s : allDataSets) {
+						model.visibleSets.add(Boolean.FALSE);
+					}
+					model.data.addAll(p.dataSets);
+					model.fireTableDataChanged();
+					
+					// TODO: replace with clean implementation (booleans)
+					plot.addAllDataSets(allDataSets);
+					plotPanel.removeAll();
+					graphComponent = (Component) plot.createChart().getCanvas();
+					plotPanel.add(graphComponent);
+					plotPanel.revalidate();
+					plotPanel.repaint();
+					graphComponent.revalidate();
+				}
+			}
+		});
+		
+		plot = new Plot3D();
+		configureTableListener();
+		
+		JButton saveProjectButton = new JButton("Save project");
+		toolBar.add(saveProjectButton);
+	}
+	
+	
+	private void proceedFileImport(File file) {
+		System.out.println("Path: " + file.getAbsolutePath());
+		DataType type = DataType.UNKNOWN;
+		try {
+			type = DataTypeDetector.getDataType(file.getAbsolutePath());
+			System.out.println(type.toString());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		DataSet data = ParserWrapper.parseFileOfType(file.getAbsolutePath(), type);
+		if(data.dataType.equals(DataType.TRIANGLES)) {
+			System.out.println("Triangles parsed correctly.");
+		}
+		else if(type.equals(DataType.LINES)) {
+			System.out.println("Lines parsed correctly.");
+		}
+		data.setName(file.getName());
+		allDataSets.add(data);
+		model.data.add(data);
+		model.visibleSets.add(Boolean.FALSE);
+		model.fireTableDataChanged();
+//		Plotter plotter = new Plotter(data, type);
+//		plot.addAllDataSets(allDataSets);
+//		plotPanel.removeAll();
+//		graphComponent = (Component) plot.createChart().getCanvas();
+//		plotPanel.add(graphComponent);
+//		plotPanel.revalidate();
+//		plotPanel.repaint();
+//		graphComponent.revalidate();
+	}
+
+	/**
+	 * Configures the mouse listener for the dataset table. 
+	 * When a line is clicked, its ParameterSet is loaded to the configuration panel.
+	 */
+	private void configureTableListener() {
+		// TODO Auto-generated method stub
+		dataSetTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 1) {
+	        	      JTable target = (JTable)e.getSource();
+	        	      int row = target.getSelectedRow();
+	        	      int column = target.getSelectedColumn();
+	        	      System.out.println("row/col :" + row + " | " + column);
+	        	      if(column == 0) {
+	        	    	  loadParameterSetOfRow(row);
+	        	      }
+				}
+			}
+		});
+	
+	}
+	
+	/**
+	 * Loads the parameter set of the selected row into the configuration panel 
+	 * @param row - row clicked in dataSetTable
+	 *
+	 */
+	
+	private void loadParameterSetOfRow(int row) {
+		ParameterSet set = allDataSets.get(row).parameterSet;
+//		set.loa;	     
+//		set.aoa;       
+//		set.bspnm;     
+//		set.pabs; 		
+//		set.abpf;		 
+		radiusOfFilamentsField.setText(set.rof.toString());		 
+//		set.fpab;      
+//		set.colorEM;   
+//		set.colorSTORM;
+//		set.colorAB;   
+		locPrecisionXYField.setText(set.sxy.toString());       
+		locPrecisionZField.setText(set.sz.toString());        
+//		set.doc;       
+//		set.nocpsmm;   
+//		set.docpsnm;   
+//		set.bd;        
+//		set.bspsnm;  
+	}
+	
+	@Override
+	public void tableChanged(TableModelEvent e) {
+		
 	}
 }

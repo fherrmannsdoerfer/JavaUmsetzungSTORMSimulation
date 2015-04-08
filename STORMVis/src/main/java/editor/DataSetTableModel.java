@@ -7,7 +7,7 @@ import javax.swing.table.AbstractTableModel;
 
 import model.DataSet;
 
-class DataSetTableModel extends AbstractTableModel {
+public class DataSetTableModel extends AbstractTableModel {
 	 /**
 	 * 
 	 */

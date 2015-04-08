@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import model.LineDataSet;
+import model.ParameterSet;
+
 import org.jzy3d.maths.Coord3d;
 
 
@@ -20,11 +23,18 @@ public class LineObjectParser {
 	public int pointNumber = 0;
 	
 	public String path;
-		
+	/**
+	 * 
+	 * @param path - abs. file path
+	 */
 	public LineObjectParser(String path) {
 		this.path = path;
 	}
 	
+	/**
+	 * Parses the selected file and puts the results into class field.
+	 * @throws IOException
+	 */
 	public void parse() throws IOException {
 		long start = System.nanoTime();
         BufferedReader br = new BufferedReader(new FileReader(path));
@@ -99,6 +109,18 @@ public class LineObjectParser {
         System.out.println("Number of objects: "+ objectNumber);
         System.out.println("Number of objects in Array: " + allObjects.size());
         //System.out.println(allObjects);
+	}
+	
+	/**
+	 * Creates a LineDataSet from the parsed objetcs
+	 * @return
+	 */
+	public LineDataSet wrapParsedObjectsToLineDataSet() {
+		LineDataSet set = new LineDataSet(new ParameterSet());
+		set.data = allObjects;
+		set.pointNumber = new Integer(pointNumber);
+		set.objectNumber = new Integer(objectNumber);
+		return set;
 	}
 	
 	public static void printMatches(String text, String regex) {
