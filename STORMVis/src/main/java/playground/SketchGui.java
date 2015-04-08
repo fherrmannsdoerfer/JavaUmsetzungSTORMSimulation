@@ -30,6 +30,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -41,6 +42,7 @@ import model.DataSet;
 import model.ParameterSet;
 import model.Project;
 import editor.DataSetTableModel;
+import editor.Editor;
 import editor.ProjectFileFilter;
 import gui.DataTypeDetector;
 import gui.DataTypeDetector.DataType;
@@ -98,6 +100,8 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private JButton antibodyColorButton;
 	private JButton stormColorButton;
 
+	private static String EXTENSION = ".storm";
+	
 	/**
 	 * Launch the application.
 	 */
@@ -555,12 +559,18 @@ public class SketchGui extends JFrame implements TableModelListener {
 					allDataSets.clear();
 					model.data.clear();
 					model.visibleSets.clear();
-					allDataSets = p.dataSets;
+					allDataSets.addAll(p.dataSets);
 					for(DataSet s : allDataSets) {
 						model.visibleSets.add(s.getParameterSet().generalVisibility);
 					}
 					model.data.addAll(p.dataSets);
-					model.fireTableDataChanged();
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							visualizeAllSelectedData();
+						}
+					});
 				}
 			}
 		});
@@ -569,12 +579,48 @@ public class SketchGui extends JFrame implements TableModelListener {
 		configureTableListener();
 		
 		JButton openEditorButton = new JButton("Open editor");
+		openEditorButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SwingUtilities.invokeLater(new Runnable() {
+		            public void run() {
+		                try {
+							new Editor();
+						} catch (IOException e) {
+							e.printStackTrace();
+						} 
+		            }
+		        });
+			}
+		});
 		toolBar.add(openEditorButton);
 		
 		Component horizontalGlue_24 = Box.createHorizontalGlue();
 		toolBar.add(horizontalGlue_24);
 		
 		JButton saveProjectButton = new JButton("Save project");
+		saveProjectButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int returnValue = fc.showSaveDialog(getContentPane());
+				if(returnValue == JFileChooser.APPROVE_OPTION) {
+					String path = fc.getSelectedFile().getAbsolutePath();
+					String name = fc.getSelectedFile().getName();
+					if (!path.endsWith(EXTENSION)) {
+					    path += EXTENSION;
+					}
+					if(name.endsWith(EXTENSION)){
+						name = name.substring(0, name.length()-6);
+					}
+					System.out.println("Path to write project: " + path);
+					System.out.println("project name: " + name);
+					Project p = new Project(name, allDataSets);
+					FileManager.writeProjectToFile(p, path);
+				}
+			}
+		});
 		toolBar.add(saveProjectButton);
 	}
 	
@@ -698,7 +744,6 @@ public class SketchGui extends JFrame implements TableModelListener {
 		
 		allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
 		
-		
 		setSelectedListsForDrawing();
 	}
 	
@@ -711,11 +756,9 @@ public class SketchGui extends JFrame implements TableModelListener {
 	 * Checks which data sets are generally visible and creates a new Plot3D with the dataSets
 	 */
 	public void setSelectedListsForDrawing() {
-		plot = null;
-		plot = new Plot3D();
 		List<DataSet> sets = new ArrayList<DataSet>();
 		for(int i = 0; i < model.data.size(); i++) {
-			if(model.visibleSets.get(i) == Boolean.TRUE) {
+			if(model.visibleSets.get(i) == true) {
 				sets.add(model.data.get(i));
 				allDataSets.get(i).getParameterSet().setGeneralVisibility(Boolean.TRUE);
 			}
@@ -737,6 +780,41 @@ public class SketchGui extends JFrame implements TableModelListener {
 			graphComponent.revalidate();
 		}
 		else if(sets.size() == 0) {
+			System.out.println("empty!!!");
+			plot.dataSets.clear();
+			plotPanel.removeAll();
+			plotPanel.add(loadDataLabel);
+			plotPanel.revalidate();
+			plotPanel.repaint();
+		}
+	}	
+	
+	private void visualizeAllSelectedData() {
+		List<DataSet> sets = new ArrayList<DataSet>();
+		for(int i = 0; i < allDataSets.size(); i++) {
+			if(allDataSets.get(i).getParameterSet().generalVisibility == true) {
+				model.visibleSets.add(Boolean.TRUE);
+				sets.add(model.data.get(i));
+			}
+			else {
+				model.visibleSets.add(Boolean.FALSE);
+			}
+		}
+		model.data.clear();
+		model.data.addAll(allDataSets);
+		
+		if(sets.size() > 0) {
+			plot.dataSets.clear();
+			plot.addAllDataSets(sets);
+			plotPanel.removeAll();
+			graphComponent = (Component) plot.createChart().getCanvas();
+			plotPanel.add(graphComponent);
+			plotPanel.revalidate();
+			plotPanel.repaint();
+			graphComponent.revalidate();
+		}
+		else if(sets.size() == 0) {
+			System.out.println("empty!!!");
 			plot.dataSets.clear();
 			plotPanel.removeAll();
 			plotPanel.add(loadDataLabel);

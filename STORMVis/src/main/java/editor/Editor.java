@@ -88,7 +88,8 @@ public class Editor implements KeyListener, TableModelListener {
 	
 	public Editor() throws IOException {
         final JFrame f = new JFrame("Editor");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+//        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         superPanel = new JPanel();
         drawPanel = new DrawPanel();
         drawPanel.addListener(new PointDrawnListener() {
