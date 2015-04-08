@@ -83,6 +83,11 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private JTextField colorRField;
 	private JTextField colorGField;
 	
+	private JCheckBox showEmBox;
+	private JCheckBox showStormPointsBox;
+	private JCheckBox showAntibodiesBox;
+	private JCheckBox mergePSFBox;
+	
 	private final JLabel loadDataLabel = new JLabel("Please import data or select a representation.");
 	private JTable dataSetTable;
 	private DataSetTableModel model;
@@ -90,6 +95,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private JPanel plotPanel;
 	private Component graphComponent;
 	
+	private int currentRow;
 	/**
 	 * contains all current dataSets (displayed in table)
 	 */
@@ -118,7 +124,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		int fontSize = 16;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		setBounds(100, 100, 288, 970);
-		setBounds(100, 100, 1000, 726);
+		setBounds(100, 100, 1200, 900);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 //		setContentPane(contentPane);
@@ -348,7 +354,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		Component horizontalGlue_17 = Box.createHorizontalGlue();
 		horizontalBox_14.add(horizontalGlue_17);
 		
-		JCheckBox mergePSFBox = new JCheckBox("");
+		mergePSFBox = new JCheckBox("");
 		horizontalBox_14.add(mergePSFBox);
 		
 		Component horizontalGlue_18 = Box.createHorizontalGlue();
@@ -450,7 +456,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		Component horizontalGlue_7 = Box.createHorizontalGlue();
 		horizontalBox_18.add(horizontalGlue_7);
 		
-		JCheckBox showStormPointsBox = new JCheckBox("");
+		showStormPointsBox = new JCheckBox("");
 		horizontalBox_18.add(showStormPointsBox);
 		
 		Box horizontalBox_20 = Box.createHorizontalBox();
@@ -462,7 +468,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		Component horizontalGlue_12 = Box.createHorizontalGlue();
 		horizontalBox_20.add(horizontalGlue_12);
 		
-		JCheckBox showAntibodiesBox = new JCheckBox("");
+		showAntibodiesBox = new JCheckBox("");
 		horizontalBox_20.add(showAntibodiesBox);
 		
 		Box horizontalBox_21 = Box.createHorizontalBox();
@@ -474,7 +480,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		Component horizontalGlue_23 = Box.createHorizontalGlue();
 		horizontalBox_21.add(horizontalGlue_23);
 		
-		JCheckBox showEmBox = new JCheckBox("");
+		showEmBox = new JCheckBox("");
 		horizontalBox_21.add(showEmBox);
 		
 		JButton visButton = new JButton("visualize");
@@ -623,6 +629,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	 */
 	
 	private void loadParameterSetOfRow(int row) {
+		currentRow = row;
 		ParameterSet set = allDataSets.get(row).parameterSet;
 		radiusOfFilamentsField.setText(set.rof.toString()); //rof                                                                                         
 		labelingEfficiencyField.setText(set.pabs.toString()); //pabs                                                                                       
@@ -637,7 +644,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		locPrecisionZField.setText(set.sz.toString()); //sz   
 		psfSizeField.setText(set.psfwidth.toString()); //psfwidth aus StormPointFinder                                                                         
 		epitopeDensityField.setText(set.bspnm.toString()); //bspnm oder bspsnm je nachdem ob Linien oder Dreiecke
-		pointSizeField.setText(set.sxy.toString());
+		pointSizeField.setText(set.pointSize.toString());
 		
 		// TODO: colors!                                                                                                         
 	}
@@ -653,7 +660,13 @@ public class SketchGui extends JFrame implements TableModelListener {
 	 * invoked by visualize button
 	 */
 	private void visualize() {
+		allDataSets.get(currentRow).getParameterSet().setEmVisibility(showEmBox.isSelected());
+		allDataSets.get(currentRow).getParameterSet().setStormVisibility(showStormPointsBox.isSelected());
+		allDataSets.get(currentRow).getParameterSet().setAntibodyVisibility(showAntibodiesBox.isSelected());
 		
+		allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
+		
+		setSelectedListsForDrawing();
 	}
 	
 	@Override
@@ -666,8 +679,16 @@ public class SketchGui extends JFrame implements TableModelListener {
 		for(int i = 0; i < model.data.size(); i++) {
 			if(model.visibleSets.get(i) == Boolean.TRUE) {
 				sets.add(model.data.get(i));
+				allDataSets.get(i).getParameterSet().setGeneralVisibility(Boolean.TRUE);
+			}
+			else {
+				allDataSets.get(i).getParameterSet().setGeneralVisibility(Boolean.FALSE);
 			}
 		}
+		
+		model.data.clear();
+		model.data.addAll(allDataSets);
+		
 		if(sets.size() > 0) {
 			plot.dataSets.clear();
 			plot.addAllDataSets(sets);
