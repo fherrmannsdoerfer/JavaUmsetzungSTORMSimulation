@@ -99,6 +99,10 @@ public class Plot3D {
 				TriangleDataSet triangles = (TriangleDataSet) set;
 				CompileableComposite comp = new CompileableComposite();
 				comp.add(triangles.drawableTriangles);
+				comp.setWireframeDisplayed(false);
+				comp.setWireframeColor(Color.BLACK);
+		        comp.setWireframeWidth(0.00001f);
+		        comp.setColorMapper(null);
 				chart.getScene().getGraph().add(comp);
 			}
 		}

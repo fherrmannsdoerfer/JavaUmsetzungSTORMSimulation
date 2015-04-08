@@ -547,19 +547,10 @@ public class SketchGui extends JFrame implements TableModelListener {
 					model.visibleSets.clear();
 					allDataSets = p.dataSets;
 					for(DataSet s : allDataSets) {
-						model.visibleSets.add(Boolean.FALSE);
+						model.visibleSets.add(s.getParameterSet().generalVisibility);
 					}
 					model.data.addAll(p.dataSets);
 					model.fireTableDataChanged();
-					
-					// TODO: replace with clean implementation (booleans)
-					plot.addAllDataSets(allDataSets);
-					plotPanel.removeAll();
-					graphComponent = (Component) plot.createChart().getCanvas();
-					plotPanel.add(graphComponent);
-					plotPanel.revalidate();
-					plotPanel.repaint();
-					graphComponent.revalidate();
 				}
 			}
 		});
@@ -613,13 +604,11 @@ public class SketchGui extends JFrame implements TableModelListener {
 		dataSetTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 1) {
-	        	      JTable target = (JTable)e.getSource();
-	        	      int row = target.getSelectedRow();
-	        	      int column = target.getSelectedColumn();
-	        	      System.out.println("row/col :" + row + " | " + column);
-	        	      if(column == 0) {
-	        	    	  loadParameterSetOfRow(row);
-	        	      }
+					JTable target = (JTable)e.getSource();
+					int row = target.getSelectedRow();
+					int column = target.getSelectedColumn();
+					System.out.println("row/col :" + row + " | " + column);
+					loadParameterSetOfRow(row);
 				}
 			}
 		});
@@ -667,8 +656,35 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private void visualize() {
 		
 	}
+	
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		
+		setSelectedListsForDrawing();
+	}
+	
+	public void setSelectedListsForDrawing() {
+		List<DataSet> sets = new ArrayList<DataSet>();
+		for(int i = 0; i < model.data.size(); i++) {
+			if(model.visibleSets.get(i) == Boolean.TRUE) {
+				sets.add(model.data.get(i));
+			}
+		}
+		if(sets.size() > 0) {
+			plot.dataSets.clear();
+			plot.addAllDataSets(sets);
+			plotPanel.removeAll();
+			graphComponent = (Component) plot.createChart().getCanvas();
+			plotPanel.add(graphComponent);
+			plotPanel.revalidate();
+			plotPanel.repaint();
+			graphComponent.revalidate();
+		}
+		else if(sets.size() == 0) {
+			plot.dataSets.clear();
+			plotPanel.removeAll();
+			plotPanel.add(loadDataLabel);
+			plotPanel.revalidate();
+			plotPanel.repaint();
+		}
 	}
 }
