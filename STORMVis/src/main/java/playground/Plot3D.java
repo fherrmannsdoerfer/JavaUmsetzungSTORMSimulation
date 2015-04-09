@@ -24,6 +24,7 @@ public class Plot3D {
 
 	public List<DataSet> dataSets = new ArrayList<DataSet>();
 	public Quality chartQuality;
+	public boolean squared = true;
 	
 	/**
 	 * select whether lines should be displayed
@@ -138,10 +139,10 @@ public class Plot3D {
 				}
 			}
 		}
-		
+		chart.getView().setSquared(squared);
 		chart.getView().setBackgroundColor(Color.BLACK);
         chart.getAxeLayout().setMainColor(Color.WHITE);
-		chart.addMouseController();
+		chart.addController(new ZoomController());
 		return chart;
 	}
 	

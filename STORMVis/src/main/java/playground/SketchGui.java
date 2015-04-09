@@ -75,9 +75,6 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private JTextField psfSizeField; //psfwidth aus StormPointFinder
 	private JTextField epitopeDensityField; //bspnm oder bspsnm je nachdem ob Linien oder Dreiecke
 	private JTextField pointSizeField; //das muesste der Parameter a aus Plotter new Color(coord.x/255.f,coord.y/255.f,coord.z/255.f,a); sein
-	private JTextField colorBField; // das sind die entsprechenden Farben aus der vorherigen Zeile
-	private JTextField colorRField;
-	private JTextField colorGField;
 	
 	private JCheckBox showEmBox;
 	private JCheckBox showStormPointsBox;
@@ -91,7 +88,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private JPanel plotPanel;
 	private Component graphComponent;
 	
-	private int currentRow;
+	private int currentRow = -1;
 	/**
 	 * contains all current dataSets (displayed in table)
 	 */
@@ -99,6 +96,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private JButton emColorButton;
 	private JButton antibodyColorButton;
 	private JButton stormColorButton;
+	private JCheckBox squaredCoordBox;
 
 	private static String EXTENSION = ".storm";
 	
@@ -511,6 +509,11 @@ public class SketchGui extends JFrame implements TableModelListener {
         
 		dataSetTable.setBounds(12, 12, 240, 166);
 		contentPane.add(dataSetTable);
+		
+		squaredCoordBox = new JCheckBox("squared coordinate system");
+		squaredCoordBox.setSelected(true);
+		squaredCoordBox.setBounds(12, 913, 240, 23);
+		contentPane.add(squaredCoordBox);
 		panel.add(jsp);
 		jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		getContentPane().add(panel, BorderLayout.EAST);
@@ -686,34 +689,36 @@ public class SketchGui extends JFrame implements TableModelListener {
 	
 	private void loadParameterSetOfRow(int row) {
 		currentRow = row;
-		ParameterSet set = allDataSets.get(row).parameterSet;
-		radiusOfFilamentsField.setText(set.rof.toString()); //rof                                                                                         
-		labelingEfficiencyField.setText(set.pabs.toString()); //pabs                                                                                       
-		meanAngleField.setText(set.aoa.toString()); //aoa     
-		backgroundLabelField.setText(set.ilpmm3.toString()); //ilpmm3 aus StormPointFinder                                                                   
-		labelLengthField.setText(set.sxy.toString()); //loa                                                                                               
-		fluorophoresPerLabelField.setText(set.fpab.toString()); //fpab                                                                                     
-		averageBlinkingNumberField.setText(set.abpf.toString()); //abpf
-		// TODO: ??
-//		averagePhotonOutputField.setText(set.sxy.toString());                                                                                             
-		locPrecisionXYField.setText(set.sxy.toString()); //sxy                                                                                            
-		locPrecisionZField.setText(set.sz.toString()); //sz   
-		psfSizeField.setText(set.psfwidth.toString()); //psfwidth aus StormPointFinder                                                                         
-		epitopeDensityField.setText(set.bspnm.toString()); //bspnm oder bspsnm je nachdem ob Linien oder Dreiecke
-		pointSizeField.setText(set.pointSize.toString());
-		
-		showAntibodiesBox.setSelected(set.getAntibodyVisibility());
-		showEmBox.setSelected(set.getEmVisibility());
-		showStormPointsBox.setSelected(set.getStormVisibility());
-		
-		emColorButton.setBackground(set.getEmColor());
-		stormColorButton.setBackground(set.getStormColor());
-		antibodyColorButton.setBackground(set.getAntibodyColor());
-		
-		
-		emColorButton.setOpaque(true);
-		stormColorButton.setOpaque(true);
-		antibodyColorButton.setOpaque(true);
+		if(currentRow != -1) {
+			ParameterSet set = allDataSets.get(row).parameterSet;
+			radiusOfFilamentsField.setText(set.rof.toString()); //rof                                                                                         
+			labelingEfficiencyField.setText(set.pabs.toString()); //pabs                                                                                       
+			meanAngleField.setText(set.aoa.toString()); //aoa     
+			backgroundLabelField.setText(set.ilpmm3.toString()); //ilpmm3 aus StormPointFinder                                                                   
+			labelLengthField.setText(set.sxy.toString()); //loa                                                                                               
+			fluorophoresPerLabelField.setText(set.fpab.toString()); //fpab                                                                                     
+			averageBlinkingNumberField.setText(set.abpf.toString()); //abpf
+			// TODO: ??
+			//		averagePhotonOutputField.setText(set.sxy.toString());                                                                                             
+			locPrecisionXYField.setText(set.sxy.toString()); //sxy                                                                                            
+			locPrecisionZField.setText(set.sz.toString()); //sz   
+			psfSizeField.setText(set.psfwidth.toString()); //psfwidth aus StormPointFinder                                                                         
+			epitopeDensityField.setText(set.bspnm.toString()); //bspnm oder bspsnm je nachdem ob Linien oder Dreiecke
+			pointSizeField.setText(set.pointSize.toString());
+
+			showAntibodiesBox.setSelected(set.getAntibodyVisibility());
+			showEmBox.setSelected(set.getEmVisibility());
+			showStormPointsBox.setSelected(set.getStormVisibility());
+
+			emColorButton.setBackground(set.getEmColor());
+			stormColorButton.setBackground(set.getStormColor());
+			antibodyColorButton.setBackground(set.getAntibodyColor());
+
+
+			emColorButton.setOpaque(true);
+			stormColorButton.setOpaque(true);
+			antibodyColorButton.setOpaque(true);
+		}
 	}
 	
 	private void updateButtonColors() {
@@ -739,13 +744,15 @@ public class SketchGui extends JFrame implements TableModelListener {
 	 * invoked by visualize button
 	 */
 	private void visualize() {
-		allDataSets.get(currentRow).getParameterSet().setEmVisibility(showEmBox.isSelected());
-		allDataSets.get(currentRow).getParameterSet().setStormVisibility(showStormPointsBox.isSelected());
-		allDataSets.get(currentRow).getParameterSet().setAntibodyVisibility(showAntibodiesBox.isSelected());
-		
-		allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
-		
-		visualizeAllSelectedData();
+		if(currentRow != -1) {
+			allDataSets.get(currentRow).getParameterSet().setEmVisibility(showEmBox.isSelected());
+			allDataSets.get(currentRow).getParameterSet().setStormVisibility(showStormPointsBox.isSelected());
+			allDataSets.get(currentRow).getParameterSet().setAntibodyVisibility(showAntibodiesBox.isSelected());
+
+			allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
+
+			visualizeAllSelectedData();
+		}
 	}
 	
 	@Override
@@ -804,6 +811,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		model.data.clear();
 		model.data.addAll(allDataSets);
 		
+		plot.squared = squaredCoordBox.isSelected();
 		if(sets.size() > 0) {
 			plot.dataSets.clear();
 			plot.addAllDataSets(sets);
