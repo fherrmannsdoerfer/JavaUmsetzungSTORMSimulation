@@ -19,6 +19,10 @@ public class DataSet implements Serializable {
 	public String name;
 	public Color color;
 	
+	public float[][] stormData;
+	public float[][] antiBodyStartPoints;
+	public float[][] antiBodyEndPoints;
+	
 	public DataSet(ParameterSet parameterSet) {
 		super();
 		this.parameterSet = parameterSet;

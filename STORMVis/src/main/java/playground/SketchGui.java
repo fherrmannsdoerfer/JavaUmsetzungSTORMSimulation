@@ -38,6 +38,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import calc.STORMCalculator;
 import model.DataSet;
 import model.ParameterSet;
 import model.Project;
@@ -88,16 +89,24 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private JPanel plotPanel;
 	private Component graphComponent;
 	
+	private STORMCalculator calc;
+	
 	private int currentRow = -1;
 	/**
 	 * contains all current dataSets (displayed in table)
 	 */
 	private List<DataSet> allDataSets = new ArrayList<DataSet>();
+	
+	
 	private JButton emColorButton;
 	private JButton antibodyColorButton;
 	private JButton stormColorButton;
+	
 	private JCheckBox squaredCoordBox;
 
+	/**
+	 * file extension for storm project files
+	 */
 	private static String EXTENSION = ".storm";
 	
 	/**
@@ -122,11 +131,9 @@ public class SketchGui extends JFrame implements TableModelListener {
 	public SketchGui() {
 		int fontSize = 16;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		setBounds(100, 100, 288, 970);
 		setBounds(100, 100, 1200, 1000);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-//		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		contentPane.setPreferredSize(new Dimension(288, 970));
 		Box verticalBox = Box.createVerticalBox();
@@ -539,7 +546,6 @@ public class SketchGui extends JFrame implements TableModelListener {
 				chooser.setFileFilter(new TriangleLineFilter());
 				chooser.setFileSelectionMode(0);
 				int returnVal = chooser.showOpenDialog(getContentPane()); //replace null with your swing container
-				File file;
 				if(returnVal == JFileChooser.APPROVE_OPTION) {     
 					proceedFileImport(chooser.getSelectedFile());
 				}
@@ -626,6 +632,8 @@ public class SketchGui extends JFrame implements TableModelListener {
 			}
 		});
 		toolBar.add(saveProjectButton);
+		
+		calc = new STORMCalculator(null);
 	}
 	
 	
@@ -736,9 +744,17 @@ public class SketchGui extends JFrame implements TableModelListener {
 	/**
 	 * invoked by calculate button
 	 * runs the calculation for the current dataset
+	 * @throws Exception 
 	 */
 	private void calculate() {
+		allDataSets.get(currentRow).getParameterSet();
 		
+//		allDataSets.get(currentRow).getParameterSet()
+		calc = new STORMCalculator(allDataSets.get(currentRow));
+		calc.startCalculation();
+		// When calc has finished, grab the new dataset
+		allDataSets.set(currentRow, calc.getCurrentDataSet());
+		visualizeAllSelectedData();
 	}
 	/**
 	 * invoked by visualize button

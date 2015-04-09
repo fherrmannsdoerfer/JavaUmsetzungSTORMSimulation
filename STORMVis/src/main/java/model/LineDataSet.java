@@ -34,6 +34,9 @@ public class LineDataSet extends DataSet implements Serializable{
 			}
 			data.add(serList);
 		}
+		this.stormData = ser.stormData;
+		this.antiBodyEndPoints = ser.antiBodyEndPoints;
+		this.antiBodyStartPoints = ser.antiBodyStartPoints;
 	}
 
 }

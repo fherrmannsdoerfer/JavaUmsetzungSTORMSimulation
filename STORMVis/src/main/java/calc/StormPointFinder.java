@@ -9,13 +9,13 @@ import java.util.List;
 
 public class StormPointFinder {
 	
-	public static float[][] findStormPoints(float[][] listEndPoints, float abpf, float sxy, float sz, float bd, float fpab, boolean background ) {
+	public static float[][] findStormPoints(float[][] listEndPoints, float abpf, float sxy, float sz, float bd, float fpab, boolean background, float psfwidth, float ilpmm3, boolean mergedPSFs) {
 		float[][] stormPoints = null;
 		//idxF = []; %idxF contains the information to which structure the fluorophore belongs
 	    //idxST = []; %idxST contains the information to which structure each localization belongs
 		// not set in following code!
 		if (background) { //unspecific labeling
-			float ilpmm3 = 50; //incorrect localizations per micrometer ^3
+//			float ilpmm3 = 50; //incorrect localizations per micrometer ^3
 			float xmin = Calc.min(listEndPoints, 0);
 			float xmax = Calc.max(listEndPoints, 0);
 			float ymin = Calc.min(listEndPoints, 1);
@@ -176,8 +176,6 @@ public class StormPointFinder {
 			System.out.println("Conversion ended");
 //			Calc.print2dMatrix(stormPoints);
 			// TODO: boolean or integer?
-			boolean mergedPSFs = true;
-	        float psfwidth = 200;
 	        float affectingFactor = 2;
 	        if(mergedPSFs) {
 	        	int maxInFrameNumbers = (int) Calc.max(stormPoints,4); 

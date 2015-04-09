@@ -39,6 +39,10 @@ public class TriangleDataSetSerializable extends TriangleDataSet implements Seri
 		this.name = set.getName();
 		this.dataType = DataType.LINES;
 		this.color = set.getColor();
+		this.primitives = set.primitives;
+		this.antiBodyEndPoints = set.antiBodyEndPoints;
+		this.antiBodyStartPoints = set.antiBodyStartPoints;
+		this.stormData = set.stormData;
 	}
 	
 }

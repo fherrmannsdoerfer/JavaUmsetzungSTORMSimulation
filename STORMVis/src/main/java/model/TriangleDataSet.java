@@ -44,6 +44,10 @@ public class TriangleDataSet extends DataSet implements Serializable{
 		for(SerializablePolygon pol : ser.data) {
 			this.drawableTriangles.add(pol.toPolygon());
 		}
+		this.primitives = ser.primitives;
+		this.antiBodyEndPoints = ser.antiBodyEndPoints;
+		this.antiBodyStartPoints = ser. antiBodyStartPoints;
+		this.stormData = ser.stormData;
 	}
 
     public List<Polygon> getDrawableTriangles() {

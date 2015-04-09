@@ -102,17 +102,6 @@ public class Plot3D {
 			        comp.add(scatter);
 			        chart.getScene().getGraph().add(comp);
 				}
-				
-				// Check if ABs should be displayed
-				if(lines.getParameterSet().antibodyVisibility == true) {
-					System.out.println("show ABs (lines)");
-				}
-				
-				// Check if STORM should be displayed
-				if(lines.getParameterSet().stormVisibility == true) {
-					System.out.println("show storm (lines)");
-				}
-				
 			}
 			else if(set.dataType == DataType.TRIANGLES) {
 				float a = 1.f;
@@ -128,16 +117,49 @@ public class Plot3D {
 			        comp.setColorMapper(null);
 					chart.getScene().getGraph().add(comp);
 				}
-				
-				if(triangles.getParameterSet().antibodyVisibility == true) {
-					System.out.println("show ABs (tr)");
-				}
-				
-				// Check if STORM should be displayed
-				if(triangles.getParameterSet().stormVisibility == true) {
-					System.out.println("show storm (tr)");
-				}
 			}
+			
+			// check if ABs should be displayed
+			if(set.getParameterSet().antibodyVisibility == true && set.antiBodyEndPoints != null && set.antiBodyStartPoints != null) {
+				System.out.println("show ABs");
+				
+				List<LineStrip> lineList = new ArrayList<LineStrip>();
+		        for(int i = 0; i < set.antiBodyEndPoints.length; i++) {
+		        	LineStrip strip = new LineStrip();
+		    		strip.setWidth(2.f);
+		    		strip.setWireframeColor(new Color(set.getParameterSet().getAntibodyColor().getRed()/255.f, set.getParameterSet().getAntibodyColor().getGreen()/255.f, set.getParameterSet().getAntibodyColor().getBlue()/255.f, 1.f));
+		        	
+		    		float[] currentRowStart = set.antiBodyStartPoints[i];
+		    		float[] currentRowEnd = set.antiBodyEndPoints[i];
+		    		strip.add(new Point(new Coord3d(currentRowStart[0],currentRowStart[1],currentRowStart[2])));
+		    		strip.add(new Point(new Coord3d(currentRowEnd[0],currentRowEnd[1],currentRowEnd[2])));
+		        	lineList.add(strip);
+		        }
+		        for (LineStrip line : lineList) {
+		        	if(line.getPoints().size() != 0) {
+		        		chart.getScene().getGraph().add(line);
+		        	}
+		        }
+			}
+			
+			// Check if STORM should be displayed
+			if(set.getParameterSet().stormVisibility == true && set.stormData != null) {
+				System.out.println("show storm");
+				float[][] result = set.stormData;
+				Coord3d[] points = new Coord3d[result.length];;
+				Color[] colors = new Color[result.length];
+				for (int i = 0; i < result.length; i++) {
+					Coord3d coord = new Coord3d(result[i][0], result[i][1], result[i][2]);
+					points[i] = coord;
+					colors[i] = new Color(set.getParameterSet().getStormColor().getRed(), set.getParameterSet().getStormColor().getGreen(), set.getParameterSet().getStormColor().getBlue(), result[i][3]);
+				}
+				CompileableComposite comp = new CompileableComposite();
+		        float pointSize = set.getParameterSet().pointSize;
+		        Scatter scatter = new Scatter(points, colors, pointSize);
+		        comp.add(scatter);
+		        chart.getScene().getGraph().add(comp);
+			}
+			
 		}
 		chart.getView().setSquared(squared);
 		chart.getView().setBackgroundColor(Color.BLACK);

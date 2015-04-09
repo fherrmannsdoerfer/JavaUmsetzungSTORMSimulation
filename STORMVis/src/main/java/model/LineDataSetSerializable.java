@@ -31,8 +31,11 @@ public class LineDataSetSerializable extends LineDataSet implements Serializable
 		this.name = set.getName();
 		this.dataType = DataType.LINES;
 		this.color = set.getColor();
+		
+		this.stormData = set.stormData;
+		this.antiBodyEndPoints = set.antiBodyEndPoints;
+		this.antiBodyStartPoints = set.antiBodyStartPoints;
 	}
-	
 	
 
 }
