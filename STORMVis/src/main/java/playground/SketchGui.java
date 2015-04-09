@@ -617,7 +617,6 @@ public class SketchGui extends JFrame implements TableModelListener {
 		
 		JButton saveProjectButton = new JButton("Save project");
 		saveProjectButton.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
@@ -640,7 +639,6 @@ public class SketchGui extends JFrame implements TableModelListener {
 			}
 		});
 		toolBar.add(saveProjectButton);
-		
 		calc = new STORMCalculator(null);
 	}
 	
@@ -667,14 +665,6 @@ public class SketchGui extends JFrame implements TableModelListener {
 		model.data.add(data);
 		model.visibleSets.add(Boolean.FALSE);
 		model.fireTableDataChanged();
-//		Plotter plotter = new Plotter(data, type);
-//		plot.addAllDataSets(allDataSets);
-//		plotPanel.removeAll();
-//		graphComponent = (Component) plot.createChart().getCanvas();
-//		plotPanel.add(graphComponent);
-//		plotPanel.revalidate();
-//		plotPanel.repaint();
-//		graphComponent.revalidate();
 	}
 
 	/**

@@ -6,7 +6,10 @@ import gnu.trove.list.array.TIntArrayList;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * @brief finding stormPoints from endPoints
+ *
+ */
 public class StormPointFinder {
 	
 	public static float[][] findStormPoints(float[][] listEndPoints, float abpf, float sxy, float sz, float bd, float fpab, boolean background, float psfwidth, float ilpmm3, boolean mergedPSFs) {

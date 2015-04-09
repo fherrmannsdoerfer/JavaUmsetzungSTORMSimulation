@@ -17,6 +17,11 @@ import org.jzy3d.maths.Coord3d;
 import parsing.TriangleObjectParser;
 import common.ScatterDemo;
 
+/**
+ * 
+ * @brief Complete STORM simulation management
+ *
+ */
 public class STORMCalculator {
 
     List<float[][]> trList;

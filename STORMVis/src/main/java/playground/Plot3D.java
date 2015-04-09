@@ -110,7 +110,7 @@ public class Plot3D {
 					System.out.println("Show triangles EM");
 					CompileableComposite comp = new CompileableComposite();
 					comp.add(triangles.drawableTriangles);
-					comp.setColor(new Color(triangles.getParameterSet().getEmColor().getRed(), triangles.getParameterSet().getEmColor().getGreen(), triangles.getParameterSet().getEmColor().getBlue(),a));
+					comp.setColor(new Color(triangles.getParameterSet().getEmColor().getRed()/255.f, triangles.getParameterSet().getEmColor().getGreen()/255.f, triangles.getParameterSet().getEmColor().getBlue()/255.f,a));
 					comp.setWireframeDisplayed(false);
 					comp.setWireframeColor(Color.BLACK);
 			        comp.setWireframeWidth(0.00001f);
@@ -151,7 +151,7 @@ public class Plot3D {
 				for (int i = 0; i < result.length; i++) {
 					Coord3d coord = new Coord3d(result[i][0], result[i][1], result[i][2]);
 					points[i] = coord;
-					colors[i] = new Color(set.getParameterSet().getStormColor().getRed(), set.getParameterSet().getStormColor().getGreen(), set.getParameterSet().getStormColor().getBlue(), result[i][3]);
+					colors[i] = new Color(set.getParameterSet().getStormColor().getRed()/255.f, set.getParameterSet().getStormColor().getGreen()/255.f, set.getParameterSet().getStormColor().getBlue()/255.f, result[i][3]);
 				}
 				CompileableComposite comp = new CompileableComposite();
 		        float pointSize = set.getParameterSet().pointSize;
