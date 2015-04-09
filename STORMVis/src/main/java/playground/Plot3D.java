@@ -122,7 +122,6 @@ public class Plot3D {
 			// check if ABs should be displayed
 			if(set.getParameterSet().antibodyVisibility == true && set.antiBodyEndPoints != null && set.antiBodyStartPoints != null) {
 				System.out.println("show ABs");
-				
 				List<LineStrip> lineList = new ArrayList<LineStrip>();
 		        for(int i = 0; i < set.antiBodyEndPoints.length; i++) {
 		        	LineStrip strip = new LineStrip();
