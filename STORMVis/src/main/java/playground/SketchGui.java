@@ -564,6 +564,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 						model.visibleSets.add(s.getParameterSet().generalVisibility);
 					}
 					model.data.addAll(p.dataSets);
+					System.out.println("Number of dss: " + allDataSets.size());
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
@@ -744,7 +745,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		
 		allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
 		
-		setSelectedListsForDrawing();
+		visualizeAllSelectedData();
 	}
 	
 	@Override
