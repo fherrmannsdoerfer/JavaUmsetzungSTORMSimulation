@@ -45,6 +45,7 @@ import model.Project;
 import editor.DataSetTableModel;
 import editor.Editor;
 import editor.ProjectFileFilter;
+import editor.SerializableImage;
 import gui.DataTypeDetector;
 import gui.DataTypeDetector.DataType;
 import gui.ParserWrapper;
@@ -90,6 +91,11 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private Component graphComponent;
 	
 	private STORMCalculator calc;
+	
+	/**
+	 * is set if a project with an image from the editor was loaded
+	 */
+	private SerializableImage loadedImage;
 	
 	private int currentRow = -1;
 	/**
@@ -565,6 +571,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 				if(returnValue == JFileChooser.APPROVE_OPTION) {
 					String path = fc.getSelectedFile().getAbsolutePath();
 					Project p = FileManager.openProjectFromFile(path);
+					loadedImage = p.getOriginalImage();
 					allDataSets.clear();
 					model.data.clear();
 					model.visibleSets.clear();
@@ -627,6 +634,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 					System.out.println("Path to write project: " + path);
 					System.out.println("project name: " + name);
 					Project p = new Project(name, allDataSets);
+					p.setOriginalImage(loadedImage);
 					FileManager.writeProjectToFile(p, path);
 				}
 			}
