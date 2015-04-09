@@ -3,10 +3,9 @@ package editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import common.Triangle;
 import model.LineDataSet;
-
 import model.TriangleDataSet;
+
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.Point2D;
 import org.jzy3d.plot3d.primitives.Point;
@@ -44,6 +43,7 @@ public class DrawManager {
     public TriangleDataSet addCurrentPointsToTriangleDataSet(TriangleDataSet s) {
         if (currentPoints.size() == 0 || currentPoints == null) return s;
         s.drawableTriangles.addAll(packCurrentPointsToTriangleList());
+        s.primitives.addAll(createPrimivesFromList(s.drawableTriangles));
         return s;
     }
 	
@@ -93,4 +93,17 @@ public class DrawManager {
 		return triangles;
 	}
 	
+	public List<float[][]> createPrimivesFromList(List<Polygon> list) {
+		List<float[][]> prim = new ArrayList<float[][]>();
+		for(Polygon p : list) {
+			float[][] tr = new float[3][3];
+			for(int i = 0; i < p.getPoints().size(); i++) {
+				tr[i][0] = p.getPoints().get(i).xyz.x;
+				tr[i][1] = p.getPoints().get(i).xyz.y;
+				tr[i][2] = p.getPoints().get(i).xyz.z;
+			}
+			prim.add(tr);
+		}
+		return prim;
+	}
 }

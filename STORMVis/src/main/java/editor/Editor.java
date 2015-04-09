@@ -137,6 +137,10 @@ public class Editor implements KeyListener, TableModelListener {
 				final DataSetSelectionTableModel model = new DataSetSelectionTableModel();
 				final DataSetSelectionTable selectionTable = new DataSetSelectionTable(model);
 				model.data.addAll(allDataSets);
+				
+				/**
+				 * closed lines or open lines
+				 */
 				if(toggleClose.isSelected()) {
 					model.selectableDataType = DataType.TRIANGLES;
 				}
