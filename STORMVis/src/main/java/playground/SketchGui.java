@@ -71,7 +71,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private JTextField labelLengthField; //loa
 	private JTextField fluorophoresPerLabelField; //fpab
 	private JTextField averageBlinkingNumberField; //abpf
-	private JTextField averagePhotonOutputField;
+	private JTextField averagePhotonOutputField; // TODO: ???
 	private JTextField locPrecisionXYField; //sxy
 	private JTextField locPrecisionZField; //sz
 	private JTextField psfSizeField; //psfwidth aus StormPointFinder
@@ -709,7 +709,13 @@ public class SketchGui extends JFrame implements TableModelListener {
 			locPrecisionXYField.setText(set.sxy.toString()); //sxy                                                                                            
 			locPrecisionZField.setText(set.sz.toString()); //sz   
 			psfSizeField.setText(set.psfwidth.toString()); //psfwidth aus StormPointFinder                                                                         
-			epitopeDensityField.setText(set.bspnm.toString()); //bspnm oder bspsnm je nachdem ob Linien oder Dreiecke
+			if(allDataSets.get(row).dataType == DataType.LINES) {
+				epitopeDensityField.setText(set.bspnm.toString());
+			}
+			else {
+				epitopeDensityField.setText(set.bspsnm.toString());
+			}
+			
 			pointSizeField.setText(set.pointSize.toString());
 
 			showAntibodiesBox.setSelected(set.getAntibodyVisibility());
@@ -745,9 +751,27 @@ public class SketchGui extends JFrame implements TableModelListener {
 	 * @throws Exception 
 	 */
 	private void calculate() {
-		allDataSets.get(currentRow).getParameterSet();
+		System.out.println("bspsnm: " + allDataSets.get(currentRow).getParameterSet().getBspsnm());
+		allDataSets.get(currentRow).getParameterSet().setRof(new Float(radiusOfFilamentsField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setPabs(new Float(labelingEfficiencyField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setAoa(new Float(meanAngleField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setIlpmm3(new Float(backgroundLabelField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setLoa(new Float(labelLengthField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setFpab(new Float(fluorophoresPerLabelField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setAbpf(new Float(averageBlinkingNumberField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setSxy(new Float(locPrecisionXYField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setSz(new Float(locPrecisionZField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setPsfwidth(new Float(psfSizeField.getText()));
+		if(allDataSets.get(currentRow).dataType == DataType.LINES) {
+			allDataSets.get(currentRow).getParameterSet().setBspnm(new Float(epitopeDensityField.getText()));
+		}
+		else {
+			allDataSets.get(currentRow).getParameterSet().setBspsnm(new Float(epitopeDensityField.getText()));
+		}
+		allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
 		
-//		allDataSets.get(currentRow).getParameterSet()
+		allDataSets.get(currentRow).getParameterSet().setMergedPSF(mergePSFBox.isSelected());
+		
 		calc = new STORMCalculator(allDataSets.get(currentRow));
 		calc.startCalculation();
 		// When calc has finished, grab the new dataset
