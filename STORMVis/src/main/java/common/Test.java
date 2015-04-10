@@ -20,6 +20,10 @@ public class Test extends FrameSwing {
 	static String FILE2 = "Microtubules.wimp";
 	static String FILE3 = "Microtubules_large.wimp";
 	
+	
+	/**
+	 * Test class for trying out new stuff
+	 */
 	public Test() {
 
 //        initUI();
