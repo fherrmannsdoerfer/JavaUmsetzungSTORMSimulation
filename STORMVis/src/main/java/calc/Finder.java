@@ -78,37 +78,37 @@ public class Finder {
 				for(int j = 1; j <= Math.floor(bspnm*lengthOfStructure); j++) {
 					float randomNumber = (float) Math.random();
 					
-					int idx = 0;
-					for(int c = 0; c < cummulativeLengths.length; c++) {
-						if(cummulativeLengths[c] >= (((float) j)/bspnm)) {
-							idx = c;
+					if(randomNumber < pabs) {
+						int idx = 0;
+						for(int c = 0; c < cummulativeLengths.length; c++) {
+							if(cummulativeLengths[c] >= (((float) j)/bspnm)) {
+								idx = c;
+							}
 						}
+						float x = points.get(i).get(idx+1)[0] - points.get(i).get(idx)[0];
+						float y = points.get(i).get(idx+1)[1] - points.get(i).get(idx)[1];
+						float z = points.get(i).get(idx+1)[2] - points.get(i).get(idx)[2];
+						float[] lineVec = new float[]{x,y,z};
+
+						float alpha = (float) (Math.random()*2*Math.PI);
+
+						float[] vecOrth = Calc.getVector(aoa, rof,alpha);
+						float[] vec = Calc.getVector(aoa, loa,alpha);
+
+						float[][] point = new float[2][3];
+						point[0] = points.get(i).get(idx);
+						point[1] = points.get(i).get(idx+1);
+						float[] rotVec = findRotation(vec, point);
+						float[] rotVecOrth = findRotation(vecOrth, point);
+
+						float[] lineVecNorm = Calc.scaleToOne(lineVec);
+						float multi = ((float)j-1.f)/bspnm - cummulativeLengths[idx];
+						float[] lineVecNormMulti = Calc.multiplyVector(lineVecNorm, multi);
+						float[] startPoint = Calc.vectorAddition(points.get(i).get(idx+1), Calc.vectorAddition(lineVecNormMulti, rotVecOrth));
+						float[] endPoint = Calc.vectorAddition(points.get(i).get(idx+1), Calc.vectorAddition(lineVecNormMulti, Calc.vectorAddition(rotVecOrth, rotVec)));
+						listStartPoints.add(startPoint);
+						listEndPoints.add(endPoint);
 					}
-					
-					float x = points.get(i).get(idx+1)[0] - points.get(i).get(idx)[0];  //points{1,i}(idx+1,1) - points{1,i}(idx,1)
-					float y = points.get(i).get(idx+1)[1] - points.get(i).get(idx)[1];
-					float z = points.get(i).get(idx+1)[2] - points.get(i).get(idx)[2];
-					float[] lineVec = new float[]{x,y,z};
-					
-					float alpha = (float) (Math.random()*2*Math.PI);
-					
-					float[] vecOrth = Calc.getVector(aoa, rof,alpha);
-                    float[] vec = Calc.getVector(aoa, loa,alpha);
-                    
-                    float[][] point = new float[2][3];
-                    point[0] = points.get(i).get(idx);
-                    point[1] = points.get(i).get(idx+1);
-                    float[] rotVec = findRotation(vec, point);
-                    float[] rotVecOrth = findRotation(vecOrth, point);
-                    
-                    
-                    float[] lineVecNorm = Calc.scaleToOne(lineVec);
-                    float multi = ((j-1)/bspnm-cummulativeLengths[idx]);
-                    float[] lineVecNormMulti = Calc.multiplyVector(lineVecNorm, multi);
-                    float[] startPoint = Calc.vectorAddition(points.get(i).get(idx+1), Calc.vectorAddition(lineVecNormMulti, rotVecOrth));
-                    float[] endPoint = Calc.vectorAddition(points.get(i).get(idx+1), Calc.vectorAddition(lineVecNormMulti, Calc.vectorAddition(rotVecOrth, rotVec)));
-                    listStartPoints.add(startPoint);
-                    listEndPoints.add(endPoint);
 				}
 			}
 		}

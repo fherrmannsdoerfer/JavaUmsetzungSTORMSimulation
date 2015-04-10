@@ -83,7 +83,6 @@ public class STORMCalculator {
 		}
 		else if(currentDataSet.dataType == DataType.LINES) {
 			LineDataSet currentLines = (LineDataSet) currentDataSet;
-			
 			Pair<float[][],float[][]> p = Finder.findLines(currentLines.data, currentDataSet.getParameterSet().bspnm, currentDataSet.getParameterSet().pabs, currentDataSet.getParameterSet().aoa, currentDataSet.getParameterSet().loa, currentDataSet.getParameterSet().rof);
 			ap = p.getValue0();
 			ep = p.getValue1();

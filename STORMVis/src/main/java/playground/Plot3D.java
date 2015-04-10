@@ -49,7 +49,7 @@ public class Plot3D {
 	
 	
 	public Chart createChart() {
-		chartQuality = Quality.Advanced;
+		chartQuality = Quality.Nicest;
 		Chart chart = AWTChartComponentFactory.chart(chartQuality, Toolkit.awt.name());
 		
 		for(DataSet set : dataSets) {

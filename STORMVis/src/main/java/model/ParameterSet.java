@@ -83,7 +83,7 @@ public class ParameterSet implements Serializable {
     	super();
     	this.loa = new Float(1.f); 	
         this.aoa = new Float((float) (90./180.*Math.PI));
-        this.bspnm = new Float(1/2.75f);
+        this.bspnm = new Float(1.f/2.75f);
         this.pabs = new Float(0.1f); 				
         this.abpf = new Float(14);		
         this.rof = new Float(3.5f);		
