@@ -1,11 +1,17 @@
 package calc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.javatuples.Pair;
+import org.jzy3d.maths.Coord3d;
 
-
+/**
+ * 
+ * Finds Antibodies/lines/ep/ap
+ *
+ */
 public class Finder {
 	// fluorophore = binding site
 	public static Pair<float[][],float[][]> findAntibodiesTri(List<float[][]> trList, float bspsnm, float pabs,float loa,float aoa,float doc,float nocpsmm,float docpsnm) {
@@ -49,6 +55,82 @@ public class Finder {
 		return new Pair<float[][], int[]>(points, idx);
 	}
 	
+	public static Pair<float[][],float[][]> findLines(List<ArrayList<Coord3d>> lines, float bspnm, float pabs,float aoa,float loa, float rof) {
+		int objectNumber = lines.size();
+		List<ArrayList<float[]>> points = new ArrayList<ArrayList<float[]>>();
+		
+		for(ArrayList<Coord3d> line : lines) {
+			ArrayList<float[]> newList = new ArrayList<float[]>();
+			for(Coord3d coord : line) {
+				float[] newCoord = new float[]{coord.x,coord.y,coord.z};
+				newList.add(newCoord);
+			}
+			points.add(newList);
+		}
+		
+		List<float[]> listStartPoints = new ArrayList<float[]>();
+		List<float[]> listEndPoints = new ArrayList<float[]>();
+		for(int i = 0; i < objectNumber; i++) {
+			if(points.get(i).size() > 0) { 
+				Pair<Float,float[]> lengthAndCummulativeLength = getLengthOfStructure(points.get(i));
+				float lengthOfStructure = lengthAndCummulativeLength.getValue0().floatValue();
+				float[] cummulativeLengths = lengthAndCummulativeLength.getValue1();
+				for(int j = 1; j <= Math.floor(bspnm*lengthOfStructure); j++) {
+					float randomNumber = (float) Math.random();
+					
+					int idx = 0;
+					for(int c = 0; c < cummulativeLengths.length; c++) {
+						if(cummulativeLengths[c] >= (((float) j)/bspnm)) {
+							idx = c;
+						}
+					}
+					
+					float x = points.get(i).get(idx+1)[0] - points.get(i).get(idx)[0];  //points{1,i}(idx+1,1) - points{1,i}(idx,1)
+					float y = points.get(i).get(idx+1)[1] - points.get(i).get(idx)[1];
+					float z = points.get(i).get(idx+1)[2] - points.get(i).get(idx)[2];
+					float[] lineVec = new float[]{x,y,z};
+					
+					float alpha = (float) (Math.random()*2*Math.PI);
+					
+					float[] vecOrth = Calc.getVector(aoa, rof,alpha);
+                    float[] vec = Calc.getVector(aoa, loa,alpha);
+                    
+                    float[][] point = new float[2][3];
+                    point[0] = points.get(i).get(idx);
+                    point[1] = points.get(i).get(idx+1);
+                    float[] rotVec = findRotation(vec, point);
+                    float[] rotVecOrth = findRotation(vecOrth, point);
+                    
+                    
+                    float[] lineVecNorm = Calc.scaleToOne(lineVec);
+                    float multi = ((j-1)/bspnm-cummulativeLengths[idx]);
+                    float[] lineVecNormMulti = Calc.multiplyVector(lineVecNorm, multi);
+                    float[] startPoint = Calc.vectorAddition(points.get(i).get(idx+1), Calc.vectorAddition(lineVecNormMulti, rotVecOrth));
+                    float[] endPoint = Calc.vectorAddition(points.get(i).get(idx+1), Calc.vectorAddition(lineVecNormMulti, Calc.vectorAddition(rotVecOrth, rotVec)));
+                    listStartPoints.add(startPoint);
+                    listEndPoints.add(endPoint);
+				}
+			}
+		}
+		return new Pair<float[][], float[][]>(Calc.toFloatArray(listStartPoints), Calc.toFloatArray(listEndPoints));
+	}
+	
+	public static Pair<Float,float[]> getLengthOfStructure(List<float[]> lines) {
+		float[] cummulativeLengths = new float[lines.size()-1];
+		Float length = null;
+		for(int i = 0; i < (lines.size() -1); i++) {
+			if(i > 0) {
+				cummulativeLengths[i] = Calc.getNorm(new float[]{lines.get(i)[0]-lines.get(i+1)[0],lines.get(i)[1]-lines.get(i+1)[1], lines.get(i)[2]-lines.get(i+1)[2]}) + cummulativeLengths[i-1];
+			}
+			else {
+				cummulativeLengths[i] = Calc.getNorm(new float[]{lines.get(i)[0]-lines.get(i+1)[0],lines.get(i)[1]-lines.get(i+1)[1], lines.get(i)[2]-lines.get(i+1)[2]});
+				length = new Float(cummulativeLengths[0]);
+			}
+		}
+		length = new Float(cummulativeLengths[cummulativeLengths.length-1]);
+		return new Pair<Float, float[]>(length, cummulativeLengths);
+	}
+	
 	public static float[][] getEndpoints(float[][] basepoints,float[][][] tr,int[] idx,float loa,float aoa) {
 		Pair<float[][],float[][]> vecPair = Calc.getVertices(tr);
 		float[][] vec1 = vecPair.getValue0();
@@ -57,7 +139,7 @@ public class Finder {
 		for(int i = 0; i < basepoints.length; i++) {
 			float[] vec = Calc.getVectorTri(aoa,loa);
 			float[] normTri = Calc.getCross(vec1[idx[i]],vec2[idx[i]]);
-			float[] finVec = findRotation(vec, normTri);
+			float[] finVec = findRotationTri(vec, normTri);
 			ep[i] = Calc.vectorAddition(basepoints[i], finVec);
 			if(Float.isNaN(ep[i][0]) || Float.isNaN(ep[i][1]) || Float.isNaN(ep[i][2])) {
 				System.out.println("NAN FOUND EP");
@@ -117,7 +199,7 @@ public class Finder {
 		return idx;
 	}
 	
-	public static float[] findRotation(float[] vec, float[] normVec) {
+	public static float[] findRotationTri(float[] vec, float[] normVec) {
 		float[] unityVec = {0,1,0};
 		float[] rotVec = null;
 		float[] targetVec = null;
@@ -149,6 +231,34 @@ public class Finder {
 	        rotVec = Calc.applyMatrix(R, vec);
 	        //Calc.printVector(rotVec);
 		}
+		return rotVec;
+	}
+	
+	public static float[] findRotation(float[] vec, float[][] point) {
+		float[] unityVec = {1,0,0};
+		float[] rotVec = null;
+		float[] targetVec = null;
+		
+		targetVec = new float[]{point[1][0] - point[0][0],point[1][1]-point[0][1],point[1][2]-point[0][2]};
+		targetVec = Calc.scaleToOne(targetVec);
+		
+		float[] v = Calc.getCross(unityVec,targetVec);
+        float s = Calc.getNorm(v);
+        if(s == 0.0) {
+        	return vec;
+        }
+        float c = Calc.getDot(unityVec, targetVec);
+        
+        float[][] vx = {{0,-v[2], v[1]},{v[2],0,-v[0]},{-v[1],v[0],0}};
+        float[][] R = {{1,0,0},{0,1,0},{0,0,1}}; //+vx+ // vx*vx*(1-c)/s^2;
+        R = Calc.matrixAddition(R, vx);
+        float[][] vxSquared = Calc.matrixMultiply(vx, vx);
+        if (Float.isNaN((float) ((float) (1-c)/(Math.pow(s, 2))))) {
+        	System.out.println("div is NAN");
+        }
+        vxSquared = Calc.matrixDivide(vxSquared,(float) ((float) (1-c)/(Math.pow(s, 2))));
+        R = Calc.matrixAddition(R, vxSquared);
+        rotVec = Calc.applyMatrix(R, vec);
 		return rotVec;
 	}
 }

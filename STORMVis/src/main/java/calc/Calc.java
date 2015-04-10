@@ -274,7 +274,7 @@ public class Calc {
 	/**
 	 * @param aoa
 	 * @param length
-	 * @return vector with antibodie angle and length
+	 * @return vector with antibody angle and length for triangles and lines
 	 */
 	
 	public static float[] getVectorTri(float aoa, float length) {
@@ -285,6 +285,15 @@ public class Calc {
 		float[] vec = {(float) (x*length),(float) (y*length),(float) (z*length)};
 		return vec;
 	}
+	
+	public static float[] getVector(float aoa, float length, float alpha) {
+		double x = Math.cos(aoa)*Math.cos(alpha);
+		double z = Math.sin(aoa);
+		double y = Math.cos(aoa)*Math.sin(alpha);
+		float[] vec = {(float) (x*length),(float) (y*length),(float) (z*length)};
+		return vec;
+	}
+
 	
 	/**
 	 * Matrix multiplication
@@ -357,6 +366,14 @@ public class Calc {
 			for (int j = 0; j < m1.length; j++) {
 				result[i][j] = m1[i][j]/div;
 			}
+		}
+		return result;
+	}
+	
+	public static float[] multiplyVector(float[] vec, float multi) {
+		float[] result = new float[vec.length];
+		for(int i = 0; i < vec.length; i++) {
+			result[i] = vec[i] *multi;
 		}
 		return result;
 	}
