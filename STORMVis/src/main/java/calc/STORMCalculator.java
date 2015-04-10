@@ -45,19 +45,6 @@ public class STORMCalculator {
 
 	public void startCalculation() {
 		long start = System.nanoTime();
-//		String path = "/Users/maximilianscheurer/ex.nff";
-//		TriangleObjectParser trParser = new TriangleObjectParser(path);
-//		trParser.limit = 0;
-//		try {
-//			trParser.parse();
-//		} catch (NumberFormatException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		trList = trParser.primitives;
 		if(currentDataSet != null) {
 			doSimulation();
 		}
@@ -87,6 +74,9 @@ public class STORMCalculator {
 			ap = p.getValue0();
 			ep = p.getValue1();
 			float[][] result = StormPointFinder.findStormPoints(ep, currentDataSet.getParameterSet().abpf, currentDataSet.getParameterSet().sxy, currentDataSet.getParameterSet().sz, currentDataSet.getParameterSet().bd, currentDataSet.getParameterSet().fpab, true, currentDataSet.getParameterSet().psfwidth, currentDataSet.getParameterSet().ilpmm3, currentDataSet.getParameterSet().mergedPSF);
+			/**
+			 * writing results to the current dataset
+			 */
 			currentDataSet.antiBodyEndPoints = ep;
 			currentDataSet.antiBodyStartPoints = ap;
 			currentDataSet.stormData = result;

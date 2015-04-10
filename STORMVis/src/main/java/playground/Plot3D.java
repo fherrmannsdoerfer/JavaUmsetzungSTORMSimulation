@@ -122,7 +122,7 @@ public class Plot3D {
 			// check if ABs should be displayed
 			if(set.getParameterSet().antibodyVisibility == true && set.antiBodyEndPoints != null && set.antiBodyStartPoints != null) {
 				System.out.println("show ABs");
-				List<LineStrip> lineList = new ArrayList<LineStrip>();
+				CompileableComposite comp = new CompileableComposite();
 		        for(int i = 0; i < set.antiBodyEndPoints.length; i++) {
 		        	LineStrip strip = new LineStrip();
 		    		strip.setWidth(2.f);
@@ -132,13 +132,9 @@ public class Plot3D {
 		    		float[] currentRowEnd = set.antiBodyEndPoints[i];
 		    		strip.add(new Point(new Coord3d(currentRowStart[0],currentRowStart[1],currentRowStart[2])));
 		    		strip.add(new Point(new Coord3d(currentRowEnd[0],currentRowEnd[1],currentRowEnd[2])));
-		        	lineList.add(strip);
+		    		comp.add(strip);
 		        }
-		        for (LineStrip line : lineList) {
-		        	if(line.getPoints().size() != 0) {
-		        		chart.getScene().getGraph().add(line);
-		        	}
-		        }
+		        chart.getScene().getGraph().add(comp);
 			}
 			
 			// Check if STORM should be displayed
