@@ -81,7 +81,7 @@ public class Finder {
 					if(randomNumber < pabs) {
 						int idx = 0;
 						for(int c = 0; c < cummulativeLengths.length; c++) {
-							if(cummulativeLengths[c] >= (((float) j)/bspnm)) {
+							if(cummulativeLengths[c] <= (((float) j)/bspnm)) {
 								idx = c;
 							}
 						}
