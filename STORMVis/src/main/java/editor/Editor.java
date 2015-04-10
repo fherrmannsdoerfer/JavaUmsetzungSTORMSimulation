@@ -2,6 +2,8 @@ package editor;
 
 import gui.DataTypeDetector.DataType;
 import inout.FileManager;
+import inout.ImageFileFilter;
+import inout.ProjectFileFilter;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -43,10 +45,14 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import table.DataSetSelectionTable;
+import table.DataSetSelectionTableModel;
+import table.DataSetTableModel;
 import model.DataSet;
 import model.LineDataSet;
 import model.ParameterSet;
 import model.Project;
+import model.SerializableImage;
 import model.TriangleDataSet;
 
 public class Editor implements KeyListener, TableModelListener {

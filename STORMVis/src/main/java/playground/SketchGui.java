@@ -1,6 +1,7 @@
 package playground;
 
 import inout.FileManager;
+import inout.ProjectFileFilter;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -38,14 +39,13 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import table.DataSetTableModel;
 import calc.STORMCalculator;
 import model.DataSet;
 import model.ParameterSet;
 import model.Project;
-import editor.DataSetTableModel;
+import model.SerializableImage;
 import editor.Editor;
-import editor.ProjectFileFilter;
-import editor.SerializableImage;
 import gui.DataTypeDetector;
 import gui.DataTypeDetector.DataType;
 import gui.ParserWrapper;

@@ -1,4 +1,4 @@
-package editor;
+package table;
 
 import gui.DataTypeDetector.DataType;
 
@@ -9,7 +9,7 @@ import javax.swing.table.AbstractTableModel;
 
 import model.DataSet;
 
-class DataSetSelectionTableModel extends AbstractTableModel {
+public class DataSetSelectionTableModel extends AbstractTableModel {
 	 /**
 	 * 
 	 */

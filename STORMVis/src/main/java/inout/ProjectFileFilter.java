@@ -1,4 +1,4 @@
-package editor;
+package inout;
 
 import java.io.File;
 
