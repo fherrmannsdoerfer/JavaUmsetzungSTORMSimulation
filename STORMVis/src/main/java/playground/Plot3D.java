@@ -13,6 +13,7 @@ import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.factories.AWTChartComponentFactory;
 import org.jzy3d.chart.factories.IChartComponentFactory.Toolkit;
 import org.jzy3d.colors.Color;
+import org.jzy3d.maths.BoundingBox3d;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.primitives.CompileableComposite;
 import org.jzy3d.plot3d.primitives.LineStrip;
@@ -25,6 +26,10 @@ public class Plot3D {
 	public List<DataSet> dataSets = new ArrayList<DataSet>();
 	public Quality chartQuality;
 	public boolean squared = true;
+	public Chart currentChart = null;
+	
+	public Coord3d viewPoint;
+	public BoundingBox3d viewBounds;
 	
 	/**
 	 * select whether lines should be displayed
@@ -156,10 +161,18 @@ public class Plot3D {
 			}
 			
 		}
+		
+		if(viewPoint != null && viewBounds != null) {
+			chart.getView().setBoundManual(viewBounds);
+			chart.setViewPoint(viewPoint);
+		}
+		
 		chart.getView().setSquared(squared);
 		chart.getView().setBackgroundColor(Color.BLACK);
         chart.getAxeLayout().setMainColor(Color.WHITE);
 		chart.addController(new ZoomController());
+		
+		currentChart = chart;
 		return chart;
 	}
 	

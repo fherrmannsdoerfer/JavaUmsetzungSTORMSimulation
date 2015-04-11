@@ -55,6 +55,7 @@ import model.Project;
 import model.SerializableImage;
 import table.DataSetTableModel;
 import calc.STORMCalculator;
+import javax.swing.JToggleButton;
 
 
 /**
@@ -118,6 +119,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private JRadioButton radioAdvanced;
 	private JRadioButton radioIntermediate;
 	private JRadioButton radioFastest;
+	private JToggleButton saveViewpointButton;
 
 	/**
 	 * file extension for storm project files
@@ -147,7 +149,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	public SketchGui() {
 		int fontSize = 16;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1200, 1000);
+		setBounds(100, 100, 1200, 1200);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
@@ -567,6 +569,10 @@ public class SketchGui extends JFrame implements TableModelListener {
 		group.add(radioAdvanced);
 		group.add(radioIntermediate);
 		group.add(radioFastest);
+		
+		saveViewpointButton = new JToggleButton("Save Viewpoint");
+		saveViewpointButton.setBounds(12, 1062, 161, 29);
+		contentPane.add(saveViewpointButton);
 		panel.add(jsp);
 		jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		getContentPane().add(panel, BorderLayout.EAST);
@@ -829,6 +835,13 @@ public class SketchGui extends JFrame implements TableModelListener {
 
 			allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
 			setPlotQuality();
+			if(saveViewpointButton.isSelected()) {
+				setViewPointAndScale();
+			}
+			else {
+				plot.viewPoint = null;
+				plot.viewBounds = null;
+			}
 			visualizeAllSelectedData();
 		}
 	}
@@ -850,6 +863,16 @@ public class SketchGui extends JFrame implements TableModelListener {
 		else if(radioFastest.isSelected()) {
 			plot.chartQuality = Quality.Fastest;
 		}
+	}
+	
+	private void setViewPointAndScale() {
+		System.out.println("VP: " + plot.currentChart.getViewPoint().toString());
+		System.out.println("scale: " + plot.currentChart.getScale().toString());
+		
+		plot.viewPoint = plot.currentChart.getViewPoint();
+		plot.viewBounds = plot.currentChart.getView().getBounds();
+		
+		
 	}
 	
 	@Override
