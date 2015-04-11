@@ -1,5 +1,10 @@
 package playground;
 
+import editor.Editor;
+import gui.DataTypeDetector;
+import gui.DataTypeDetector.DataType;
+import gui.ParserWrapper;
+import gui.TriangleLineFilter;
 import inout.FileManager;
 import inout.ProjectFileFilter;
 
@@ -19,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -26,6 +32,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -34,22 +41,20 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import table.DataSetTableModel;
-import calc.STORMCalculator;
+import org.jzy3d.plot3d.rendering.canvas.Quality;
+
 import model.DataSet;
 import model.ParameterSet;
 import model.Project;
 import model.SerializableImage;
-import editor.Editor;
-import gui.DataTypeDetector;
-import gui.DataTypeDetector.DataType;
-import gui.ParserWrapper;
-import gui.TriangleLineFilter;
+import table.DataSetTableModel;
+import calc.STORMCalculator;
 
 
 /**
@@ -109,6 +114,10 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private JButton stormColorButton;
 	
 	private JCheckBox squaredCoordBox;
+	private JRadioButton radioNicest;
+	private JRadioButton radioAdvanced;
+	private JRadioButton radioIntermediate;
+	private JRadioButton radioFastest;
 
 	/**
 	 * file extension for storm project files
@@ -123,6 +132,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 			public void run() {
 				try {
 					SketchGui frame = new SketchGui();
+					frame.setTitle("STORMVis");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -141,7 +151,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
-		contentPane.setPreferredSize(new Dimension(288, 970));
+		contentPane.setPreferredSize(new Dimension(288, 1080));
 		Box verticalBox = Box.createVerticalBox();
 		verticalBox.setName("");
 		verticalBox.setFont(new Font("Dialog", Font.ITALIC, 89));
@@ -525,8 +535,38 @@ public class SketchGui extends JFrame implements TableModelListener {
 		
 		squaredCoordBox = new JCheckBox("squared coordinate system");
 		squaredCoordBox.setSelected(true);
-		squaredCoordBox.setBounds(12, 913, 240, 23);
+		squaredCoordBox.setBounds(12, 1027, 240, 23);
 		contentPane.add(squaredCoordBox);
+		
+		Box verticalBox_8 = Box.createVerticalBox();
+		verticalBox_8.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Plot Quality", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		verticalBox_8.setBounds(12, 910, 240, 116);
+		contentPane.add(verticalBox_8);
+		
+		Box horizontalBox_19 = Box.createHorizontalBox();
+		verticalBox_8.add(horizontalBox_19);
+		
+		Component horizontalGlue_25 = Box.createHorizontalGlue();
+		horizontalBox_19.add(horizontalGlue_25);
+		
+		radioNicest = new JRadioButton("Nicest");
+		verticalBox_8.add(radioNicest);
+		radioNicest.setSelected(true);
+		
+		radioAdvanced = new JRadioButton("Advanced");
+		verticalBox_8.add(radioAdvanced);
+		
+		radioIntermediate = new JRadioButton("Intermediate");
+		verticalBox_8.add(radioIntermediate);
+		
+		radioFastest = new JRadioButton("Fastest");
+		verticalBox_8.add(radioFastest);
+		
+		ButtonGroup group = new ButtonGroup();
+		group.add(radioNicest);
+		group.add(radioAdvanced);
+		group.add(radioIntermediate);
+		group.add(radioFastest);
 		panel.add(jsp);
 		jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		getContentPane().add(panel, BorderLayout.EAST);
@@ -788,8 +828,27 @@ public class SketchGui extends JFrame implements TableModelListener {
 			allDataSets.get(currentRow).getParameterSet().setAntibodyVisibility(showAntibodiesBox.isSelected());
 
 			allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
-
+			setPlotQuality();
 			visualizeAllSelectedData();
+		}
+	}
+	
+	/**
+	 * sets the plot quality according to the radiobuttons
+	 */
+	
+	private void setPlotQuality() {
+		if(radioNicest.isSelected()) {
+			plot.chartQuality = Quality.Nicest;
+		}
+		else if(radioAdvanced.isSelected()) {
+			plot.chartQuality = Quality.Advanced;
+		}
+		else if(radioIntermediate.isSelected()) {
+			plot.chartQuality = Quality.Intermediate;
+		}
+		else if(radioFastest.isSelected()) {
+			plot.chartQuality = Quality.Fastest;
 		}
 	}
 	

@@ -32,7 +32,7 @@ public class Plot3D {
 	public boolean showLines = true;
 	
 	public Plot3D() {
-		
+		chartQuality = Quality.Nicest;
 	}
 	
 	public void addDataSet(DataSet s) {
@@ -49,10 +49,10 @@ public class Plot3D {
 	
 	
 	public Chart createChart() {
-		chartQuality = Quality.Nicest;
 		Chart chart = AWTChartComponentFactory.chart(chartQuality, Toolkit.awt.name());
 		
 		for(DataSet set : dataSets) {
+			
 			if(set.dataType == DataType.LINES) {
 				LineDataSet lines = (LineDataSet) set;
 				
