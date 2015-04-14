@@ -54,8 +54,10 @@ public class Plot3D {
 	
 	
 	public Chart createChart() {
-		Chart chart = AWTChartComponentFactory.chart(chartQuality, Toolkit.awt.name());
-		
+		//Chart chart = new Chart(chartQuality,Toolkit.awt.name()){
+		//	//AWTChartComponentFactory.chart(chartQuality, Toolkit.awt.name());
+		//}
+		Chart chart =AWTChartComponentFactory.chart(chartQuality, Toolkit.awt.name());
 		for(DataSet set : dataSets) {
 			
 			if(set.dataType == DataType.LINES) {
@@ -166,12 +168,10 @@ public class Plot3D {
 			chart.getView().setBoundManual(viewBounds);
 			chart.setViewPoint(viewPoint);
 		}
-		
 		chart.getView().setSquared(squared);
 		chart.getView().setBackgroundColor(Color.BLACK);
         chart.getAxeLayout().setMainColor(Color.WHITE);
 		chart.addController(new ZoomController());
-		
 		currentChart = chart;
 		return chart;
 	}
