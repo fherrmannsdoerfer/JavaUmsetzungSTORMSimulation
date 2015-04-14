@@ -154,14 +154,17 @@ public class SketchGui extends JFrame implements TableModelListener {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 		contentPane.setPreferredSize(new Dimension(288, 1080));
+
 		Box verticalBox = Box.createVerticalBox();
 		verticalBox.setName("");
 		verticalBox.setFont(new Font("Dialog", Font.ITALIC, 89));
-		verticalBox.setBounds(12, 190, 240, 720);
+		verticalBox.setBounds(12, 183, 240, 866);
 		verticalBox.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "parameters", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		verticalBox.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		verticalBox.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		contentPane.add(verticalBox);
+		
+		
 		
 		Box verticalBox_7 = Box.createVerticalBox();
 		verticalBox_7.setBorder(new TitledBorder(null, "simulation parameters", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -513,37 +516,16 @@ public class SketchGui extends JFrame implements TableModelListener {
 		showEmBox = new JCheckBox("");
 		horizontalBox_21.add(showEmBox);
 		
-		JButton visButton = new JButton("visualize");
-		visButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		visButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				visualize();
-			}
-		});
-		verticalBox.add(visButton);
-		
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.add(contentPane);
-		JScrollPane jsp = new JScrollPane(contentPane);
-		
-		model = new DataSetTableModel();
-        dataSetTable = new JTable(model);
-        dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
-        model.addTableModelListener(this);
-        
-		dataSetTable.setBounds(12, 12, 240, 166);
-		contentPane.add(dataSetTable);
-		
 		squaredCoordBox = new JCheckBox("squared coordinate system");
+		squaredCoordBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+		verticalBox_6.add(squaredCoordBox);
 		squaredCoordBox.setSelected(true);
-		squaredCoordBox.setBounds(12, 1027, 240, 23);
-		contentPane.add(squaredCoordBox);
+
 		
 		Box verticalBox_8 = Box.createVerticalBox();
+		verticalBox_8.setAlignmentX(Component.CENTER_ALIGNMENT);
+		verticalBox_6.add(verticalBox_8);
 		verticalBox_8.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Plot Quality", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		verticalBox_8.setBounds(12, 910, 240, 116);
-		contentPane.add(verticalBox_8);
 		
 		Box horizontalBox_19 = Box.createHorizontalBox();
 		verticalBox_8.add(horizontalBox_19);
@@ -569,6 +551,29 @@ public class SketchGui extends JFrame implements TableModelListener {
 		group.add(radioAdvanced);
 		group.add(radioIntermediate);
 		group.add(radioFastest);
+		
+
+		model = new DataSetTableModel();
+        dataSetTable = new JTable(model);
+        dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
+        model.addTableModelListener(this);
+        
+		dataSetTable.setBounds(12, 12, 240, 166);
+		contentPane.add(dataSetTable);
+		
+		JButton visButton = new JButton("visualize");
+		verticalBox.add(visButton);
+		visButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		visButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				visualize();
+			}
+		});
+		
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(contentPane);
+		JScrollPane jsp = new JScrollPane(contentPane);
 		
 		saveViewpointButton = new JToggleButton("Save Viewpoint");
 		saveViewpointButton.setBounds(12, 1062, 161, 29);
