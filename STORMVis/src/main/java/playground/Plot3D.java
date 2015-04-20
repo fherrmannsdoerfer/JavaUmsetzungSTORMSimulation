@@ -27,7 +27,7 @@ public class Plot3D {
 
 	public List<DataSet> dataSets = new ArrayList<DataSet>();
 	public Quality chartQuality;
-	public boolean squared = true;
+	public boolean squared = false;
 	public Chart currentChart = null;
 	
 	public Coord3d viewPoint;
@@ -56,9 +56,7 @@ public class Plot3D {
 	
 	
 	public Chart createChart() {
-		//Chart chart = new Chart(chartQuality,Toolkit.awt.name()){
-		//	//AWTChartComponentFactory.chart(chartQuality, Toolkit.awt.name());
-		//}
+		
 		Chart chart =AWTChartComponentFactory.chart(chartQuality, Toolkit.awt.name());
 		for(DataSet set : dataSets) {
 			
@@ -67,7 +65,7 @@ public class Plot3D {
 				
 				// Check if EM should be shown
 				if(lines.getParameterSet().emVisibility == true) {
-					System.out.println("Show lines EM");
+					//System.out.println("Show lines EM");
 					int pointNumber = 0;
 					// TODO: count point number in editor?!
 					if(lines.pointNumber == null || lines.pointNumber.intValue() == 0) {
@@ -101,7 +99,7 @@ public class Plot3D {
 			        	lineList.add(strip);
 			        }
 			        CompileableComposite comp = new CompileableComposite();
-			        float pointSize = lines.getParameterSet().pointSize;
+			        float pointSize = 0;// lines.getParameterSet().pointSize;
 			        Scatter scatter = new Scatter(points, colors, pointSize);
 			        for (LineStrip line : lineList) {
 			        	if(line.getPoints().size() != 0) {
@@ -116,7 +114,7 @@ public class Plot3D {
 				float a = 1.f;
 				TriangleDataSet triangles = (TriangleDataSet) set;
 				if(triangles.getParameterSet().emVisibility == true) {
-					System.out.println("Show triangles EM");
+					//System.out.println("Show triangles EM");
 					CompileableComposite comp = new CompileableComposite();
 					comp.add(triangles.drawableTriangles);
 					comp.setColor(new Color(triangles.getParameterSet().getEmColor().getRed()/255.f, triangles.getParameterSet().getEmColor().getGreen()/255.f, triangles.getParameterSet().getEmColor().getBlue()/255.f,a));

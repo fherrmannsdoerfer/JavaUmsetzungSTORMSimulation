@@ -21,6 +21,9 @@ public class ParameterSet implements Serializable {
     public Float docpsnm;
     public Float bd;
     public Float bspsnm;
+    public int frames;
+    public Float kOn;
+    public Float kOff;
     
     public Boolean generalVisibility;
     public Boolean emVisibility;
@@ -41,7 +44,7 @@ public class ParameterSet implements Serializable {
 	public ParameterSet(Float loa, Float aoa, Float bspnm, Float pabs,
 			Float abpf, Float rof, Float fpab, int[] colorEM, int[] colorSTORM,
 			int[] colorAB, Float sxy, Float sz, Float doc, Float nocpsmm,
-			Float docpsnm, Float bd, Float bspsnm, Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility, Float ilpmm3, Float psfwidth, Boolean mergedPSF, Float pointSize
+			Float docpsnm, Float bd, Float bspsnm, int frames, Float kOn, Float kOff, Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility, Float ilpmm3, Float psfwidth, Boolean mergedPSF, Float pointSize
 			, Color emColor, Color stormColor, Color antibodyColor) {
 		super();
 		this.loa = loa;
@@ -61,6 +64,9 @@ public class ParameterSet implements Serializable {
 		this.docpsnm = docpsnm;
 		this.bd = bd;
 		this.bspsnm = bspsnm;
+		this.frames = frames;
+		this.kOff = kOff;
+		this.kOn = kOn;
 		
 		this.generalVisibility = generalVisibility; 
 		this.emVisibility = emVisibility;      
@@ -98,11 +104,14 @@ public class ParameterSet implements Serializable {
         this.docpsnm = new Float(0.01f);
         this.bd = new Float((float) (3*5*1e-7));
         this.bspsnm = new Float(10/600.f);
+        this.frames = 10000;
+        this.kOn = 1.f;
+        this.kOff = 500.f;
         
         this.generalVisibility = Boolean.FALSE; 
-		this.emVisibility = Boolean.FALSE;      
-		this.stormVisibility = Boolean.FALSE;   
-		this.antibodyVisibility = Boolean.FALSE;
+		this.emVisibility = Boolean.TRUE;      
+		this.stormVisibility = Boolean.TRUE;   
+		this.antibodyVisibility = Boolean.TRUE;
 		
 		this.ilpmm3 = new Float(50.f);
 		this.psfwidth = new Float(200.f);
@@ -174,6 +183,30 @@ public class ParameterSet implements Serializable {
 
 	public void setFpab(Float fpab) {
 		this.fpab = fpab;
+	}
+	
+	public int getFrames(){
+		return frames;
+	}
+	
+	public void setFrames(int frames){
+		this.frames = frames;
+	}
+	
+	public Float getKOn(){
+		return kOn;
+	}
+	
+	public void setKOn(Float kOn){
+		this.kOn = kOn;
+	}
+	
+	public Float getKOff(){
+		return kOff;
+	}
+	
+	public void setKOff(Float kOff){
+		this.kOff = kOff;
 	}
 
 	public int[] getColorEM() {

@@ -58,7 +58,7 @@ public class STORMCalculator {
 		float[][] ap = null;
 		if(currentDataSet.dataType == DataType.TRIANGLES) {
 			TriangleDataSet currentTrs = (TriangleDataSet) currentDataSet;
-			Pair<float[][],float[][]> p = Finder.findAntibodiesTri(currentTrs.primitives, currentDataSet.getParameterSet().bspsnm, currentDataSet.getParameterSet().pabs, currentDataSet.getParameterSet().loa, currentDataSet.getParameterSet().aoa, currentDataSet.getParameterSet().doc, currentDataSet.getParameterSet().nocpsmm, currentDataSet.getParameterSet().docpsnm);
+			Pair<float[][],float[][]> p = Finder.findAntibodiesTri(currentTrs.primitives, currentDataSet);
 			ep = p.getValue1();
 			ap = p.getValue0();
 			float [][] epCopy = new float[ep.length][];
@@ -69,7 +69,7 @@ public class STORMCalculator {
 			}
 			currentDataSet.antiBodyEndPoints = epCopy;
 			currentDataSet.antiBodyStartPoints = apCopy;
-			float[][] result = StormPointFinder.findStormPoints(ep, currentDataSet.getParameterSet().abpf, currentDataSet.getParameterSet().sxy, currentDataSet.getParameterSet().sz, currentDataSet.getParameterSet().bd, currentDataSet.getParameterSet().fpab, true, currentDataSet.getParameterSet().psfwidth, currentDataSet.getParameterSet().ilpmm3, currentDataSet.getParameterSet().mergedPSF);
+			float[][] result = StormPointFinder.findStormPoints(ep, currentDataSet);
 			/**
 			 * writing results to the current dataset
 			 */
@@ -77,7 +77,7 @@ public class STORMCalculator {
 		}
 		else if(currentDataSet.dataType == DataType.LINES) {
 			LineDataSet currentLines = (LineDataSet) currentDataSet;
-			Pair<float[][],float[][]> p = Finder.findAntibodiesLines(currentLines.data, currentDataSet.getParameterSet().bspnm, currentDataSet.getParameterSet().pabs, currentDataSet.getParameterSet().aoa, currentDataSet.getParameterSet().loa, currentDataSet.getParameterSet().rof);
+			Pair<float[][],float[][]> p = Finder.findAntibodiesLines(currentLines.data, currentDataSet);
 			ap = p.getValue0();
 			ep = p.getValue1();
 			float [][] epCopy = new float[ep.length][];
@@ -88,7 +88,7 @@ public class STORMCalculator {
 			}
 			currentDataSet.antiBodyEndPoints = epCopy;
 			currentDataSet.antiBodyStartPoints = apCopy;
-			float[][] result = StormPointFinder.findStormPoints(ep, currentDataSet.getParameterSet().abpf, currentDataSet.getParameterSet().sxy, currentDataSet.getParameterSet().sz, currentDataSet.getParameterSet().bd, currentDataSet.getParameterSet().fpab, true, currentDataSet.getParameterSet().psfwidth, currentDataSet.getParameterSet().ilpmm3, currentDataSet.getParameterSet().mergedPSF);
+			float[][] result = StormPointFinder.findStormPoints(ep, currentDataSet);
 			/**
 			 * writing results to the current dataset
 			 */

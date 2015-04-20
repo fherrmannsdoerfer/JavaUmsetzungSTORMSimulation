@@ -78,7 +78,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private JTextField backgroundLabelField; //ilpmm3 aus StormPointFinder
 	private JTextField labelLengthField; //loa
 	private JTextField fluorophoresPerLabelField; //fpab
-	private JTextField averageBlinkingNumberField; //abpf
+	private JTextField kOnField; //abpf
 	private JTextField averagePhotonOutputField; // TODO: ???
 	private JTextField locPrecisionXYField; //sxy
 	private JTextField locPrecisionZField; //sz
@@ -127,7 +127,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	 * file extension for storm project files
 	 */
 	private static String EXTENSION = ".storm";
-	private JTextField textField;
+	private JTextField kOffField;
 	private JTextField recordedFramesField;
 	
 	/**
@@ -312,32 +312,32 @@ public class SketchGui extends JFrame implements TableModelListener {
 		Box horizontalBox_10 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_10);
 		
-		JLabel lblAverageBlinkingNumber = new JLabel("k off time");
+		JLabel lblAverageBlinkingNumber = new JLabel("k on time");
 		horizontalBox_10.add(lblAverageBlinkingNumber);
 		
 		Component horizontalGlue_10 = Box.createHorizontalGlue();
 		horizontalBox_10.add(horizontalGlue_10);
 		
-		averageBlinkingNumberField = new JTextField();
-		averageBlinkingNumberField.setMinimumSize(new Dimension(6, 10));
-		averageBlinkingNumberField.setMaximumSize(new Dimension(60, 22));
-		averageBlinkingNumberField.setColumns(5);
-		horizontalBox_10.add(averageBlinkingNumberField);
+		kOnField = new JTextField();
+		kOnField.setMinimumSize(new Dimension(6, 10));
+		kOnField.setMaximumSize(new Dimension(60, 22));
+		kOnField.setColumns(5);
+		horizontalBox_10.add(kOnField);
 		
 		Box horizontalBox_17 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_17);
 		
-		JLabel lblKOnTime = new JLabel("k on time");
+		JLabel lblKOnTime = new JLabel("k off time");
 		horizontalBox_17.add(lblKOnTime);
 		
 		Component horizontalGlue_3 = Box.createHorizontalGlue();
 		horizontalBox_17.add(horizontalGlue_3);
 		
-		textField = new JTextField();
-		textField.setMinimumSize(new Dimension(6, 10));
-		textField.setMaximumSize(new Dimension(60, 22));
-		textField.setColumns(5);
-		horizontalBox_17.add(textField);
+		kOffField = new JTextField();
+		kOffField.setMinimumSize(new Dimension(6, 10));
+		kOffField.setMaximumSize(new Dimension(60, 22));
+		kOffField.setColumns(5);
+		horizontalBox_17.add(kOffField);
 		
 		Box horizontalBox_22 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_22);
@@ -831,13 +831,15 @@ public class SketchGui extends JFrame implements TableModelListener {
 		currentRow = row;
 		if(currentRow != -1) {
 			ParameterSet set = allDataSets.get(row).parameterSet;
-			radiusOfFilamentsField.setText(set.rof.toString()); //rof                                                                                         
-			labelingEfficiencyField.setText(set.pabs.toString()); //pabs                                                                                       
-			meanAngleField.setText(set.aoa.toString()); //aoa     
-			backgroundLabelField.setText(set.ilpmm3.toString()); //ilpmm3 aus StormPointFinder                                                                   
-			labelLengthField.setText(set.sxy.toString()); //loa                                                                                               
-			fluorophoresPerLabelField.setText(set.fpab.toString()); //fpab                                                                                     
-			averageBlinkingNumberField.setText(set.abpf.toString()); //abpf
+			radiusOfFilamentsField.setText(set.getRof().toString()); //rof                                                                                         
+			labelingEfficiencyField.setText(set.getPabs().toString()); //pabs                                                                                       
+			meanAngleField.setText(set.getAoa().toString()); //aoa     
+			backgroundLabelField.setText(set.getIlpmm3().toString()); //ilpmm3 aus StormPointFinder                                                                   
+			labelLengthField.setText(set.getSxy().toString()); //loa                                                                                               
+			fluorophoresPerLabelField.setText(set.getFpab().toString()); //fpab                                                                                     
+			kOnField.setText(set.getKOn().toString()); //kOn
+			kOffField.setText(set.getKOff().toString()); //kOff
+			recordedFramesField.setText(String.valueOf(set.getFrames())); //frames
 			// TODO: ??
 			//		averagePhotonOutputField.setText(set.sxy.toString());                                                                                             
 			locPrecisionXYField.setText(set.sxy.toString()); //sxy                                                                                            
@@ -892,7 +894,9 @@ public class SketchGui extends JFrame implements TableModelListener {
 		allDataSets.get(currentRow).getParameterSet().setIlpmm3(new Float(backgroundLabelField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setLoa(new Float(labelLengthField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setFpab(new Float(fluorophoresPerLabelField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setAbpf(new Float(averageBlinkingNumberField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setKOn(new Float(kOnField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setKOff(new Float(kOffField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setFrames(new Integer(recordedFramesField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setSxy(new Float(locPrecisionXYField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setSz(new Float(locPrecisionZField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setPsfwidth(new Float(psfSizeField.getText()));

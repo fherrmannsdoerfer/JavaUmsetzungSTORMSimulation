@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import model.DataSet;
+import model.ParameterSet;
+
 import org.javatuples.Pair;
 import org.jzy3d.maths.Coord3d;
 
@@ -14,7 +17,15 @@ import org.jzy3d.maths.Coord3d;
  */
 public class Finder {
 	// fluorophore = binding site
-	public static Pair<float[][],float[][]> findAntibodiesTri(List<float[][]> trList, float bspsnm, float pabs,float loa,float aoa,float doc,float nocpsmm,float docpsnm) {
+	public static Pair<float[][],float[][]> findAntibodiesTri(List<float[][]> trList, DataSet parameter) {
+		ParameterSet ps = parameter.getParameterSet();
+		float bspsnm = ps.getBspsnm();
+		float pabs = ps.getPabs();
+		float loa = ps.getLoa();
+		float aoa = ps.getAoa();
+		float doc = ps.getDoc();
+		float nocpsmm = ps.getNocpsmm();
+		float docpsnm = ps.getDocpsnm();
 		float[][][] triangles = Calc.getMatrix(trList);
 		float[] areas = Calc.getAreas(triangles);
 		int numberOfFluorophores = (int) Math.floor(Calc.sum(areas)*bspsnm*pabs);
@@ -55,8 +66,13 @@ public class Finder {
 		return new Pair<float[][], int[]>(points, idx);
 	}
 	
-	public static Pair<float[][],float[][]> findAntibodiesLines(List<ArrayList<Coord3d>> lines, float bspnm, 
-			float pabs,float aoa,float loa, float rof) {
+	public static Pair<float[][],float[][]> findAntibodiesLines(List<ArrayList<Coord3d>> lines, DataSet ds) {
+		ParameterSet ps = ds.getParameterSet();
+		float bspnm = ps.getBspnm();
+		float pabs = ps.getPabs();
+		float rof = ps.getRof();
+		float aoa = ps.getAoa();
+		float loa = ps.getLoa();
 		//finds start- and endpoint of antibodies for filamentous structures
 		int objectNumber = lines.size();
 		List<ArrayList<float[]>> points = new ArrayList<ArrayList<float[]>>();
