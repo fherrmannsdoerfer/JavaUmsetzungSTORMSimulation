@@ -47,6 +47,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 
 import model.DataSet;
@@ -55,6 +56,7 @@ import model.Project;
 import model.SerializableImage;
 import table.DataSetTableModel;
 import calc.STORMCalculator;
+
 import javax.swing.JToggleButton;
 
 
@@ -125,6 +127,8 @@ public class SketchGui extends JFrame implements TableModelListener {
 	 * file extension for storm project files
 	 */
 	private static String EXTENSION = ".storm";
+	private JTextField textField;
+	private JTextField recordedFramesField;
 	
 	/**
 	 * Launch the application.
@@ -149,7 +153,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	public SketchGui() {
 		int fontSize = 16;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1200, 1000);
+		setBounds(100, 100, 1200, 1200);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
@@ -308,7 +312,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		Box horizontalBox_10 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_10);
 		
-		JLabel lblAverageBlinkingNumber = new JLabel("average blinking number");
+		JLabel lblAverageBlinkingNumber = new JLabel("k off time");
 		horizontalBox_10.add(lblAverageBlinkingNumber);
 		
 		Component horizontalGlue_10 = Box.createHorizontalGlue();
@@ -319,6 +323,36 @@ public class SketchGui extends JFrame implements TableModelListener {
 		averageBlinkingNumberField.setMaximumSize(new Dimension(60, 22));
 		averageBlinkingNumberField.setColumns(5);
 		horizontalBox_10.add(averageBlinkingNumberField);
+		
+		Box horizontalBox_17 = Box.createHorizontalBox();
+		verticalBox_3.add(horizontalBox_17);
+		
+		JLabel lblKOnTime = new JLabel("k on time");
+		horizontalBox_17.add(lblKOnTime);
+		
+		Component horizontalGlue_3 = Box.createHorizontalGlue();
+		horizontalBox_17.add(horizontalGlue_3);
+		
+		textField = new JTextField();
+		textField.setMinimumSize(new Dimension(6, 10));
+		textField.setMaximumSize(new Dimension(60, 22));
+		textField.setColumns(5);
+		horizontalBox_17.add(textField);
+		
+		Box horizontalBox_22 = Box.createHorizontalBox();
+		verticalBox_3.add(horizontalBox_22);
+		
+		JLabel lblRecordedFrames = new JLabel("recorded frames");
+		horizontalBox_22.add(lblRecordedFrames);
+		
+		Component horizontalGlue_26 = Box.createHorizontalGlue();
+		horizontalBox_22.add(horizontalGlue_26);
+		
+		recordedFramesField = new JTextField();
+		recordedFramesField.setMinimumSize(new Dimension(6, 10));
+		recordedFramesField.setMaximumSize(new Dimension(60, 22));
+		recordedFramesField.setColumns(5);
+		horizontalBox_22.add(recordedFramesField);
 		
 		Box horizontalBox_11 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_11);
@@ -561,6 +595,48 @@ public class SketchGui extends JFrame implements TableModelListener {
 		dataSetTable.setBounds(12, 12, 240, 166);
 		contentPane.add(dataSetTable);
 		
+		Box horizontalBox_23 = Box.createHorizontalBox();
+		verticalBox.add(horizontalBox_23);
+		
+		Component horizontalGlue_29 = Box.createHorizontalGlue();
+		horizontalBox_23.add(horizontalGlue_29);
+		
+		JButton xyViewButton = new JButton("xy");
+		xyViewButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setViewPoint(0.,Math.PI/2);
+			}
+		});
+		horizontalBox_23.add(xyViewButton);
+		
+		Component horizontalGlue_27 = Box.createHorizontalGlue();
+		horizontalBox_23.add(horizontalGlue_27);
+		
+		JButton xzViewButton = new JButton("xz");
+		xzViewButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setViewPoint(Math.PI/2,0);
+			}
+		});
+		horizontalBox_23.add(xzViewButton);
+		
+		Component horizontalGlue_28 = Box.createHorizontalGlue();
+		horizontalBox_23.add(horizontalGlue_28);
+		
+		JButton yzViewButton = new JButton("yz");
+		yzViewButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setViewPoint(0,0);
+			}
+		});
+		horizontalBox_23.add(yzViewButton);
+		
+		Component horizontalGlue_30 = Box.createHorizontalGlue();
+		horizontalBox_23.add(horizontalGlue_30);
+		
 		JButton visButton = new JButton("visualize");
 		verticalBox.add(visButton);
 		visButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -694,6 +770,13 @@ public class SketchGui extends JFrame implements TableModelListener {
 	}
 	
 	
+	private void setViewPoint(double sigma, double theta) {
+		plot.viewPoint= new Coord3d((float) sigma, (float) theta, plot.currentChart.getViewPoint().z);
+		plot.viewBounds = plot.currentChart.getView().getBounds();
+		getDrawingParameters();
+		visualizeAllSelectedData();
+	}
+
 	private void proceedFileImport(File file) {
 		System.out.println("Path: " + file.getAbsolutePath());
 		DataType type = DataType.UNKNOWN;
@@ -834,12 +917,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	 */
 	private void visualize() {
 		if(currentRow != -1) {
-			allDataSets.get(currentRow).getParameterSet().setEmVisibility(showEmBox.isSelected());
-			allDataSets.get(currentRow).getParameterSet().setStormVisibility(showStormPointsBox.isSelected());
-			allDataSets.get(currentRow).getParameterSet().setAntibodyVisibility(showAntibodiesBox.isSelected());
-
-			allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
-			setPlotQuality();
+			getDrawingParameters();
 			if(saveViewpointButton.isSelected()) {
 				setViewPointAndScale();
 			}
@@ -851,6 +929,14 @@ public class SketchGui extends JFrame implements TableModelListener {
 		}
 	}
 	
+	private void getDrawingParameters(){
+		allDataSets.get(currentRow).getParameterSet().setEmVisibility(showEmBox.isSelected());
+		allDataSets.get(currentRow).getParameterSet().setStormVisibility(showStormPointsBox.isSelected());
+		allDataSets.get(currentRow).getParameterSet().setAntibodyVisibility(showAntibodiesBox.isSelected());
+
+		allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
+		setPlotQuality();
+	}
 	/**
 	 * sets the plot quality according to the radiobuttons
 	 */
@@ -876,8 +962,6 @@ public class SketchGui extends JFrame implements TableModelListener {
 		
 		plot.viewPoint = plot.currentChart.getViewPoint();
 		plot.viewBounds = plot.currentChart.getView().getBounds();
-		
-		
 	}
 	
 	@Override

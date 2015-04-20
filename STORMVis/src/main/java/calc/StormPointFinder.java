@@ -92,7 +92,7 @@ public class StormPointFinder {
 				nbrBlinkingEvents[i] = 0;
 			}
 		}
-		System.out.println("Start creating stPoints");
+		System.out.println("Start creating STORM points");
 		float[][] stormPointsTemp = null;
 		List<float[]> allStormPoints = new ArrayList<float[]>();
 		System.out.println("floor: "+ Math.floor(Calc.max(nbrBlinkingEvents)));

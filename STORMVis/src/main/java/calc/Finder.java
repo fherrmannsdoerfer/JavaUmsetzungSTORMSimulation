@@ -46,7 +46,7 @@ public class Finder {
 					points[f][i] = tr[idx[f]][0][i] + (float) randx*vec1[idx[f]][i] + (float) randy*vec2[idx[f]][i];
 				}
 				
-				if ((randx + randy)<1) {
+				if ((randx + randy)>1) {
 					// remove ? // edit <=
 				}
 				else break;
@@ -55,7 +55,9 @@ public class Finder {
 		return new Pair<float[][], int[]>(points, idx);
 	}
 	
-	public static Pair<float[][],float[][]> findLines(List<ArrayList<Coord3d>> lines, float bspnm, float pabs,float aoa,float loa, float rof) {
+	public static Pair<float[][],float[][]> findAntibodiesLines(List<ArrayList<Coord3d>> lines, float bspnm, 
+			float pabs,float aoa,float loa, float rof) {
+		//finds start- and endpoint of antibodies for filamentous structures
 		int objectNumber = lines.size();
 		List<ArrayList<float[]>> points = new ArrayList<ArrayList<float[]>>();
 		
@@ -81,8 +83,9 @@ public class Finder {
 					if(randomNumber < pabs) {
 						int idx = 0;
 						for(int c = 0; c < cummulativeLengths.length; c++) {
-							if(cummulativeLengths[c] <= (((float) j)/bspnm)) {
+							if(cummulativeLengths[c] >= (((float) j)/bspnm)) {
 								idx = c;
+								break;
 							}
 						}
 						float x = points.get(i).get(idx+1)[0] - points.get(i).get(idx)[0];
@@ -92,15 +95,14 @@ public class Finder {
 
 						float alpha = (float) (Math.random()*2*Math.PI);
 
-						float[] vecOrth = Calc.getVector(aoa, rof,alpha);
-						float[] vec = Calc.getVector(aoa, loa,alpha);
+						float[] vecOrth = Calc.getVectorLine((float) (90./180.*Math.PI), rof,alpha);
+						float[] vec = Calc.getVectorLine(aoa, loa,alpha);
 
 						float[][] point = new float[2][3];
 						point[0] = points.get(i).get(idx);
 						point[1] = points.get(i).get(idx+1);
 						float[] rotVec = findRotation(vec, point);
 						float[] rotVecOrth = findRotation(vecOrth, point);
-
 						float[] lineVecNorm = Calc.scaleToOne(lineVec);
 						float multi = ((float)j-1.f)/bspnm - cummulativeLengths[idx];
 						float[] lineVecNormMulti = Calc.multiplyVector(lineVecNorm, multi);

@@ -21,6 +21,8 @@ import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.Scatter;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 
+import calc.Calc;
+
 public class Plot3D {
 
 	public List<DataSet> dataSets = new ArrayList<DataSet>();

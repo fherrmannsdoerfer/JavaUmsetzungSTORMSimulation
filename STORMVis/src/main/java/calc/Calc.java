@@ -293,6 +293,13 @@ public class Calc {
 		float[] vec = {(float) (x*length),(float) (y*length),(float) (z*length)};
 		return vec;
 	}
+	public static float[] getVectorLine(float aoa, float length, float alpha) {
+		double z = Math.sin(aoa)*Math.sin(alpha);
+		double y = Math.sin(aoa)*Math.cos(alpha);
+		double x = Math.sqrt(1-y*y-z*z);
+		float[] vec = {(float) (x*length),(float) (y*length),(float) (z*length)};
+		return vec;
+	}
 
 	
 	/**
