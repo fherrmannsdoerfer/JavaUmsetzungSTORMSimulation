@@ -58,6 +58,7 @@ import table.DataSetTableModel;
 import calc.STORMCalculator;
 
 import javax.swing.JToggleButton;
+import javax.swing.JProgressBar;
 
 
 /**
@@ -97,6 +98,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private Plot3D plot;
 	private JPanel plotPanel;
 	private Component graphComponent;
+	private JProgressBar progressBar;
 	
 	private STORMCalculator calc;
 	
@@ -162,8 +164,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		Box verticalBox = Box.createVerticalBox();
 		verticalBox.setName("");
 		verticalBox.setFont(new Font("Dialog", Font.ITALIC, 89));
-		verticalBox.setBounds(12, 183, 240, 866);
-		verticalBox.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "parameters", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		verticalBox.setBounds(12, 183, 240, 872);
 		verticalBox.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		verticalBox.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		contentPane.add(verticalBox);
@@ -191,10 +192,14 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox.add(horizontalGlue);
 		
 		epitopeDensityField = new JTextField();
+		epitopeDensityField.setHorizontalAlignment(SwingConstants.RIGHT);
 		epitopeDensityField.setMinimumSize(new Dimension(6, 10));
 		epitopeDensityField.setMaximumSize(new Dimension(60, 22));
 		epitopeDensityField.setColumns(5);
 		horizontalBox.add(epitopeDensityField);
+		
+		Component verticalGlue_4 = Box.createVerticalGlue();
+		verticalBox_1.add(verticalGlue_4);
 		
 		Box horizontalBox_1 = Box.createHorizontalBox();
 		verticalBox_1.add(horizontalBox_1);
@@ -206,6 +211,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_1.add(horizontalGlue_1);
 		
 		radiusOfFilamentsField = new JTextField();
+		radiusOfFilamentsField.setHorizontalAlignment(SwingConstants.RIGHT);
 		radiusOfFilamentsField.setMinimumSize(new Dimension(6, 10));
 		radiusOfFilamentsField.setMaximumSize(new Dimension(60, 22));
 		radiusOfFilamentsField.setColumns(5);
@@ -234,10 +240,14 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_4.add(horizontalGlue_4);
 		
 		labelingEfficiencyField = new JTextField();
+		labelingEfficiencyField.setHorizontalAlignment(SwingConstants.RIGHT);
 		labelingEfficiencyField.setMinimumSize(new Dimension(6, 10));
 		labelingEfficiencyField.setMaximumSize(new Dimension(60, 22));
 		labelingEfficiencyField.setColumns(5);
 		horizontalBox_4.add(labelingEfficiencyField);
+		
+		Component verticalGlue_5 = Box.createVerticalGlue();
+		verticalBox_2.add(verticalGlue_5);
 		
 		Box horizontalBox_5 = Box.createHorizontalBox();
 		verticalBox_2.add(horizontalBox_5);
@@ -249,10 +259,14 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_5.add(horizontalGlue_5);
 		
 		meanAngleField = new JTextField();
+		meanAngleField.setHorizontalAlignment(SwingConstants.RIGHT);
 		meanAngleField.setMinimumSize(new Dimension(6, 10));
 		meanAngleField.setMaximumSize(new Dimension(60, 22));
 		meanAngleField.setColumns(5);
 		horizontalBox_5.add(meanAngleField);
+		
+		Component verticalGlue_6 = Box.createVerticalGlue();
+		verticalBox_2.add(verticalGlue_6);
 		
 		Box horizontalBox_6 = Box.createHorizontalBox();
 		verticalBox_2.add(horizontalBox_6);
@@ -264,6 +278,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_6.add(horizontalGlue_6);
 		
 		backgroundLabelField = new JTextField();
+		backgroundLabelField.setHorizontalAlignment(SwingConstants.RIGHT);
 		backgroundLabelField.setMinimumSize(new Dimension(6, 10));
 		backgroundLabelField.setMaximumSize(new Dimension(60, 22));
 		backgroundLabelField.setColumns(5);
@@ -289,10 +304,14 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_8.add(horizontalGlue_8);
 		
 		labelLengthField = new JTextField();
+		labelLengthField.setHorizontalAlignment(SwingConstants.RIGHT);
 		labelLengthField.setMinimumSize(new Dimension(6, 10));
 		labelLengthField.setMaximumSize(new Dimension(60, 22));
 		labelLengthField.setColumns(5);
 		horizontalBox_8.add(labelLengthField);
+		
+		Component verticalGlue_7 = Box.createVerticalGlue();
+		verticalBox_3.add(verticalGlue_7);
 		
 		Box horizontalBox_9 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_9);
@@ -304,10 +323,14 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_9.add(horizontalGlue_9);
 		
 		fluorophoresPerLabelField = new JTextField();
+		fluorophoresPerLabelField.setHorizontalAlignment(SwingConstants.RIGHT);
 		fluorophoresPerLabelField.setMinimumSize(new Dimension(6, 10));
 		fluorophoresPerLabelField.setMaximumSize(new Dimension(60, 22));
 		fluorophoresPerLabelField.setColumns(5);
 		horizontalBox_9.add(fluorophoresPerLabelField);
+		
+		Component verticalGlue_8 = Box.createVerticalGlue();
+		verticalBox_3.add(verticalGlue_8);
 		
 		Box horizontalBox_10 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_10);
@@ -319,10 +342,14 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_10.add(horizontalGlue_10);
 		
 		kOnField = new JTextField();
+		kOnField.setHorizontalAlignment(SwingConstants.RIGHT);
 		kOnField.setMinimumSize(new Dimension(6, 10));
 		kOnField.setMaximumSize(new Dimension(60, 22));
 		kOnField.setColumns(5);
 		horizontalBox_10.add(kOnField);
+		
+		Component verticalGlue_9 = Box.createVerticalGlue();
+		verticalBox_3.add(verticalGlue_9);
 		
 		Box horizontalBox_17 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_17);
@@ -334,10 +361,14 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_17.add(horizontalGlue_3);
 		
 		kOffField = new JTextField();
+		kOffField.setHorizontalAlignment(SwingConstants.RIGHT);
 		kOffField.setMinimumSize(new Dimension(6, 10));
 		kOffField.setMaximumSize(new Dimension(60, 22));
 		kOffField.setColumns(5);
 		horizontalBox_17.add(kOffField);
+		
+		Component verticalGlue_10 = Box.createVerticalGlue();
+		verticalBox_3.add(verticalGlue_10);
 		
 		Box horizontalBox_22 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_22);
@@ -349,10 +380,14 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_22.add(horizontalGlue_26);
 		
 		recordedFramesField = new JTextField();
+		recordedFramesField.setHorizontalAlignment(SwingConstants.RIGHT);
 		recordedFramesField.setMinimumSize(new Dimension(6, 10));
 		recordedFramesField.setMaximumSize(new Dimension(60, 22));
 		recordedFramesField.setColumns(5);
 		horizontalBox_22.add(recordedFramesField);
+		
+		Component verticalGlue_11 = Box.createVerticalGlue();
+		verticalBox_3.add(verticalGlue_11);
 		
 		Box horizontalBox_11 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_11);
@@ -364,6 +399,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_11.add(horizontalGlue_11);
 		
 		averagePhotonOutputField = new JTextField();
+		averagePhotonOutputField.setHorizontalAlignment(SwingConstants.RIGHT);
 		averagePhotonOutputField.setMinimumSize(new Dimension(6, 10));
 		averagePhotonOutputField.setMaximumSize(new Dimension(60, 22));
 		averagePhotonOutputField.setColumns(5);
@@ -386,10 +422,14 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_12.add(horizontalGlue_13);
 		
 		locPrecisionXYField = new JTextField();
+		locPrecisionXYField.setHorizontalAlignment(SwingConstants.RIGHT);
 		locPrecisionXYField.setMinimumSize(new Dimension(6, 10));
 		locPrecisionXYField.setMaximumSize(new Dimension(60, 22));
 		locPrecisionXYField.setColumns(5);
 		horizontalBox_12.add(locPrecisionXYField);
+		
+		Component verticalGlue_12 = Box.createVerticalGlue();
+		verticalBox_4.add(verticalGlue_12);
 		
 		Box horizontalBox_13 = Box.createHorizontalBox();
 		verticalBox_4.add(horizontalBox_13);
@@ -401,10 +441,14 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_13.add(horizontalGlue_14);
 		
 		locPrecisionZField = new JTextField();
+		locPrecisionZField.setHorizontalAlignment(SwingConstants.RIGHT);
 		locPrecisionZField.setMinimumSize(new Dimension(6, 10));
 		locPrecisionZField.setMaximumSize(new Dimension(60, 22));
 		locPrecisionZField.setColumns(5);
 		horizontalBox_13.add(locPrecisionZField);
+		
+		Component verticalGlue_13 = Box.createVerticalGlue();
+		verticalBox_4.add(verticalGlue_13);
 		
 		Box horizontalBox_14 = Box.createHorizontalBox();
 		verticalBox_4.add(horizontalBox_14);
@@ -446,10 +490,14 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_15.add(horizontalGlue_16);
 		
 		psfSizeField = new JTextField();
+		psfSizeField.setHorizontalAlignment(SwingConstants.RIGHT);
 		psfSizeField.setMinimumSize(new Dimension(6, 10));
 		psfSizeField.setMaximumSize(new Dimension(60, 22));
 		psfSizeField.setColumns(5);
 		horizontalBox_15.add(psfSizeField);
+		
+		progressBar = new JProgressBar();
+		verticalBox_4.add(progressBar);
 		
 		JButton calcButton = new JButton("calculate");
 		calcButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -457,7 +505,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		calcButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				calculate();
+				calculate(progressBar);
 			}
 		});
 		verticalBox.add(calcButton);
@@ -476,6 +524,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_16.add(horizontalGlue_2);
 		
 		pointSizeField = new JTextField();
+		pointSizeField.setHorizontalAlignment(SwingConstants.RIGHT);
 		pointSizeField.setMinimumSize(new Dimension(6, 10));
 		pointSizeField.setMaximumSize(new Dimension(60, 22));
 		pointSizeField.setColumns(5);
@@ -637,6 +686,16 @@ public class SketchGui extends JFrame implements TableModelListener {
 		Component horizontalGlue_30 = Box.createHorizontalGlue();
 		horizontalBox_23.add(horizontalGlue_30);
 		
+		Component verticalGlue_3 = Box.createVerticalGlue();
+		verticalBox.add(verticalGlue_3);
+		
+		saveViewpointButton = new JToggleButton("Save Viewpoint");
+		saveViewpointButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		verticalBox.add(saveViewpointButton);
+		
+		Component verticalGlue_14 = Box.createVerticalGlue();
+		verticalBox.add(verticalGlue_14);
+		
 		JButton visButton = new JButton("visualize");
 		verticalBox.add(visButton);
 		visButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -650,10 +709,6 @@ public class SketchGui extends JFrame implements TableModelListener {
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(contentPane);
 		JScrollPane jsp = new JScrollPane(contentPane);
-		
-		saveViewpointButton = new JToggleButton("Save Viewpoint");
-		saveViewpointButton.setBounds(12, 1062, 161, 29);
-		contentPane.add(saveViewpointButton);
 		panel.add(jsp);
 		jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		getContentPane().add(panel, BorderLayout.EAST);
@@ -886,7 +941,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 	 * runs the calculation for the current dataset
 	 * @throws Exception 
 	 */
-	private void calculate() {
+	private void calculate(JProgressBar pb) {
 		System.out.println("bspsnm: " + allDataSets.get(currentRow).getParameterSet().getBspsnm());
 		allDataSets.get(currentRow).getParameterSet().setRof(new Float(radiusOfFilamentsField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setPabs(new Float(labelingEfficiencyField.getText()));

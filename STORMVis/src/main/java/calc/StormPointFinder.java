@@ -25,10 +25,10 @@ public class StormPointFinder {
 		boolean mergedPSFs = ps.mergedPSF;
 				
 		if (background) { //unspecific labeling
-			addBackground(listEndPoints, ilpmm3);	
+			listEndPoints = addBackground(listEndPoints, ilpmm3);	
     	}
 		if (fpab != 1){
-			addMultipleFluorophoresPerAntibody(listEndPoints, fpab);
+			listEndPoints = addMultipleFluorophoresPerAntibody(listEndPoints, fpab);
 		}
 		return createStormPoints(listEndPoints, ps, sxy, sz, mergedPSFs, psfWidth);
 	}
@@ -218,7 +218,7 @@ public class StormPointFinder {
     	System.out.println("Loop time total: " + (System.nanoTime()-loopStart)/1e9 +" s");
 	}
 
-	private static void addMultipleFluorophoresPerAntibody(float[][] listEndPoints, float fpab) {
+	private static float[][] addMultipleFluorophoresPerAntibody(float[][] listEndPoints, float fpab) {
 		int[] idx = new int[listEndPoints.length]; 
 		for (int i = 0; i<listEndPoints.length;i++) {
 			idx[i] = (int) Math.abs(Math.floor(Calc.randn() * fpab+fpab));
@@ -251,10 +251,10 @@ public class StormPointFinder {
 			}
 		}
 		listEndPoints = Calc.toFloatArray(listEndPointsAugmented);
-		System.out.println("--- List End Points ---");
+		return listEndPoints;
 	}
 
-	private static void addBackground(float[][] listEndPoints, float ilpmm3) {
+	private static float[][] addBackground(float[][] listEndPoints, float ilpmm3) {
 		float xmin = Calc.min(listEndPoints, 0);
 		float xmax = Calc.max(listEndPoints, 0);
 		float ymin = Calc.min(listEndPoints, 1);
@@ -278,5 +278,6 @@ public class StormPointFinder {
 				listEndPoints = Calc.appendLine(listEndPoints, new float[]{x[j],y[j],z[j]});
 			}
 		}
+		return listEndPoints;
 	}
 }

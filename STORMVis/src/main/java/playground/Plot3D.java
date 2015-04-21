@@ -84,7 +84,7 @@ public class Plot3D {
 			        for(ArrayList<Coord3d> obj : lines.data) {
 			        	LineStrip strip = new LineStrip();
 			    		strip.setWidth(2.f);
-			    		strip.setWireframeColor(Color.WHITE);
+			    		strip.setWireframeColor(new Color(lines.getParameterSet().getEmColor().getRed()/255.f, lines.getParameterSet().getEmColor().getGreen()/255.f, lines.getParameterSet().getEmColor().getBlue()/255.f,1.f));
 			        	for(Coord3d coord : obj) {
 			        		points[i] = coord;
 			        		float a = 1.f;
@@ -98,16 +98,16 @@ public class Plot3D {
 			        	}
 			        	lineList.add(strip);
 			        }
-			        CompileableComposite comp = new CompileableComposite();
+			        //CompileableComposite comp = new CompileableComposite();
 			        float pointSize = 0;// lines.getParameterSet().pointSize;
-			        Scatter scatter = new Scatter(points, colors, pointSize);
+			        //Scatter scatter = new Scatter(points, colors, pointSize);
 			        for (LineStrip line : lineList) {
 			        	if(line.getPoints().size() != 0) {
 			        		chart.getScene().getGraph().add(line);
 			        	}
 			        }
-			        comp.add(scatter);
-			        chart.getScene().getGraph().add(comp);
+			        //comp.add(scatter);
+			        //chart.getScene().getGraph().add(comp);
 				}
 			}
 			else if(set.dataType == DataType.TRIANGLES) {
@@ -128,7 +128,7 @@ public class Plot3D {
 			
 			// check if ABs should be displayed
 			if(set.getParameterSet().antibodyVisibility == true && set.antiBodyEndPoints != null && set.antiBodyStartPoints != null) {
-				System.out.println("show ABs");
+				//System.out.println("show ABs");
 				CompileableComposite comp = new CompileableComposite();
 		        for(int i = 0; i < set.antiBodyEndPoints.length; i++) {
 		        	LineStrip strip = new LineStrip();
@@ -146,7 +146,7 @@ public class Plot3D {
 			
 			// Check if STORM should be displayed
 			if(set.getParameterSet().stormVisibility == true && set.stormData != null) {
-				System.out.println("show storm");
+				//System.out.println("show storm");
 				float[][] result = set.stormData;
 				Coord3d[] points = new Coord3d[result.length];;
 				Color[] colors = new Color[result.length];

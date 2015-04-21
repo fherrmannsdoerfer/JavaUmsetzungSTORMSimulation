@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JProgressBar;
+
 import model.DataSet;
 import model.ParameterSet;
 
@@ -17,7 +19,8 @@ import org.jzy3d.maths.Coord3d;
  */
 public class Finder {
 	// fluorophore = binding site
-	public static Pair<float[][],float[][]> findAntibodiesTri(List<float[][]> trList, DataSet parameter) {
+	public static Pair<float[][],float[][]> findAntibodiesTri(List<float[][]> trList, 
+			DataSet parameter) {
 		ParameterSet ps = parameter.getParameterSet();
 		float bspsnm = ps.getBspsnm();
 		float pabs = ps.getPabs();
@@ -41,13 +44,14 @@ public class Finder {
 		return new Pair<float[][],float[][]>(basepoints,ep);
 	}
 	
-	public static Pair<float[][],int[]> findBasePoints(int nbrFluorophores,float[][][] tr,float[] areas) {
+	public static Pair<float[][],int[]> findBasePoints(int nbrFluorophores,float[][][] tr,
+			float[] areas) {
 		float[][] points = new float[nbrFluorophores][3];
 		Pair<float[][],float[][]> vecPair = Calc.getVertices(tr);
 		float[][] vec1 = vecPair.getValue0();
 		float[][] vec2 = vecPair.getValue1();
 		int[] idx = getRandomTriangles(areas, nbrFluorophores);
-		
+	
 		for (int f = 0; f < nbrFluorophores; f++) {
 			while(true) {
 				double randx = Math.random();
@@ -61,6 +65,7 @@ public class Finder {
 					// remove ? // edit <=
 				}
 				else break;
+				
 			}
 		}
 		return new Pair<float[][], int[]>(points, idx);
@@ -85,7 +90,6 @@ public class Finder {
 			}
 			points.add(newList);
 		}
-		
 		List<float[]> listStartPoints = new ArrayList<float[]>();
 		List<float[]> listEndPoints = new ArrayList<float[]>();
 		for(int i = 0; i < objectNumber; i++) {
@@ -126,6 +130,7 @@ public class Finder {
 						float[] endPoint = Calc.vectorAddition(points.get(i).get(idx+1), Calc.vectorAddition(lineVecNormMulti, Calc.vectorAddition(rotVecOrth, rotVec)));
 						listStartPoints.add(startPoint);
 						listEndPoints.add(endPoint);
+						
 					}
 				}
 			}
@@ -149,7 +154,8 @@ public class Finder {
 		return new Pair<Float, float[]>(length, cummulativeLengths);
 	}
 	
-	public static float[][] getEndpoints(float[][] basepoints,float[][][] tr,int[] idx,float loa,float aoa) {
+	public static float[][] getEndpoints(float[][] basepoints,float[][][] tr,
+			int[] idx,float loa,float aoa) {
 		Pair<float[][],float[][]> vecPair = Calc.getVertices(tr);
 		float[][] vec1 = vecPair.getValue0();
 		float[][] vec2 = vecPair.getValue1();

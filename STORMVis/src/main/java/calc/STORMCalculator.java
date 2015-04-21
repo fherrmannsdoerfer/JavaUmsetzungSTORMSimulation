@@ -6,6 +6,8 @@ import gui.DataTypeDetector.DataType;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JProgressBar;
+
 import model.DataSet;
 import model.LineDataSet;
 import model.TriangleDataSet;
