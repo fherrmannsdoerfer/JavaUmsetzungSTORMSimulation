@@ -18,6 +18,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -70,7 +72,7 @@ import javax.swing.JProgressBar;
  * 
  */
 
-public class SketchGui extends JFrame implements TableModelListener {
+public class SketchGui extends JFrame implements TableModelListener,PropertyChangeListener {
 
 	private JPanel contentPane;
 	private JTextField radiusOfFilamentsField; //rof
@@ -100,7 +102,8 @@ public class SketchGui extends JFrame implements TableModelListener {
 	private Component graphComponent;
 	private JProgressBar progressBar;
 	
-	private STORMCalculator calc;
+	public STORMCalculator calc;
+	
 	
 	/**
 	 * is set if a project with an image from the editor was loaded
@@ -497,6 +500,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		horizontalBox_15.add(psfSizeField);
 		
 		progressBar = new JProgressBar();
+		progressBar.setStringPainted(true);
 		verticalBox_4.add(progressBar);
 		
 		JButton calcButton = new JButton("calculate");
@@ -505,7 +509,7 @@ public class SketchGui extends JFrame implements TableModelListener {
 		calcButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				calculate(progressBar);
+				calculate();
 			}
 		});
 		verticalBox.add(calcButton);
@@ -941,7 +945,8 @@ public class SketchGui extends JFrame implements TableModelListener {
 	 * runs the calculation for the current dataset
 	 * @throws Exception 
 	 */
-	private void calculate(JProgressBar pb) {
+	private void calculate() {
+		allDataSets.get(currentRow).setProgressBar(progressBar);
 		System.out.println("bspsnm: " + allDataSets.get(currentRow).getParameterSet().getBspsnm());
 		allDataSets.get(currentRow).getParameterSet().setRof(new Float(radiusOfFilamentsField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setPabs(new Float(labelingEfficiencyField.getText()));
@@ -966,11 +971,15 @@ public class SketchGui extends JFrame implements TableModelListener {
 		allDataSets.get(currentRow).getParameterSet().setMergedPSF(mergePSFBox.isSelected());
 		
 		calc = new STORMCalculator(allDataSets.get(currentRow));
-		calc.startCalculation();
+		//calc = new STORMCalculator(allDataSets.get(currentRow));
+		calc.addPropertyChangeListener(this);
+		calc.execute();
 		// When calc has finished, grab the new dataset
-		allDataSets.set(currentRow, calc.getCurrentDataSet());
-		visualizeAllSelectedData();
+		//allDataSets.set(currentRow, calc.getCurrentDataSet());
+		//visualizeAllSelectedData();
 	}
+	
+
 	/**
 	 * invoked by visualize button
 	 */
@@ -1097,6 +1106,14 @@ public class SketchGui extends JFrame implements TableModelListener {
 			plotPanel.add(loadDataLabel);
 			plotPanel.revalidate();
 			plotPanel.repaint();
+		}
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if ("progress" == evt.getPropertyName()) {
+            int progress = (Integer) evt.getNewValue();
+            progressBar.setValue(progress);
 		}
 	}
 }

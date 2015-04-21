@@ -6,6 +6,8 @@ import gnu.trove.list.array.TIntArrayList;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JProgressBar;
+
 import model.DataSet;
 import model.ParameterSet;
 
@@ -14,7 +16,8 @@ import model.ParameterSet;
  *
  */
 public class StormPointFinder {
-	public static float[][] findStormPoints(float[][] listEndPoints, DataSet ds) {
+	public static float[][] findStormPoints(float[][] listEndPoints, DataSet ds, STORMCalculator calc) {
+		JProgressBar progressBar = ds.getProgressBar();
 		ParameterSet ps = ds.getParameterSet();
 		float sxy = ps.getSxy();
 		float sz = ps.getSz();
@@ -30,11 +33,12 @@ public class StormPointFinder {
 		if (fpab != 1){
 			listEndPoints = addMultipleFluorophoresPerAntibody(listEndPoints, fpab);
 		}
-		return createStormPoints(listEndPoints, ps, sxy, sz, mergedPSFs, psfWidth);
+		return createStormPoints(listEndPoints, ps, sxy, sz, mergedPSFs, psfWidth, progressBar, calc);
 	}
 
 	private static float[][] createStormPoints(float[][] listEndPoints, ParameterSet ps, 
-			float sxy, float sz, boolean mergedPSFs, float psfWidth) {
+			float sxy, float sz, boolean mergedPSFs, float psfWidth, JProgressBar progressBar,
+			STORMCalculator calc) {
 		float[][] stormPoints = null;
 		//individual number of blinking events per fluorophore
 		float[] nbrBlinkingEvents = new float[listEndPoints.length];
@@ -45,12 +49,15 @@ public class StormPointFinder {
 				nbrBlinkingEvents[i] = 0;
 			}
 		}
-		System.out.println("Start creating STORM points");
 		float[][] stormPointsTemp = null;
 		List<float[]> allStormPoints = new ArrayList<float[]>();
 		System.out.println("floor: "+ Math.floor(Calc.max(nbrBlinkingEvents)));
 		int pointCounter = 0;
+		progressBar.setString("Create Localizations");
 		for (int i = 1; i <= Math.floor(Calc.max(nbrBlinkingEvents)); i++) {
+			if (i%(Math.floor(Calc.max(nbrBlinkingEvents))/100)==0) {
+				calc.publicSetProgress((int) (1.*i/Math.floor(Calc.max(nbrBlinkingEvents))*100.));
+			}
 			List<Integer> idxArray = new ArrayList<Integer>();
 			int countOne = 0;
 			for (int j = 0; j < nbrBlinkingEvents.length; j++) {
@@ -103,7 +110,7 @@ public class StormPointFinder {
 			}
 				
 			if (mergedPSFs){
-				mergeOverlappingPSFs(stormPoints, stormPointsArrayList, psfWidth);
+				mergeOverlappingPSFs(stormPoints, stormPointsArrayList, psfWidth, progressBar, calc);
 			}
 			
 	        stormPoints = Calc.toFloatArray(stormPointsArrayList);
@@ -112,12 +119,17 @@ public class StormPointFinder {
 	}
 
 	private static void mergeOverlappingPSFs(float[][] stormPoints, 
-			List<float[]> stormPointsArrayList, float psfWidth) {
+			List<float[]> stormPointsArrayList, float psfWidth, JProgressBar progressBar,
+			STORMCalculator calc) {
 		float affectingFactor = 2;
     	int maxInFrameNumbers = (int) Calc.max(stormPoints,4); 
     	System.out.println("maxInFrameNumbers: " + maxInFrameNumbers);
     	long loopStart = System.nanoTime();
+    	progressBar.setString("Merge Near Localizations");
     	for (int i = 1; i <= maxInFrameNumbers; i++) {
+    		if (i%(maxInFrameNumbers/100)==0) {
+				calc.publicSetProgress((int) (1.*i/maxInFrameNumbers*100.));
+			}
     		long start = System.nanoTime();
 //        		System.out.println("progress: i = " + i);
     		TIntArrayList idxArray = new TIntArrayList();

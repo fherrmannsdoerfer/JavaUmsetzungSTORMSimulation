@@ -20,7 +20,7 @@ import org.jzy3d.maths.Coord3d;
 public class Finder {
 	// fluorophore = binding site
 	public static Pair<float[][],float[][]> findAntibodiesTri(List<float[][]> trList, 
-			DataSet parameter) {
+			DataSet parameter, STORMCalculator calc) {
 		ParameterSet ps = parameter.getParameterSet();
 		float bspsnm = ps.getBspsnm();
 		float pabs = ps.getPabs();
@@ -36,7 +36,7 @@ public class Finder {
 		if(numberOfFluorophores == 0) {
 			return null;
 		}
-		Pair<float[][],int[]> basePointPair = findBasePoints((int) Math.ceil(numberOfFluorophores * (1-doc)), triangles, areas);
+		Pair<float[][],int[]> basePointPair = findBasePoints((int) Math.ceil(numberOfFluorophores * (1-doc)), triangles, areas, parameter.getProgressBar(), calc);
 //		Calc.print2dMatrix(basePointPair.getValue0());
 		float[][] basepoints = basePointPair.getValue0();
 		int[] idx = basePointPair.getValue1();
@@ -45,18 +45,20 @@ public class Finder {
 	}
 	
 	public static Pair<float[][],int[]> findBasePoints(int nbrFluorophores,float[][][] tr,
-			float[] areas) {
+			float[] areas, JProgressBar progressBar, STORMCalculator calc) {
 		float[][] points = new float[nbrFluorophores][3];
 		Pair<float[][],float[][]> vecPair = Calc.getVertices(tr);
 		float[][] vec1 = vecPair.getValue0();
 		float[][] vec2 = vecPair.getValue1();
-		int[] idx = getRandomTriangles(areas, nbrFluorophores);
-	
+		int[] idx = getRandomTriangles(areas, nbrFluorophores,progressBar,calc);
+		progressBar.setString("Finding Basepoints");
 		for (int f = 0; f < nbrFluorophores; f++) {
 			while(true) {
 				double randx = Math.random();
 				double randy = Math.random();
-				
+				if (f%(nbrFluorophores/100)==0) {
+					calc.publicSetProgress((int) (1.*f/nbrFluorophores*100.));
+				}
 				for (int i = 0; i < 3; i++) {
 					points[f][i] = tr[idx[f]][0][i] + (float) randx*vec1[idx[f]][i] + (float) randy*vec2[idx[f]][i];
 				}
@@ -71,7 +73,9 @@ public class Finder {
 		return new Pair<float[][], int[]>(points, idx);
 	}
 	
-	public static Pair<float[][],float[][]> findAntibodiesLines(List<ArrayList<Coord3d>> lines, DataSet ds) {
+	public static Pair<float[][],float[][]> findAntibodiesLines(List<ArrayList<Coord3d>> lines, 
+			DataSet ds, STORMCalculator calc) {
+		JProgressBar progressBar = ds.getProgressBar();
 		ParameterSet ps = ds.getParameterSet();
 		float bspnm = ps.getBspnm();
 		float pabs = ps.getPabs();
@@ -92,7 +96,11 @@ public class Finder {
 		}
 		List<float[]> listStartPoints = new ArrayList<float[]>();
 		List<float[]> listEndPoints = new ArrayList<float[]>();
+		progressBar.setString("Finding Antibodies;");
 		for(int i = 0; i < objectNumber; i++) {
+			if (i%(objectNumber/100)==0) {
+				calc.publicSetProgress((int) (1.*i/objectNumber*100.));
+			}
 			if(points.get(i).size() > 0) { 
 				Pair<Float,float[]> lengthAndCummulativeLength = getLengthOfStructure(points.get(i));
 				float lengthOfStructure = lengthAndCummulativeLength.getValue0().floatValue();
@@ -175,7 +183,8 @@ public class Finder {
 		return ep;
 	}
 	
-	public static int[] getRandomTriangles(float[] areas, int nbrFluorophores) {
+	public static int[] getRandomTriangles(float[] areas, int nbrFluorophores, JProgressBar progressBar, STORMCalculator calc) {
+		progressBar.setString("Finding Random Triangles");
 		float tot = Calc.sum(areas);
 		int[] idx = new int[0];
 		int[] startingindices = new int[areas.length];
@@ -198,6 +207,9 @@ public class Finder {
 	    }
 	    int startidx = 0;
 	    for (int i = 0; i < nbrFluorophores; i++) {
+	    	if (i%(nbrFluorophores/100)==0) {
+				calc.publicSetProgress((int) (1.*i/nbrFluorophores*100.));
+			}
 	    	float randD = randd[i]*tot;
 	        for (int k = 1; k < startingsum.length;k++) {
 	            if (randD>startingsum[k]) {

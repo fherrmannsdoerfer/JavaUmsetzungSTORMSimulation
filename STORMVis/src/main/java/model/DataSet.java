@@ -4,6 +4,8 @@ import gui.DataTypeDetector.DataType;
 
 import java.awt.Color;
 import java.io.Serializable;
+
+import javax.swing.JProgressBar;
 /**
  * 
  * @author maxscheurer
@@ -22,6 +24,8 @@ public class DataSet implements Serializable {
 	public float[][] stormData;
 	public float[][] antiBodyStartPoints;
 	public float[][] antiBodyEndPoints;
+	
+	public JProgressBar progressBar;
 	
 	public DataSet(ParameterSet parameterSet) {
 		super();
@@ -67,6 +71,12 @@ public class DataSet implements Serializable {
 		this.color = color;
 	}
 	
+	public void setProgressBar(JProgressBar progressBar){
+		this.progressBar = progressBar;
+	}
 	
+	public JProgressBar getProgressBar(){
+		return this.progressBar;
+	}
 	
 }
