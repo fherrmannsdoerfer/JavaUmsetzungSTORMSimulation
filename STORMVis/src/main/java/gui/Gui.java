@@ -307,7 +307,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		Box verticalBox_3 = Box.createVerticalBox();
 		verticalBox_5.add(verticalBox_3);
-		verticalBox_3.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Label Dependent Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		verticalBox_3.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Label Dependent Parameters", TitledBorder.LEADING, TitledBorder.TOP, usedFont, new Color(0, 0, 0)));
 		
 		Box horizontalBox_8 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_8);
@@ -352,12 +352,12 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		Box verticalBox_4 = Box.createVerticalBox();
 		verticalBox_5.add(verticalBox_4);
-		verticalBox_4.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Setup And Label Dependent Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		verticalBox_4.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Setup And Label Dependent Parameters", TitledBorder.LEADING, TitledBorder.TOP, usedFont, new Color(0, 0, 0)));
 		
 		Box horizontalBox_12 = Box.createHorizontalBox();
 		verticalBox_4.add(horizontalBox_12);
 		
-		JLabel lblLabelingResolutionXy = new JLabel("Localizaton Precision XY");
+		JLabel lblLabelingResolutionXy = new JLabel("Localization Precision XY");
 		horizontalBox_12.add(lblLabelingResolutionXy);
 		
 		Component horizontalGlue_13 = Box.createHorizontalGlue();
@@ -376,7 +376,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_13 = Box.createHorizontalBox();
 		verticalBox_4.add(horizontalBox_13);
 		
-		JLabel lblLocalizaitonPrecisionZ = new JLabel("Localizaiton Precision Z");
+		JLabel lblLocalizaitonPrecisionZ = new JLabel("Localization Precision Z");
 		horizontalBox_13.add(lblLocalizaitonPrecisionZ);
 		
 		Component horizontalGlue_14 = Box.createHorizontalGlue();
@@ -499,7 +499,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		verticalBox_12.add(verticalGlue_19);
 		
 		Box verticalBox_11 = Box.createVerticalBox();
-		verticalBox_11.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Background And Distortions", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		verticalBox_11.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Background And Distortions", TitledBorder.LEADING, TitledBorder.TOP, usedFont, new Color(0, 0, 0)));
 		verticalBox_9.add(verticalBox_11);
 		
 		Box horizontalBox_6 = Box.createHorizontalBox();
@@ -707,6 +707,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		showEmBox = new JCheckBox("");
 		horizontalBox_21.add(showEmBox);
 		
+		Component verticalGlue_22 = Box.createVerticalGlue();
+		verticalBox_6.add(verticalGlue_22);
+		
 		Box verticalBox_14 = Box.createVerticalBox();
 		verticalBox_6.add(verticalBox_14);
 		
@@ -862,6 +865,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			}
 		});
 		
+		Component rigidArea_1 = Box.createRigidArea(new Dimension(20, 20));
+		toolBar.add(rigidArea_1);
+		
 		JButton importProjectButton = new JButton("Import Project");
 		toolBar.add(importProjectButton);
 		importProjectButton.addActionListener(new ActionListener() {
@@ -914,6 +920,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		        });
 			}
 		});
+		
+		Component rigidArea_2 = Box.createRigidArea(new Dimension(20, 20));
+		toolBar.add(rigidArea_2);
 		toolBar.add(openEditorButton);
 		
 		Component horizontalGlue_24 = Box.createHorizontalGlue();
@@ -936,7 +945,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					}
 					System.out.println("Path to write project: " + path);
 					System.out.println("project name: " + name);
-					Project p = new Project(name, allDataSets);
+					Project p = new Project(name, allDataSets,1.f);
 					p.setOriginalImage(loadedImage);
 					FileManager.writeProjectToFile(p, path);
 				}
@@ -966,6 +975,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				}
 			}
 		});
+		
+		Component rigidArea = Box.createRigidArea(new Dimension(20, 20));
+		toolBar.add(rigidArea);
 		toolBar.add(exportButton);
 		
 		calc = new STORMCalculator(null);
@@ -973,6 +985,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	
 	
 	private void setViewPoint(double sigma, double theta) {
+		if (allDataSets.size()<1){
+			return;
+		}
 		plot.viewPoint= new Coord3d((float) sigma, (float) theta, plot.currentChart.getViewPoint().z);
 		plot.viewBounds = plot.currentChart.getView().getBounds();
 		getDrawingParameters();
@@ -1066,7 +1081,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			stormColorButton.setBackground(set.getStormColor());
 			antibodyColorButton.setBackground(set.getAntibodyColor());
 
-			//emColorButton.setContentAreaFilled(false);
+			emColorButton.setContentAreaFilled(false);
 			stormColorButton.setContentAreaFilled(false);
 			antibodyColorButton.setContentAreaFilled(false);
 
@@ -1097,6 +1112,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	 * @throws Exception 
 	 */
 	private void calculate() {
+		if (allDataSets.size()<1){
+			return;
+		}
 		allDataSets.get(currentRow).setProgressBar(progressBar);
 		System.out.println("bspsnm: " + allDataSets.get(currentRow).getParameterSet().getBspsnm());
 		allDataSets.get(currentRow).getParameterSet().setRof(new Float(radiusOfFilamentsField.getText()));

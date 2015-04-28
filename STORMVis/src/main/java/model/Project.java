@@ -14,6 +14,7 @@ import java.util.List;
 public class Project implements Serializable {
 	public String projectName;
 	public List<DataSet> dataSets;
+	public Float pxPerNm;
 	
 	public SerializableImage originalImage;
 	
@@ -34,16 +35,26 @@ public class Project implements Serializable {
 		this.dataSets.add(set);
 	}
 	
-	public Project(String projectName, List<DataSet> dataSets) {
+	public void setPxPerNm(Float pxPerNm){
+		this.pxPerNm = pxPerNm;
+	}
+	
+	public Float getPxPerNm(){
+		return pxPerNm;
+	}
+	
+	public Project(String projectName, List<DataSet> dataSets, Float pxPerNm) {
 		super();
 		this.projectName = projectName;
 		this.dataSets = dataSets;
+		this.pxPerNm = pxPerNm;
 	}
 	
 	public Project() {
 		super();
 		this.projectName = "new project";
 		this.dataSets = new ArrayList<DataSet>();
+		this.pxPerNm = 1.f;
 	}
 	
 	public SerializableImage getOriginalImage() {

@@ -78,6 +78,8 @@ public class Editor implements KeyListener, TableModelListener {
 	private List<DataSet> allDataSets = new ArrayList<DataSet>();
 	private Color currentDrawingColor = Color.RED;
 	
+	private Float lastValuePxNmRatio=1.f;
+	
 	private static String EXTENSION = ".storm";
 	
 	public static void main(String[] args) {
@@ -199,7 +201,9 @@ public class Editor implements KeyListener, TableModelListener {
 						new JLabel("Existing datasets:"),
 						selectionTable,
 				};
-				JOptionPane.showMessageDialog(null, inputs, "Save Options", JOptionPane.PLAIN_MESSAGE);
+				Object[] options = {"Cancel"};
+				JOptionPane.showOptionDialog(null, inputs, "Save Options",  JOptionPane.PLAIN_MESSAGE,  JOptionPane.PLAIN_MESSAGE, null,options,options[0]);
+				//JOptionPane.showMessageDialog(null, inputs, "Save Options", JOptionPane.PLAIN_MESSAGE);
 				imgPanel.requestFocus();
 			}
 		});
@@ -209,7 +213,10 @@ public class Editor implements KeyListener, TableModelListener {
         pixelNmField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				drawPanel.drawManager.ratio = Float.parseFloat(pixelNmField.getText());
+				Float newValuePxNmRatio = Float.parseFloat(pixelNmField.getText());
+				rescaleData(lastValuePxNmRatio, newValuePxNmRatio);
+				drawPanel.drawManager.ratio = newValuePxNmRatio;
+				lastValuePxNmRatio = newValuePxNmRatio;
 				drawPanel.repaint();
 			}
 		});
@@ -283,7 +290,7 @@ public class Editor implements KeyListener, TableModelListener {
 					}
 					System.out.println("Path to write project: " + path);
 					System.out.println("project name: " + name);
-					Project p = new Project(name, allDataSets);
+					Project p = new Project(name, allDataSets,  Float.parseFloat(pixelNmField.getText()));
 					p.setOriginalImage(new SerializableImage(imgPanel.getOriginalImage()));
 					FileManager.writeProjectToFile(p, path);
 				}
@@ -315,6 +322,7 @@ public class Editor implements KeyListener, TableModelListener {
 					zoomFactor = 1.f;
 					imgPanel.scaleFactor = zoomFactor;
 					imgPanel.zoom(zoomFactor);
+					pixelNmField.setText(p.getPxPerNm().toString());
 					updateBoundsOfComponents();
 				}
 			}
@@ -449,6 +457,19 @@ public class Editor implements KeyListener, TableModelListener {
         checkForPoints();
     } 
 	
+	protected void rescaleData(Float lastValuePxNmRatio,
+			Float newValuePxNmRatio) {
+		for(DataSet s : allDataSets) {
+			if(s.getDataType()==DataType.LINES){
+				((LineDataSet)s).rescaleData(newValuePxNmRatio/lastValuePxNmRatio);
+			}
+			else{
+				((TriangleDataSet)s).rescaleData(newValuePxNmRatio/lastValuePxNmRatio);
+			}
+		}
+		
+	}
+
 	private void updateBoundsOfComponents() {
 		superPanel.removeAll();
 		superPanel.setPreferredSize(imgPanel.getPreferredSize());

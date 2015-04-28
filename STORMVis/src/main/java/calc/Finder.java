@@ -270,10 +270,7 @@ public class Finder {
 	        vxSquared = Calc.matrixDivide(vxSquared,(float) ((float) (Math.pow(s, 2))/(1-c)));
 	        
 	        R = Calc.matrixAddition(R, vxSquared);
-	        //Calc.print2dMatrix(R);
-	        Calc.printVector(Calc.applyMatrix(R, unityVec));
-	        rotVec = Calc.applyMatrix(R, abVec);
-	        //Calc.printVector(rotVec);
+	        rotVec = Calc.applyMatrix(R, abVec);	        
 		}
 		return rotVec;
 	}
