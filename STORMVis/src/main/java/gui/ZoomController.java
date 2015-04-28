@@ -1,4 +1,4 @@
-package playground;
+package gui;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -32,8 +32,9 @@ public class ZoomController extends AWTCameraMouseController {
 			float shiftx = (float) (move.x*Math.sin(vp.x));
 			float shifty = (float) (-move.x*Math.cos(vp.x));
 			float shiftz = (float) (move.y*Math.cos(vp.y));
-			float fac = 1;
-	        BoundingBox3d newBounds = bounds.shift(new Coord3d(fac*shiftx,fac*shifty,fac*shiftz));
+			float fac = (float)((bounds.getXmax()-bounds.getXmin())/250.);///(bounds.getYmax()-bounds.getYmin())*Math.cos(vp.x));
+	        System.out.println(fac);
+			BoundingBox3d newBounds = bounds.shift(new Coord3d(fac*shiftx,fac*shifty,fac*shiftz));
 	        View.current().setBoundManual(newBounds);
 	        //System.out.println(vp.x*180/3.14+" "+vp.y*180/3.14+" "+vp.z);
 	        View.current().shoot(); 

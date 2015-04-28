@@ -1,10 +1,7 @@
-package playground;
+package gui;
 
 import editor.Editor;
-import gui.DataTypeDetector;
 import gui.DataTypeDetector.DataType;
-import gui.ParserWrapper;
-import gui.TriangleLineFilter;
 import inout.FileManager;
 import inout.ProjectFileFilter;
 
@@ -64,8 +61,11 @@ import calc.STORMCalculator;
 import javax.swing.JToggleButton;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
+
 import java.awt.FlowLayout;
+
 import javax.swing.BoxLayout;
+
 import java.awt.CardLayout;
 
 
@@ -190,7 +190,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		setBounds(10, 10, 1200, 900);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setPreferredSize(new Dimension(288, 500));
+		contentPane.setPreferredSize(new Dimension(200, 630));
 		
 		ButtonGroup group = new ButtonGroup();
 		
@@ -207,7 +207,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box verticalBox_13 = Box.createVerticalBox();
 		contentPane.add(verticalBox_13);
 		dataSetTable = new JTable(model);
-		dataSetTable.setPreferredSize(new Dimension(150, 250));
+		dataSetTable.setPreferredSize(new Dimension(130, 250));
 		verticalBox_13.add(dataSetTable);
 		
 				Box verticalBox = Box.createVerticalBox();
@@ -830,7 +830,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				});
 		dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
 		jsp.setAlignmentX(Component.LEFT_ALIGNMENT);
-		jsp.setPreferredSize(new Dimension(290, 400));
+		jsp.setPreferredSize(new Dimension(300, 600));
 		panel.add(jsp, "name_652625437088073");
 		jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		getContentPane().add(panel, BorderLayout.EAST);

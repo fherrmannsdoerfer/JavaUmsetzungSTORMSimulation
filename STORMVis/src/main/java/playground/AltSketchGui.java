@@ -4,6 +4,7 @@ import editor.Editor;
 import gui.DataTypeDetector;
 import gui.DataTypeDetector.DataType;
 import gui.ParserWrapper;
+import gui.Plot3D;
 import gui.TriangleLineFilter;
 import inout.FileManager;
 import inout.ProjectFileFilter;

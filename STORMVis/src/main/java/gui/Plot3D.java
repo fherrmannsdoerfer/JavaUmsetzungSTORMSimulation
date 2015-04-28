@@ -1,4 +1,4 @@
-package playground;
+package gui;
 
 import gui.DataTypeDetector.DataType;
 
