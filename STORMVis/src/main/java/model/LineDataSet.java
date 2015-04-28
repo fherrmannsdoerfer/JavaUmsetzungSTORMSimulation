@@ -38,5 +38,18 @@ public class LineDataSet extends DataSet implements Serializable{
 		this.antiBodyEndPoints = ser.antiBodyEndPoints;
 		this.antiBodyStartPoints = ser.antiBodyStartPoints;
 	}
-
+	
+	 public void rescaleData(Float factor){
+		 for (int i = 0; i<data.size(); i++){
+			 ArrayList<Coord3d> tmp = new ArrayList<Coord3d>();
+			 for (int j = 0; j<data.get(i).size(); j++){
+				 Coord3d tmpCoord = new Coord3d();
+				 tmpCoord.x = data.get(i).get(j).x*factor;
+				 tmpCoord.y = data.get(i).get(j).y*factor;
+				 tmpCoord.z = data.get(i).get(j).z*factor;
+				 tmp.add(tmpCoord);
+			 }
+			 data.set(i, tmp);
+		 }
+	 }
 }

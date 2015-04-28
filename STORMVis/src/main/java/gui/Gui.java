@@ -936,7 +936,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					}
 					System.out.println("Path to write project: " + path);
 					System.out.println("project name: " + name);
-					Project p = new Project(name, allDataSets);
+					Project p = new Project(name, allDataSets,1.f);
 					p.setOriginalImage(loadedImage);
 					FileManager.writeProjectToFile(p, path);
 				}

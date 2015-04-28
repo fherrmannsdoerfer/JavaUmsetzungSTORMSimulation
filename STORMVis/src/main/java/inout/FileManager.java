@@ -93,7 +93,7 @@ public class FileManager {
 	}
 
 	public static void writeProjectionToFile(float[][] stormData, String path, int mode) {
-		double pixelsize = 1;
+		double pixelsize = 10;
 		double sigma = 5/pixelsize; //in nm sigma to blur localizations
 		int filterwidth = 3; // must be odd
 		float xmin = Calc.min(stormData, 0);
