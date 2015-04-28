@@ -56,9 +56,9 @@ public class Finder {
 			while(true) {
 				double randx = Math.random();
 				double randy = Math.random();
-				if (f%(nbrFluorophores/100)==0) {
+				//if (f%(nbrFluorophores/100)==0) {
 					calc.publicSetProgress((int) (1.*f/nbrFluorophores*100.));
-				}
+				//}
 				for (int i = 0; i < 3; i++) {
 					points[f][i] = tr[idx[f]][0][i] + (float) randx*vec1[idx[f]][i] + (float) randy*vec2[idx[f]][i];
 				}
@@ -98,9 +98,9 @@ public class Finder {
 		List<float[]> listEndPoints = new ArrayList<float[]>();
 		progressBar.setString("Finding Antibodies;");
 		for(int i = 0; i < objectNumber; i++) {
-			if (i%(objectNumber/100)==0) {
-				calc.publicSetProgress((int) (1.*i/objectNumber*100.));
-			}
+			//if (i%(objectNumber/100)==0) {
+			calc.publicSetProgress((int) (1.*i/objectNumber*100.));
+			//}
 			if(points.get(i).size() > 0) { 
 				Pair<Float,float[]> lengthAndCummulativeLength = getLengthOfStructure(points.get(i));
 				float lengthOfStructure = lengthAndCummulativeLength.getValue0().floatValue();
@@ -171,7 +171,11 @@ public class Finder {
 		for(int i = 0; i < basepoints.length; i++) {
 			float[] vec = Calc.getVectorTri(aoa,loa);
 			float[] normTri = Calc.getCross(vec1[idx[i]],vec2[idx[i]]);
-			float[] finVec = findRotationTri(vec, normTri);
+			float[] vec3 = {0,1,0};
+			float[] normTri3 = {0,1,1};
+			float[] finvectest = findRotationTri(normTri3,vec3);
+			//System.out.println("["+finvectest[0]+","+finvectest[1]+","+finvectest[2]);
+			float[] finVec = findRotationTri(normTri,vec);
 			ep[i] = Calc.vectorAddition(basepoints[i], finVec);
 			if(Float.isNaN(ep[i][0]) || Float.isNaN(ep[i][1]) || Float.isNaN(ep[i][2])) {
 				System.out.println("NAN FOUND EP");
@@ -207,9 +211,9 @@ public class Finder {
 	    }
 	    int startidx = 0;
 	    for (int i = 0; i < nbrFluorophores; i++) {
-	    	if (i%(nbrFluorophores/100)==0) {
+	    	//if (i%(nbrFluorophores/100)==0) {
 				calc.publicSetProgress((int) (1.*i/nbrFluorophores*100.));
-			}
+			//}
 	    	float randD = randd[i]*tot;
 	        for (int k = 1; k < startingsum.length;k++) {
 	            if (randD>startingsum[k]) {
@@ -222,7 +226,7 @@ public class Finder {
 	            if (randD<partsum) { 
 	            	int[] idxcopy = new int[idx.length+1];
 	            	System.arraycopy(idx, 0, idxcopy, 0, idx.length);
-	            	idxcopy[idx.length] = j-1;
+	            	idxcopy[idx.length] = j;
 	            	idx = idxcopy;
 	                break;
 	    		}
@@ -235,14 +239,17 @@ public class Finder {
 		return idx;
 	}
 	
-	public static float[] findRotationTri(float[] vec, float[] normVec) {
-		float[] unityVec = {0,1,0};
+	public static float[] findRotationTri(float[] normVec, float[] abVec) {
+		float[] unityVec = {0,0,1};
 		float[] rotVec = null;
 		float[] targetVec = null;
 		float[] negNormVec = Calc.getNegativeVec(normVec);
-		
-		if (Arrays.equals(unityVec, normVec) || Arrays.equals(unityVec, negNormVec)) {
-	        rotVec = vec;
+				
+		if (normVec[0] == 0 && normVec[1] == 0){
+	        rotVec = abVec;
+		}
+		else if (Arrays.equals(unityVec, negNormVec)){
+			rotVec = Calc.getNegativeVec(abVec);
 		}
 		else {
 	        targetVec = normVec;
@@ -250,7 +257,7 @@ public class Finder {
 	        float[] v = Calc.getCross(unityVec,targetVec);
 	        float s = Calc.getNorm(v);
 	        if(s == 0.0) {
-	        	return vec;
+	        	return abVec;
 	        }
 	        float c = Calc.getDot(unityVec, targetVec);
 	        float[][] vx = {{0,-v[2], v[1]},{v[2],0,-v[0]},{-v[1],v[0],0}};
@@ -260,11 +267,12 @@ public class Finder {
 	        if (Float.isNaN((float) ((float) (1-c)/(Math.pow(s, 2))))) {
 	        	System.out.println("div is NAN");
 	        }
-	        vxSquared = Calc.matrixDivide(vxSquared,(float) ((float) (1-c)/(Math.pow(s, 2))));
+	        vxSquared = Calc.matrixDivide(vxSquared,(float) ((float) (Math.pow(s, 2))/(1-c)));
 	        
 	        R = Calc.matrixAddition(R, vxSquared);
 	        //Calc.print2dMatrix(R);
-	        rotVec = Calc.applyMatrix(R, vec);
+	        Calc.printVector(Calc.applyMatrix(R, unityVec));
+	        rotVec = Calc.applyMatrix(R, abVec);
 	        //Calc.printVector(rotVec);
 		}
 		return rotVec;

@@ -28,6 +28,7 @@ public class Plot3D {
 	public List<DataSet> dataSets = new ArrayList<DataSet>();
 	public Quality chartQuality;
 	public boolean squared = false;
+	public boolean showBox = true;
 	public Chart currentChart = null;
 	
 	public Coord3d viewPoint;
@@ -83,7 +84,7 @@ public class Plot3D {
 					int i = 0;
 			        for(ArrayList<Coord3d> obj : lines.data) {
 			        	LineStrip strip = new LineStrip();
-			    		strip.setWidth(2.f);
+			    		strip.setWidth(lines.getParameterSet().lineWidth);
 			    		strip.setWireframeColor(new Color(lines.getParameterSet().getEmColor().getRed()/255.f, lines.getParameterSet().getEmColor().getGreen()/255.f, lines.getParameterSet().getEmColor().getBlue()/255.f,1.f));
 			        	for(Coord3d coord : obj) {
 			        		points[i] = coord;
@@ -132,7 +133,7 @@ public class Plot3D {
 				CompileableComposite comp = new CompileableComposite();
 		        for(int i = 0; i < set.antiBodyEndPoints.length; i++) {
 		        	LineStrip strip = new LineStrip();
-		    		strip.setWidth(2.f);
+		    		strip.setWidth(set.getParameterSet().lineWidth);
 		    		strip.setWireframeColor(new Color(set.getParameterSet().getAntibodyColor().getRed()/255.f, set.getParameterSet().getAntibodyColor().getGreen()/255.f, set.getParameterSet().getAntibodyColor().getBlue()/255.f, 1.f));
 		        	
 		    		float[] currentRowStart = set.antiBodyStartPoints[i];
@@ -168,6 +169,7 @@ public class Plot3D {
 			chart.getView().setBoundManual(viewBounds);
 			chart.setViewPoint(viewPoint);
 		}
+		chart.setAxeDisplayed(showBox);
 		chart.getView().setSquared(squared);
 		chart.getView().setBackgroundColor(Color.BLACK);
         chart.getAxeLayout().setMainColor(Color.WHITE);

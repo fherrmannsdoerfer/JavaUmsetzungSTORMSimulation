@@ -62,5 +62,10 @@
 	<version>3.0.3</version>
 </dependency>
    
-</dependencies>
+    <dependency>
+    	<groupId>gov.nih.imagej</groupId>
+    	<artifactId>imagej</artifactId>
+    	<version>1.47</version>
+    </dependency>
+  </dependencies>
 </project>

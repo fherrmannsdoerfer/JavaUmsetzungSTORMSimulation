@@ -54,7 +54,7 @@ public class Test extends FrameSwing {
 		float[][] mx = {{1,0},{2,2},{3,1}};
 //		Calc.print2dMatrix(Calc.pairwiseDistance(mx, mx));
 		STORMCalculator calc = new STORMCalculator(null);
-		calc.startCalculation();
+		calc.execute();
      }
 	
 //	private void initUI() {

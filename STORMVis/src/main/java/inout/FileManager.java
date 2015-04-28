@@ -1,6 +1,9 @@
 package inout;
 
 import gui.DataTypeDetector.DataType;
+import ij.ImagePlus;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -16,6 +19,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import calc.Calc;
 import model.DataSet;
 import model.LineDataSet;
 import model.LineDataSetSerializable;
@@ -86,5 +90,46 @@ public class FileManager {
 		}
 		
 		return p;
+	}
+
+	public static void writeProjectionToFile(float[][] stormData, String path, int mode) {
+		double pixelsize = 10;
+		double sigma = 5/pixelsize; //in nm sigma to blur localizations
+		int filterwidth = 3; // must be odd
+		float xmin = Calc.min(stormData, 0);
+		float xmax = Calc.max(stormData, 0);
+		float ymin = Calc.min(stormData, 1);
+		float ymax = Calc.max(stormData, 1);
+		float zmin = Calc.min(stormData, 2);
+		float zmax = Calc.max(stormData, 2);
+		int pixelX = 0;
+		int pixelY = 0;
+		if (mode == 0){
+			mode = 1;
+		}
+		
+		switch (mode){
+			case 1://xy
+				pixelX =(int) Math.pow(2, Math.ceil(Math.log((xmax-xmin) / pixelsize)/Math.log(2)));
+				pixelY = (int) Math.pow(2, Math.ceil(Math.log((ymax-ymin) / pixelsize)/Math.log(2)));
+				break;
+			case 2://xz
+				pixelX =(int) Math.pow(2, Math.ceil(Math.log((xmax-xmin) / pixelsize)/Math.log(2)));
+				pixelY = (int) Math.pow(2, Math.ceil(Math.log((zmax-zmin) / pixelsize)/Math.log(2)));
+				break;
+			case 3://yz
+				pixelX =(int) Math.pow(2, Math.ceil(Math.log((ymax-ymin) / pixelsize)/Math.log(2)));
+				pixelY = (int) Math.pow(2, Math.ceil(Math.log((zmax-zmin) / pixelsize)/Math.log(2)));
+				break;
+		}
+		
+		float [][] image = new float[pixelX][pixelY];
+		image = Calc.addFilteredPoints(image, sigma, filterwidth, pixelsize, stormData,mode,xmin,ymin,zmin);
+		ImageProcessor ip = new FloatProcessor(pixelX,pixelY);
+		ip.setFloatArray(image);
+		ImagePlus imgP = new ImagePlus("", ip);
+		//System.out.println("Image rendered ("+imgP.getWidth()+"*"+imgP.getHeight()+")");
+		ij.IJ.save(new ImagePlus("",imgP.getProcessor().convertToByte(false)), path);
+		ij.IJ.save(imgP, path);
 	}
 } 

@@ -35,6 +35,7 @@ public class ParameterSet implements Serializable {
 	public Boolean mergedPSF;
 	
 	public Float pointSize;
+	public Float lineWidth;
 	
 	public Color emColor;
 	public Color stormColor;
@@ -44,7 +45,9 @@ public class ParameterSet implements Serializable {
 	public ParameterSet(Float loa, Float aoa, Float bspnm, Float pabs,
 			Float abpf, Float rof, Float fpab, int[] colorEM, int[] colorSTORM,
 			int[] colorAB, Float sxy, Float sz, Float doc, Float nocpsmm,
-			Float docpsnm, Float bd, Float bspsnm, int frames, Float kOn, Float kOff, Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility, Float ilpmm3, Float psfwidth, Boolean mergedPSF, Float pointSize
+			Float docpsnm, Float bd, Float bspsnm, int frames, Float kOn, Float kOff, 
+			Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility, 
+			Float ilpmm3, Float psfwidth, Boolean mergedPSF, Float pointSize, Float lineWidth
 			, Color emColor, Color stormColor, Color antibodyColor) {
 		super();
 		this.loa = loa;
@@ -79,6 +82,7 @@ public class ParameterSet implements Serializable {
 		this.mergedPSF = mergedPSF;
 		
 		this.pointSize = pointSize;
+		this.lineWidth = lineWidth;
 		
 		this.emColor = emColor;          
 		this.stormColor = stormColor;       
@@ -119,6 +123,7 @@ public class ParameterSet implements Serializable {
 		this.mergedPSF = Boolean.FALSE;
 		
 		this.pointSize = new Float(2.f);
+		this.lineWidth = new Float(2.f);
 		
 		/**
 		 * default colors for visualization
@@ -375,6 +380,10 @@ public class ParameterSet implements Serializable {
 
 	public void setAntibodyColor(Color antibodyColor) {
 		this.antibodyColor = antibodyColor;
+	}
+
+	public void setLineWidth(Float lineWidth) {
+		this.lineWidth = lineWidth;	
 	}
 	
 	

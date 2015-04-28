@@ -280,8 +280,8 @@ public class Calc {
 	public static float[] getVectorTri(float aoa, float length) {
 		double alpha = Math.random()*2*Math.PI;
 		double x = Math.cos(aoa)*Math.cos(alpha);
-		double z = Math.sin(aoa);
 		double y = Math.cos(aoa)*Math.sin(alpha);
+		double z = Math.sin(aoa);
 		float[] vec = {(float) (x*length),(float) (y*length),(float) (z*length)};
 		return vec;
 	}
@@ -458,10 +458,10 @@ public class Calc {
 	 * @return random Vector * multiplier
 	 */
 	
-	public static float[] randVector(int dimension, float multiplier) {
+	public static float[] randVector(int dimension, float min, float max) {
 		float[] result = new float[dimension];
 		for(int i = 0; i < dimension; i++) {
-			result[i] = (float) Math.random() * multiplier;
+			result[i] = (float) Math.random() * (max - min) + min;
 		}
 		return result;
 	}
@@ -625,6 +625,45 @@ public class Calc {
 	    Random rand = new Random();
 	    int randomNum = rand.nextInt((max - min) + 1) + min;
 	    return randomNum;
+	}
+	
+	public static float[][] addFilteredPoints(float[][] image, double sigma, int filterwidth, 
+			double pixelsize, float[][] sd, int mode, double xmin, double ymin, double zmin){
+		if (filterwidth %2 == 0) {System.err.println("filterwidth must be odd");}
+		double factor = 100*1/(2*Math.PI*sigma*sigma);
+		double factor2 = -0.5/sigma/sigma;
+		//System.out.println(sd.getSize());
+		for (int i = 1; i<sd.length; i++){
+			float[] sl = sd[i];//.get(i);
+			double posX = 0;
+			double posY = 0;
+			switch (mode){
+				case 1:
+					posX = (sl[0]-xmin)/pixelsize; //position of current localization
+					posY = (sl[1]-ymin)/pixelsize;
+					break;
+				case 2:
+					posX = (sl[0]-xmin)/pixelsize; //position of current localization
+					posY = (sl[2]-zmin)/pixelsize;
+					break;
+				case 3:
+					posX = (sl[1]-ymin)/pixelsize; //position of current localization
+					posY = (sl[2]-zmin)/pixelsize;
+					break;
+			}
+			
+			int pixelXStart = (int)Math.floor(posX) - (filterwidth-1)/2;
+			int pixelYStart = (int)Math.floor(posY) - (filterwidth-1)/2;
+			for (int k = pixelXStart; k<pixelXStart+ filterwidth;k++){
+				for(int l= pixelYStart; l<pixelYStart+ filterwidth;l++){
+					try{
+						image[k][l] = image[k][l] + (float)(factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+						//System.out.println("factor: "+factor+" k: "+k+" l: "+l+"posX: "+posX+"posY: "+posY+" image[k][l]" +image[k][l]+" res: "+(float)(factor * Math.exp(-0.5/sigma/sigma*(Math.pow((k-posX),2)+Math.pow((l-posY),2)))));
+					} catch(IndexOutOfBoundsException e){e.toString();}
+				}
+			}
+		}
+		return image;
 	}
 	
 }

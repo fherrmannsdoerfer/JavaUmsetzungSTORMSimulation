@@ -72,7 +72,7 @@ import javax.swing.JProgressBar;
  * 
  */
 
-public class SketchGui extends JFrame implements TableModelListener,PropertyChangeListener {
+public class AltSketchGui extends JFrame implements TableModelListener,PropertyChangeListener {
 
 	private JPanel contentPane;
 	private JTextField radiusOfFilamentsField; //rof
@@ -142,7 +142,7 @@ public class SketchGui extends JFrame implements TableModelListener,PropertyChan
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					SketchGui frame = new SketchGui();
+					AltSketchGui frame = new AltSketchGui();
 					frame.setTitle("STORMVis");
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -155,7 +155,7 @@ public class SketchGui extends JFrame implements TableModelListener,PropertyChan
 	/**
 	 * Create the frame.
 	 */
-	public SketchGui() {
+	public AltSketchGui() {
 		int fontSize = 16;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1200, 1200);

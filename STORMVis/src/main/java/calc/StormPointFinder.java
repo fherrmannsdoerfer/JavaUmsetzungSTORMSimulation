@@ -55,9 +55,9 @@ public class StormPointFinder {
 		int pointCounter = 0;
 		progressBar.setString("Create Localizations");
 		for (int i = 1; i <= Math.floor(Calc.max(nbrBlinkingEvents)); i++) {
-			if (i%(Math.floor(Calc.max(nbrBlinkingEvents))/100)==0) {
+			//if (i%(Math.floor(Calc.max(nbrBlinkingEvents))/100)==0) {
 				calc.publicSetProgress((int) (1.*i/Math.floor(Calc.max(nbrBlinkingEvents))*100.));
-			}
+			//}
 			List<Integer> idxArray = new ArrayList<Integer>();
 			int countOne = 0;
 			for (int j = 0; j < nbrBlinkingEvents.length; j++) {
@@ -127,9 +127,9 @@ public class StormPointFinder {
     	long loopStart = System.nanoTime();
     	progressBar.setString("Merge Near Localizations");
     	for (int i = 1; i <= maxInFrameNumbers; i++) {
-    		if (i%(maxInFrameNumbers/100)==0) {
+    		//if (i%(maxInFrameNumbers/100)==0) {
 				calc.publicSetProgress((int) (1.*i/maxInFrameNumbers*100.));
-			}
+			//}
     		long start = System.nanoTime();
 //        		System.out.println("progress: i = " + i);
     		TIntArrayList idxArray = new TIntArrayList();
@@ -279,9 +279,9 @@ public class StormPointFinder {
 		//ilpmm3: //incorrect localizations per micrometer ^3
 		int numberOfIncorrectLocalizations = (int) Math.floor(ilpmm3*(xmax-xmin)/1e3*(ymax-ymin)/1e3*(zmax-zmin)/1e3);
 		System.out.println("noil:" + numberOfIncorrectLocalizations);
-		float[] x = Calc.randVector(numberOfIncorrectLocalizations, ((xmax -xmin) + xmin));
-		float[] y = Calc.randVector(numberOfIncorrectLocalizations, ((ymax -ymin) + ymin));
-		float[] z = Calc.randVector(numberOfIncorrectLocalizations, ((zmax -zmin) + zmin));
+		float[] x = Calc.randVector(numberOfIncorrectLocalizations, xmin, xmax);
+		float[] y = Calc.randVector(numberOfIncorrectLocalizations, ymin, ymax);
+		float[] z = Calc.randVector(numberOfIncorrectLocalizations, zmin, zmax);
 		if(numberOfIncorrectLocalizations == 0) {
 			System.out.println("No coordinates to append.");
 		}

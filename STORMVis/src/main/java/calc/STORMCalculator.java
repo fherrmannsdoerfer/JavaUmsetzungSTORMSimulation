@@ -50,7 +50,6 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 	public Void doInBackground() {
 		long start = System.nanoTime();
 		if(currentDataSet != null) {
-			setProgress(5);
 			doSimulation();
 		}
 		System.out.println("Whole converting and simulation time: "+ (System.nanoTime()-start)/1e9 +"s");
@@ -62,12 +61,12 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 		System.out.println("Worker finished");
 	}
 	public void doSimulation() {
-		float[][] ep = null;
+		float[][] ep = null; // = {{2,3,0},{3,2,0},{2,2,2},{4,6,8},{1,2,43}};
 		float[][] ap = null;
 		if(currentDataSet.dataType == DataType.TRIANGLES) {
 			TriangleDataSet currentTrs = (TriangleDataSet) currentDataSet;
 			Pair<float[][],float[][]> p = Finder.findAntibodiesTri(currentTrs.primitives, currentDataSet, this);
-			ep = p.getValue1();
+			ep = p.getValue1(); 
 			ap = p.getValue0();
 			float [][] epCopy = new float[ep.length][];
 			float [][] apCopy = new float[ap.length][];
