@@ -95,6 +95,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField epitopeDensityField; //bspnm oder bspsnm je nachdem ob Linien oder Dreiecke
 	private JTextField pointSizeField; //das muesste der Parameter a aus Plotter new Color(coord.x/255.f,coord.y/255.f,coord.z/255.f,a); sein
 	
+	JLabel lblRadiusOfFilaments;
+	
 	private JCheckBox showEmBox;
 	private JCheckBox showStormPointsBox;
 	private JCheckBox showAntibodiesBox;
@@ -254,7 +256,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_1 = Box.createHorizontalBox();
 		verticalBox_1.add(horizontalBox_1);
 		
-		JLabel lblRadiusOfFilaments = new JLabel("Radius Of Filaments (nm)");
+		lblRadiusOfFilaments = new JLabel("Radius Of Filaments (nm)");
 		horizontalBox_1.add(lblRadiusOfFilaments);
 		
 		Component horizontalGlue_1 = Box.createHorizontalGlue();
@@ -1048,7 +1050,15 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		currentRow = row;
 		if(currentRow != -1) {
 			ParameterSet set = allDataSets.get(row).parameterSet;
-			radiusOfFilamentsField.setText(set.getRof().toString()); //rof                                                                                         
+			if (allDataSets.get(row).dataType == DataType.LINES){
+				radiusOfFilamentsField.setEnabled(true);
+				lblRadiusOfFilaments.setEnabled(true);
+				radiusOfFilamentsField.setText(set.getRof().toString()); //rof      
+			}
+			else{
+				radiusOfFilamentsField.setEnabled(false);
+				lblRadiusOfFilaments.setEnabled(false);
+			}
 			labelingEfficiencyField.setText(set.getPabs().toString()); //pabs                                                                                       
 			meanAngleField.setText(set.getAoa().toString()); //aoa     
 			backgroundLabelField.setText(set.getIlpmm3().toString()); //ilpmm3 aus StormPointFinder                                                                   
