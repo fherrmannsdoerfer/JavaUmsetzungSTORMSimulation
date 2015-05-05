@@ -9,8 +9,12 @@ import java.util.Random;
 
 import javax.vecmath.Vector3d;
 
+import model.LineDataSet;
+import model.TriangleDataSet;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.javatuples.Pair;
+import org.jzy3d.maths.Coord3d;
 
 
 public class Calc { 
@@ -768,5 +772,78 @@ public class Calc {
 		}
 		return image;
 	}
-	
+
+	public static ArrayList<Float> findShiftLines(List<ArrayList<Coord3d>> data) {
+		ArrayList<Float> shifts = new ArrayList<Float>();
+		float minx = Float.MAX_VALUE;
+		float maxx = -Float.MAX_VALUE;
+		float miny = Float.MAX_VALUE;
+		float maxy = -Float.MAX_VALUE;
+		float minz = Float.MAX_VALUE;
+		float maxz = -Float.MAX_VALUE;
+		for (ArrayList<Coord3d> list: data){
+			for (Coord3d cord:list){
+				if (cord.x<minx){
+					minx = cord.x;
+				}
+				if (cord.x>maxx){
+					maxx = cord.x;
+				}
+				if (cord.y<miny){
+					miny = cord.y;
+				}
+				if (cord.y>maxy){
+					maxy = cord.y;
+				}
+				if (cord.z<minz){
+					minz = cord.z;
+				}
+				if (cord.z>maxz){
+					maxz = cord.z;
+				}
+			}
+		}
+		shifts.add((maxx+minx)/2.f);
+		shifts.add((maxy+miny)/2.f);
+		shifts.add((maxz+minz)/2.f);
+		return shifts;
+	}
+
+	public static ArrayList<Float> findShiftTriangles(List<float[][]> primitives) {
+		ArrayList<Float> shifts = new ArrayList<Float>();
+		float minx = Float.MAX_VALUE;
+		float maxx = -Float.MAX_VALUE;
+		float miny = Float.MAX_VALUE;
+		float maxy = -Float.MAX_VALUE;
+		float minz = Float.MAX_VALUE;
+		float maxz = -Float.MAX_VALUE;
+		for(float[][] prim:primitives){
+			for(int i =0; i<prim.length; i++){
+				if (prim[i][0]<minx){
+					minx = prim[i][0];
+				}
+				if (prim[i][0]>maxx){
+					maxx = prim[i][0];
+				}
+				if (prim[i][1]<miny){
+					miny = prim[i][1];
+				}
+				if (prim[i][1]>maxy){
+					maxy = prim[i][1];
+				}
+				if (prim[i][2]<minz){
+					minz = prim[i][2];
+				}
+				if (prim[i][2]>maxz){
+					maxz = prim[i][2];
+				}
+			}
+		}
+		shifts.add((maxx+minx)/2.f);
+		shifts.add((maxy+miny)/2.f);
+		shifts.add((maxz+minz)/2.f);
+		return shifts;
+	}
+
+
 }

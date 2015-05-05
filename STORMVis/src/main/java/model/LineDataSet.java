@@ -52,4 +52,18 @@ public class LineDataSet extends DataSet implements Serializable{
 			 data.set(i, tmp);
 		 }
 	 }
+	 
+	public void shiftData(float shiftX, float shiftY, float shiftZ) {
+		 for (int i = 0; i<data.size(); i++){
+			 ArrayList<Coord3d> tmp = new ArrayList<Coord3d>();
+			 for (int j = 0; j<data.get(i).size(); j++){
+				 Coord3d tmpCoord = new Coord3d();
+				 tmpCoord.x = data.get(i).get(j).x+shiftX;
+				 tmpCoord.y = data.get(i).get(j).y+shiftY;
+				 tmpCoord.z = data.get(i).get(j).z+shiftZ;
+				 tmp.add(tmpCoord);
+			 }
+			 data.set(i, tmp);
+		 }
+	}
 }

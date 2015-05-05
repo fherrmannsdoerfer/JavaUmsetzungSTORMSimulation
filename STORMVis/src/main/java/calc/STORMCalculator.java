@@ -3,6 +3,7 @@ package calc;
 
 import gui.DataTypeDetector.DataType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

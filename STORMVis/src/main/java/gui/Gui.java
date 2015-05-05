@@ -52,10 +52,13 @@ import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 
 import model.DataSet;
+import model.LineDataSet;
 import model.ParameterSet;
 import model.Project;
 import model.SerializableImage;
+import model.TriangleDataSet;
 import table.DataSetTableModel;
+import calc.Calc;
 import calc.STORMCalculator;
 
 import javax.swing.JToggleButton;
@@ -67,7 +70,6 @@ import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 
 import java.awt.CardLayout;
-import org.eclipse.wb.swing.FocusTraversalOnArray;
 
 
 /**
@@ -82,6 +84,7 @@ import org.eclipse.wb.swing.FocusTraversalOnArray;
 public class Gui extends JFrame implements TableModelListener,PropertyChangeListener {
 
 	private JPanel contentPane;
+	private JLabel epitopeDensityLabel;
 	private JTextField radiusOfFilamentsField; //rof
 	private JTextField labelingEfficiencyField; //pabs
 	private JTextField meanAngleField; //aoa
@@ -151,6 +154,12 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	final JToggleButton yzViewButton;
 	
 	int viewStatus = 0;
+	
+	float shiftX = -1;
+	float shiftY = -1;
+	float shiftZ = -1;
+	
+	JFileChooser chooser = new JFileChooser();
 	/**
 	 * Launch the application.
 	 */
@@ -238,8 +247,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox = Box.createHorizontalBox();
 		verticalBox_1.add(horizontalBox);
 		
-		JLabel lblNewLabel = new JLabel("<html>Epitope Density (nm<sup>-2</sup>)</html>");
-		horizontalBox.add(lblNewLabel);
+		epitopeDensityLabel = new JLabel("<html>Epitope Density (nm<sup>-2</sup>)</html>");
+		horizontalBox.add(epitopeDensityLabel);
 		
 		Component horizontalGlue = Box.createHorizontalGlue();
 		horizontalBox.add(horizontalGlue);
@@ -250,7 +259,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		epitopeDensityField.setMaximumSize(new Dimension(60, 22));
 		epitopeDensityField.setColumns(5);
 		horizontalBox.add(epitopeDensityField);
-		horizontalBox.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{lblNewLabel, horizontalGlue, epitopeDensityField}));
+		//horizontalBox.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{lblNewLabel, horizontalGlue, epitopeDensityField}));
 		
 		Component verticalGlue_4 = Box.createVerticalGlue();
 		verticalBox_1.add(verticalGlue_4);
@@ -646,9 +655,13 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_18.add(horizontalGlue_7);
 		
 		stormColorButton = new JButton("");
+		horizontalBox_18.add(stormColorButton);
 		stormColorButton.setMinimumSize(new Dimension(33, 20));
 		stormColorButton.setMaximumSize(new Dimension(33, 20));
-		stormColorButton.setPreferredSize(new Dimension(40, 40));
+		stormColorButton.setPreferredSize(new Dimension(40, 20));
+		
+		showStormPointsBox = new JCheckBox("");
+		horizontalBox_18.add(showStormPointsBox);
 		stormColorButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -656,10 +669,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				updateButtonColors();
 			}
 		});
-		horizontalBox_18.add(stormColorButton);
-		
-		showStormPointsBox = new JCheckBox("");
-		horizontalBox_18.add(showStormPointsBox);
 		
 		Box horizontalBox_20 = Box.createHorizontalBox();
 		verticalBox_6.add(horizontalBox_20);
@@ -858,7 +867,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		importFileButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser chooser = new JFileChooser();
 				chooser.setAcceptAllFileFilterUsed(false);
 				chooser.setFileFilter(new TriangleLineFilter());
 				chooser.setFileSelectionMode(0);
@@ -1020,6 +1028,28 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		model.data.add(data);
 		model.visibleSets.add(Boolean.FALSE);
 		model.fireTableDataChanged();
+		if (shiftX == -1 && shiftY == -1 && shiftZ == -1){
+			ArrayList<Float> shifts = new ArrayList<Float>();
+			if (allDataSets.get(0).dataType == DataType.LINES){
+				LineDataSet lines = (LineDataSet) allDataSets.get(0);
+				shifts = Calc.findShiftLines(lines.data);
+			}
+			else{
+				TriangleDataSet triangles = (TriangleDataSet) allDataSets.get(0);
+				shifts = Calc.findShiftTriangles(triangles.primitives);
+			}
+			shiftX = -shifts.get(0);
+			shiftY = -shifts.get(1);
+			shiftZ = -shifts.get(2);
+		}
+		if (allDataSets.get(allDataSets.size()-1).dataType == DataType.LINES){
+			LineDataSet lines = (LineDataSet) allDataSets.get(allDataSets.size()-1);
+			lines.shiftData(shiftX,shiftY,shiftZ);
+		}
+		else{
+			TriangleDataSet triangles = (TriangleDataSet) allDataSets.get(allDataSets.size()-1);
+			triangles.shiftData(shiftX,shiftY,shiftZ);
+		}
 	}
 
 	/**
@@ -1055,11 +1085,13 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			if (allDataSets.get(row).dataType == DataType.LINES){
 				radiusOfFilamentsField.setEnabled(true);
 				lblRadiusOfFilaments.setEnabled(true);
-				radiusOfFilamentsField.setText(set.getRof().toString()); //rof      
+				radiusOfFilamentsField.setText(set.getRof().toString()); //rof   
+				epitopeDensityLabel.setText("<html>Epitope Density (nm<sup>-1</sup>)</html>");
 			}
 			else{
 				radiusOfFilamentsField.setEnabled(false);
 				lblRadiusOfFilaments.setEnabled(false);
+				epitopeDensityLabel.setText("<html>Epitope Density (nm<sup>-2</sup>)</html>");
 			}
 			labelingEfficiencyField.setText(set.getPabs().toString()); //pabs                                                                                       
 			meanAngleField.setText(set.getAoa().toString()); //aoa     
@@ -1129,7 +1161,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		}
 		allDataSets.get(currentRow).setProgressBar(progressBar);
 		System.out.println("bspsnm: " + allDataSets.get(currentRow).getParameterSet().getBspsnm());
-		allDataSets.get(currentRow).getParameterSet().setRof(new Float(radiusOfFilamentsField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setPabs(new Float(labelingEfficiencyField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setAoa(new Float(meanAngleField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setIlpmm3(new Float(backgroundLabelField.getText()));
@@ -1143,6 +1174,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setPsfwidth(new Float(psfSizeField.getText()));
 		if(allDataSets.get(currentRow).dataType == DataType.LINES) {
 			allDataSets.get(currentRow).getParameterSet().setBspnm(new Float(epitopeDensityField.getText()));
+			allDataSets.get(currentRow).getParameterSet().setRof(new Float(radiusOfFilamentsField.getText()));
 		}
 		else {
 			allDataSets.get(currentRow).getParameterSet().setBspsnm(new Float(epitopeDensityField.getText()));

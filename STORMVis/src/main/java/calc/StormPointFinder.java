@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.swing.JProgressBar;
 
+import org.jzy3d.maths.Array;
+
 import model.DataSet;
 import model.ParameterSet;
 
@@ -232,10 +234,10 @@ public class StormPointFinder {
 
 	private static float[][] addMultipleFluorophoresPerAntibody(float[][] listEndPoints, float fpab) {
 		int[] idx = new int[listEndPoints.length]; 
-		for (int i = 0; i<listEndPoints.length;i++) {
-			idx[i] = (int) Math.abs(Math.floor(Calc.randn() * fpab+fpab));
+		for (int i = 0; i<listEndPoints.length;i++) { //get random number of fluorophore for each antibody
+			idx[i] = (int) Math.abs(Math.floor(Calc.randn() * Math.sqrt(fpab)+fpab));
 		}
-		for (int i = 0; i < idx.length; i++) {
+		for (int i = 0; i < idx.length; i++) {//make sure that each antibodie has at least 1 fluorophore
 			if(idx[i] == 0) {
 				idx[i] = 1;
 			}
@@ -245,7 +247,7 @@ public class StormPointFinder {
 			List<float[]> alteredPoints = new ArrayList<float[]>();
 			for (int k = 0; k < idx.length; k++) {
 				if(idx[k]>=i) {
-					alteredPoints.add(listEndPoints[k]);
+					alteredPoints.add(Array.clone(listEndPoints[k]));
 				}
 			}
 			
@@ -259,7 +261,9 @@ public class StormPointFinder {
 			}
 			
 			for (int p = 0; p < altPoints.length; p++) {
-				listEndPointsAugmented.add(altPoints[p]);
+				float[] tmp = new float[3];
+				tmp = altPoints[p];
+				listEndPointsAugmented.add(Array.clone(tmp));
 			}
 		}
 		listEndPoints = Calc.toFloatArray(listEndPointsAugmented);

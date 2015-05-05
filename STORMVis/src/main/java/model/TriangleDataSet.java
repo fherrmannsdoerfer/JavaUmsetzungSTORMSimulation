@@ -105,5 +105,31 @@ public class TriangleDataSet extends DataSet implements Serializable{
     	}
     	primitives = prim;
     }
+
+	public void shiftData(float shiftX, float shiftY, float shiftZ) {
+		List<Polygon> newList = new ArrayList<Polygon>();
+    	for (Polygon p: drawableTriangles){
+    		Polygon pNew = new Polygon();
+    		pNew.add(new Point(new Coord3d(p.get(0).xyz.x+shiftX, p.get(0).xyz.y+shiftY, p.get(0).xyz.z+shiftZ)));
+    		pNew.add(new Point(new Coord3d(p.get(1).xyz.x+shiftX, p.get(1).xyz.y+shiftY, p.get(1).xyz.z+shiftZ)));
+    		pNew.add(new Point(new Coord3d(p.get(2).xyz.x+shiftX, p.get(2).xyz.y+shiftY, p.get(2).xyz.z+shiftZ)));
+    		newList.add(pNew);
+    	}
+    	drawableTriangles.clear();
+    	drawableTriangles = newList;
+    	
+    	List<float[][]> prim = new ArrayList<float[][]>();
+    	primitives.clear();
+    	for(Polygon p : drawableTriangles) {
+	    	float[][] tr = new float[3][3];
+	    	for(int i = 0; i < p.getPoints().size(); i++) {
+		    	tr[i][0] = p.getPoints().get(i).xyz.x;
+		    	tr[i][1] = p.getPoints().get(i).xyz.y;
+		    	tr[i][2] = p.getPoints().get(i).xyz.z;
+	    	}
+	    	prim.add(tr);
+    	}
+    	primitives = prim;
+	}
 }
 
