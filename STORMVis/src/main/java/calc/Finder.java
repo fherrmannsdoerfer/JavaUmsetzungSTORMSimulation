@@ -297,7 +297,7 @@ public class Finder {
         if (Float.isNaN((float) ((float) (1-c)/(Math.pow(s, 2))))) {
         	System.out.println("div is NAN");
         }
-        vxSquared = Calc.matrixDivide(vxSquared,(float) ((float) (1-c)/(Math.pow(s, 2))));
+        vxSquared = Calc.matrixDivide(vxSquared,(float) ((float) (Math.pow(s, 2)/(1-c))));
         R = Calc.matrixAddition(R, vxSquared);
         rotVec = Calc.applyMatrix(R, vec);
 		return rotVec;

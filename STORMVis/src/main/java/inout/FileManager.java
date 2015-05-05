@@ -94,7 +94,7 @@ public class FileManager {
 
 	public static void writeProjectionToFile(float[][] stormData, String path, int mode) {
 		double pixelsize = 10;
-		double sigma = 5/pixelsize; //in nm sigma to blur localizations
+		double sigma = 20/pixelsize; //in nm sigma to blur localizations
 		int filterwidth = 3; // must be odd
 		float xmin = Calc.min(stormData, 0);
 		float xmax = Calc.max(stormData, 0);
@@ -131,5 +131,34 @@ public class FileManager {
 		//System.out.println("Image rendered ("+imgP.getWidth()+"*"+imgP.getHeight()+")");
 		ij.IJ.save(new ImagePlus("",imgP.getProcessor().convertToByte(false)), path);
 		ij.IJ.save(imgP, path);
+		
+		float [][] imageRed = new float[pixelX][pixelY];
+		float [][] imageGreen = new float[pixelX][pixelY];
+		float [][] imageBlue = new float[pixelX][pixelY];
+		ArrayList<float[][]> coloredImage = new ArrayList<float[][]>();
+		coloredImage.add(imageRed);
+		coloredImage.add(imageGreen);
+		coloredImage.add(imageBlue);
+		coloredImage = Calc.addFilteredPoints3D(coloredImage, sigma, filterwidth, pixelsize, stormData,mode);
+		ImageProcessor ipRed = new FloatProcessor(pixelX,pixelY);
+		ImageProcessor ipGreen = new FloatProcessor(pixelX,pixelY);
+		ImageProcessor ipBlue = new FloatProcessor(pixelX,pixelY);
+		ipRed.setFloatArray(coloredImage.get(0));
+		ipGreen.setFloatArray(coloredImage.get(1));
+		ipBlue.setFloatArray(coloredImage.get(2));
+		ImagePlus imgPRed = new ImagePlus("", ipRed);
+		ImagePlus imgPGreen = new ImagePlus("", ipGreen);
+		ImagePlus imgPBlue = new ImagePlus("", ipBlue);
+		System.out.println("3D Image rendered ("+imgPRed.getWidth()+"*"+imgPRed.getHeight()+")");
+		ArrayList<ImagePlus> colImg = new ArrayList<ImagePlus>();
+		colImg.add(imgPRed);
+		colImg.add(imgPGreen);
+		colImg.add(imgPBlue);
+		
+		String basename = path.substring(0, path.length()-4);
+		ij.IJ.save(colImg.get(0),basename+"redCh.tif");
+		ij.IJ.save(colImg.get(1),basename+"greenCh.tif");
+		ij.IJ.save(colImg.get(2),basename+"BlueCh.tif");
+			
 	}
 } 

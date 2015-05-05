@@ -67,6 +67,7 @@ import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 
 import java.awt.CardLayout;
+import org.eclipse.wb.swing.FocusTraversalOnArray;
 
 
 /**
@@ -237,7 +238,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox = Box.createHorizontalBox();
 		verticalBox_1.add(horizontalBox);
 		
-		JLabel lblNewLabel = new JLabel("Epitope Density (nm^-2)");
+		JLabel lblNewLabel = new JLabel("<html>Epitope Density (nm<sup>-2</sup>)</html>");
 		horizontalBox.add(lblNewLabel);
 		
 		Component horizontalGlue = Box.createHorizontalGlue();
@@ -249,6 +250,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		epitopeDensityField.setMaximumSize(new Dimension(60, 22));
 		epitopeDensityField.setColumns(5);
 		horizontalBox.add(epitopeDensityField);
+		horizontalBox.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{lblNewLabel, horizontalGlue, epitopeDensityField}));
 		
 		Component verticalGlue_4 = Box.createVerticalGlue();
 		verticalBox_1.add(verticalGlue_4);
@@ -314,7 +316,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_8 = Box.createHorizontalBox();
 		verticalBox_3.add(horizontalBox_8);
 		
-		JLabel lblMeanDistanceLabel = new JLabel("Label Length (nm)");
+		JLabel lblMeanDistanceLabel = new JLabel("Label Epitope Distance (nm)");
 		horizontalBox_8.add(lblMeanDistanceLabel);
 		
 		Component horizontalGlue_8 = Box.createHorizontalGlue();
@@ -404,7 +406,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_5 = Box.createHorizontalBox();
 		verticalBox_10.add(horizontalBox_5);
 		
-		JLabel lblMeanAngle = new JLabel("Mean Binding Angle");
+		JLabel lblMeanAngle = new JLabel("Mean Binding Degree");
 		horizontalBox_5.add(lblMeanAngle);
 		
 		Component horizontalGlue_5 = Box.createHorizontalGlue();
