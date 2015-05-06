@@ -131,9 +131,9 @@ public class TriangleObjectParser {
         		for (int i = 0; i<3; i++){
         			System.out.println(counter+" "+numberVertices +" "+ numberFaces);
         			System.out.println("Integer.valueOf(words.get(i))"+Integer.valueOf(words.get(i)));
-        			Coord3d saveCoord = new Coord3d(listVertices.get(Integer.valueOf(words.get(i+1)))[0],
-        					listVertices.get(Integer.valueOf(words.get(i+1)))[1],
-        					listVertices.get(Integer.valueOf(words.get(i+1)))[2]);
+        			Coord3d saveCoord = new Coord3d(listVertices.get(Integer.valueOf(words.get((i+1))))[0]*1.62,
+        					listVertices.get(Integer.valueOf(words.get(i+1)))[1]*1.62,
+        					listVertices.get(Integer.valueOf(words.get(i+1)))[2]*1.62);
                     Color color = new Color(saveCoord.x/255.f, saveCoord.y/255.f, 1-saveCoord.z/255.f, 1.f);
                     Point newPoint = new Point(saveCoord, color);
                     newTriangle.add(newPoint);
