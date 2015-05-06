@@ -25,6 +25,20 @@ public class ParserWrapper {
 			}
 			return trParser.wrapParsedObjectsToTriangleDataSet();
 		}
+		else if (type.equals(DataType.PLY)) {
+			TriangleObjectParser trParser = new TriangleObjectParser(path,type);
+//			trParser.limit = 0;
+			try {
+				trParser.parse();
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return trParser.wrapParsedObjectsToTriangleDataSet();
+		}
 		else if (type.equals(DataType.LINES)) {
 			LineObjectParser lineParser = new LineObjectParser(path);
 			try {
@@ -35,6 +49,7 @@ public class ParserWrapper {
 			}
 			return lineParser.wrapParsedObjectsToLineDataSet();
 		}
+		
 		else {
 			return null;
 		}

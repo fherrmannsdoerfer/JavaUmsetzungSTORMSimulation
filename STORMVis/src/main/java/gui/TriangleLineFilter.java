@@ -16,7 +16,8 @@ public class TriangleLineFilter extends FileFilter {
 	    String extension = Utils.getExtension(f);
 	    if (extension != null) {
 	        if (extension.equals(Utils.nff) ||
-	            extension.equals(Utils.wimp)) {
+	            extension.equals(Utils.wimp) ||
+	        	extension.equals(Utils.ply)){
 	                return true;
 	        } else {
 	            return false;
@@ -37,6 +38,7 @@ public class TriangleLineFilter extends FileFilter {
 	    public final static String nff = "nff";
 	    public final static String wimp = "wimp";
 	    public final static String txt = "txt";
+	    public final static String ply = "ply";
 	    
 	    /*
 	     * Get the extension of a file.

@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class DataTypeDetector {
 	public enum DataType {
-	    TRIANGLES, LINES, UNKNOWN
+	    TRIANGLES, LINES, PLY, UNKNOWN
 	}
 	
 	public static DataType getDataType(String filePath) throws IOException {
@@ -21,6 +21,9 @@ public class DataTypeDetector {
             }
             else if (line.contains("pp 3")) {
             	return DataType.TRIANGLES;
+            }
+            else if(line.contains("ply")){
+            	return DataType.PLY;
             }
         }
         return DataType.UNKNOWN;

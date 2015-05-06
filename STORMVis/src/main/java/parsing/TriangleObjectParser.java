@@ -1,5 +1,8 @@
 package parsing;
+import gui.DataTypeDetector.DataType;
+
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,15 +28,126 @@ public class TriangleObjectParser {
 	public List<float[][]> primitives;
 	public int limit;
 	public String path;
+	private DataType type;
 	
 	public TriangleObjectParser(String path) {
 		this.path = path;
+		this.type = DataType.TRIANGLES;
+		if(path == null) {
+			this.path = FILE;
+		}
+	}
+	
+	public TriangleObjectParser(String path, DataType type) {
+		this.path = path;
+		this.type = type;
 		if(path == null) {
 			this.path = FILE;
 		}
 	}
 	
 	public void parse() throws NumberFormatException, IOException {
+		if (type == DataType.TRIANGLES){
+			importNff();
+		}
+		else if(type == DataType.PLY){
+			importPly();
+		}
+		
+	}
+	
+	
+	private void importPly() throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(path));
+        String line;
+        List<String> words = new ArrayList<String>();
+        int objectNumber = 0;
+        boolean all = true;
+        allTriangles  = new ArrayList<Polygon>();
+        primitives = new ArrayList<float[][]>();
+        int numberVertices = 0;
+        int numberFaces = 0;
+        while ((line = br.readLine())!=null){
+        	if (line.contains("element") && line.contains("vertex")){
+        		words.clear();
+        		int pos = 0,end;
+        		while ((end = line.indexOf(' ', pos)) >= 0) {
+                    words.add(line.substring(pos,end));
+                    pos = end + 1;
+                }
+        		if (pos<line.length()){
+        			words.add(line.substring(pos,line.length()));
+        		}
+        		numberVertices = Integer.valueOf(words.get(2));
+        	}
+        	if (line.contains("element") && line.contains("face")){
+        		words.clear();
+        		int pos = 0,end;
+        		while ((end = line.indexOf(' ', pos)) >= 0) {
+                    words.add(line.substring(pos,end));
+                    pos = end + 1;
+                }
+        		if (pos<line.length()){
+        			words.add(line.substring(pos,line.length()));
+        		}
+        		numberFaces = Integer.valueOf(words.get(2));
+        	}
+        	if(line.contains("end_header")){
+        		break;
+        	}
+        }
+        int counter = 0;
+        ArrayList<Float[]> listVertices = new ArrayList<Float[]>();
+        while ((line = br.readLine())!=null&& counter < (numberVertices + numberFaces) ){
+        	counter += 1;
+        	if (counter<=numberVertices){//store vertices
+        		words.clear();
+        		int pos = 0,end;
+        		while ((end = line.indexOf(' ', pos)) >= 0) {
+                    words.add(line.substring(pos,end));
+                    pos = end + 1;
+                }
+        		if (pos<line.length()){
+        			words.add(line.substring(pos,line.length()));
+        		}
+        		Float[] vertex = new Float[3];
+        		vertex[0] = Float.valueOf(words.get(0));
+        		vertex[1] = Float.valueOf(words.get(1));
+        		vertex[2] = Float.valueOf(words.get(2));
+        		listVertices.add(vertex);
+        	}
+        	else{//create triangles
+        		float[][] primTR = new float[3][3];
+        		Polygon newTriangle = newTriangle();
+        		words.clear();
+        		int pos = 0,end;
+        		while ((end = line.indexOf(' ', pos)) >= 0) {
+                    words.add(line.substring(pos,end));
+                    pos = end + 1;
+                }
+        		if (pos<line.length()){
+        			words.add(line.substring(pos,line.length()));
+        		}
+        		for (int i = 0; i<3; i++){
+        			System.out.println(counter+" "+numberVertices +" "+ numberFaces);
+        			System.out.println("Integer.valueOf(words.get(i))"+Integer.valueOf(words.get(i)));
+        			Coord3d saveCoord = new Coord3d(listVertices.get(Integer.valueOf(words.get(i+1)))[0],
+        					listVertices.get(Integer.valueOf(words.get(i+1)))[1],
+        					listVertices.get(Integer.valueOf(words.get(i+1)))[2]);
+                    Color color = new Color(saveCoord.x/255.f, saveCoord.y/255.f, 1-saveCoord.z/255.f, 1.f);
+                    Point newPoint = new Point(saveCoord, color);
+                    newTriangle.add(newPoint);
+                    primTR[i][0] = saveCoord.x;
+                    primTR[i][1] = saveCoord.y;
+                    primTR[i][2] = saveCoord.z;
+        		}
+        		allTriangles.add(newTriangle);
+            	primitives.add(primTR);
+        	}
+        }
+	}
+
+	private void importNff() throws NumberFormatException, IOException {
 		long start = System.nanoTime();
         BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
@@ -99,9 +213,9 @@ public class TriangleObjectParser {
         long time = System.nanoTime() - start;
         System.out.println("Took " + time / 1e9 + "s to parse and save triangles");
         System.out.println("Number of tr.: " + objectNumber);
+		
 	}
-	
-	
+
 	protected Polygon newTriangle() {
 		return new Polygon() {
 			@Override

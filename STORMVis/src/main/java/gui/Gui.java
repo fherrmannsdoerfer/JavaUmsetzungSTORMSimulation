@@ -1023,6 +1023,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		else if(type.equals(DataType.LINES)) {
 			System.out.println("Lines parsed correctly.");
 		}
+		else if(type.equals(DataType.PLY)){
+			System.out.println("PLY file parsed.");
+		}
 		data.setName(file.getName());
 		allDataSets.add(data);
 		model.data.add(data);
