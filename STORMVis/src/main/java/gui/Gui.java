@@ -159,6 +159,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	float shiftY = -1;
 	float shiftZ = -1;
 	
+	public Color backgroundColor = Color.BLACK;
+	public Color mainColor = Color.WHITE;
+	JButton mainColorButton;
+	JButton backgroundColorButton;
 	JFileChooser chooser = new JFileChooser();
 	/**
 	 * Launch the application.
@@ -746,6 +750,32 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		Component horizontalGlue_33 = Box.createHorizontalGlue();
 		horizontalBox_26.add(horizontalGlue_33);
+				
+				Box horizontalBox_27 = Box.createHorizontalBox();
+				verticalBox_6.add(horizontalBox_27);
+				
+				JLabel lblBackgroundColor = new JLabel("Background Color");
+				horizontalBox_27.add(lblBackgroundColor);
+				
+				Component horizontalGlue_34 = Box.createHorizontalGlue();
+				horizontalBox_27.add(horizontalGlue_34);
+				
+				backgroundColorButton = new JButton("");
+				backgroundColorButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						backgroundColor = JColorChooser.showDialog(getContentPane(), "Choose color for background", backgroundColor);
+						//backgroundColor = new org.jzy3d.colors.Color(chosenColor.getRed(), chosenColor.getGreen(), chosenColor.getBlue());
+						updateButtonColors();
+					}
+				});
+				backgroundColorButton.setPreferredSize(new Dimension(40, 20));
+				backgroundColorButton.setMinimumSize(new Dimension(33, 20));
+				backgroundColorButton.setMaximumSize(new Dimension(33, 20));
+				horizontalBox_27.add(backgroundColorButton);
+				
+				Component verticalGlue_23 = Box.createVerticalGlue();
+				verticalBox_6.add(verticalGlue_23);
 		
 				
 				Box verticalBox_8 = Box.createVerticalBox();
@@ -757,6 +787,29 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				
 				Component horizontalGlue_25 = Box.createHorizontalGlue();
 				horizontalBox_19.add(horizontalGlue_25);
+				
+				Box horizontalBox_28 = Box.createHorizontalBox();
+				verticalBox_6.add(horizontalBox_28);
+				
+				JLabel lblColorOfAxis = new JLabel("Color Of Axes");
+				horizontalBox_28.add(lblColorOfAxis);
+				
+				Component horizontalGlue_35 = Box.createHorizontalGlue();
+				horizontalBox_28.add(horizontalGlue_35);
+				
+				mainColorButton = new JButton("");
+				mainColorButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						mainColor = JColorChooser.showDialog(getContentPane(), "Choose color for background", mainColor);
+						//backgroundColor = new org.jzy3d.colors.Color(chosenColor.getRed(), chosenColor.getGreen(), chosenColor.getBlue());
+						updateButtonColors();
+					}
+				});
+				mainColorButton.setPreferredSize(new Dimension(40, 20));
+				mainColorButton.setMinimumSize(new Dimension(33, 20));
+				mainColorButton.setMaximumSize(new Dimension(33, 20));
+				horizontalBox_28.add(mainColorButton);
 				
 				Box horizontalBox_23 = Box.createHorizontalBox();
 				verticalBox.add(horizontalBox_23);
@@ -1097,7 +1150,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				epitopeDensityLabel.setText("<html>Epitope Density (nm<sup>-2</sup>)</html>");
 			}
 			labelingEfficiencyField.setText(set.getPabs().toString()); //pabs                                                                                       
-			meanAngleField.setText(set.getAoa().toString()); //aoa     
+			meanAngleField.setText(String.format(Locale.ENGLISH,"%.4f", set.getAoa()*180.f/Math.PI)); //aoa     
 			backgroundLabelField.setText(set.getIlpmm3().toString()); //ilpmm3 aus StormPointFinder                                                                   
 			labelLengthField.setText(set.getSxy().toString()); //loa                                                                                               
 			fluorophoresPerLabelField.setText(set.getFpab().toString()); //fpab                                                                                     
@@ -1124,17 +1177,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			showEmBox.setSelected(set.getEmVisibility());
 			showStormPointsBox.setSelected(set.getStormVisibility());
 
-			emColorButton.setBackground(set.getEmColor());
-			stormColorButton.setBackground(set.getStormColor());
-			antibodyColorButton.setBackground(set.getAntibodyColor());
-
-			emColorButton.setContentAreaFilled(false);
-			stormColorButton.setContentAreaFilled(false);
-			antibodyColorButton.setContentAreaFilled(false);
-
-			emColorButton.setOpaque(true);
-			stormColorButton.setOpaque(true);
-			antibodyColorButton.setOpaque(true);
+			updateButtonColors();
 		}
 	}
 	
@@ -1143,14 +1186,20 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		emColorButton.setBackground(set.getEmColor());
 		stormColorButton.setBackground(set.getStormColor());
 		antibodyColorButton.setBackground(set.getAntibodyColor());
+		backgroundColorButton.setBackground(backgroundColor);
+		mainColorButton.setBackground(mainColor);
 		
-		//emColorButton.setContentAreaFilled(false);
+		emColorButton.setContentAreaFilled(false);
 		stormColorButton.setContentAreaFilled(false);
 		antibodyColorButton.setContentAreaFilled(false);
+		backgroundColorButton.setContentAreaFilled(false);
+		mainColorButton.setContentAreaFilled(false);
 		
 		emColorButton.setOpaque(true);
 		stormColorButton.setOpaque(true);
 		antibodyColorButton.setOpaque(true);
+		backgroundColorButton.setOpaque(true);
+		mainColorButton.setOpaque(true);
 	}
 	
 	/**
@@ -1165,7 +1214,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).setProgressBar(progressBar);
 		System.out.println("bspsnm: " + allDataSets.get(currentRow).getParameterSet().getBspsnm());
 		allDataSets.get(currentRow).getParameterSet().setPabs(new Float(labelingEfficiencyField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setAoa(new Float(meanAngleField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setAoa((float) ((new Float(meanAngleField.getText()))/180*Math.PI));
 		allDataSets.get(currentRow).getParameterSet().setIlpmm3(new Float(backgroundLabelField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setLoa(new Float(labelLengthField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setFpab(new Float(fluorophoresPerLabelField.getText()));
@@ -1296,6 +1345,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		plot.squared = squaredCoordBox.isSelected();
 		plot.showBox = chckbxShowAxes.isSelected();
+		plot.backgroundColor = new org.jzy3d.colors.Color(backgroundColor.getRed(),backgroundColor.getGreen(),backgroundColor.getBlue());
+		plot.mainColor = new org.jzy3d.colors.Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue());
 		if(sets.size() > 0) {
 			plot.dataSets.clear();
 			plot.addAllDataSets(sets);

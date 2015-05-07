@@ -101,8 +101,8 @@ public class ParameterSet implements Serializable {
         this.colorEM = new int[]{0,0,0}; 
         this.colorSTORM = new int[]{1,0,0};
         this.colorAB = new int[]{0,1,0}; 
-        this.sxy = new Float(1.0f); 
-        this.sz = new Float(1.0f); 
+        this.sxy = new Float(4.0f); 
+        this.sz = new Float(8.0f); 
         this.doc = new Float(0.f); 
         this.nocpsmm = new Float(1.f); 
         this.docpsnm = new Float(0.01f);

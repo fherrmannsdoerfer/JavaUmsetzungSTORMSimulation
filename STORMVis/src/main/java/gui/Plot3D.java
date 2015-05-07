@@ -30,6 +30,8 @@ public class Plot3D {
 	public boolean squared = false;
 	public boolean showBox = true;
 	public Chart currentChart = null;
+	public Color backgroundColor = Color.BLACK;
+	public Color mainColor = Color.WHITE;
 	
 	public Coord3d viewPoint;
 	public BoundingBox3d viewBounds;
@@ -171,8 +173,8 @@ public class Plot3D {
 		}
 		chart.setAxeDisplayed(showBox);
 		chart.getView().setSquared(squared);
-		chart.getView().setBackgroundColor(Color.BLACK);
-        chart.getAxeLayout().setMainColor(Color.WHITE);
+		chart.getView().setBackgroundColor(backgroundColor);
+        chart.getAxeLayout().setMainColor(mainColor);
 		chart.addController(new ZoomController());
 		currentChart = chart;
 		return chart;
