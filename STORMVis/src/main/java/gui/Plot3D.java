@@ -29,6 +29,7 @@ public class Plot3D {
 	public Quality chartQuality;
 	public boolean squared = false;
 	public boolean showBox = true;
+	public boolean showTicks = true;
 	public Chart currentChart = null;
 	public Color backgroundColor = Color.BLACK;
 	public Color mainColor = Color.WHITE;
@@ -176,6 +177,14 @@ public class Plot3D {
 		chart.getView().setBackgroundColor(backgroundColor);
         chart.getAxeLayout().setMainColor(mainColor);
 		chart.addController(new ZoomController());
+		
+		chart.getAxeLayout().setXAxeLabelDisplayed(showTicks);
+		chart.getAxeLayout().setYAxeLabelDisplayed(showTicks);
+		chart.getAxeLayout().setZAxeLabelDisplayed(showTicks);
+		chart.getAxeLayout().setXTickLabelDisplayed(showTicks);
+		chart.getAxeLayout().setYTickLabelDisplayed(showTicks);
+		chart.getAxeLayout().setZTickLabelDisplayed(showTicks);
+		
 		currentChart = chart;
 		return chart;
 	}

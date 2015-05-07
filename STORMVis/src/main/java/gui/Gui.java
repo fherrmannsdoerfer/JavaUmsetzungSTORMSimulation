@@ -163,6 +163,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	public Color mainColor = Color.WHITE;
 	JButton mainColorButton;
 	JButton backgroundColorButton;
+	JCheckBox chckbxShowTicks;
 	JFileChooser chooser = new JFileChooser();
 	/**
 	 * Launch the application.
@@ -737,6 +738,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		chckbxShowAxes.setSelected(true);
 		horizontalBox_25.add(chckbxShowAxes);
 		chckbxShowAxes.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		
+		chckbxShowTicks = new JCheckBox("Show Ticks");
+		chckbxShowTicks.setSelected(true);
+		chckbxShowTicks.setAlignmentX(1.0f);
+		horizontalBox_25.add(chckbxShowTicks);
 		
 		Component horizontalGlue_32 = Box.createHorizontalGlue();
 		horizontalBox_25.add(horizontalGlue_32);
@@ -1345,6 +1351,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		plot.squared = squaredCoordBox.isSelected();
 		plot.showBox = chckbxShowAxes.isSelected();
+		plot.showTicks = chckbxShowTicks.isSelected();
 		plot.backgroundColor = new org.jzy3d.colors.Color(backgroundColor.getRed(),backgroundColor.getGreen(),backgroundColor.getBlue());
 		plot.mainColor = new org.jzy3d.colors.Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue());
 		if(sets.size() > 0) {
