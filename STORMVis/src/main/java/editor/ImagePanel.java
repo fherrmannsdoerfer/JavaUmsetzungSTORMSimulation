@@ -23,7 +23,7 @@ class ImagePanel extends JPanel {
 	private BufferedImage originalImage;
 	public float scaleFactor = 1.f;
 	public ImagePanel() throws IOException {
-		
+		setDefaultImage();
 		addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
             	requestFocus();
@@ -31,6 +31,10 @@ class ImagePanel extends JPanel {
         });
 	}
 	
+	private void setDefaultImage() {
+		originalImage = new BufferedImage(750,750,BufferedImage.TYPE_INT_RGB);
+	}
+
 	public void setPathAndReadImage(String path) {
 		try {                
 			image = ImageIO.read(new File(path));

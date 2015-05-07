@@ -54,6 +54,7 @@ import model.ParameterSet;
 import model.Project;
 import model.SerializableImage;
 import model.TriangleDataSet;
+import java.awt.Component;
 
 public class Editor implements KeyListener, TableModelListener {
 	
@@ -81,6 +82,7 @@ public class Editor implements KeyListener, TableModelListener {
 	private Float lastValuePxNmRatio=1.f;
 	
 	private static String EXTENSION = ".storm";
+	private JLabel lblNewLabel;
 	
 	public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -108,9 +110,13 @@ public class Editor implements KeyListener, TableModelListener {
 		});
         drawPanel.setOpaque(false);
         imgPanel = new ImagePanel();
-        FlowLayout flowLayout = (FlowLayout) imgPanel.getLayout();
-        flowLayout.setAlignOnBaseline(true);
         imgPanel.setOpaque(true);
+        imgPanel.setLayout(new BorderLayout(0, 0));
+        
+        lblNewLabel = new JLabel("Please import an image");
+        lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        lblNewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        imgPanel.add(lblNewLabel, BorderLayout.CENTER);
         superPanel.setPreferredSize(imgPanel.getPreferredSize());
         drawPanel.setPreferredSize(imgPanel.getPreferredSize());
         drawPanel.setBounds(0,0,(int) imgPanel.getPreferredSize().getWidth(),(int) imgPanel.getPreferredSize().getHeight());

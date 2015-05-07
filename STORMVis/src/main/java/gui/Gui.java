@@ -698,6 +698,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_20.add(antibodyColorButton);
 		
 		showAntibodiesBox = new JCheckBox("");
+		
 		horizontalBox_20.add(showAntibodiesBox);
 		
 		Box horizontalBox_21 = Box.createHorizontalBox();
@@ -723,6 +724,12 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_21.add(emColorButton);
 		
 		showEmBox = new JCheckBox("");
+		showEmBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				visualizeAllSelectedData();
+			}
+		});
 		horizontalBox_21.add(showEmBox);
 		
 		Component verticalGlue_22 = Box.createVerticalGlue();
@@ -735,11 +742,23 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		verticalBox_14.add(horizontalBox_25);
 		
 		chckbxShowAxes = new JCheckBox("Show Axes");
+		chckbxShowAxes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				visualizeAllSelectedData();
+			}
+		});
 		chckbxShowAxes.setSelected(true);
 		horizontalBox_25.add(chckbxShowAxes);
 		chckbxShowAxes.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		
 		chckbxShowTicks = new JCheckBox("Show Ticks");
+		chckbxShowTicks.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				visualizeAllSelectedData();
+			}
+		});
 		chckbxShowTicks.setSelected(true);
 		chckbxShowTicks.setAlignmentX(1.0f);
 		horizontalBox_25.add(chckbxShowTicks);
@@ -751,6 +770,12 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		verticalBox_14.add(horizontalBox_26);
 		
 		squaredCoordBox = new JCheckBox("Squared Coordinate System");
+		squaredCoordBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				visualizeAllSelectedData();
+			}
+		});
 		horizontalBox_26.add(squaredCoordBox);
 		squaredCoordBox.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
@@ -1112,6 +1137,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			TriangleDataSet triangles = (TriangleDataSet) allDataSets.get(allDataSets.size()-1);
 			triangles.shiftData(shiftX,shiftY,shiftZ);
 		}
+		if (allDataSets.size()==1){
+			allDataSets.get(0).getParameterSet().setGeneralVisibility(Boolean.TRUE);
+			visualizeAllSelectedData();
+		}
 	}
 
 	/**
@@ -1206,6 +1235,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		antibodyColorButton.setOpaque(true);
 		backgroundColorButton.setOpaque(true);
 		mainColorButton.setOpaque(true);
+		visualizeAllSelectedData();
 	}
 	
 	/**
