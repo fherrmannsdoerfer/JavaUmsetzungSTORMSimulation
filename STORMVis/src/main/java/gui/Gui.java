@@ -1113,9 +1113,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		data.setName(file.getName());
 		allDataSets.add(data);
 		model.data.add(data);
-		model.visibleSets.add(Boolean.FALSE);
+		model.visibleSets.add(Boolean.TRUE);
 		model.fireTableDataChanged();
 		if (shiftX == -1 && shiftY == -1 && shiftZ == -1){
+			dataSetTable.setRowSelectionInterval(0, 0);
+			loadParameterSetOfRow(0);
 			ArrayList<Float> shifts = new ArrayList<Float>();
 			if (allDataSets.get(0).dataType == DataType.LINES){
 				LineDataSet lines = (LineDataSet) allDataSets.get(0);
@@ -1187,13 +1189,12 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			labelingEfficiencyField.setText(set.getPabs().toString()); //pabs                                                                                       
 			meanAngleField.setText(String.format(Locale.ENGLISH,"%.4f", set.getAoa()*180.f/Math.PI)); //aoa     
 			backgroundLabelField.setText(set.getIlpmm3().toString()); //ilpmm3 aus StormPointFinder                                                                   
-			labelLengthField.setText(set.getSxy().toString()); //loa                                                                                               
+			labelLengthField.setText(set.getLoa().toString()); //loa                                                                                               
 			fluorophoresPerLabelField.setText(set.getFpab().toString()); //fpab                                                                                     
 			kOnField.setText(set.getKOn().toString()); //kOn
 			kOffField.setText(set.getKOff().toString()); //kOff
 			recordedFramesField.setText(String.valueOf(set.getFrames())); //frames
-			// TODO: ??
-			//		averagePhotonOutputField.setText(set.sxy.toString());                                                                                             
+			averagePhotonOutputField.setText(Integer.toString(set.getMeanPhotonNumber()));                                                                                             
 			locPrecisionXYField.setText(set.sxy.toString()); //sxy                                                                                            
 			locPrecisionZField.setText(set.sz.toString()); //sz   
 			psfSizeField.setText(set.psfwidth.toString()); //psfwidth aus StormPointFinder         
@@ -1256,10 +1257,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setFpab(new Float(fluorophoresPerLabelField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setKOn(new Float(kOnField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setKOff(new Float(kOffField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setFrames(new Integer(recordedFramesField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setFrames((new Float(recordedFramesField.getText())).intValue());
 		allDataSets.get(currentRow).getParameterSet().setSxy(new Float(locPrecisionXYField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setSz(new Float(locPrecisionZField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setPsfwidth(new Float(psfSizeField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setMeanPhotonNumber((new Float(averagePhotonOutputField.getText())).intValue());
 		if(allDataSets.get(currentRow).dataType == DataType.LINES) {
 			allDataSets.get(currentRow).getParameterSet().setBspnm(new Float(epitopeDensityField.getText()));
 			allDataSets.get(currentRow).getParameterSet().setRof(new Float(radiusOfFilamentsField.getText()));

@@ -9,6 +9,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
@@ -156,9 +157,22 @@ public class FileManager {
 		colImg.add(imgPBlue);
 		
 		String basename = path.substring(0, path.length()-4);
-		ij.IJ.save(colImg.get(0),basename+"redCh.tif");
-		ij.IJ.save(colImg.get(1),basename+"greenCh.tif");
+		ij.IJ.save(colImg.get(0),basename+"RedCh.tif");
+		ij.IJ.save(colImg.get(1),basename+"GreenCh.tif");
 		ij.IJ.save(colImg.get(2),basename+"BlueCh.tif");
 			
+		writeLocalizationsToFile(stormData,basename);
+	}
+
+	private static void writeLocalizationsToFile(float[][] stormData, String basename) {
+		try{
+			FileWriter writer = new FileWriter(basename+"Localizations.txt");
+			for (int i = 0; i<stormData.length; i++){
+				float[] tmp = stormData[i];
+				writer.append(tmp[0]+" "+tmp[1]+" "+tmp[2]+" "+tmp[3]+" "+tmp[4]+"\n");
+			}
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {e.printStackTrace();}
 	}
 } 

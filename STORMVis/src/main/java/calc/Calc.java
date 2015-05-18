@@ -640,15 +640,19 @@ public class Calc {
 		double factor = 10000*1/(2*Math.PI*sigma*sigma);
 		double factor2 = -0.5/sigma/sigma;
 		//ArrayList<Double> dims = getDimensions();
-		
+		sd[sd.length-2][2] = -450;
+		sd[sd.length-1][2] = 450;
+
 		float xMin = Calc.min(sd, 0);
 		float xMax = Calc.max(sd, 0);
 		float yMin = Calc.min(sd, 1);
 		float yMax = Calc.max(sd, 1);
 		float zMin = Calc.min(sd, 2);
 		float zMax = Calc.max(sd, 2);
+
+		zMax = zMax - zMin;
 		
-		System.out.println("zMax: "+zMax);
+		System.out.println("zMax: "+zMax+" zMin: "+zMin);
 		float[][] redChannel = coloredImage.get(0);
 		float[][] greenChannel = coloredImage.get(1);
 		float[][] blueChannel = coloredImage.get(2);
@@ -675,14 +679,42 @@ public class Calc {
 					posZ = (sl[0])-zMin;
 					break;
 			}
-			
+			boolean inverted = false;
+						
 			int pixelXStart = (int)Math.floor(posX) - (filterwidth-1)/2;
 			int pixelYStart = (int)Math.floor(posY) - (filterwidth-1)/2;
 			for (int k = pixelXStart; k<pixelXStart+ filterwidth;k++){
 				for(int l= pixelYStart; l<pixelYStart+ filterwidth;l++){
 					double kk = 1;
 					try{
-						if (true){
+						if (inverted){
+							if (posZ < 0.25* zMax){
+								redChannel[k][l] = redChannel[k][l] - (float)((4*posZ / zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								greenChannel[k][l] = greenChannel[k][l] - (float)((4*posZ / zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));	
+							}
+							else if (posZ < 0.5* zMax){
+								redChannel[k][l] = redChannel[k][l] -(float)((4*posZ/zMax - 1)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								blueChannel[k][l] = blueChannel[k][l] -(float)((4*posZ/zMax - 1)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								greenChannel[k][l] = greenChannel[k][l] - (float)((2 - 4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								redChannel[k][l] = redChannel[k][l] - (float)((2 - 4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								//blueChannel[k][l] = blueChannel[k][l] + (float)((1)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+							}
+							else if (posZ < 0.75* zMax){
+								
+								redChannel[k][l] = redChannel[k][l] - (float)((4*posZ/zMax - 2)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								blueChannel[k][l] = blueChannel[k][l] - (float)((4*posZ/zMax - 2)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								
+								redChannel[k][l] = redChannel[k][l] - (float)((3 - 4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								greenChannel[k][l] = greenChannel[k][l] - (float)((3 - 4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+							}
+							else {
+								greenChannel[k][l] = greenChannel[k][l] - (float)((4*posZ/zMax - 3)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								blueChannel[k][l] = blueChannel[k][l] - (float)((4*posZ/zMax - 3)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								blueChannel[k][l] = blueChannel[k][l] - (float)((4-4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								redChannel[k][l] = redChannel[k][l] - (float)((4-4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+							}
+						}
+						else{
 							if (posZ < 0.25* zMax){
 								//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 								//greenChannel[k][l] = greenChannel[k][l] + (float)((posZ)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
@@ -694,12 +726,12 @@ public class Calc {
 								//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 								//green rises from 0 to 1 blue stays one
 								greenChannel[k][l] = greenChannel[k][l] + (float)((4*posZ/zMax - 1)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								blueChannel[k][l] = blueChannel[k][l] + (float)((1)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								blueChannel[k][l] = blueChannel[k][l] + (float)((2 - 4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 							}
 							else if (posZ < 0.75* zMax){
 								//green stays one, blue goes to zero again
 								//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								greenChannel[k][l] = greenChannel[k][l] + (float)((1)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								greenChannel[k][l] = greenChannel[k][l] + (float)((4*posZ/zMax - 2)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 								blueChannel[k][l] = blueChannel[k][l] + (float)((3 - 4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 							}
 							else {
@@ -714,8 +746,8 @@ public class Calc {
 				}
 			}
 		}
-		double max= 0;
-		double min = 1e19;
+		float max= 0;
+		float min = (float) 1e19;
 		for (int i = 0; i<redChannel.length;i++){
 			for(int j = 0; j<redChannel[0].length; j++){
 				max = Math.max(redChannel[i][j],max);
@@ -724,6 +756,13 @@ public class Calc {
 				min = Math.min(redChannel[i][j],min);
 				min = Math.min(greenChannel[i][j],min);
 				min = Math.min(blueChannel[i][j],min);
+			}
+		}
+		for (int i = 0; i<redChannel.length;i++){
+			for(int j = 0; j<redChannel[0].length; j++){
+				redChannel[i][j] = (redChannel[i][j]-min);
+				greenChannel[i][j] = (greenChannel[i][j]-min);
+				blueChannel[i][j] = (blueChannel[i][j]-min);
 			}
 		}
 		//ArrayList<float[][]> normalizedChannels = normalizeChannels(redChannel, greenChannel, blueChannel);
@@ -843,6 +882,11 @@ public class Calc {
 		shifts.add((maxy+miny)/2.f);
 		shifts.add((maxz+minz)/2.f);
 		return shifts;
+	}
+
+	public static float[][] appendFrameAndIntensity(float[][] listEndPoints) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

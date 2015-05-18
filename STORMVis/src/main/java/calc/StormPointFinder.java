@@ -35,7 +35,33 @@ public class StormPointFinder {
 		if (fpab != 1){
 			listEndPoints = addMultipleFluorophoresPerAntibody(listEndPoints, fpab);
 		}
+		listEndPoints = assignFrameAndIntensity(listEndPoints, ps.getFrames(), ps.getMeanPhotonNumber());
 		return createStormPoints(listEndPoints, ps, sxy, sz, mergedPSFs, psfWidth, progressBar, calc);
+	}
+	
+	//model for frequency of intensities is exponential decay p(I) = exp(-kI)
+	//no intensities under 1000 photons are assumed to be fitted
+	private static float[][] assignFrameAndIntensity(float[][] listEndPoints,
+			int frames, int meanPhotonNumber) {
+		float[][] augmentEp = new float[listEndPoints.length][5];
+		double k = -Math.log(0.5)/(meanPhotonNumber-1000);
+		double factor = 50;
+		ArrayList<Float> intensities = new ArrayList<Float>();
+		for (int i = 1000; i<4*meanPhotonNumber; i++){
+			for (int j = 0; j<Math.ceil(factor * Math.exp(-k*i)); j++){
+				//System.out.println(Math.ceil(factor * Math.exp(-k*i)));
+				intensities.add((float) i);
+			}
+		}
+		int numberCoordinats = listEndPoints.length;
+		for (int i = 0; i< numberCoordinats; i++){
+			augmentEp[i][0] = listEndPoints[i][0];
+			augmentEp[i][1] = listEndPoints[i][1];
+			augmentEp[i][2] = listEndPoints[i][2];
+			augmentEp[i][3] = (int) (Math.random()*frames);
+			augmentEp[i][4] = intensities.get((int) (Math.random()*intensities.size()-2));
+		}
+		return listEndPoints;
 	}
 
 	private static float[][] createStormPoints(float[][] listEndPoints, ParameterSet ps, 
@@ -254,14 +280,14 @@ public class StormPointFinder {
 			float[][] altPoints = Calc.toFloatArray(alteredPoints);
 			
 			for (int c = 0; c < altPoints.length; c++) {
-				for (int u = 0; u < altPoints[0].length; u++) {
+				for (int u = 0; u < 3; u++) {
 					//find fluorophores in a sphere around the endpoint of the antibody
 					altPoints[c][u] = (float) (altPoints[c][u] + Calc.randn()*1.5);
 				}
 			}
 			
 			for (int p = 0; p < altPoints.length; p++) {
-				float[] tmp = new float[3];
+				float[] tmp = new float[5];
 				tmp = altPoints[p];
 				listEndPointsAugmented.add(Array.clone(tmp));
 			}

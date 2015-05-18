@@ -24,6 +24,7 @@ public class ParameterSet implements Serializable {
     public int frames;
     public Float kOn;
     public Float kOff;
+    public int meanPhotonNumber;
     
     public Boolean generalVisibility;
     public Boolean emVisibility;
@@ -45,7 +46,7 @@ public class ParameterSet implements Serializable {
 	public ParameterSet(Float loa, Float aoa, Float bspnm, Float pabs,
 			Float abpf, Float rof, Float fpab, int[] colorEM, int[] colorSTORM,
 			int[] colorAB, Float sxy, Float sz, Float doc, Float nocpsmm,
-			Float docpsnm, Float bd, Float bspsnm, int frames, Float kOn, Float kOff, 
+			Float docpsnm, Float bd, Float bspsnm, int frames, Float kOn, Float kOff, int meanPhotonNumber,
 			Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility, 
 			Float ilpmm3, Float psfwidth, Boolean mergedPSF, Float pointSize, Float lineWidth
 			, Color emColor, Color stormColor, Color antibodyColor) {
@@ -70,6 +71,7 @@ public class ParameterSet implements Serializable {
 		this.frames = frames;
 		this.kOff = kOff;
 		this.kOn = kOn;
+		this.meanPhotonNumber = meanPhotonNumber;
 		
 		this.generalVisibility = generalVisibility; 
 		this.emVisibility = emVisibility;      
@@ -111,6 +113,7 @@ public class ParameterSet implements Serializable {
         this.frames = 10000;
         this.kOn = 1.f;
         this.kOff = 500.f;
+        this.meanPhotonNumber = 4000;
         
         this.generalVisibility = Boolean.FALSE; 
 		this.emVisibility = Boolean.TRUE;      
@@ -385,7 +388,12 @@ public class ParameterSet implements Serializable {
 	public void setLineWidth(Float lineWidth) {
 		this.lineWidth = lineWidth;	
 	}
-	
+	public void setMeanPhotonNumber(int meanPhotonNumber){
+		this.meanPhotonNumber = meanPhotonNumber;
+	}
+	public int getMeanPhotonNumber(){
+		return this.meanPhotonNumber;
+	}
 	
     
     /**

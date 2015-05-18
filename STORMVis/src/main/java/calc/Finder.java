@@ -63,10 +63,9 @@ public class Finder {
 					points[f][i] = tr[idx[f]][0][i] + (float) randx*vec1[idx[f]][i] + (float) randy*vec2[idx[f]][i];
 				}
 				
-				if ((randx + randy)>1) {
-					// remove ? // edit <=
+				if ((randx + randy)<1) {
+					break;
 				}
-				else break;
 				
 			}
 		}
@@ -138,13 +137,14 @@ public class Finder {
 						float[] endPoint = Calc.vectorAddition(points.get(i).get(idx+1), Calc.vectorAddition(lineVecNormMulti, Calc.vectorAddition(rotVecOrth, rotVec)));
 						listStartPoints.add(startPoint);
 						listEndPoints.add(endPoint);
-						
 					}
 				}
 			}
 		}
 		return new Pair<float[][], float[][]>(Calc.toFloatArray(listStartPoints), Calc.toFloatArray(listEndPoints));
 	}
+	
+
 	
 	public static Pair<Float,float[]> getLengthOfStructure(List<float[]> lines) {
 		float[] cummulativeLengths = new float[lines.size()-1];
@@ -167,7 +167,7 @@ public class Finder {
 		Pair<float[][],float[][]> vecPair = Calc.getVertices(tr);
 		float[][] vec1 = vecPair.getValue0();
 		float[][] vec2 = vecPair.getValue1();
-		float[][] ep = new float[basepoints.length][3];
+		float[][] ep = new float[basepoints.length][3]; //x,y,z,frame,intensity
 		for(int i = 0; i < basepoints.length; i++) {
 			float[] vec = Calc.getVectorTri(aoa,loa);
 			float[] normTri = Calc.getCross(vec1[idx[i]],vec2[idx[i]]);
