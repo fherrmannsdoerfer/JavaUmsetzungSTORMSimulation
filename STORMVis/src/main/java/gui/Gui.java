@@ -114,6 +114,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private Component graphComponent;
 	private JProgressBar progressBar;
 	
+	private JRadioButton radioNicest;
+	private JRadioButton radioAdvanced;
+	private JRadioButton radioIntermediate;
+	private JRadioButton radioFastest;
+	
 	public STORMCalculator calc;
 	
 	int fontSize = 12;
@@ -209,7 +214,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setPreferredSize(new Dimension(200, 630));
 		
-		ButtonGroup group = new ButtonGroup();
+		
+		
 		
 
 		model = new DataSetTableModel();
@@ -420,7 +426,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_5 = Box.createHorizontalBox();
 		verticalBox_10.add(horizontalBox_5);
 		
-		JLabel lblMeanAngle = new JLabel("Mean Binding Degree");
+		JLabel lblMeanAngle = new JLabel("Mean Binding Angle");
 		horizontalBox_5.add(lblMeanAngle);
 		
 		Component horizontalGlue_5 = Box.createHorizontalGlue();
@@ -500,7 +506,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_11 = Box.createHorizontalBox();
 		verticalBox_12.add(horizontalBox_11);
 		
-		JLabel lblAveragePhotonOutput = new JLabel("Average Photon Output");
+		JLabel lblAveragePhotonOutput = new JLabel("Median Photon Output");
 		horizontalBox_11.add(lblAveragePhotonOutput);
 		
 		Component horizontalGlue_11 = Box.createHorizontalGlue();
@@ -807,17 +813,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				
 				Component verticalGlue_23 = Box.createVerticalGlue();
 				verticalBox_6.add(verticalGlue_23);
-		
-				
-				Box verticalBox_8 = Box.createVerticalBox();
-				verticalBox_8.setAlignmentX(Component.CENTER_ALIGNMENT);
-				verticalBox_6.add(verticalBox_8);
-				
-				Box horizontalBox_19 = Box.createHorizontalBox();
-				verticalBox_8.add(horizontalBox_19);
-				
-				Component horizontalGlue_25 = Box.createHorizontalGlue();
-				horizontalBox_19.add(horizontalGlue_25);
 				
 				Box horizontalBox_28 = Box.createHorizontalBox();
 				verticalBox_6.add(horizontalBox_28);
@@ -841,6 +836,40 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				mainColorButton.setMinimumSize(new Dimension(33, 20));
 				mainColorButton.setMaximumSize(new Dimension(33, 20));
 				horizontalBox_28.add(mainColorButton);
+		
+				
+				Box verticalBox_8 = Box.createVerticalBox();
+				verticalBox_8.setAlignmentX(Component.CENTER_ALIGNMENT);
+				verticalBox_6.add(verticalBox_8);
+				
+				Box horizontalBox_19 = Box.createHorizontalBox();
+				verticalBox_8.add(horizontalBox_19);
+				
+				Component horizontalGlue_25 = Box.createHorizontalGlue();
+				horizontalBox_19.add(horizontalGlue_25);
+				
+				
+				radioNicest = new JRadioButton("Nicest");
+				verticalBox_8.add(radioNicest);
+				radioNicest.setSelected(true);
+				
+				radioAdvanced = new JRadioButton("Advanced");
+				verticalBox_8.add(radioAdvanced);
+				
+				radioIntermediate = new JRadioButton("Intermediate");
+				verticalBox_8.add(radioIntermediate);
+				
+				radioFastest = new JRadioButton("Fastest");
+				verticalBox_8.add(radioFastest);
+				
+				ButtonGroup group = new ButtonGroup();
+				group.add(radioNicest);
+				group.add(radioAdvanced);
+				group.add(radioIntermediate);
+				group.add(radioFastest);
+				
+				Box horizontalBox_29 = Box.createHorizontalBox();
+				verticalBox_8.add(horizontalBox_29);
 				
 				Box horizontalBox_23 = Box.createHorizontalBox();
 				verticalBox.add(horizontalBox_23);
@@ -1314,8 +1343,22 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	 */
 	
 	private void setPlotQuality() {
-		plot.chartQuality = Quality.Intermediate;
+		if(radioNicest.isSelected()) {
+			plot.chartQuality = Quality.Nicest;
+		}
+		else if(radioAdvanced.isSelected()) {
+			plot.chartQuality = Quality.Advanced;
+		}
+		else if(radioIntermediate.isSelected()) {
+			plot.chartQuality = Quality.Intermediate;
+		}
+		else if(radioFastest.isSelected()) {
+			plot.chartQuality = Quality.Fastest;
+		}
 	}
+	//private void setPlotQuality() {
+	//	plot.chartQuality = Quality.Advanced;
+	//}
 	
 	private void setViewPointAndScale() {
 		System.out.println("VP: " + plot.currentChart.getViewPoint().toString());

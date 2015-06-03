@@ -35,8 +35,12 @@ public class StormPointFinder {
 		if (fpab != 1){
 			listEndPoints = addMultipleFluorophoresPerAntibody(listEndPoints, fpab);
 		}
-		listEndPoints = assignFrameAndIntensity(listEndPoints, ps.getFrames(), ps.getMeanPhotonNumber());
-		return createStormPoints(listEndPoints, ps, sxy, sz, mergedPSFs, psfWidth, progressBar, calc);
+		float[][] stormPoints = createStormPoints(listEndPoints, ps, sxy, sz, mergedPSFs, psfWidth, progressBar, calc);
+		stormPoints = assignFrameAndIntensity(stormPoints, ps.getFrames(), ps.getMeanPhotonNumber());
+		if (mergedPSFs){
+			mergeOverlappingPSFs(stormPoints, psfWidth, progressBar, calc);
+		}
+		return stormPoints;
 	}
 	
 	//model for frequency of intensities is exponential decay p(I) = exp(-kI)
@@ -45,9 +49,9 @@ public class StormPointFinder {
 			int frames, int meanPhotonNumber) {
 		float[][] augmentEp = new float[listEndPoints.length][5];
 		double k = -Math.log(0.5)/(meanPhotonNumber-1000);
-		double factor = 50;
+		double factor = 500;
 		ArrayList<Float> intensities = new ArrayList<Float>();
-		for (int i = 1000; i<4*meanPhotonNumber; i++){
+		for (int i = 1000; i<7*meanPhotonNumber; i++){
 			for (int j = 0; j<Math.ceil(factor * Math.exp(-k*i)); j++){
 				//System.out.println(Math.ceil(factor * Math.exp(-k*i)));
 				intensities.add((float) i);
@@ -61,9 +65,11 @@ public class StormPointFinder {
 			augmentEp[i][3] = (int) (Math.random()*frames);
 			augmentEp[i][4] = intensities.get((int) (Math.random()*intensities.size()-2));
 		}
-		return listEndPoints;
+		return augmentEp;
 	}
 
+	//creates multiple blinking events based on the enpoints of the antibodies
+	//also multiple fluorophores per antibody are taken into account
 	private static float[][] createStormPoints(float[][] listEndPoints, ParameterSet ps, 
 			float sxy, float sz, boolean mergedPSFs, float psfWidth, JProgressBar progressBar,
 			STORMCalculator calc) {
@@ -107,50 +113,25 @@ public class StormPointFinder {
 			}
 			
 			// TODO: intensity distribution
-			stormPointsTemp = new float[x.length][4];
-			float[] intensities = new float[x.length];
-			for(int b = 0; b < x.length; b++) {
-				intensities[b] = 1.f;
-			}
-			
+			stormPointsTemp = new float[x.length][3];
+						
 			for(int j = 0; j < x.length; j++) {
 				stormPointsTemp[j][0] = x[j];
 				stormPointsTemp[j][1] = y[j];
 				stormPointsTemp[j][2] = z[j];
-				stormPointsTemp[j][3] = intensities[j];
 				allStormPoints.add(stormPointsTemp[j]);
 				pointCounter++;
 			}
 		}
 		stormPoints = Calc.toFloatArray(allStormPoints);
 
-		if (stormPoints.length != 0) {
-			//append random intensity
-			float[] frameNumberCol = new float[stormPoints.length];
-			for (int i = 0; i < stormPoints.length; i++) {
-				frameNumberCol[i] = Calc.randInt(0, ps.getFrames());
-			}
-			stormPoints = Calc.appendColumn(stormPoints, frameNumberCol);
-
-			List<float[]> stormPointsArrayList = new ArrayList<float[]>();
-			for(int k = 0; k < stormPoints.length; k++) {
-				stormPointsArrayList.add(stormPoints[k]);
-			}
-				
-			if (mergedPSFs){
-				mergeOverlappingPSFs(stormPoints, stormPointsArrayList, psfWidth, progressBar, calc);
-			}
-			
-	        stormPoints = Calc.toFloatArray(stormPointsArrayList);
-		}
 		return stormPoints;
 	}
 
-	private static void mergeOverlappingPSFs(float[][] stormPoints, 
-			List<float[]> stormPointsArrayList, float psfWidth, JProgressBar progressBar,
+	private static void mergeOverlappingPSFs(float[][] stormPoints, float psfWidth, JProgressBar progressBar,
 			STORMCalculator calc) {
 		float affectingFactor = 2;
-    	int maxInFrameNumbers = (int) Calc.max(stormPoints,4); 
+    	int maxInFrameNumbers = (int) Calc.max(stormPoints,3); 
     	System.out.println("maxInFrameNumbers: " + maxInFrameNumbers);
     	long loopStart = System.nanoTime();
     	progressBar.setString("Merge Near Localizations");
@@ -162,11 +143,10 @@ public class StormPointFinder {
 //        		System.out.println("progress: i = " + i);
     		TIntArrayList idxArray = new TIntArrayList();
 			int countOne = 0;
-			float[] col = Calc.getColumnOfArrayListToFloatArray(stormPointsArrayList,4);
 //    			Calc.printVector(col);
 //    			System.out.println("Check1");
-			for (int j = 0; j < stormPointsArrayList.size(); j++) {
-				if(col[j] == i) {
+			for (int j = 0; j < stormPoints.length; j++) {
+				if((int) stormPoints[j][3] == i) {
 					idxArray.add(new Integer(j));
 					countOne++;
 				}
@@ -175,8 +155,8 @@ public class StormPointFinder {
 //    			System.out.println("i: "+ i + " | idx array count: " + idxArray.size());
 			float[][] stormXY = new float[idxArray.size()][2];
 			for (int h = 0; h < idxArray.size(); h++) {
-				stormXY[h][0] = stormPointsArrayList.get(idxArray.get(h))[0];
-				stormXY[h][1] = stormPointsArrayList.get(idxArray.get(h))[1];
+				stormXY[h][0] = stormPoints[h][0];//stormPointsArrayList.get(idxArray.get(h))[0];
+				stormXY[h][1] = stormPoints[h][1];//stormPointsArrayList.get(idxArray.get(h))[1];
 			}
 //    			System.out.println("Check2.1");
 			float[][] dists = null;
@@ -211,7 +191,7 @@ public class StormPointFinder {
 				float[][] meanCoords = new float[locations.size()][5];
 				for (int j = 0; j < locations.size(); j++) {
 					for (int k = 0; k < 5; k++) {
-						meanCoords[j][k] = (stormPointsArrayList.get(idxArray.get(locations.get(j)[0]))[k] + stormPointsArrayList.get(idxArray.get(locations.get(j)[1]))[k])/2.f; 
+						meanCoords[j][k] = (stormPoints[idxArray.get(locations.get(j)[0])][k] + stormPoints[idxArray.get(locations.get(j)[1])][k])/2.f; 
 					}
 				}
 				
@@ -219,22 +199,33 @@ public class StormPointFinder {
 				float[][] diffVec = new float[locations2.size()][2];
 				int locSize = locations2.size();
 				for(int k = 0; k < locSize; k++) {
-					diffVec[k][0] = stormPointsArrayList.get(idxArray.get(locations2.get(k)[0]))[0] - stormPointsArrayList.get(idxArray.get(locations2.get(k)[1]))[0];
-					diffVec[k][1] = stormPointsArrayList.get(idxArray.get(locations2.get(k)[0]))[1] - stormPointsArrayList.get(idxArray.get(locations2.get(k)[1]))[1];
+					diffVec[k][0] = stormPoints[idxArray.get(locations2.get(k)[0])][0] - stormPoints[idxArray.get(locations2.get(k)[1])][0];
+					diffVec[k][1] = stormPoints[idxArray.get(locations2.get(k)[0])][1] - stormPoints[idxArray.get(locations2.get(k)[1])][1];
 				}
 //    				System.out.println("size: "+ diffVec.length);
 				int diffVecLength = diffVec.length;
 				for(int k = 0; k < diffVecLength; k++) {
 					float add = (affectingFactor*psfWidth-Calc.getNorm(diffVec[k]))/(affectingFactor*psfWidth)*0.5f;
-					stormPointsArrayList.get(idxArray.get(locations2.get(k)[0]))[0] = stormPointsArrayList.get(idxArray.get(locations2.get(k)[0]))[0] - add*diffVec[k][0];
-					stormPointsArrayList.get(idxArray.get(locations2.get(k)[0]))[1] = stormPointsArrayList.get(idxArray.get(locations2.get(k)[0]))[1] - add*diffVec[k][1];
+					stormPoints[idxArray.get(locations2.get(k)[0])][0] = stormPoints[idxArray.get(locations2.get(k)[0])][0] - add*diffVec[k][0];
+					stormPoints[idxArray.get(locations2.get(k)[0])][1] = stormPoints[idxArray.get(locations2.get(k)[0])][1] - add*diffVec[k][1];
 					
-					stormPointsArrayList.get(idxArray.get(locations2.get(k)[1]))[0] = stormPointsArrayList.get(idxArray.get(locations2.get(k)[1]))[0] + add*diffVec[k][0];
-					stormPointsArrayList.get(idxArray.get(locations2.get(k)[1]))[1] = stormPointsArrayList.get(idxArray.get(locations2.get(k)[1]))[1] + add*diffVec[k][1];
+					stormPoints[idxArray.get(locations2.get(k)[1])][0] = stormPoints[idxArray.get(locations2.get(k)[1])][0] + add*diffVec[k][0];
+					stormPoints[idxArray.get(locations2.get(k)[1])][1] = stormPoints[idxArray.get(locations2.get(k)[1])][1] + add*diffVec[k][1];
 				}
 				
 				
 //    				System.out.println("diff time: " + (System.nanoTime() - diffVecTime)/1e9);
+				
+				ArrayList<float[]> stormPointsArrayList = new ArrayList<float[]>();
+				for (int k = 0; k<stormPoints.length; k++){
+					float[] tmp = new float[5];
+					tmp[0] = stormPoints[k][0];
+					tmp[1] = stormPoints[k][1];
+					tmp[2] = stormPoints[k][2];
+					tmp[3] = stormPoints[k][3];
+					tmp[4] = stormPoints[k][4];
+					stormPointsArrayList.add(tmp);
+				}
 				
 				long removeTimeStart = System.nanoTime();
 				idxArray.sort();
@@ -249,6 +240,7 @@ public class StormPointFinder {
 					stormPointsArrayList.add(meanCoords[k]);
 				}
 //    				System.out.println("adding, mergin: " + (System.nanoTime()-addTimeStart)/1e9 + "s");
+				stormPoints = Calc.toFloatArray(stormPointsArrayList);
 			}
 			else {
 				continue;

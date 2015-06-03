@@ -683,62 +683,63 @@ public class Calc {
 						
 			int pixelXStart = (int)Math.floor(posX) - (filterwidth-1)/2;
 			int pixelYStart = (int)Math.floor(posY) - (filterwidth-1)/2;
+			float intensity = sl[4];
 			for (int k = pixelXStart; k<pixelXStart+ filterwidth;k++){
 				for(int l= pixelYStart; l<pixelYStart+ filterwidth;l++){
 					double kk = 1;
 					try{
 						if (inverted){
 							if (posZ < 0.25* zMax){
-								redChannel[k][l] = redChannel[k][l] - (float)((4*posZ / zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								greenChannel[k][l] = greenChannel[k][l] - (float)((4*posZ / zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));	
+								redChannel[k][l] = redChannel[k][l] - (float)((4*posZ / zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								greenChannel[k][l] = greenChannel[k][l] - (float)((4*posZ / zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));	
 							}
 							else if (posZ < 0.5* zMax){
-								redChannel[k][l] = redChannel[k][l] -(float)((4*posZ/zMax - 1)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								blueChannel[k][l] = blueChannel[k][l] -(float)((4*posZ/zMax - 1)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								greenChannel[k][l] = greenChannel[k][l] - (float)((2 - 4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								redChannel[k][l] = redChannel[k][l] - (float)((2 - 4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								//blueChannel[k][l] = blueChannel[k][l] + (float)((1)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								redChannel[k][l] = redChannel[k][l] -(float)((4*posZ/zMax - 1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								blueChannel[k][l] = blueChannel[k][l] -(float)((4*posZ/zMax - 1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								greenChannel[k][l] = greenChannel[k][l] - (float)((2 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								redChannel[k][l] = redChannel[k][l] - (float)((2 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								//blueChannel[k][l] = blueChannel[k][l] + (float)((1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 							}
 							else if (posZ < 0.75* zMax){
 								
-								redChannel[k][l] = redChannel[k][l] - (float)((4*posZ/zMax - 2)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								blueChannel[k][l] = blueChannel[k][l] - (float)((4*posZ/zMax - 2)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								redChannel[k][l] = redChannel[k][l] - (float)((4*posZ/zMax - 2)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								blueChannel[k][l] = blueChannel[k][l] - (float)((4*posZ/zMax - 2)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 								
-								redChannel[k][l] = redChannel[k][l] - (float)((3 - 4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								greenChannel[k][l] = greenChannel[k][l] - (float)((3 - 4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								redChannel[k][l] = redChannel[k][l] - (float)((3 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								greenChannel[k][l] = greenChannel[k][l] - (float)((3 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 							}
 							else {
-								greenChannel[k][l] = greenChannel[k][l] - (float)((4*posZ/zMax - 3)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								blueChannel[k][l] = blueChannel[k][l] - (float)((4*posZ/zMax - 3)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								blueChannel[k][l] = blueChannel[k][l] - (float)((4-4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								redChannel[k][l] = redChannel[k][l] - (float)((4-4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								greenChannel[k][l] = greenChannel[k][l] - (float)((4*posZ/zMax - 3)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								blueChannel[k][l] = blueChannel[k][l] - (float)((4*posZ/zMax - 3)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								blueChannel[k][l] = blueChannel[k][l] - (float)((4-4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								redChannel[k][l] = redChannel[k][l] - (float)((4-4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 							}
 						}
 						else{
 							if (posZ < 0.25* zMax){
-								//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								//greenChannel[k][l] = greenChannel[k][l] + (float)((posZ)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								//greenChannel[k][l] = greenChannel[k][l] + (float)((posZ)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 								//blue rises from 0 to 1
-								blueChannel[k][l] = blueChannel[k][l] + (float)((4*posZ / zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								blueChannel[k][l] = blueChannel[k][l] + (float)((4*posZ / zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 								
 							}
 							else if (posZ < 0.5* zMax){
-								//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 								//green rises from 0 to 1 blue stays one
-								greenChannel[k][l] = greenChannel[k][l] + (float)((4*posZ/zMax - 1)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								blueChannel[k][l] = blueChannel[k][l] + (float)((2 - 4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								greenChannel[k][l] = greenChannel[k][l] + (float)((4*posZ/zMax - 1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								blueChannel[k][l] = blueChannel[k][l] + (float)((2 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 							}
 							else if (posZ < 0.75* zMax){
 								//green stays one, blue goes to zero again
-								//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								greenChannel[k][l] = greenChannel[k][l] + (float)((4*posZ/zMax - 2)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								blueChannel[k][l] = blueChannel[k][l] + (float)((3 - 4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								greenChannel[k][l] = greenChannel[k][l] + (float)((4*posZ/zMax - 2)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								blueChannel[k][l] = blueChannel[k][l] + (float)((3 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 							}
 							else {
 								//green goes to zero red rises
-								redChannel[k][l] = redChannel[k][l] + (float)((4*posZ/zMax - 3)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								greenChannel[k][l] = greenChannel[k][l] + (float)((4-4*posZ/zMax)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								//blueChannel[k][l] = blueChannel[k][l] + (float)((0)*factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								redChannel[k][l] = redChannel[k][l] + (float)((4*posZ/zMax - 3)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								greenChannel[k][l] = greenChannel[k][l] + (float)((4-4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								//blueChannel[k][l] = blueChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 							}
 						}
 						
@@ -803,8 +804,8 @@ public class Calc {
 			for (int k = pixelXStart; k<pixelXStart+ filterwidth;k++){
 				for(int l= pixelYStart; l<pixelYStart+ filterwidth;l++){
 					try{
-						image[k][l] = image[k][l] + (float)(factor * Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-						//System.out.println("factor: "+factor+" k: "+k+" l: "+l+"posX: "+posX+"posY: "+posY+" image[k][l]" +image[k][l]+" res: "+(float)(factor * Math.exp(-0.5/sigma/sigma*(Math.pow((k-posX),2)+Math.pow((l-posY),2)))));
+						image[k][l] = image[k][l] + (float)(factor* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+						//System.out.println("factor: "+factor+" k: "+k+" l: "+l+"posX: "+posX+"posY: "+posY+" image[k][l]" +image[k][l]+" res: "+(float)(factor*intensity* Math.exp(-0.5/sigma/sigma*(Math.pow((k-posX),2)+Math.pow((l-posY),2)))));
 					} catch(IndexOutOfBoundsException e){e.toString();}
 				}
 			}

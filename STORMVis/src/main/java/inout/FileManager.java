@@ -167,6 +167,7 @@ public class FileManager {
 	private static void writeLocalizationsToFile(float[][] stormData, String basename) {
 		try{
 			FileWriter writer = new FileWriter(basename+"Localizations.txt");
+			writer.append("Pos_x Pos_y Pos_z_Frame Intensity\n");
 			for (int i = 0; i<stormData.length; i++){
 				float[] tmp = stormData[i];
 				writer.append(tmp[0]+" "+tmp[1]+" "+tmp[2]+" "+tmp[3]+" "+tmp[4]+"\n");

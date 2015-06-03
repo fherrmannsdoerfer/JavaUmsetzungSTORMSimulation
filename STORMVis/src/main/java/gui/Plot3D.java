@@ -115,7 +115,7 @@ public class Plot3D {
 				}
 			}
 			else if(set.dataType == DataType.TRIANGLES) {
-				float a = 1.f;
+				float a = 0.5f;//1.f;
 				TriangleDataSet triangles = (TriangleDataSet) set;
 				if(triangles.getParameterSet().emVisibility == true) {
 					//System.out.println("Show triangles EM");
