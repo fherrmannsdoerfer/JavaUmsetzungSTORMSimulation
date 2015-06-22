@@ -233,17 +233,17 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		dataSetTable.setPreferredSize(new Dimension(130, 250));
 		verticalBox_13.add(dataSetTable);
 		
-				Box verticalBox = Box.createVerticalBox();
-				verticalBox.setMaximumSize(new Dimension(222222, 222220));
-				verticalBox_13.add(verticalBox);
-				verticalBox.setPreferredSize(new Dimension(290, 800));
-				verticalBox.setMinimumSize(new Dimension(290, 600));
-				verticalBox.setName("");
-				verticalBox.setFont(new Font("Dialog", Font.ITALIC, 89));
-				verticalBox.setAlignmentX(Component.CENTER_ALIGNMENT);
-				
-				JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-				verticalBox.add(tabbedPane);
+		Box verticalBox = Box.createVerticalBox();
+		verticalBox.setMaximumSize(new Dimension(222222, 222220));
+		verticalBox_13.add(verticalBox);
+		verticalBox.setPreferredSize(new Dimension(290, 800));
+		verticalBox.setMinimumSize(new Dimension(290, 600));
+		verticalBox.setName("");
+		verticalBox.setFont(new Font("Dialog", Font.ITALIC, 89));
+		verticalBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		verticalBox.add(tabbedPane);
 				
 		Box verticalBox_7 = Box.createVerticalBox();
 		tabbedPane.addTab("Basic Settings", null, verticalBox_7, null);
@@ -1320,6 +1320,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			getDrawingParameters();
 			if(saveViewpointButton.isSelected()) {
 				setViewPointAndScale();
+				
 			}
 			else {
 				plot.viewPoint = null;
@@ -1366,6 +1367,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		plot.viewPoint = plot.currentChart.getViewPoint();
 		plot.viewBounds = plot.currentChart.getView().getBounds();
+		
+		//System.err.println("Viewpoint wurde überschrieben!!!! Zeile 1372");
+		//plot.viewPoint = new Coord3d((float) 0.6871975, (float) 0.30719763, (float) 835.31036);
+		
 	}
 	
 	@Override

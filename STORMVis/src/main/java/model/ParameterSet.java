@@ -131,9 +131,9 @@ public class ParameterSet implements Serializable {
 		/**
 		 * default colors for visualization
 		 */
-		this.emColor = Color.RED;
-		this.stormColor = Color.BLUE;
-		this.antibodyColor = Color.GREEN;
+		this.emColor = new Color(204,0,51);
+		this.stormColor = new Color(204,204,255);
+		this.antibodyColor = new Color(255,204,102);
 		
     }
 
