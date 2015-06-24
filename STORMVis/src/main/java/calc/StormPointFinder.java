@@ -38,7 +38,7 @@ public class StormPointFinder {
 		float[][] stormPoints = createStormPoints(listEndPoints, ps, sxy, sz, mergedPSFs, psfWidth, progressBar, calc);
 		stormPoints = assignFrameAndIntensity(stormPoints, ps.getFrames(), ps.getMeanPhotonNumber());
 		if (mergedPSFs){
-			mergeOverlappingPSFs(stormPoints, psfWidth, progressBar, calc);
+			stormPoints = mergeOverlappingPSFs(stormPoints, psfWidth, progressBar, calc);
 		}
 		return stormPoints;
 	}
@@ -128,8 +128,9 @@ public class StormPointFinder {
 		return stormPoints;
 	}
 
-	private static void mergeOverlappingPSFs(float[][] stormPoints, float psfWidth, JProgressBar progressBar,
+	private static float[][] mergeOverlappingPSFs(float[][] stormPoints, float psfWidth, JProgressBar progressBar,
 			STORMCalculator calc) {
+		ArrayList<float[]> returnList = new ArrayList<float[]>();
 		float affectingFactor = 2;
     	int maxInFrameNumbers = (int) Calc.max(stormPoints,3); 
     	System.out.println("maxInFrameNumbers: " + maxInFrameNumbers);
@@ -141,22 +142,31 @@ public class StormPointFinder {
 			//}
     		long start = System.nanoTime();
 //        		System.out.println("progress: i = " + i);
-    		TIntArrayList idxArray = new TIntArrayList();
+    		ArrayList<Integer> idxArray = new ArrayList<Integer>(); //idxArray stores all indices of the current frame
 			int countOne = 0;
 //    			Calc.printVector(col);
 //    			System.out.println("Check1");
+			
 			for (int j = 0; j < stormPoints.length; j++) {
 				if((int) stormPoints[j][3] == i) {
 					idxArray.add(new Integer(j));
 					countOne++;
 				}
 			}
+			Float[][] currStormPoints = new Float[idxArray.size()][5];
+			for (int j = 0; j<idxArray.size(); j++){
+				currStormPoints[j][0] = stormPoints[idxArray.get(j)][0];
+				currStormPoints[j][1] = stormPoints[idxArray.get(j)][1];
+				currStormPoints[j][2] = stormPoints[idxArray.get(j)][2];
+				currStormPoints[j][3] = stormPoints[idxArray.get(j)][3];
+				currStormPoints[j][4] = stormPoints[idxArray.get(j)][4];
+			}
 //    			System.out.println("Check2");
 //    			System.out.println("i: "+ i + " | idx array count: " + idxArray.size());
 			float[][] stormXY = new float[idxArray.size()][2];
 			for (int h = 0; h < idxArray.size(); h++) {
-				stormXY[h][0] = stormPoints[h][0];//stormPointsArrayList.get(idxArray.get(h))[0];
-				stormXY[h][1] = stormPoints[h][1];//stormPointsArrayList.get(idxArray.get(h))[1];
+				stormXY[h][0] = currStormPoints[h][0];//stormPointsArrayList.get(idxArray.get(h))[0];
+				stormXY[h][1] = currStormPoints[h][1];//stormPointsArrayList.get(idxArray.get(h))[1];
 			}
 //    			System.out.println("Check2.1");
 			float[][] dists = null;
@@ -191,63 +201,64 @@ public class StormPointFinder {
 				float[][] meanCoords = new float[locations.size()][5];
 				for (int j = 0; j < locations.size(); j++) {
 					for (int k = 0; k < 5; k++) {
-						meanCoords[j][k] = (stormPoints[idxArray.get(locations.get(j)[0])][k] + stormPoints[idxArray.get(locations.get(j)[1])][k])/2.f; 
+						meanCoords[j][k] = (currStormPoints[(locations.get(j)[0])][k] + currStormPoints[(locations.get(j)[1])][k])/2.f;
 					}
 				}
 				
 //    				long diffVecTime = System.nanoTime();
 				float[][] diffVec = new float[locations2.size()][2];
 				int locSize = locations2.size();
-				for(int k = 0; k < locSize; k++) {
-					diffVec[k][0] = stormPoints[idxArray.get(locations2.get(k)[0])][0] - stormPoints[idxArray.get(locations2.get(k)[1])][0];
-					diffVec[k][1] = stormPoints[idxArray.get(locations2.get(k)[0])][1] - stormPoints[idxArray.get(locations2.get(k)[1])][1];
+				for(int k = 0; k < locSize; k++) {//diffVec will be used to shift point which match this condition psfwidth < distance < affecting factor *psfwidth
+					diffVec[k][0] = currStormPoints[(locations2.get(k)[0])][0] - currStormPoints[(locations2.get(k)[1])][0];
+					diffVec[k][1] = currStormPoints[(locations2.get(k)[0])][1] - currStormPoints[(locations2.get(k)[1])][1];
 				}
 //    				System.out.println("size: "+ diffVec.length);
 				int diffVecLength = diffVec.length;
-				for(int k = 0; k < diffVecLength; k++) {
+				for(int k = 0; k < diffVecLength; k++) {//points are shifted
 					float add = (affectingFactor*psfWidth-Calc.getNorm(diffVec[k]))/(affectingFactor*psfWidth)*0.5f;
-					stormPoints[idxArray.get(locations2.get(k)[0])][0] = stormPoints[idxArray.get(locations2.get(k)[0])][0] - add*diffVec[k][0];
-					stormPoints[idxArray.get(locations2.get(k)[0])][1] = stormPoints[idxArray.get(locations2.get(k)[0])][1] - add*diffVec[k][1];
+					currStormPoints[(locations2.get(k)[0])][0] = currStormPoints[(locations2.get(k)[0])][0] - add*diffVec[k][0];
+					currStormPoints[(locations2.get(k)[0])][1] = currStormPoints[(locations2.get(k)[0])][1] - add*diffVec[k][1];
 					
-					stormPoints[idxArray.get(locations2.get(k)[1])][0] = stormPoints[idxArray.get(locations2.get(k)[1])][0] + add*diffVec[k][0];
-					stormPoints[idxArray.get(locations2.get(k)[1])][1] = stormPoints[idxArray.get(locations2.get(k)[1])][1] + add*diffVec[k][1];
+					currStormPoints[(locations2.get(k)[1])][0] = currStormPoints[(locations2.get(k)[1])][0] + add*diffVec[k][0];
+					currStormPoints[(locations2.get(k)[1])][1] = currStormPoints[(locations2.get(k)[1])][1] + add*diffVec[k][1];
 				}
 				
 				
 //    				System.out.println("diff time: " + (System.nanoTime() - diffVecTime)/1e9);
 				
-				ArrayList<float[]> stormPointsArrayList = new ArrayList<float[]>();
-				for (int k = 0; k<stormPoints.length; k++){
-					float[] tmp = new float[5];
-					tmp[0] = stormPoints[k][0];
-					tmp[1] = stormPoints[k][1];
-					tmp[2] = stormPoints[k][2];
-					tmp[3] = stormPoints[k][3];
-					tmp[4] = stormPoints[k][4];
-					stormPointsArrayList.add(tmp);
-				}
 				
-				long removeTimeStart = System.nanoTime();
-				idxArray.sort();
-			    idxArray.reverse();
-			    for (int j = 0; j < locations.size(); j++) {
-			    	int line = idxArray.get(locations.get(j)[0]);
-			    	stormPointsArrayList.remove(line);
-			    }
-				long addTimeStart = System.nanoTime();
+				
+				ArrayList<float[]> stormPointsArrayList = new ArrayList<float[]>();
+				for (int k = 0; k<currStormPoints.length; k++){
+					for (int j = 0; j<locations.size(); j++){
+						if (locations.get(j)[0] == k || locations.get(j)[1]==k){
+							continue;
+						}
+					}
+					float[] tmp = new float[5];
+					tmp[0] = currStormPoints[k][0];
+					tmp[1] = currStormPoints[k][1];
+					tmp[2] = currStormPoints[k][2];
+					tmp[3] = currStormPoints[k][3];
+					tmp[4] = currStormPoints[k][4];
+					stormPointsArrayList.add(tmp);
+					
+				}
 				
 				for(int k = 0; k < meanCoords.length; k++) {
 					stormPointsArrayList.add(meanCoords[k]);
 				}
+				returnList.addAll(stormPointsArrayList);
 //    				System.out.println("adding, mergin: " + (System.nanoTime()-addTimeStart)/1e9 + "s");
-				stormPoints = Calc.toFloatArray(stormPointsArrayList);
 			}
+			
 			else {
 				continue;
 			}
 //    			System.out.println("Runtime " + i + " = " + (System.nanoTime()-start)/1e9);
     	}
     	System.out.println("Loop time total: " + (System.nanoTime()-loopStart)/1e9 +" s");
+    	return Calc.toFloatArray(returnList);
 	}
 
 	private static float[][] addMultipleFluorophoresPerAntibody(float[][] listEndPoints, float fpab) {
