@@ -157,9 +157,9 @@ public class FileManager {
 		colImg.add(imgPBlue);
 		
 		String basename = path.substring(0, path.length()-4);
-		ij.IJ.save(colImg.get(0),basename+"RedCh.tif");
-		ij.IJ.save(colImg.get(1),basename+"GreenCh.tif");
-		ij.IJ.save(colImg.get(2),basename+"BlueCh.tif");
+		ij.IJ.save(colImg.get(0),basename+"redCh.tif");
+		ij.IJ.save(colImg.get(1),basename+"greenCh.tif");
+		ij.IJ.save(colImg.get(2),basename+"blueCh.tif");
 			
 		writeLocalizationsToFile(stormData,basename);
 	}

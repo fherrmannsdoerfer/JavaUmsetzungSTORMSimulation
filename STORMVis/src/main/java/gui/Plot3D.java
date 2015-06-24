@@ -167,7 +167,6 @@ public class Plot3D {
 			}
 			
 		}
-		
 		if(viewPoint != null && viewBounds != null) {
 			chart.getView().setBoundManual(viewBounds);
 			chart.setViewPoint(viewPoint);
