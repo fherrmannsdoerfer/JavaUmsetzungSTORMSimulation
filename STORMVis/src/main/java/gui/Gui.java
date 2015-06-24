@@ -1424,6 +1424,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			}
 			else {
 				model.visibleSets.add(Boolean.FALSE);
+				sets.add(model.data.get(i));
 			}
 		}
 		model.data.clear();
