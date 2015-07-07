@@ -14,6 +14,7 @@ import model.TriangleDataSet;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.javatuples.Pair;
+import org.jzy3d.colors.Color;
 import org.jzy3d.maths.Coord3d;
 
 
@@ -587,6 +588,9 @@ public class Calc {
 	}
 	
 	public static float[][] toFloatArray(List<float[]> f) {
+		if (f.size()==0){
+			return new float[0][0];
+		}
 		float[][] result = new float[f.size()][f.get(0).length];
 		for (int i = 0; i < result.length; i++) {
 			result[i] = f.get(i);
@@ -815,6 +819,16 @@ public class Calc {
 
 	public static ArrayList<Float> findShiftLines(List<ArrayList<Coord3d>> data) {
 		ArrayList<Float> shifts = new ArrayList<Float>();
+		ArrayList<Float> dims = new ArrayList<Float>();
+		dims = findDimsLines(data);
+		shifts.add((dims.get(1)+dims.get(0))/2.f);
+		shifts.add((dims.get(3)+dims.get(2))/2.f);
+		shifts.add((dims.get(5)+dims.get(4))/2.f);
+		return shifts;
+	}
+	
+	public static ArrayList<Float> findDimsLines(List<ArrayList<Coord3d>> data){
+		ArrayList<Float> dims = new ArrayList<Float>();
 		float minx = Float.MAX_VALUE;
 		float maxx = -Float.MAX_VALUE;
 		float miny = Float.MAX_VALUE;
@@ -843,14 +857,26 @@ public class Calc {
 				}
 			}
 		}
-		shifts.add((maxx+minx)/2.f);
-		shifts.add((maxy+miny)/2.f);
-		shifts.add((maxz+minz)/2.f);
-		return shifts;
+		dims.add(minx);
+		dims.add(maxx);
+		dims.add(miny);
+		dims.add(maxy);
+		dims.add(minz);
+		dims.add(maxz);
+		return dims;
 	}
 
 	public static ArrayList<Float> findShiftTriangles(List<float[][]> primitives) {
+		ArrayList<Float> dims = findDimsTriangles(primitives);
 		ArrayList<Float> shifts = new ArrayList<Float>();
+		shifts.add((dims.get(1)+dims.get(0))/2.f);
+		shifts.add((dims.get(3)+dims.get(2))/2.f);
+		shifts.add((dims.get(5)+dims.get(4))/2.f);
+		return shifts;
+	}
+	
+	public static ArrayList<Float> findDimsTriangles(List<float[][]> primitives){
+		ArrayList<Float> dims = new ArrayList<Float>();
 		float minx = Float.MAX_VALUE;
 		float maxx = -Float.MAX_VALUE;
 		float miny = Float.MAX_VALUE;
@@ -879,15 +905,71 @@ public class Calc {
 				}
 			}
 		}
-		shifts.add((maxx+minx)/2.f);
-		shifts.add((maxy+miny)/2.f);
-		shifts.add((maxz+minz)/2.f);
-		return shifts;
+		dims.add(minx);
+		dims.add(maxx);
+		dims.add(miny);
+		dims.add(maxy);
+		dims.add(minz);
+		dims.add(maxz);
+		return dims;
 	}
+	
+	public static ArrayList<Float> findDims(float[][] antiBodyEndPoints){
+		ArrayList<Float> dims = new ArrayList<Float>();
+		float minx = Float.MAX_VALUE;
+		float maxx = -Float.MAX_VALUE;
+		float miny = Float.MAX_VALUE;
+		float maxy = -Float.MAX_VALUE;
+		float minz = Float.MAX_VALUE;
+		float maxz = -Float.MAX_VALUE;
+		for(float[] prim:antiBodyEndPoints){
+			for(int i =0; i<prim.length; i++){
+				if (prim[0]<minx){
+					minx = prim[0];
+				}
+				if (prim[0]>maxx){
+					maxx = prim[0];
+				}
+				if (prim[1]<miny){
+					miny = prim[1];
+				}
+				if (prim[1]>maxy){
+					maxy = prim[1];
+				}
+				if (prim[2]<minz){
+					minz = prim[2];
+				}
+				if (prim[2]>maxz){
+					maxz = prim[2];
+				}
+			}
+		}
+		dims.add(minx);
+		dims.add(maxx);
+		dims.add(miny);
+		dims.add(maxy);
+		dims.add(minz);
+		dims.add(maxz);
+		return dims;
+	}
+	
+	
 
-	public static float[][] appendFrameAndIntensity(float[][] listEndPoints) {
-		// TODO Auto-generated method stub
-		return null;
+
+	public static float[][] findStormDataInRange(float[][] stormData,
+			ArrayList<Float> borders) {
+		ArrayList<float[]> retList = new ArrayList<float[]>();
+		for (int i = 0; i < stormData.length; i++) {
+			Coord3d coord = new Coord3d(stormData[i][0], stormData[i][1], stormData[i][2]);
+			if (coord.x<borders.get(0)||coord.x>borders.get(1)||coord.y<borders.get(2)||coord.y>borders.get(3)||coord.z<borders.get(4)||coord.z>borders.get(5)){
+				
+			}
+			else{
+				float[] tmp = {stormData[i][0],stormData[i][1],stormData[i][2],stormData[i][3],stormData[i][4]};
+				retList.add(tmp);
+			}
+		}
+		return toFloatArray(retList);
 	}
 
 

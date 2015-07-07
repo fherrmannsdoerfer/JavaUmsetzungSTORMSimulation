@@ -4,6 +4,7 @@ import gui.DataTypeDetector.DataType;
 
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.maths.Point2D;
+import org.jzy3d.plot3d.primitives.AbstractDrawable;
 import org.jzy3d.plot3d.primitives.Point;
 import org.jzy3d.plot3d.primitives.Polygon;
 
@@ -130,6 +131,30 @@ public class TriangleDataSet extends DataSet implements Serializable{
 	    	prim.add(tr);
     	}
     	primitives = prim;
+	}
+
+	public List<Polygon> cropTriangle(
+			ArrayList<Float> borders) {
+		ArrayList<Polygon> retList = new ArrayList<Polygon>();
+		for(Polygon p : drawableTriangles) {
+    		Coord3d c1 = p.get(0).xyz;
+    		Coord3d c2 = p.get(1).xyz;
+    		Coord3d c3 = p.get(2).xyz;
+    		boolean addTriangle = true;
+    		if (c1.x<borders.get(0)||c1.x>borders.get(1)||c1.y<borders.get(2)||c1.y>borders.get(3)||c1.z<borders.get(4)||c1.z>borders.get(5)){
+    			addTriangle = false;
+    		}
+    		if (c2.x<borders.get(0)||c2.x>borders.get(1)||c2.y<borders.get(2)||c2.y>borders.get(3)||c1.z<borders.get(4)||c1.z>borders.get(5)){
+    			addTriangle = false;
+    		}
+    		if (c3.x<borders.get(0)||c3.x>borders.get(1)||c3.y<borders.get(2)||c3.y>borders.get(3)||c3.z<borders.get(4)||c3.z>borders.get(5)){
+    			addTriangle = false;
+    		}
+    		if (addTriangle){
+    			retList.add(p);
+    		}
+    	}
+		return retList;
 	}
 }
 

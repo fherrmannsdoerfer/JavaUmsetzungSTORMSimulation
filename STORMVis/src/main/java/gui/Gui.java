@@ -45,6 +45,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
@@ -70,6 +72,8 @@ import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 
 import java.awt.CardLayout;
+
+import javax.swing.JSlider;
 
 
 /**
@@ -170,6 +174,24 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	JButton backgroundColorButton;
 	JCheckBox chckbxShowTicks;
 	JFileChooser chooser = new JFileChooser();
+	private JTextField xminField;
+	private JTextField xmaxField;
+	private JTextField yminField;
+	private JTextField ymaxField;
+	private JTextField zminField;
+	private JTextField zmaxField;
+	JSlider xminSlider;
+	JSlider xmaxSlider;
+	JSlider yminSlider;
+	JSlider ymaxSlider;
+	JSlider zminSlider;
+	JSlider zmaxSlider;
+	float xmin =  (float) +9e99;
+	float xmax =  (float) -9e99;
+	float ymin =  (float) +9e99;
+	float ymax =  (float) -9e99;
+	float zmin =  (float) +9e99;
+	float zmax =  (float) -9e99;
 	/**
 	 * Launch the application.
 	 */
@@ -230,7 +252,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box verticalBox_13 = Box.createVerticalBox();
 		contentPane.add(verticalBox_13);
 		dataSetTable = new JTable(model);
-		dataSetTable.setPreferredSize(new Dimension(130, 250));
+		dataSetTable.setPreferredSize(new Dimension(130, 120));
 		verticalBox_13.add(dataSetTable);
 		
 		Box verticalBox = Box.createVerticalBox();
@@ -618,8 +640,14 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		verticalBox_6.setBorder(new TitledBorder(null, "Visualization Parameter", TitledBorder.LEADING, TitledBorder.TOP, usedFont, null));
 		verticalBox.add(verticalBox_6);
 		
+		JTabbedPane tabbedPane_1 = new JTabbedPane(JTabbedPane.TOP);
+		verticalBox_6.add(tabbedPane_1);
+		
+		Box verticalBox_16 = Box.createVerticalBox();
+		tabbedPane_1.addTab("Basic Settings", null, verticalBox_16, null);
+		
 		Box horizontalBox_16 = Box.createHorizontalBox();
-		verticalBox_6.add(horizontalBox_16);
+		verticalBox_16.add(horizontalBox_16);
 		
 		JLabel lblPointSize = new JLabel("Point Size");
 		horizontalBox_16.add(lblPointSize);
@@ -635,10 +663,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_16.add(pointSizeField);
 		
 		Component verticalGlue_20 = Box.createVerticalGlue();
-		verticalBox_6.add(verticalGlue_20);
+		verticalBox_16.add(verticalGlue_20);
 		
 		Box horizontalBox_24 = Box.createHorizontalBox();
-		verticalBox_6.add(horizontalBox_24);
+		verticalBox_16.add(horizontalBox_24);
 		
 		JLabel lblLineWidth = new JLabel("Line Width");
 		horizontalBox_24.add(lblLineWidth);
@@ -654,10 +682,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_24.add(lineWidthField);
 		
 		Component verticalGlue_17 = Box.createVerticalGlue();
-		verticalBox_6.add(verticalGlue_17);
+		verticalBox_16.add(verticalGlue_17);
 		
 		Box horizontalBox_18 = Box.createHorizontalBox();
-		verticalBox_6.add(horizontalBox_18);
+		verticalBox_16.add(horizontalBox_18);
 		
 		JLabel lblShowStormPoints = new JLabel("Show STORM Points");
 		horizontalBox_18.add(lblShowStormPoints);
@@ -673,16 +701,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		showStormPointsBox = new JCheckBox("");
 		horizontalBox_18.add(showStormPointsBox);
-		stormColorButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				allDataSets.get(currentRow).getParameterSet().setStormColor(JColorChooser.showDialog(getContentPane(), "Choose color for Storm points", allDataSets.get(currentRow).getParameterSet().getStormColor()));
-				updateButtonColors();
-			}
-		});
 		
 		Box horizontalBox_20 = Box.createHorizontalBox();
-		verticalBox_6.add(horizontalBox_20);
+		verticalBox_16.add(horizontalBox_20);
 		
 		JLabel lblShowAntibodies = new JLabel("Show Antibodies");
 		horizontalBox_20.add(lblShowAntibodies);
@@ -708,7 +729,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_20.add(showAntibodiesBox);
 		
 		Box horizontalBox_21 = Box.createHorizontalBox();
-		verticalBox_6.add(horizontalBox_21);
+		verticalBox_16.add(horizontalBox_21);
 		
 		JLabel lblShowEm = new JLabel("Show EM");
 		horizontalBox_21.add(lblShowEm);
@@ -717,9 +738,19 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_21.add(horizontalGlue_23);
 		
 		emColorButton = new JButton("");
+		horizontalBox_21.add(emColorButton);
 		emColorButton.setMinimumSize(new Dimension(33, 20));
 		emColorButton.setMaximumSize(new Dimension(33, 20));
 		emColorButton.setPreferredSize(new Dimension(40, 20));
+		
+		showEmBox = new JCheckBox("");
+		horizontalBox_21.add(showEmBox);
+		showEmBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				visualizeAllSelectedData();
+			}
+		});
 		emColorButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -727,22 +758,12 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				updateButtonColors();
 			}
 		});
-		horizontalBox_21.add(emColorButton);
-		
-		showEmBox = new JCheckBox("");
-		showEmBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				visualizeAllSelectedData();
-			}
-		});
-		horizontalBox_21.add(showEmBox);
 		
 		Component verticalGlue_22 = Box.createVerticalGlue();
-		verticalBox_6.add(verticalGlue_22);
+		verticalBox_16.add(verticalGlue_22);
 		
 		Box verticalBox_14 = Box.createVerticalBox();
-		verticalBox_6.add(verticalBox_14);
+		verticalBox_16.add(verticalBox_14);
 		
 		Box horizontalBox_25 = Box.createHorizontalBox();
 		verticalBox_14.add(horizontalBox_25);
@@ -787,66 +808,69 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		Component horizontalGlue_33 = Box.createHorizontalGlue();
 		horizontalBox_26.add(horizontalGlue_33);
-				
-				Box horizontalBox_27 = Box.createHorizontalBox();
-				verticalBox_6.add(horizontalBox_27);
-				
-				JLabel lblBackgroundColor = new JLabel("Background Color");
-				horizontalBox_27.add(lblBackgroundColor);
-				
-				Component horizontalGlue_34 = Box.createHorizontalGlue();
-				horizontalBox_27.add(horizontalGlue_34);
-				
-				backgroundColorButton = new JButton("");
-				backgroundColorButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						backgroundColor = JColorChooser.showDialog(getContentPane(), "Choose color for background", backgroundColor);
-						//backgroundColor = new org.jzy3d.colors.Color(chosenColor.getRed(), chosenColor.getGreen(), chosenColor.getBlue());
-						updateButtonColors();
-					}
-				});
-				backgroundColorButton.setPreferredSize(new Dimension(40, 20));
-				backgroundColorButton.setMinimumSize(new Dimension(33, 20));
-				backgroundColorButton.setMaximumSize(new Dimension(33, 20));
-				horizontalBox_27.add(backgroundColorButton);
-				
-				Component verticalGlue_23 = Box.createVerticalGlue();
-				verticalBox_6.add(verticalGlue_23);
-				
-				Box horizontalBox_28 = Box.createHorizontalBox();
-				verticalBox_6.add(horizontalBox_28);
-				
-				JLabel lblColorOfAxis = new JLabel("Color Of Axes");
-				horizontalBox_28.add(lblColorOfAxis);
-				
-				Component horizontalGlue_35 = Box.createHorizontalGlue();
-				horizontalBox_28.add(horizontalGlue_35);
-				
-				mainColorButton = new JButton("");
-				mainColorButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						mainColor = JColorChooser.showDialog(getContentPane(), "Choose color for background", mainColor);
-						//backgroundColor = new org.jzy3d.colors.Color(chosenColor.getRed(), chosenColor.getGreen(), chosenColor.getBlue());
-						updateButtonColors();
-					}
-				});
-				mainColorButton.setPreferredSize(new Dimension(40, 20));
-				mainColorButton.setMinimumSize(new Dimension(33, 20));
-				mainColorButton.setMaximumSize(new Dimension(33, 20));
-				horizontalBox_28.add(mainColorButton);
+		
+		Box horizontalBox_27 = Box.createHorizontalBox();
+		verticalBox_16.add(horizontalBox_27);
+		
+		JLabel lblBackgroundColor = new JLabel("Background Color");
+		horizontalBox_27.add(lblBackgroundColor);
+		
+		Component horizontalGlue_34 = Box.createHorizontalGlue();
+		horizontalBox_27.add(horizontalGlue_34);
+		
+		backgroundColorButton = new JButton("");
+		backgroundColorButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				backgroundColor = JColorChooser.showDialog(getContentPane(), "Choose color for background", backgroundColor);
+				//backgroundColor = new org.jzy3d.colors.Color(chosenColor.getRed(), chosenColor.getGreen(), chosenColor.getBlue());
+				updateButtonColors();
+			}
+		});
+		backgroundColorButton.setPreferredSize(new Dimension(40, 20));
+		backgroundColorButton.setMinimumSize(new Dimension(33, 20));
+		backgroundColorButton.setMaximumSize(new Dimension(33, 20));
+		horizontalBox_27.add(backgroundColorButton);
+		
+		Component verticalGlue_23 = Box.createVerticalGlue();
+		verticalBox_16.add(verticalGlue_23);
+		
+		Box horizontalBox_28 = Box.createHorizontalBox();
+		verticalBox_16.add(horizontalBox_28);
+		
+		JLabel lblColorOfAxis = new JLabel("Color Of Axes");
+		horizontalBox_28.add(lblColorOfAxis);
+		
+		Component horizontalGlue_35 = Box.createHorizontalGlue();
+		horizontalBox_28.add(horizontalGlue_35);
+		
+		mainColorButton = new JButton("");
+		mainColorButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainColor = JColorChooser.showDialog(getContentPane(), "Choose color for background", mainColor);
+				//backgroundColor = new org.jzy3d.colors.Color(chosenColor.getRed(), chosenColor.getGreen(), chosenColor.getBlue());
+				updateButtonColors();
+			}
+		});
+		mainColorButton.setPreferredSize(new Dimension(40, 20));
+		mainColorButton.setMinimumSize(new Dimension(33, 20));
+		mainColorButton.setMaximumSize(new Dimension(33, 20));
+		horizontalBox_28.add(mainColorButton);
+		
+		Box verticalBox_17 = Box.createVerticalBox();
+		tabbedPane_1.addTab("Advanced Settings", null, verticalBox_17, null);
+		
+		Box horizontalBox_30 = Box.createHorizontalBox();
+		verticalBox_17.add(horizontalBox_30);
 		
 				
 				Box verticalBox_8 = Box.createVerticalBox();
+				horizontalBox_30.add(verticalBox_8);
 				verticalBox_8.setAlignmentX(Component.CENTER_ALIGNMENT);
-				verticalBox_6.add(verticalBox_8);
 				
-				Box horizontalBox_19 = Box.createHorizontalBox();
-				verticalBox_8.add(horizontalBox_19);
-				
-				Component horizontalGlue_25 = Box.createHorizontalGlue();
-				horizontalBox_19.add(horizontalGlue_25);
+				JLabel lblRenderingQuality = new JLabel("Rendering Quality");
+				verticalBox_8.add(lblRenderingQuality);
 				
 				
 				radioNicest = new JRadioButton("Nicest");
@@ -861,15 +885,189 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				
 				radioFastest = new JRadioButton("Fastest");
 				verticalBox_8.add(radioFastest);
-				
 				ButtonGroup group = new ButtonGroup();
 				group.add(radioNicest);
 				group.add(radioAdvanced);
 				group.add(radioIntermediate);
 				group.add(radioFastest);
 				
-				Box horizontalBox_29 = Box.createHorizontalBox();
-				verticalBox_8.add(horizontalBox_29);
+				Component verticalGlue_24 = Box.createVerticalGlue();
+				verticalBox_8.add(verticalGlue_24);
+				
+				Component horizontalGlue_36 = Box.createHorizontalGlue();
+				horizontalBox_30.add(horizontalGlue_36);
+				
+				Box verticalBox_15 = Box.createVerticalBox();
+				horizontalBox_30.add(verticalBox_15);
+				
+				JLabel lblNewLabel = new JLabel("x min");
+				verticalBox_15.add(lblNewLabel);
+				
+				Box horizontalBox_31 = Box.createHorizontalBox();
+				verticalBox_15.add(horizontalBox_31);
+				
+				xminField = new JTextField();
+				xminField.setHorizontalAlignment(SwingConstants.RIGHT);
+				xminField.setText("0");
+				xminField.setMaximumSize(new Dimension(60, 22));
+				horizontalBox_31.add(xminField);
+				xminField.setColumns(10);
+				
+				xminSlider = new JSlider();
+				xminSlider.setValue(0);
+				xminSlider.addChangeListener(new ChangeListener() { 
+					@Override
+					public void stateChanged(ChangeEvent arg0) {
+						xminField.setText(String.valueOf(xminSlider.getValue()));
+						visualizeAllSelectedData();
+					}
+				});
+				
+				horizontalBox_31.add(xminSlider);
+				
+				Component verticalGlue_25 = Box.createVerticalGlue();
+				verticalBox_15.add(verticalGlue_25);
+				
+				JLabel lblNewLabel_1 = new JLabel("x max");
+				verticalBox_15.add(lblNewLabel_1);
+				
+				Box horizontalBox_32 = Box.createHorizontalBox();
+				verticalBox_15.add(horizontalBox_32);
+				
+				xmaxField = new JTextField();
+				xmaxField.setHorizontalAlignment(SwingConstants.RIGHT);
+				xmaxField.setText("0");
+				xmaxField.setMaximumSize(new Dimension(60, 22));
+				xmaxField.setColumns(10);
+				horizontalBox_32.add(xmaxField);
+				
+				xmaxSlider = new JSlider();
+				xmaxSlider.setValue(100);
+				xmaxSlider.addChangeListener(new ChangeListener() { 
+					@Override
+					public void stateChanged(ChangeEvent arg0) {
+						xmaxField.setText(String.valueOf(xmaxSlider.getValue()));
+						visualizeAllSelectedData();
+					}
+				});
+				horizontalBox_32.add(xmaxSlider);
+				
+				Component verticalGlue_26 = Box.createVerticalGlue();
+				verticalBox_15.add(verticalGlue_26);
+				
+				JLabel lblNewLabel_2 = new JLabel("y min");
+				verticalBox_15.add(lblNewLabel_2);
+				
+				Box horizontalBox_33 = Box.createHorizontalBox();
+				verticalBox_15.add(horizontalBox_33);
+				
+				yminField = new JTextField();
+				yminField.setHorizontalAlignment(SwingConstants.RIGHT);
+				yminField.setText("0");
+				yminField.setMaximumSize(new Dimension(60, 22));
+				yminField.setColumns(10);
+				horizontalBox_33.add(yminField);
+				
+				yminSlider = new JSlider();
+				yminSlider.setValue(0);
+				yminSlider.addChangeListener(new ChangeListener() { 
+					@Override
+					public void stateChanged(ChangeEvent arg0) {
+						yminField.setText(String.valueOf(yminSlider.getValue()));
+						visualizeAllSelectedData();
+					}
+				});
+				horizontalBox_33.add(yminSlider);
+				
+				Component verticalGlue_27 = Box.createVerticalGlue();
+				verticalBox_15.add(verticalGlue_27);
+				
+				JLabel lblNewLabel_3 = new JLabel("y max");
+				verticalBox_15.add(lblNewLabel_3);
+				
+				Box horizontalBox_34 = Box.createHorizontalBox();
+				verticalBox_15.add(horizontalBox_34);
+				
+				ymaxField = new JTextField();
+				ymaxField.setText("0");
+				ymaxField.setHorizontalAlignment(SwingConstants.RIGHT);
+				ymaxField.setMaximumSize(new Dimension(60, 22));
+				ymaxField.setColumns(10);
+				horizontalBox_34.add(ymaxField);
+				
+				ymaxSlider = new JSlider();
+				ymaxSlider.setValue(100);
+				ymaxSlider.addChangeListener(new ChangeListener() { 
+					@Override
+					public void stateChanged(ChangeEvent arg0) {
+						ymaxField.setText(String.valueOf(ymaxSlider.getValue()));
+						visualizeAllSelectedData();
+					}
+				});
+				horizontalBox_34.add(ymaxSlider);
+				
+				Component verticalGlue_28 = Box.createVerticalGlue();
+				verticalBox_15.add(verticalGlue_28);
+				
+				JLabel lblNewLabel_4 = new JLabel("z min");
+				verticalBox_15.add(lblNewLabel_4);
+				
+				Box horizontalBox_35 = Box.createHorizontalBox();
+				verticalBox_15.add(horizontalBox_35);
+				
+				zminField = new JTextField();
+				zminField.setHorizontalAlignment(SwingConstants.RIGHT);
+				zminField.setText("0");
+				zminField.setMaximumSize(new Dimension(60, 22));
+				zminField.setColumns(10);
+				horizontalBox_35.add(zminField);
+				
+				zminSlider = new JSlider();
+				zminSlider.setValue(0);
+				zminSlider.addChangeListener(new ChangeListener() { 
+					@Override
+					public void stateChanged(ChangeEvent arg0) {
+						zminField.setText(String.valueOf(zminSlider.getValue()));
+						visualizeAllSelectedData();
+					}
+				});
+				horizontalBox_35.add(zminSlider);
+				
+				Component verticalGlue_29 = Box.createVerticalGlue();
+				verticalBox_15.add(verticalGlue_29);
+				
+				JLabel lblZMin = new JLabel("z max");
+				verticalBox_15.add(lblZMin);
+				
+				Box horizontalBox_36 = Box.createHorizontalBox();
+				verticalBox_15.add(horizontalBox_36);
+				
+				zmaxField = new JTextField();
+				zmaxField.setText("0");
+				zmaxField.setHorizontalAlignment(SwingConstants.RIGHT);
+				zmaxField.setMaximumSize(new Dimension(60, 22));
+				zmaxField.setColumns(10);
+				horizontalBox_36.add(zmaxField);
+				
+				zmaxSlider = new JSlider();
+				zmaxSlider.setValue(100);
+				zmaxSlider.addChangeListener(new ChangeListener() { 
+					@Override
+					public void stateChanged(ChangeEvent arg0) {
+						zmaxField.setText(String.valueOf(zmaxSlider.getValue()));
+						visualizeAllSelectedData();
+					}
+				});
+				horizontalBox_36.add(zmaxSlider);
+		stormColorButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				allDataSets.get(currentRow).getParameterSet().setStormColor(JColorChooser.showDialog(getContentPane(), "Choose color for Storm points", allDataSets.get(currentRow).getParameterSet().getStormColor()));
+				updateButtonColors();
+			}
+		});
+				
+				
 				
 				Box horizontalBox_23 = Box.createHorizontalBox();
 				verticalBox.add(horizontalBox_23);
@@ -1394,7 +1592,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		}
 		model.data.clear();
 		model.data.addAll(allDataSets);
-		
+		updateMinMax();
 		if(sets.size() > 0) {
 			plot.dataSets.clear();
 			plot.addAllDataSets(sets);
@@ -1424,7 +1622,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			}
 			else {
 				model.visibleSets.add(Boolean.FALSE);
-				sets.add(model.data.get(i));
+				//sets.add(model.data.get(i));
 			}
 		}
 		model.data.clear();
@@ -1435,6 +1633,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		plot.showTicks = chckbxShowTicks.isSelected();
 		plot.backgroundColor = new org.jzy3d.colors.Color(backgroundColor.getRed(),backgroundColor.getGreen(),backgroundColor.getBlue());
 		plot.mainColor = new org.jzy3d.colors.Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue());
+		updateMinMax();
+		plot.borders = getBorders();
 		if(sets.size() > 0) {
 			plot.dataSets.clear();
 			plot.addAllDataSets(sets);
@@ -1453,6 +1653,124 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			plotPanel.revalidate();
 			plotPanel.repaint();
 		}
+	}
+	
+	private ArrayList<Float> getBorders(){
+		ArrayList<Float> borders = new ArrayList<Float>();
+		borders.add(new Float(xminField.getText()));
+		borders.add(new Float(xmaxField.getText()));
+		borders.add(new Float(yminField.getText()));
+		borders.add(new Float(ymaxField.getText()));
+		borders.add(new Float(zminField.getText()));
+		borders.add(new Float(zmaxField.getText()));
+		return borders;
+	}
+	
+	private void updateMinMax() {
+		
+		ArrayList<Float> maxDims = new ArrayList<Float>();
+		maxDims.add(xmin);
+		maxDims.add(xmax);
+		maxDims.add(ymin);
+		maxDims.add(ymax);
+		maxDims.add(zmin);
+		maxDims.add(zmax);
+		ArrayList<Float> oldDims = new ArrayList<Float>(); // to check if min max dimensions have changed
+		for (int i = 0; i<maxDims.size(); i++){
+			oldDims.add(maxDims.get(i));
+		}
+		ArrayList<Float> dims = new ArrayList<Float>();
+		
+		for(int i = 0; i < allDataSets.size(); i++) {
+			if(allDataSets.get(i).getParameterSet().generalVisibility == true) {
+				if (allDataSets.get(i).antiBodyEndPoints != null){
+					dims = Calc.findDims(allDataSets.get(i).antiBodyEndPoints);
+					maxDims = findBorders(maxDims,dims);
+					dims = Calc.findDims(allDataSets.get(i).antiBodyStartPoints);
+					maxDims = findBorders(maxDims,dims);
+				}
+				if (allDataSets.get(i).stormData != null){
+					dims = Calc.findDims(allDataSets.get(i).stormData);
+					maxDims = findBorders(maxDims,dims);
+				}
+	
+				if(allDataSets.get(i).dataType.equals(DataType.TRIANGLES)) {
+					TriangleDataSet triangles = (TriangleDataSet) allDataSets.get(i);
+					dims = Calc.findDimsTriangles(triangles.getPrimitives());
+					maxDims = findBorders(maxDims,dims);
+				}
+				else if(allDataSets.get(i).dataType.equals(DataType.LINES)){
+					LineDataSet lines = (LineDataSet) allDataSets.get(i);
+					dims = Calc.findDimsLines(lines.data);
+					maxDims = findBorders(maxDims,dims);
+				}
+			}
+			else {
+				
+			}
+			
+		}
+		if (oldDims.equals(maxDims)){
+				
+		}
+		else{ // if the dims have changed update sliders
+			xminSlider.setMinimum(maxDims.get(0).intValue());
+			xminSlider.setMaximum(maxDims.get(1).intValue());
+			xminSlider.setValue(xminSlider.getMinimum());
+			
+			xmaxSlider.setMinimum(maxDims.get(0).intValue());
+			xmaxSlider.setMaximum(maxDims.get(1).intValue());
+			xmaxSlider.setValue(xmaxSlider.getMaximum());
+			
+			yminSlider.setMinimum(maxDims.get(2).intValue());
+			yminSlider.setMaximum(maxDims.get(3).intValue());
+			yminSlider.setValue(yminSlider.getMinimum());
+			
+			ymaxSlider.setMinimum(maxDims.get(2).intValue());
+			ymaxSlider.setMaximum(maxDims.get(3).intValue());
+			ymaxSlider.setValue(ymaxSlider.getMaximum());
+			
+			zminSlider.setMinimum(maxDims.get(4).intValue());
+			zminSlider.setMaximum(maxDims.get(5).intValue());
+			zminSlider.setValue(zminSlider.getMinimum());
+			
+			zmaxSlider.setMinimum(maxDims.get(4).intValue());
+			zmaxSlider.setMaximum(maxDims.get(5).intValue());
+			zmaxSlider.setValue(zmaxSlider.getMaximum());
+			xmin = maxDims.get(0);
+			ymin = maxDims.get(2);
+			zmin = maxDims.get(4);
+			xmax = maxDims.get(1);
+			ymax = maxDims.get(3);
+			zmax = maxDims.get(5);
+			xminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(0)));
+			xmaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(1)));
+			yminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(2)));
+			ymaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(3)));
+			zminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(4)));
+			zmaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(5)));
+		}
+		
+		plot.borders = getBorders();
+	}
+	
+	private ArrayList<Float> findBorders(ArrayList<Float> oldBorder, ArrayList<Float> candidates){
+		ArrayList<Float> newBorders = new ArrayList<Float>();
+		for (int i = 0; i < 3; i++){
+			if (candidates.get(2*i)< oldBorder.get(2*i)){
+				newBorders.add(candidates.get(2*i));
+			}
+			else{
+				newBorders.add(oldBorder.get(2*i));
+			}
+			if (candidates.get(2*i+1)> oldBorder.get(2*i+1)){
+				newBorders.add(candidates.get(2*i+1));
+			}
+			else{
+				newBorders.add(oldBorder.get(2*i+1));
+			}
+		}
+		return newBorders;
 	}
 
 	@Override

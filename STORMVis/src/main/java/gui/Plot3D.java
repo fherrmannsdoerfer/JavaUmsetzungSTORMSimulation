@@ -18,6 +18,7 @@ import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.primitives.CompileableComposite;
 import org.jzy3d.plot3d.primitives.LineStrip;
 import org.jzy3d.plot3d.primitives.Point;
+import org.jzy3d.plot3d.primitives.Polygon;
 import org.jzy3d.plot3d.primitives.Scatter;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 
@@ -36,6 +37,8 @@ public class Plot3D {
 	
 	public Coord3d viewPoint;
 	public BoundingBox3d viewBounds;
+	
+	public ArrayList<Float> borders;
 	
 	/**
 	 * select whether lines should be displayed
@@ -86,25 +89,27 @@ public class Plot3D {
 			        List<LineStrip> lineList = new ArrayList<LineStrip>();
 					int i = 0;
 			        for(ArrayList<Coord3d> obj : lines.data) {
+			        	boolean showThisLine = true;
+			        	for(Coord3d coord : obj){
+			        		if (coord.x<borders.get(0)||coord.x>borders.get(1)||coord.y<borders.get(2)||coord.y>borders.get(3)||coord.z<borders.get(4)||coord.z>borders.get(5)){
+			        			showThisLine = false;
+			        		}
+			        	}
 			        	LineStrip strip = new LineStrip();
 			    		strip.setWidth(lines.getParameterSet().lineWidth);
 			    		strip.setWireframeColor(new Color(lines.getParameterSet().getEmColor().getRed()/255.f, lines.getParameterSet().getEmColor().getGreen()/255.f, lines.getParameterSet().getEmColor().getBlue()/255.f,1.f));
 			        	for(Coord3d coord : obj) {
 			        		points[i] = coord;
 			        		float a = 1.f;
-			        		// TODO: use for multiple colors
-//			        		colors[i] = new Color(coord.x/255.f,coord.y/255.f,coord.z/255.f,a);
 			        		colors[i] = new Color(lines.getParameterSet().getEmColor().getRed()/255.f, lines.getParameterSet().getEmColor().getGreen()/255.f, lines.getParameterSet().getEmColor().getBlue()/255.f,a);
-			        		if(showLines) {
+			        		if(showLines && showThisLine) {
 			        			strip.add(new Point(coord));
 			        		}
 			        		i++;
 			        	}
 			        	lineList.add(strip);
 			        }
-			        //CompileableComposite comp = new CompileableComposite();
-			        float pointSize = 0;// lines.getParameterSet().pointSize;
-			        //Scatter scatter = new Scatter(points, colors, pointSize);
+
 			        for (LineStrip line : lineList) {
 			        	if(line.getPoints().size() != 0) {
 			        		chart.getScene().getGraph().add(line);
@@ -119,14 +124,17 @@ public class Plot3D {
 				TriangleDataSet triangles = (TriangleDataSet) set;
 				if(triangles.getParameterSet().emVisibility == true) {
 					//System.out.println("Show triangles EM");
-					CompileableComposite comp = new CompileableComposite();
-					comp.add(triangles.drawableTriangles);
-					comp.setColor(new Color(triangles.getParameterSet().getEmColor().getRed()/255.f, triangles.getParameterSet().getEmColor().getGreen()/255.f, triangles.getParameterSet().getEmColor().getBlue()/255.f,a));
-					comp.setWireframeDisplayed(false);
-					comp.setWireframeColor(Color.BLACK);
-			        comp.setWireframeWidth(0.00001f);
-			        comp.setColorMapper(null);
-					chart.getScene().getGraph().add(comp);
+					List<Polygon> croppedTri = triangles.cropTriangle(borders);
+					if (croppedTri.size()!= 0 ){
+						CompileableComposite comp = new CompileableComposite();
+						comp.add(croppedTri);
+						comp.setColor(new Color(triangles.getParameterSet().getEmColor().getRed()/255.f, triangles.getParameterSet().getEmColor().getGreen()/255.f, triangles.getParameterSet().getEmColor().getBlue()/255.f,a));
+						comp.setWireframeDisplayed(false);
+						comp.setWireframeColor(Color.BLACK);
+				        comp.setWireframeWidth(0.00001f);
+				        comp.setColorMapper(null);
+						chart.getScene().getGraph().add(comp);
+					}
 				}
 			}
 			
@@ -135,23 +143,35 @@ public class Plot3D {
 				//System.out.println("show ABs");
 				CompileableComposite comp = new CompileableComposite();
 		        for(int i = 0; i < set.antiBodyEndPoints.length; i++) {
-		        	LineStrip strip = new LineStrip();
-		    		strip.setWidth(set.getParameterSet().lineWidth);
-		    		strip.setWireframeColor(new Color(set.getParameterSet().getAntibodyColor().getRed()/255.f, set.getParameterSet().getAntibodyColor().getGreen()/255.f, set.getParameterSet().getAntibodyColor().getBlue()/255.f, 1.f));
-		        	
-		    		float[] currentRowStart = set.antiBodyStartPoints[i];
+		        	float[] currentRowStart = set.antiBodyStartPoints[i];
 		    		float[] currentRowEnd = set.antiBodyEndPoints[i];
-		    		strip.add(new Point(new Coord3d(currentRowStart[0],currentRowStart[1],currentRowStart[2])));
-		    		strip.add(new Point(new Coord3d(currentRowEnd[0],currentRowEnd[1],currentRowEnd[2])));
-		    		comp.add(strip);
+		        	boolean showAB = true;
+		    		if (currentRowStart[0] <borders.get(0)||currentRowStart[0]>borders.get(1)||currentRowStart[1]<borders.get(2)||currentRowStart[1]>borders.get(3)||currentRowStart[2]<borders.get(4)||currentRowStart[2]>borders.get(5)){
+		    			showAB = false;
+		    		}
+		    		if (currentRowEnd[0] <borders.get(0)||currentRowEnd[0]>borders.get(1)||currentRowEnd[1]<borders.get(2)||currentRowEnd[1]>borders.get(3)||currentRowEnd[2]<borders.get(4)||currentRowEnd[2]>borders.get(5)){
+		    			showAB = false;
+		    		}
+		    		if (showAB){
+			        	LineStrip strip = new LineStrip();
+			    		strip.setWidth(set.getParameterSet().lineWidth);
+			    		strip.setWireframeColor(new Color(set.getParameterSet().getAntibodyColor().getRed()/255.f, set.getParameterSet().getAntibodyColor().getGreen()/255.f, set.getParameterSet().getAntibodyColor().getBlue()/255.f, 1.f));
+			        	
+			    		
+			    		strip.add(new Point(new Coord3d(currentRowStart[0],currentRowStart[1],currentRowStart[2])));
+			    		strip.add(new Point(new Coord3d(currentRowEnd[0],currentRowEnd[1],currentRowEnd[2])));
+			    		comp.add(strip);
+		    		}
 		        }
-		        chart.getScene().getGraph().add(comp);
+		        if (comp.size()!=0){
+		        	chart.getScene().getGraph().add(comp);
+		        }
 			}
 			
 			// Check if STORM should be displayed
 			if(set.getParameterSet().stormVisibility == true && set.stormData != null) {
 				//System.out.println("show storm");
-				float[][] result = set.stormData;
+				float[][] result = Calc.findStormDataInRange(set.stormData, borders);
 				Coord3d[] points = new Coord3d[result.length];;
 				Color[] colors = new Color[result.length];
 				for (int i = 0; i < result.length; i++) {
@@ -159,11 +179,13 @@ public class Plot3D {
 					points[i] = coord;
 					colors[i] = new Color(set.getParameterSet().getStormColor().getRed()/255.f, set.getParameterSet().getStormColor().getGreen()/255.f, set.getParameterSet().getStormColor().getBlue()/255.f, result[i][3]);
 				}
-				CompileableComposite comp = new CompileableComposite();
-		        float pointSize = set.getParameterSet().pointSize;
-		        Scatter scatter = new Scatter(points, colors, pointSize);
-		        comp.add(scatter);
-		        chart.getScene().getGraph().add(comp);
+				if (result.length != 0){
+					CompileableComposite comp = new CompileableComposite();
+			        float pointSize = set.getParameterSet().pointSize;
+			        Scatter scatter = new Scatter(points, colors, pointSize);
+			        comp.add(scatter);
+			        chart.getScene().getGraph().add(comp);
+				}
 			}
 			
 		}

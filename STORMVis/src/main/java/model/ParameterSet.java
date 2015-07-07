@@ -93,18 +93,18 @@ public class ParameterSet implements Serializable {
     
     public ParameterSet() {
     	super();
-    	this.loa = new Float(1.f); 	
+    	this.loa = new Float(16.f); 	
         this.aoa = new Float((float) (90./180.*Math.PI));
-        this.bspnm = new Float(1.f/2.75f);
+        this.bspnm = new Float(13.f/8.f);
         this.pabs = new Float(0.1f); 				
         this.abpf = new Float(14);		
-        this.rof = new Float(3.5f);		
-        this.fpab = new Float(1.5f); 
+        this.rof = new Float(12.5f);		
+        this.fpab = new Float(1.f); 
         this.colorEM = new int[]{0,0,0}; 
         this.colorSTORM = new int[]{1,0,0};
         this.colorAB = new int[]{0,1,0}; 
-        this.sxy = new Float(4.0f); 
-        this.sz = new Float(8.0f); 
+        this.sxy = new Float(10.0f); 
+        this.sz = new Float(30.0f); 
         this.doc = new Float(0.f); 
         this.nocpsmm = new Float(1.f); 
         this.docpsnm = new Float(0.01f);
@@ -112,7 +112,7 @@ public class ParameterSet implements Serializable {
         this.bspsnm = new Float(10/600.f);
         this.frames = 10000;
         this.kOn = 1.f;
-        this.kOff = 500.f;
+        this.kOff = 2000.f;
         this.meanPhotonNumber = 4000;
         
         this.generalVisibility = Boolean.FALSE; 
