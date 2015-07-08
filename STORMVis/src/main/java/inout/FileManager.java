@@ -93,7 +93,7 @@ public class FileManager {
 		return p;
 	}
 
-	public static void writeProjectionToFile(float[][] stormData, String path, int mode) {
+	public static void writeProjectionToFile(float[][] stormData, String path, int mode,ArrayList<Float> borders) {
 		double pixelsize = 10;
 		double sigma = 20/pixelsize; //in nm sigma to blur localizations
 		int filterwidth = 3; // must be odd
@@ -125,7 +125,7 @@ public class FileManager {
 		}
 		
 		float [][] image = new float[pixelX][pixelY];
-		image = Calc.addFilteredPoints(image, sigma, filterwidth, pixelsize, stormData,mode,xmin,ymin,zmin);
+		image = Calc.addFilteredPoints(image, sigma, filterwidth, pixelsize, stormData,mode,xmin,ymin,zmin,borders);
 		ImageProcessor ip = new FloatProcessor(pixelX,pixelY);
 		ip.setFloatArray(image);
 		ImagePlus imgP = new ImagePlus("", ip);
@@ -140,7 +140,7 @@ public class FileManager {
 		coloredImage.add(imageRed);
 		coloredImage.add(imageGreen);
 		coloredImage.add(imageBlue);
-		coloredImage = Calc.addFilteredPoints3D(coloredImage, sigma, filterwidth, pixelsize, stormData,mode);
+		coloredImage = Calc.addFilteredPoints3D(coloredImage, sigma, filterwidth, pixelsize, stormData,mode,borders);
 		ImageProcessor ipRed = new FloatProcessor(pixelX,pixelY);
 		ImageProcessor ipGreen = new FloatProcessor(pixelX,pixelY);
 		ImageProcessor ipBlue = new FloatProcessor(pixelX,pixelY);

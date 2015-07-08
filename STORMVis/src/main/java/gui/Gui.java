@@ -47,6 +47,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
@@ -162,7 +164,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	final JToggleButton xzViewButton;
 	final JToggleButton yzViewButton;
 	
-	int viewStatus = 0;
+	int viewStatus = 0; // which projection is used for display and rendering
 	
 	float shiftX = -1;
 	float shiftY = -1;
@@ -192,6 +194,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	float ymax =  (float) -9e99;
 	float zmin =  (float) +9e99;
 	float zmax =  (float) -9e99;
+	ArrayList<Float> borders = new ArrayList<Float>();
 	/**
 	 * Launch the application.
 	 */
@@ -910,6 +913,14 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				xminField.setHorizontalAlignment(SwingConstants.RIGHT);
 				xminField.setText("0");
 				xminField.setMaximumSize(new Dimension(60, 22));
+				xminField.addActionListener(new ActionListener(){
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						updateSlider(Float.parseFloat(xminField.getText()),xminSlider);
+					}
+					
+				});
 				horizontalBox_31.add(xminField);
 				xminField.setColumns(10);
 				
@@ -939,6 +950,14 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				xmaxField.setText("0");
 				xmaxField.setMaximumSize(new Dimension(60, 22));
 				xmaxField.setColumns(10);
+				xmaxField.addActionListener(new ActionListener(){
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						updateSlider(Float.parseFloat(xmaxField.getText()),xmaxSlider);
+					}
+					
+				});
 				horizontalBox_32.add(xmaxField);
 				
 				xmaxSlider = new JSlider();
@@ -966,6 +985,14 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				yminField.setText("0");
 				yminField.setMaximumSize(new Dimension(60, 22));
 				yminField.setColumns(10);
+				yminField.addActionListener(new ActionListener(){
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						updateSlider(Float.parseFloat(yminField.getText()),yminSlider);
+					}
+					
+				});
 				horizontalBox_33.add(yminField);
 				
 				yminSlider = new JSlider();
@@ -993,6 +1020,14 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				ymaxField.setHorizontalAlignment(SwingConstants.RIGHT);
 				ymaxField.setMaximumSize(new Dimension(60, 22));
 				ymaxField.setColumns(10);
+				ymaxField.addActionListener(new ActionListener(){
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						updateSlider(Float.parseFloat(ymaxField.getText()),ymaxSlider);
+					}
+					
+				});
 				horizontalBox_34.add(ymaxField);
 				
 				ymaxSlider = new JSlider();
@@ -1020,6 +1055,14 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				zminField.setText("0");
 				zminField.setMaximumSize(new Dimension(60, 22));
 				zminField.setColumns(10);
+				zminField.addActionListener(new ActionListener(){
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						updateSlider(Float.parseFloat(zminField.getText()),zminSlider);
+					}
+					
+				});
 				horizontalBox_35.add(zminField);
 				
 				zminSlider = new JSlider();
@@ -1047,6 +1090,14 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				zmaxField.setHorizontalAlignment(SwingConstants.RIGHT);
 				zmaxField.setMaximumSize(new Dimension(60, 22));
 				zmaxField.setColumns(10);
+				zmaxField.addActionListener(new ActionListener(){
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						updateSlider(Float.parseFloat(zmaxField.getText()),zmaxSlider);
+					}
+					
+				});
 				horizontalBox_36.add(zmaxField);
 				
 				zmaxSlider = new JSlider();
@@ -1294,7 +1345,14 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					}
 					System.out.println("Path to write project: " + path);
 					System.out.println("project name: " + name);
-					FileManager.writeProjectionToFile(allDataSets.get(currentRow).stormData, path, viewStatus);
+					borders.clear();
+					borders.add(Float.valueOf(xminField.getText()));
+					borders.add(Float.valueOf(xmaxField.getText()));
+					borders.add(Float.valueOf(yminField.getText()));
+					borders.add(Float.valueOf(ymaxField.getText()));
+					borders.add(Float.valueOf(zminField.getText()));
+					borders.add(Float.valueOf(zmaxField.getText()));
+					FileManager.writeProjectionToFile(allDataSets.get(currentRow).stormData, path, viewStatus,borders);
 				}
 			}
 		});
@@ -1307,6 +1365,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	}
 	
 	
+	protected void updateSlider(float value, JSlider slider) {
+		slider.setValue((int) value);
+	}
+
 	private void setViewPoint(double sigma, double theta) {
 		if (allDataSets.size()<1){
 			return;
@@ -1749,6 +1811,13 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			ymaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(3)));
 			zminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(4)));
 			zmaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(5)));
+			borders.clear();
+			borders.add(xmin);
+			borders.add(xmax);
+			borders.add(ymin);
+			borders.add(ymax);
+			borders.add(zmin);
+			borders.add(zmax);
 		}
 		
 		plot.borders = getBorders();

@@ -637,7 +637,7 @@ public class Calc {
 	}
 	
 	public static ArrayList<float[][]> addFilteredPoints3D(ArrayList<float[][]> coloredImage, double sigma, int filterwidth, 
-			double pixelsize, float[][] sd, int mode){
+			double pixelsize, float[][] sd, int mode, ArrayList<Float> borders){
 	//ArrayList<float[][]> addFilteredPoints(ArrayList<float[][]> coloredImage, double sigma, 
 	//		int filterwidth, double pixelsize, ArrayList<StormLocalization> sd){
 		if (filterwidth %2 == 0) {System.err.println("filterwidth must be odd");}
@@ -662,92 +662,93 @@ public class Calc {
 		float[][] blueChannel = coloredImage.get(2);
 		for (int i = 1; i<sd.length; i++){
 			float[] sl = sd[i];//.get(i);
-			
-			double posX = 0;
-			double posY = 0;
-			double posZ = 0;
-			switch (mode){
-				case 1:
-					posX = (sl[0]-xMin)/pixelsize; //position of current localization
-					posY = (sl[1]-yMin)/pixelsize;
-					posZ = (sl[2])-zMin;;
-					break;
-				case 2:
-					posX = (sl[0]-xMin)/pixelsize; //position of current localization
-					posY = (sl[2]-zMin)/pixelsize;
-					posZ = (sl[1])-zMin;;
-					break;
-				case 3:
-					posX = (sl[1]-yMin)/pixelsize; //position of current localization
-					posY = (sl[2]-zMin)/pixelsize;
-					posZ = (sl[0])-zMin;
-					break;
-			}
-			boolean inverted = false;
-						
-			int pixelXStart = (int)Math.floor(posX) - (filterwidth-1)/2;
-			int pixelYStart = (int)Math.floor(posY) - (filterwidth-1)/2;
-			float intensity = sl[4];
-			for (int k = pixelXStart; k<pixelXStart+ filterwidth;k++){
-				for(int l= pixelYStart; l<pixelYStart+ filterwidth;l++){
-					double kk = 1;
-					try{
-						if (inverted){
-							if (posZ < 0.25* zMax){
-								redChannel[k][l] = redChannel[k][l] - (float)((4*posZ / zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								greenChannel[k][l] = greenChannel[k][l] - (float)((4*posZ / zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));	
+			if (sl[0]>borders.get(0)&&sl[0]<borders.get(1)&&sl[1]>borders.get(2)&&sl[1]<borders.get(3)&&sl[2]>borders.get(4)&&sl[2]<borders.get(5)){
+				double posX = 0;
+				double posY = 0;
+				double posZ = 0;
+				switch (mode){
+					case 1:
+						posX = (sl[0]-xMin)/pixelsize; //position of current localization
+						posY = (sl[1]-yMin)/pixelsize;
+						posZ = (sl[2])-zMin;;
+						break;
+					case 2:
+						posX = (sl[0]-xMin)/pixelsize; //position of current localization
+						posY = (sl[2]-zMin)/pixelsize;
+						posZ = (sl[1])-zMin;;
+						break;
+					case 3:
+						posX = (sl[1]-yMin)/pixelsize; //position of current localization
+						posY = (sl[2]-zMin)/pixelsize;
+						posZ = (sl[0])-zMin;
+						break;
+				}
+				boolean inverted = false;
+							
+				int pixelXStart = (int)Math.floor(posX) - (filterwidth-1)/2;
+				int pixelYStart = (int)Math.floor(posY) - (filterwidth-1)/2;
+				float intensity = sl[4];
+				for (int k = pixelXStart; k<pixelXStart+ filterwidth;k++){
+					for(int l= pixelYStart; l<pixelYStart+ filterwidth;l++){
+						double kk = 1;
+						try{
+							if (inverted){
+								if (posZ < 0.25* zMax){
+									redChannel[k][l] = redChannel[k][l] - (float)((4*posZ / zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									greenChannel[k][l] = greenChannel[k][l] - (float)((4*posZ / zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));	
+								}
+								else if (posZ < 0.5* zMax){
+									redChannel[k][l] = redChannel[k][l] -(float)((4*posZ/zMax - 1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									blueChannel[k][l] = blueChannel[k][l] -(float)((4*posZ/zMax - 1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									greenChannel[k][l] = greenChannel[k][l] - (float)((2 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									redChannel[k][l] = redChannel[k][l] - (float)((2 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									//blueChannel[k][l] = blueChannel[k][l] + (float)((1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								}
+								else if (posZ < 0.75* zMax){
+									
+									redChannel[k][l] = redChannel[k][l] - (float)((4*posZ/zMax - 2)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									blueChannel[k][l] = blueChannel[k][l] - (float)((4*posZ/zMax - 2)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									
+									redChannel[k][l] = redChannel[k][l] - (float)((3 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									greenChannel[k][l] = greenChannel[k][l] - (float)((3 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								}
+								else {
+									greenChannel[k][l] = greenChannel[k][l] - (float)((4*posZ/zMax - 3)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									blueChannel[k][l] = blueChannel[k][l] - (float)((4*posZ/zMax - 3)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									blueChannel[k][l] = blueChannel[k][l] - (float)((4-4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									redChannel[k][l] = redChannel[k][l] - (float)((4-4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								}
 							}
-							else if (posZ < 0.5* zMax){
-								redChannel[k][l] = redChannel[k][l] -(float)((4*posZ/zMax - 1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								blueChannel[k][l] = blueChannel[k][l] -(float)((4*posZ/zMax - 1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								greenChannel[k][l] = greenChannel[k][l] - (float)((2 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								redChannel[k][l] = redChannel[k][l] - (float)((2 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								//blueChannel[k][l] = blueChannel[k][l] + (float)((1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+							else{
+								if (posZ < 0.25* zMax){
+									//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									//greenChannel[k][l] = greenChannel[k][l] + (float)((posZ)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									//blue rises from 0 to 1
+									blueChannel[k][l] = blueChannel[k][l] + (float)((4*posZ / zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									
+								}
+								else if (posZ < 0.5* zMax){
+									//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									//green rises from 0 to 1 blue stays one
+									greenChannel[k][l] = greenChannel[k][l] + (float)((4*posZ/zMax - 1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									blueChannel[k][l] = blueChannel[k][l] + (float)((2 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								}
+								else if (posZ < 0.75* zMax){
+									//green stays one, blue goes to zero again
+									//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									greenChannel[k][l] = greenChannel[k][l] + (float)((4*posZ/zMax - 2)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									blueChannel[k][l] = blueChannel[k][l] + (float)((3 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								}
+								else {
+									//green goes to zero red rises
+									redChannel[k][l] = redChannel[k][l] + (float)((4*posZ/zMax - 3)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									greenChannel[k][l] = greenChannel[k][l] + (float)((4-4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+									//blueChannel[k][l] = blueChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+								}
 							}
-							else if (posZ < 0.75* zMax){
-								
-								redChannel[k][l] = redChannel[k][l] - (float)((4*posZ/zMax - 2)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								blueChannel[k][l] = blueChannel[k][l] - (float)((4*posZ/zMax - 2)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								
-								redChannel[k][l] = redChannel[k][l] - (float)((3 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								greenChannel[k][l] = greenChannel[k][l] - (float)((3 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-							}
-							else {
-								greenChannel[k][l] = greenChannel[k][l] - (float)((4*posZ/zMax - 3)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								blueChannel[k][l] = blueChannel[k][l] - (float)((4*posZ/zMax - 3)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								blueChannel[k][l] = blueChannel[k][l] - (float)((4-4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								redChannel[k][l] = redChannel[k][l] - (float)((4-4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-							}
-						}
-						else{
-							if (posZ < 0.25* zMax){
-								//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								//greenChannel[k][l] = greenChannel[k][l] + (float)((posZ)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								//blue rises from 0 to 1
-								blueChannel[k][l] = blueChannel[k][l] + (float)((4*posZ / zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								
-							}
-							else if (posZ < 0.5* zMax){
-								//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								//green rises from 0 to 1 blue stays one
-								greenChannel[k][l] = greenChannel[k][l] + (float)((4*posZ/zMax - 1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								blueChannel[k][l] = blueChannel[k][l] + (float)((2 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-							}
-							else if (posZ < 0.75* zMax){
-								//green stays one, blue goes to zero again
-								//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								greenChannel[k][l] = greenChannel[k][l] + (float)((4*posZ/zMax - 2)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								blueChannel[k][l] = blueChannel[k][l] + (float)((3 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-							}
-							else {
-								//green goes to zero red rises
-								redChannel[k][l] = redChannel[k][l] + (float)((4*posZ/zMax - 3)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								greenChannel[k][l] = greenChannel[k][l] + (float)((4-4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								//blueChannel[k][l] = blueChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-							}
-						}
-						
-					} catch(IndexOutOfBoundsException e){e.toString();}
+							
+						} catch(IndexOutOfBoundsException e){e.toString();}
+					}
 				}
 			}
 		}
@@ -779,7 +780,8 @@ public class Calc {
 	}
 	
 	public static float[][] addFilteredPoints(float[][] image, double sigma, int filterwidth, 
-			double pixelsize, float[][] sd, int mode, double xmin, double ymin, double zmin){
+			double pixelsize, float[][] sd, int mode, double xmin, double ymin, double zmin,
+			ArrayList<Float> borders){
 		if (filterwidth %2 == 0) {System.err.println("filterwidth must be odd");}
 		double factor = 100*1/(2*Math.PI*sigma*sigma);
 		double factor2 = -0.5/sigma/sigma;
@@ -808,8 +810,10 @@ public class Calc {
 			for (int k = pixelXStart; k<pixelXStart+ filterwidth;k++){
 				for(int l= pixelYStart; l<pixelYStart+ filterwidth;l++){
 					try{
-						image[k][l] = image[k][l] + (float)(factor* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-						//System.out.println("factor: "+factor+" k: "+k+" l: "+l+"posX: "+posX+"posY: "+posY+" image[k][l]" +image[k][l]+" res: "+(float)(factor*intensity* Math.exp(-0.5/sigma/sigma*(Math.pow((k-posX),2)+Math.pow((l-posY),2)))));
+						if (sl[0]>borders.get(0)&&sl[0]<borders.get(1)&&sl[1]>borders.get(2)&&sl[1]<borders.get(3)&&sl[2]>borders.get(4)&&sl[2]<borders.get(5)){
+							image[k][l] = image[k][l] + (float)(factor* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+						}
+							//System.out.println("factor: "+factor+" k: "+k+" l: "+l+"posX: "+posX+"posY: "+posY+" image[k][l]" +image[k][l]+" res: "+(float)(factor*intensity* Math.exp(-0.5/sigma/sigma*(Math.pow((k-posX),2)+Math.pow((l-posY),2)))));
 					} catch(IndexOutOfBoundsException e){e.toString();}
 				}
 			}
