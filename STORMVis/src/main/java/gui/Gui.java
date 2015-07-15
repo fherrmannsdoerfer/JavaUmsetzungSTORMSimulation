@@ -572,7 +572,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_6 = Box.createHorizontalBox();
 		verticalBox_11.add(horizontalBox_6);
 		
-		JLabel lblBackgroundLabel = new JLabel("background label");
+		JLabel lblBackgroundLabel = new JLabel("Background Label");
 		horizontalBox_6.add(lblBackgroundLabel);
 		
 		Component horizontalGlue_6 = Box.createHorizontalGlue();
