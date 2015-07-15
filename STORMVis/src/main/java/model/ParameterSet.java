@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.io.Serializable;
 
 public class ParameterSet implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public Float loa;	
     public Float aoa; 
     public Float bspnm;
@@ -34,6 +38,7 @@ public class ParameterSet implements Serializable {
     public Float ilpmm3;
 	public Float psfwidth;
 	public Boolean mergedPSF;
+	public Boolean coupleSigmaIntensity;
 	
 	public Float pointSize;
 	public Float lineWidth;
@@ -48,7 +53,7 @@ public class ParameterSet implements Serializable {
 			int[] colorAB, Float sxy, Float sz, Float doc, Float nocpsmm,
 			Float docpsnm, Float bd, Float bspsnm, int frames, Float kOn, Float kOff, int meanPhotonNumber,
 			Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility, 
-			Float ilpmm3, Float psfwidth, Boolean mergedPSF, Float pointSize, Float lineWidth
+			Float ilpmm3, Float psfwidth, Boolean mergedPSF, Boolean coupleSigmaIntensity, Float pointSize, Float lineWidth
 			, Color emColor, Color stormColor, Color antibodyColor) {
 		super();
 		this.loa = loa;
@@ -82,6 +87,7 @@ public class ParameterSet implements Serializable {
 		this.psfwidth = psfwidth;
 		
 		this.mergedPSF = mergedPSF;
+		this.coupleSigmaIntensity = coupleSigmaIntensity;
 		
 		this.pointSize = pointSize;
 		this.lineWidth = lineWidth;
@@ -124,6 +130,7 @@ public class ParameterSet implements Serializable {
 		this.psfwidth = new Float(200.f);
 		
 		this.mergedPSF = Boolean.FALSE;
+		this.coupleSigmaIntensity = Boolean.TRUE;
 		
 		this.pointSize = new Float(2.f);
 		this.lineWidth = new Float(2.f);
@@ -351,6 +358,14 @@ public class ParameterSet implements Serializable {
 
 	public void setMergedPSF(Boolean mergedPSF) {
 		this.mergedPSF = mergedPSF;
+	}
+	
+	public void setCoupleSigmaIntensity(Boolean coupleSigmaIntensity){
+		this.coupleSigmaIntensity = coupleSigmaIntensity;
+	}
+	
+	public Boolean getCoupleSigmaIntensity(){
+		return this.coupleSigmaIntensity;
 	}
 
 	public Float getPointSize() {

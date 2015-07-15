@@ -111,6 +111,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JCheckBox showStormPointsBox;
 	private JCheckBox showAntibodiesBox;
 	private JCheckBox mergePSFBox;
+	JCheckBox coupleSigmaIntensityBox;
 	
 	private final JLabel loadDataLabel = new JLabel("Please import data or select a representation.");
 	private JTable dataSetTable;
@@ -547,6 +548,23 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Component verticalGlue_19 = Box.createVerticalGlue();
 		verticalBox_12.add(verticalGlue_19);
 		
+		Box horizontalBox_19 = Box.createHorizontalBox();
+		verticalBox_12.add(horizontalBox_19);
+		
+		JLabel lblNewLabel_5 = new JLabel("Couple Loc. Precision And Intensity ");
+		horizontalBox_19.add(lblNewLabel_5);
+		
+		Component horizontalGlue_37 = Box.createHorizontalGlue();
+		horizontalGlue_37.setSize(new Dimension(10, 0));
+		horizontalBox_19.add(horizontalGlue_37);
+		
+		coupleSigmaIntensityBox = new JCheckBox("");
+		coupleSigmaIntensityBox.setSelected(true);
+		horizontalBox_19.add(coupleSigmaIntensityBox);
+		
+		Component horizontalGlue_18 = Box.createHorizontalGlue();
+		horizontalBox_19.add(horizontalGlue_18);
+		
 		Box verticalBox_11 = Box.createVerticalBox();
 		verticalBox_11.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Background And Distortions", TitledBorder.LEADING, TitledBorder.TOP, usedFont, new Color(0, 0, 0)));
 		verticalBox_9.add(verticalBox_11);
@@ -601,22 +619,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		mergePSFBox = new JCheckBox("");
 		horizontalBox_14.add(mergePSFBox);
 		
-		Component horizontalGlue_18 = Box.createHorizontalGlue();
-		horizontalBox_14.add(horizontalGlue_18);
-		
-		Component horizontalGlue_20 = Box.createHorizontalGlue();
-		horizontalBox_14.add(horizontalGlue_20);
-		
-		Component horizontalGlue_21 = Box.createHorizontalGlue();
-		horizontalBox_14.add(horizontalGlue_21);
-		
-		Component horizontalGlue_22 = Box.createHorizontalGlue();
-		horizontalBox_14.add(horizontalGlue_22);
-		
-		Component horizontalGlue_19 = Box.createHorizontalGlue();
-		horizontalBox_14.add(horizontalGlue_19);
-		
 		Component horizontalGlue_15 = Box.createHorizontalGlue();
+		horizontalGlue_15.setPreferredSize(new Dimension(100, 0));
 		horizontalBox_14.add(horizontalGlue_15);
 		
 		JButton calcButton = new JButton("Calculate");
@@ -1561,6 +1565,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setLineWidth(new Float(lineWidthField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setMergedPSF(mergePSFBox.isSelected());
+		allDataSets.get(currentRow).getParameterSet().setCoupleSigmaIntensity(coupleSigmaIntensityBox.isSelected());
 		
 		calc = new STORMCalculator(allDataSets.get(currentRow));
 		//calc = new STORMCalculator(allDataSets.get(currentRow));

@@ -35,7 +35,7 @@ public class StormPointFinder {
 		if (fpab != 1){
 			listEndPoints = addMultipleFluorophoresPerAntibody(listEndPoints, fpab);
 		}
-		float[][] stormPoints = createStormPoints(listEndPoints, ps, sxy, sz, mergedPSFs, psfWidth, progressBar, calc);
+		float[][] stormPoints = createStormPoints(listEndPoints, ps, sxy, sz, mergedPSFs, psfWidth, progressBar, calc,ps.getFrames(), ps.getMeanPhotonNumber());
 		stormPoints = assignFrameAndIntensity(stormPoints, ps.getFrames(), ps.getMeanPhotonNumber());
 		if (mergedPSFs){
 			stormPoints = mergeOverlappingPSFs(stormPoints, psfWidth, progressBar, calc);
@@ -72,7 +72,18 @@ public class StormPointFinder {
 	//also multiple fluorophores per antibody are taken into account
 	private static float[][] createStormPoints(float[][] listEndPoints, ParameterSet ps, 
 			float sxy, float sz, boolean mergedPSFs, float psfWidth, JProgressBar progressBar,
-			STORMCalculator calc) {
+			STORMCalculator calc, int frames, int meanPhotonNumber) {
+		double k = -Math.log(0.5)/(meanPhotonNumber-1000);
+		double factor = 500;
+		ArrayList<Float> intensities = new ArrayList<Float>();
+		for (int i = 1000; i<7*meanPhotonNumber; i++){
+			for (int j = 0; j<Math.ceil(factor * Math.exp(-k*i)); j++){
+				//System.out.println(Math.ceil(factor * Math.exp(-k*i)));
+				intensities.add((float) i);
+			}
+		}
+		
+			
 		float[][] stormPoints = null;
 		//individual number of blinking events per fluorophore
 		float[] nbrBlinkingEvents = new float[listEndPoints.length];
@@ -103,22 +114,34 @@ public class StormPointFinder {
 			float[] x = new float[countOne];
 			float[] y = new float[countOne];
 			float[] z = new float[countOne];
+			float[] intensity = new float[countOne];
 			
 			float[][] listEndPointsTranspose = Calc.transpose(listEndPoints);
 			
-			for (int k = 0; k < idxArray.size(); k++) {
-				x[k] = listEndPointsTranspose[0][idxArray.get(k).intValue()] + Calc.randn()*sxy;
-				y[k] = listEndPointsTranspose[1][idxArray.get(k).intValue()] + Calc.randn()*sxy;
-				z[k] = listEndPointsTranspose[2][idxArray.get(k).intValue()] + Calc.randn()*sz;
+			for (int k1 = 0; k1 < idxArray.size(); k1++) {
+				intensity[k1] = intensities.get((int) (Math.random()*intensities.size()-2));
+				if (ps.getCoupleSigmaIntensity()){
+					x[k1] = (float) (listEndPointsTranspose[0][idxArray.get(k1).intValue()] + Calc.randn()*(sxy/Math.sqrt(intensity[k1]/meanPhotonNumber)));
+					y[k1] = (float) (listEndPointsTranspose[1][idxArray.get(k1).intValue()] + Calc.randn()*(sxy/Math.sqrt(intensity[k1]/meanPhotonNumber)));
+					z[k1] = (float) (listEndPointsTranspose[2][idxArray.get(k1).intValue()] + Calc.randn()*(sz/Math.sqrt(intensity[k1]/meanPhotonNumber)));
+				}
+				else {
+					x[k1] = (listEndPointsTranspose[0][idxArray.get(k1).intValue()] + Calc.randn()*(sxy));
+					y[k1] = (listEndPointsTranspose[1][idxArray.get(k1).intValue()] + Calc.randn()*(sxy));
+					z[k1] = (listEndPointsTranspose[2][idxArray.get(k1).intValue()] + Calc.randn()*(sz));
+				}
 			}
 			
 			// TODO: intensity distribution
-			stormPointsTemp = new float[x.length][3];
+			stormPointsTemp = new float[x.length][5];
 						
 			for(int j = 0; j < x.length; j++) {
 				stormPointsTemp[j][0] = x[j];
 				stormPointsTemp[j][1] = y[j];
 				stormPointsTemp[j][2] = z[j];
+				stormPointsTemp[j][3] = (int) (Math.random()*frames);
+				stormPointsTemp[j][4] = intensity[j];
+			
 				allStormPoints.add(stormPointsTemp[j]);
 				pointCounter++;
 			}
