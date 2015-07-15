@@ -333,7 +333,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_4 = Box.createHorizontalBox();
 		verticalBox_2.add(horizontalBox_4);
 		
-		JLabel lblLabelingEfficiency = new JLabel("Labeling Efficiency");
+		JLabel lblLabelingEfficiency = new JLabel("Labeling Efficiency (%)f");
 		horizontalBox_4.add(lblLabelingEfficiency);
 		
 		Component horizontalGlue_4 = Box.createHorizontalGlue();
@@ -407,7 +407,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_12 = Box.createHorizontalBox();
 		verticalBox_4.add(horizontalBox_12);
 		
-		JLabel lblLabelingResolutionXy = new JLabel("Localization Precision XY");
+		JLabel lblLabelingResolutionXy = new JLabel("Localization Precision XY (nm)");
 		horizontalBox_12.add(lblLabelingResolutionXy);
 		
 		Component horizontalGlue_13 = Box.createHorizontalGlue();
@@ -426,7 +426,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_13 = Box.createHorizontalBox();
 		verticalBox_4.add(horizontalBox_13);
 		
-		JLabel lblLocalizaitonPrecisionZ = new JLabel("Localization Precision Z");
+		JLabel lblLocalizaitonPrecisionZ = new JLabel("Localization Precision Z (nm)");
 		horizontalBox_13.add(lblLocalizaitonPrecisionZ);
 		
 		Component horizontalGlue_14 = Box.createHorizontalGlue();
@@ -452,7 +452,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_5 = Box.createHorizontalBox();
 		verticalBox_10.add(horizontalBox_5);
 		
-		JLabel lblMeanAngle = new JLabel("Mean Binding Angle");
+		JLabel lblMeanAngle = new JLabel("Mean Binding Angle (Degree)");
 		horizontalBox_5.add(lblMeanAngle);
 		
 		Component horizontalGlue_5 = Box.createHorizontalGlue();
@@ -475,7 +475,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_10 = Box.createHorizontalBox();
 		verticalBox_12.add(horizontalBox_10);
 		
-		JLabel lblAverageBlinkingNumber = new JLabel("k_on Time");
+		JLabel lblAverageBlinkingNumber = new JLabel("k_on Constant");
 		horizontalBox_10.add(lblAverageBlinkingNumber);
 		
 		Component horizontalGlue_10 = Box.createHorizontalGlue();
@@ -494,7 +494,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_17 = Box.createHorizontalBox();
 		verticalBox_12.add(horizontalBox_17);
 		
-		JLabel lblKOnTime = new JLabel("k_off Time");
+		JLabel lblKOnTime = new JLabel("k_off Constant");
 		horizontalBox_17.add(lblKOnTime);
 		
 		Component horizontalGlue_3 = Box.createHorizontalGlue();
@@ -572,7 +572,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_6 = Box.createHorizontalBox();
 		verticalBox_11.add(horizontalBox_6);
 		
-		JLabel lblBackgroundLabel = new JLabel("Background Label");
+		JLabel lblBackgroundLabel = new JLabel("<html>Background Label (&mu;m<sup>-3</sup>)</html>");
 		horizontalBox_6.add(lblBackgroundLabel);
 		
 		Component horizontalGlue_6 = Box.createHorizontalGlue();
@@ -591,7 +591,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_15 = Box.createHorizontalBox();
 		verticalBox_11.add(horizontalBox_15);
 		
-		JLabel lblPsfSize = new JLabel("PSF Size");
+		JLabel lblPsfSize = new JLabel("PSF Size (nm)");
 		horizontalBox_15.add(lblPsfSize);
 		
 		Component horizontalGlue_16 = Box.createHorizontalGlue();
@@ -907,7 +907,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				Box verticalBox_15 = Box.createVerticalBox();
 				horizontalBox_30.add(verticalBox_15);
 				
-				JLabel lblNewLabel = new JLabel("x min");
+				JLabel lblNewLabel = new JLabel("x min (nm)");
 				verticalBox_15.add(lblNewLabel);
 				
 				Box horizontalBox_31 = Box.createHorizontalBox();
@@ -943,7 +943,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				Component verticalGlue_25 = Box.createVerticalGlue();
 				verticalBox_15.add(verticalGlue_25);
 				
-				JLabel lblNewLabel_1 = new JLabel("x max");
+				JLabel lblNewLabel_1 = new JLabel("x max (nm)");
 				verticalBox_15.add(lblNewLabel_1);
 				
 				Box horizontalBox_32 = Box.createHorizontalBox();
@@ -978,7 +978,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				Component verticalGlue_26 = Box.createVerticalGlue();
 				verticalBox_15.add(verticalGlue_26);
 				
-				JLabel lblNewLabel_2 = new JLabel("y min");
+				JLabel lblNewLabel_2 = new JLabel("y min (nm)");
 				verticalBox_15.add(lblNewLabel_2);
 				
 				Box horizontalBox_33 = Box.createHorizontalBox();
@@ -1013,7 +1013,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				Component verticalGlue_27 = Box.createVerticalGlue();
 				verticalBox_15.add(verticalGlue_27);
 				
-				JLabel lblNewLabel_3 = new JLabel("y max");
+				JLabel lblNewLabel_3 = new JLabel("y max (nm)");
 				verticalBox_15.add(lblNewLabel_3);
 				
 				Box horizontalBox_34 = Box.createHorizontalBox();
@@ -1048,7 +1048,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				Component verticalGlue_28 = Box.createVerticalGlue();
 				verticalBox_15.add(verticalGlue_28);
 				
-				JLabel lblNewLabel_4 = new JLabel("z min");
+				JLabel lblNewLabel_4 = new JLabel("z min (nm)");
 				verticalBox_15.add(lblNewLabel_4);
 				
 				Box horizontalBox_35 = Box.createHorizontalBox();
@@ -1083,7 +1083,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				Component verticalGlue_29 = Box.createVerticalGlue();
 				verticalBox_15.add(verticalGlue_29);
 				
-				JLabel lblZMin = new JLabel("z max");
+				JLabel lblZMin = new JLabel("z max (nm)");
 				verticalBox_15.add(lblZMin);
 				
 				Box horizontalBox_36 = Box.createHorizontalBox();
