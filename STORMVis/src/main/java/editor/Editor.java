@@ -322,6 +322,7 @@ public class Editor implements KeyListener, TableModelListener {
 					for(DataSet s : allDataSets) {
 						model.visibleSets.add(Boolean.FALSE);
 					}
+					
 					model.data.addAll(p.dataSets);
 					drawPanel.repaint();
 					imgPanel.setImageFromRecoveredProject(p.getOriginalImage().getImage());

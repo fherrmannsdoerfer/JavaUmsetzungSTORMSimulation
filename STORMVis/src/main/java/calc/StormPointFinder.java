@@ -154,7 +154,7 @@ public class StormPointFinder {
 	private static float[][] mergeOverlappingPSFs(float[][] stormPoints, float psfWidth, JProgressBar progressBar,
 			STORMCalculator calc) {
 		ArrayList<float[]> returnList = new ArrayList<float[]>();
-		float affectingFactor = 2;
+		float affectingFactor = (float) 1.5;
     	int maxInFrameNumbers = (int) Calc.max(stormPoints,3); 
     	System.out.println("maxInFrameNumbers: " + maxInFrameNumbers);
     	long loopStart = System.nanoTime();
@@ -223,9 +223,13 @@ public class StormPointFinder {
 				
 				float[][] meanCoords = new float[locations.size()][5];
 				for (int j = 0; j < locations.size(); j++) {
-					for (int k = 0; k < 5; k++) {
-						meanCoords[j][k] = (currStormPoints[(locations.get(j)[0])][k] + currStormPoints[(locations.get(j)[1])][k])/2.f;
+					float int1 = currStormPoints[(locations.get(j)[0])][4];
+					float int2 = currStormPoints[(locations.get(j)[1])][4];
+					for (int k = 0; k < 3; k++) {
+						meanCoords[j][k] = (currStormPoints[(locations.get(j)[0])][k]*int1+ currStormPoints[(locations.get(j)[1])][k]*int2)/(int1+int2);
 					}
+					meanCoords[j][3] = currStormPoints[(locations.get(j)[0])][3];
+					meanCoords[j][4] = int1 + int2;
 				}
 				
 //    				long diffVecTime = System.nanoTime();

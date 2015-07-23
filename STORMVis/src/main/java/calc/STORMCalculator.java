@@ -60,6 +60,7 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 	@Override
 	public void done(){
 		System.out.println("Worker finished");
+		currentDataSet.getProgressBar().setString("Calculation Done!");
 	}
 	public void doSimulation() {
 		float[][] ep = null; // = {{2,3,0},{3,2,0},{2,2,2},{4,6,8},{1,2,43}};
@@ -101,6 +102,7 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 			 * writing results to the current dataset
 			 */
 			currentDataSet.stormData = result;
+			currentDataSet.getProgressBar().setString("Calculation Done!");
 		}
 	}
 	

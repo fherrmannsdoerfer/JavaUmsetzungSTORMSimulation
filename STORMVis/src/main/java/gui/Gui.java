@@ -76,6 +76,7 @@ import javax.swing.BoxLayout;
 import java.awt.CardLayout;
 
 import javax.swing.JSlider;
+import javax.swing.ScrollPaneConstants;
 
 
 /**
@@ -147,8 +148,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JButton emColorButton;
 	private JButton antibodyColorButton;
 	private JButton stormColorButton;
-	
-	private JCheckBox squaredCoordBox;
 	private JCheckBox chckbxShowAxes;
 	private JToggleButton saveViewpointButton;
 
@@ -238,7 +237,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		setBounds(10, 10, 1200, 900);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setPreferredSize(new Dimension(200, 630));
+		contentPane.setPreferredSize(new Dimension(250, 800));
 		
 		
 		
@@ -251,11 +250,13 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		panel.setLayout(new CardLayout(0, 0));
 		panel.add(contentPane);
 		JScrollPane jsp = new JScrollPane(contentPane);
+		jsp.setMinimumSize(new Dimension(27, 400));
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
 		
 		Box verticalBox_13 = Box.createVerticalBox();
 		contentPane.add(verticalBox_13);
 		dataSetTable = new JTable(model);
+		dataSetTable.setMinimumSize(new Dimension(30, 60));
 		dataSetTable.setPreferredSize(new Dimension(130, 120));
 		verticalBox_13.add(dataSetTable);
 		
@@ -333,7 +334,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_4 = Box.createHorizontalBox();
 		verticalBox_2.add(horizontalBox_4);
 		
-		JLabel lblLabelingEfficiency = new JLabel("Labeling Efficiency (%)f");
+		JLabel lblLabelingEfficiency = new JLabel("Labeling Efficiency (%)");
 		horizontalBox_4.add(lblLabelingEfficiency);
 		
 		Component horizontalGlue_4 = Box.createHorizontalGlue();
@@ -591,7 +592,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_15 = Box.createHorizontalBox();
 		verticalBox_11.add(horizontalBox_15);
 		
-		JLabel lblPsfSize = new JLabel("PSF Size (nm)");
+		JLabel lblPsfSize = new JLabel("Largest Merging Distance (nm)");
 		horizontalBox_15.add(lblPsfSize);
 		
 		Component horizontalGlue_16 = Box.createHorizontalGlue();
@@ -707,6 +708,13 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		stormColorButton.setPreferredSize(new Dimension(40, 20));
 		
 		showStormPointsBox = new JCheckBox("");
+		showStormPointsBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				allDataSets.get(currentRow).getParameterSet().stormVisibility = showStormPointsBox.isSelected();
+				visualizeAllSelectedData();
+			}
+		});
 		horizontalBox_18.add(showStormPointsBox);
 		
 		Box horizontalBox_20 = Box.createHorizontalBox();
@@ -732,7 +740,13 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_20.add(antibodyColorButton);
 		
 		showAntibodiesBox = new JCheckBox("");
-		
+		showAntibodiesBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				allDataSets.get(currentRow).getParameterSet().antibodyVisibility = showAntibodiesBox.isSelected();
+				visualizeAllSelectedData();
+			}
+		});
 		horizontalBox_20.add(showAntibodiesBox);
 		
 		Box horizontalBox_21 = Box.createHorizontalBox();
@@ -755,6 +769,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		showEmBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				allDataSets.get(currentRow).getParameterSet().emVisibility = showEmBox.isSelected();
 				visualizeAllSelectedData();
 			}
 		});
@@ -802,16 +817,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		Box horizontalBox_26 = Box.createHorizontalBox();
 		verticalBox_14.add(horizontalBox_26);
-		
-		squaredCoordBox = new JCheckBox("Squared Coordinate System");
-		squaredCoordBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				visualizeAllSelectedData();
-			}
-		});
-		horizontalBox_26.add(squaredCoordBox);
-		squaredCoordBox.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
 		Component horizontalGlue_33 = Box.createHorizontalGlue();
 		horizontalBox_26.add(horizontalGlue_33);
@@ -1194,7 +1199,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				Component verticalGlue_3 = Box.createVerticalGlue();
 				verticalBox.add(verticalGlue_3);
 				
-				saveViewpointButton = new JToggleButton("Save Viewpoint");
+				saveViewpointButton = new JToggleButton("Fix Viewpoint");
 				saveViewpointButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 				verticalBox.add(saveViewpointButton);
 				
@@ -1212,9 +1217,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				});
 		dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
 		jsp.setAlignmentX(Component.LEFT_ALIGNMENT);
-		jsp.setPreferredSize(new Dimension(300, 600));
+		jsp.setPreferredSize(new Dimension(350, 600));
 		panel.add(jsp, "name_652625437088073");
-		jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		getContentPane().add(panel, BorderLayout.EAST);
 		
 		plotPanel = new JPanel(new BorderLayout());
@@ -1479,8 +1483,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				lblRadiusOfFilaments.setEnabled(false);
 				epitopeDensityLabel.setText("<html>Epitope Density (nm<sup>-2</sup>)</html>");
 			}
-			labelingEfficiencyField.setText(set.getPabs().toString()); //pabs                                                                                       
-			meanAngleField.setText(String.format(Locale.ENGLISH,"%.4f", set.getAoa()*180.f/Math.PI)); //aoa     
+			labelingEfficiencyField.setText(String.format(Locale.ENGLISH,"%.2f",set.getPabs()*100)); //pabs                                                                                       
+			meanAngleField.setText(String.format(Locale.ENGLISH,"%.2f", set.getAoa()*180.f/Math.PI)); //aoa     
 			backgroundLabelField.setText(set.getIlpmm3().toString()); //ilpmm3 aus StormPointFinder                                                                   
 			labelLengthField.setText(set.getLoa().toString()); //loa                                                                                               
 			fluorophoresPerLabelField.setText(set.getFpab().toString()); //fpab                                                                                     
@@ -1543,7 +1547,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		}
 		allDataSets.get(currentRow).setProgressBar(progressBar);
 		System.out.println("bspsnm: " + allDataSets.get(currentRow).getParameterSet().getBspsnm());
-		allDataSets.get(currentRow).getParameterSet().setPabs(new Float(labelingEfficiencyField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setPabs((float) (new Float(labelingEfficiencyField.getText())/100.));
 		allDataSets.get(currentRow).getParameterSet().setAoa((float) ((new Float(meanAngleField.getText()))/180*Math.PI));
 		allDataSets.get(currentRow).getParameterSet().setIlpmm3(new Float(backgroundLabelField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setLoa(new Float(labelLengthField.getText()));
@@ -1694,8 +1698,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		}
 		model.data.clear();
 		model.data.addAll(allDataSets);
-		
-		plot.squared = squaredCoordBox.isSelected();
+		plot.squared = false;
 		plot.showBox = chckbxShowAxes.isSelected();
 		plot.showTicks = chckbxShowTicks.isSelected();
 		plot.backgroundColor = new org.jzy3d.colors.Color(backgroundColor.getRed(),backgroundColor.getGreen(),backgroundColor.getBlue());

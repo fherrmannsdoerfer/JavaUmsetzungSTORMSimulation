@@ -127,7 +127,7 @@ public class ParameterSet implements Serializable {
 		this.antibodyVisibility = Boolean.TRUE;
 		
 		this.ilpmm3 = new Float(50.f);
-		this.psfwidth = new Float(200.f);
+		this.psfwidth = new Float(400.f);
 		
 		this.mergedPSF = Boolean.FALSE;
 		this.coupleSigmaIntensity = Boolean.TRUE;
