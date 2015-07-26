@@ -112,6 +112,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JCheckBox showStormPointsBox;
 	private JCheckBox showAntibodiesBox;
 	private JCheckBox mergePSFBox;
+	private JCheckBox applyBleachBox;
 	JCheckBox coupleSigmaIntensityBox;
 	
 	private final JLabel loadDataLabel = new JLabel("Please import data or select a representation.");
@@ -195,6 +196,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	float zmin =  (float) +9e99;
 	float zmax =  (float) -9e99;
 	ArrayList<Float> borders = new ArrayList<Float>();
+	private JTextField bleachConstantField;
 	/**
 	 * Launch the application.
 	 */
@@ -234,10 +236,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	 */
 	public Gui() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(10, 10, 1200, 900);
+		setBounds(10, 10, 1200, 1000);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setPreferredSize(new Dimension(250, 800));
+		contentPane.setPreferredSize(new Dimension(250, 900));
 		
 		
 		
@@ -263,7 +265,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box verticalBox = Box.createVerticalBox();
 		verticalBox.setMaximumSize(new Dimension(222222, 222220));
 		verticalBox_13.add(verticalBox);
-		verticalBox.setPreferredSize(new Dimension(290, 800));
+		verticalBox.setPreferredSize(new Dimension(290, 900));
 		verticalBox.setMinimumSize(new Dimension(290, 600));
 		verticalBox.setName("");
 		verticalBox.setFont(new Font("Dialog", Font.ITALIC, 89));
@@ -443,6 +445,22 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Component verticalGlue_13 = Box.createVerticalGlue();
 		verticalBox_4.add(verticalGlue_13);
 		
+		Box horizontalBox_22 = Box.createHorizontalBox();
+		verticalBox_4.add(horizontalBox_22);
+		
+		JLabel lblRecordedFrames = new JLabel("Recorded Frames");
+		horizontalBox_22.add(lblRecordedFrames);
+		
+		Component horizontalGlue_26 = Box.createHorizontalGlue();
+		horizontalBox_22.add(horizontalGlue_26);
+		
+		recordedFramesField = new JTextField();
+		recordedFramesField.setHorizontalAlignment(SwingConstants.RIGHT);
+		recordedFramesField.setMinimumSize(new Dimension(6, 10));
+		recordedFramesField.setMaximumSize(new Dimension(60, 22));
+		recordedFramesField.setColumns(5);
+		horizontalBox_22.add(recordedFramesField);
+		
 		Box verticalBox_9 = Box.createVerticalBox();
 		tabbedPane.addTab("Advanced Settings", null, verticalBox_9, null);
 		
@@ -511,21 +529,37 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Component verticalGlue_10 = Box.createVerticalGlue();
 		verticalBox_12.add(verticalGlue_10);
 		
-		Box horizontalBox_22 = Box.createHorizontalBox();
-		verticalBox_12.add(horizontalBox_22);
+		Box horizontalBox_29 = Box.createHorizontalBox();
+		verticalBox_12.add(horizontalBox_29);
 		
-		JLabel lblRecordedFrames = new JLabel("Recorded Frames");
-		horizontalBox_22.add(lblRecordedFrames);
+		JLabel lblAllowBleaching = new JLabel("Allow Bleaching");
+		horizontalBox_29.add(lblAllowBleaching);
 		
-		Component horizontalGlue_26 = Box.createHorizontalGlue();
-		horizontalBox_22.add(horizontalGlue_26);
+		applyBleachBox = new JCheckBox("");
+		applyBleachBox.setHorizontalAlignment(SwingConstants.TRAILING);
+		horizontalBox_29.add(applyBleachBox);
 		
-		recordedFramesField = new JTextField();
-		recordedFramesField.setHorizontalAlignment(SwingConstants.RIGHT);
-		recordedFramesField.setMinimumSize(new Dimension(6, 10));
-		recordedFramesField.setMaximumSize(new Dimension(60, 22));
-		recordedFramesField.setColumns(5);
-		horizontalBox_22.add(recordedFramesField);
+		Component horizontalGlue_20 = Box.createHorizontalGlue();
+		horizontalBox_29.add(horizontalGlue_20);
+		
+		Component horizontalGlue_21 = Box.createHorizontalGlue();
+		horizontalBox_29.add(horizontalGlue_21);
+		
+		JLabel lblBleachConstant = new JLabel("Bleach Constant ");
+		horizontalBox_29.add(lblBleachConstant);
+		
+		Component horizontalGlue_19 = Box.createHorizontalGlue();
+		horizontalBox_29.add(horizontalGlue_19);
+		
+		bleachConstantField = new JTextField();
+		bleachConstantField.setMinimumSize(new Dimension(6, 10));
+		bleachConstantField.setMaximumSize(new Dimension(60, 22));
+		bleachConstantField.setHorizontalAlignment(SwingConstants.RIGHT);
+		bleachConstantField.setColumns(5);
+		horizontalBox_29.add(bleachConstantField);
+		
+		Component verticalGlue_30 = Box.createVerticalGlue();
+		verticalBox_12.add(verticalGlue_30);
 		
 		Component verticalGlue_11 = Box.createVerticalGlue();
 		verticalBox_12.add(verticalGlue_11);
@@ -624,6 +658,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalGlue_15.setPreferredSize(new Dimension(100, 0));
 		horizontalBox_14.add(horizontalGlue_15);
 		
+		Box horizontalBox_37 = Box.createHorizontalBox();
+		verticalBox_11.add(horizontalBox_37);
+		
 		JButton calcButton = new JButton("Calculate");
 		calcButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		calcButton.addActionListener(new ActionListener() {
@@ -711,7 +748,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		showStormPointsBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				allDataSets.get(currentRow).getParameterSet().stormVisibility = showStormPointsBox.isSelected();
+				allDataSets.get(currentRow).getParameterSet().setStormVisibility(showStormPointsBox.isSelected());
 				visualizeAllSelectedData();
 			}
 		});
@@ -743,7 +780,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		showAntibodiesBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				allDataSets.get(currentRow).getParameterSet().antibodyVisibility = showAntibodiesBox.isSelected();
+				allDataSets.get(currentRow).getParameterSet().setAntibodyVisibility(showAntibodiesBox.isSelected());
 				visualizeAllSelectedData();
 			}
 		});
@@ -769,7 +806,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		showEmBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				allDataSets.get(currentRow).getParameterSet().emVisibility = showEmBox.isSelected();
+				allDataSets.get(currentRow).getParameterSet().setEmVisibility(showEmBox.isSelected());
 				visualizeAllSelectedData();
 			}
 		});
@@ -1269,7 +1306,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					model.visibleSets.clear();
 					allDataSets.addAll(p.dataSets);
 					for(DataSet s : allDataSets) {
-						model.visibleSets.add(s.getParameterSet().generalVisibility);
+						model.visibleSets.add(s.getParameterSet().getGeneralVisibility());
 					}
 					model.data.addAll(p.dataSets);
 					System.out.println("Number of dss: " + allDataSets.size());
@@ -1490,26 +1527,29 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			fluorophoresPerLabelField.setText(set.getFpab().toString()); //fpab                                                                                     
 			kOnField.setText(set.getKOn().toString()); //kOn
 			kOffField.setText(set.getKOff().toString()); //kOff
+			bleachConstantField.setText(set.getBleachConst().toString());
 			recordedFramesField.setText(String.valueOf(set.getFrames())); //frames
 			averagePhotonOutputField.setText(Integer.toString(set.getMeanPhotonNumber()));                                                                                             
-			locPrecisionXYField.setText(set.sxy.toString()); //sxy                                                                                            
-			locPrecisionZField.setText(set.sz.toString()); //sz   
-			psfSizeField.setText(set.psfwidth.toString()); //psfwidth aus StormPointFinder         
-			lineWidthField.setText(set.lineWidth.toString());
+			locPrecisionXYField.setText(set.getSxy().toString()); //sxy                                                                                            
+			locPrecisionZField.setText(set.getSz().toString()); //sz   
+			psfSizeField.setText(set.getPsfwidth().toString()); //psfwidth aus StormPointFinder         
+			lineWidthField.setText(set.getLineWidth().toString());
 			if(allDataSets.get(row).dataType == DataType.LINES) {
-				System.out.println(set.bspnm);
-				epitopeDensityField.setText(String.format(Locale.ENGLISH,"%.4f", set.bspnm));
+				System.out.println(set.getBspnm());
+				epitopeDensityField.setText(String.format(Locale.ENGLISH,"%.4f", set.getBspnm()));
 			}
 			else {
-				epitopeDensityField.setText(String.format(Locale.ENGLISH,"%.4f",set.bspsnm));
+				epitopeDensityField.setText(String.format(Locale.ENGLISH,"%.4f",set.getBspsnm()));
 			}
 			
-			pointSizeField.setText(set.pointSize.toString());
+			pointSizeField.setText(set.getPointSize().toString());
 
 			showAntibodiesBox.setSelected(set.getAntibodyVisibility());
 			showEmBox.setSelected(set.getEmVisibility());
 			showStormPointsBox.setSelected(set.getStormVisibility());
-
+			mergePSFBox.setSelected(set.getMergedPSF());
+			applyBleachBox.setSelected(set.getApplyBleaching());
+			coupleSigmaIntensityBox.setSelected(set.getCoupleSigmaIntensity());
 			updateButtonColors();
 		}
 	}
@@ -1554,6 +1594,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setFpab(new Float(fluorophoresPerLabelField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setKOn(new Float(kOnField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setKOff(new Float(kOffField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setBleachConst(new Float(bleachConstantField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setFrames((new Float(recordedFramesField.getText())).intValue());
 		allDataSets.get(currentRow).getParameterSet().setSxy(new Float(locPrecisionXYField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setSz(new Float(locPrecisionZField.getText()));
@@ -1569,6 +1610,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setLineWidth(new Float(lineWidthField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setMergedPSF(mergePSFBox.isSelected());
+		allDataSets.get(currentRow).getParameterSet().setApplyBleaching(applyBleachBox.isSelected());
 		allDataSets.get(currentRow).getParameterSet().setCoupleSigmaIntensity(coupleSigmaIntensityBox.isSelected());
 		
 		calc = new STORMCalculator(allDataSets.get(currentRow));
@@ -1687,7 +1729,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private void visualizeAllSelectedData() {
 		List<DataSet> sets = new ArrayList<DataSet>();
 		for(int i = 0; i < allDataSets.size(); i++) {
-			if(allDataSets.get(i).getParameterSet().generalVisibility == true) {
+			if(allDataSets.get(i).getParameterSet().getGeneralVisibility() == true) {
 				model.visibleSets.add(Boolean.TRUE);
 				sets.add(model.data.get(i));
 			}
@@ -1752,7 +1794,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		ArrayList<Float> dims = new ArrayList<Float>();
 		
 		for(int i = 0; i < allDataSets.size(); i++) {
-			if(allDataSets.get(i).getParameterSet().generalVisibility == true) {
+			if(allDataSets.get(i).getParameterSet().getGeneralVisibility() == true) {
 				if (allDataSets.get(i).antiBodyEndPoints != null){
 					dims = Calc.findDims(allDataSets.get(i).antiBodyEndPoints);
 					maxDims = findBorders(maxDims,dims);

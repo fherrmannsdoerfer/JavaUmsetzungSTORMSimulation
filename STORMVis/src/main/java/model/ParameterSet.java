@@ -8,53 +8,55 @@ public class ParameterSet implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public Float loa;	
-    public Float aoa; 
-    public Float bspnm;
-    public Float pabs; 				
-    public Float abpf;		
-    public Float rof;		
-    public Float fpab; 
-    public int[] colorEM; 
-    public int[] colorSTORM;
-    public int[] colorAB; 
-    public Float sxy; 
-    public Float sz; 
-    public Float doc; 
-    public Float nocpsmm; 
-    public Float docpsnm;
-    public Float bd;
-    public Float bspsnm;
-    public int frames;
-    public Float kOn;
-    public Float kOff;
-    public int meanPhotonNumber;
+	private Float loa;	
+    private Float aoa; 
+    private Float bspnm;
+    private Float pabs; 				
+    private Float abpf;		
+    private Float rof;		
+    private Float fpab; 
+    private int[] colorEM; 
+    private int[] colorSTORM;
+    private int[] colorAB; 
+    private Float sxy; 
+    private Float sz; 
+    private Float doc; 
+    private Float nocpsmm; 
+    private Float docpsnm;
+    private Float bd;
+    private Float bspsnm;
+    private int frames;
+    private Float kOn;
+    private Float kOff;
+    private Float bleachConst;
+    private int meanPhotonNumber;
     
-    public Boolean generalVisibility;
-    public Boolean emVisibility;
-    public Boolean stormVisibility;
-    public Boolean antibodyVisibility;
+    private Boolean generalVisibility;
+    private Boolean emVisibility;
+    private Boolean stormVisibility;
+    private Boolean antibodyVisibility;
     
-    public Float ilpmm3;
-	public Float psfwidth;
-	public Boolean mergedPSF;
-	public Boolean coupleSigmaIntensity;
+    private Float ilpmm3;
+	private Float psfwidth;
+	private Boolean applyBleaching;
+	private Boolean mergedPSF;
+	private Boolean coupleSigmaIntensity;
 	
-	public Float pointSize;
-	public Float lineWidth;
+	private Float pointSize;
+	private Float lineWidth;
 	
-	public Color emColor;
-	public Color stormColor;
-	public Color antibodyColor;
+	private Color emColor;
+	private Color stormColor;
+	private Color antibodyColor;
     
     
 	public ParameterSet(Float loa, Float aoa, Float bspnm, Float pabs,
 			Float abpf, Float rof, Float fpab, int[] colorEM, int[] colorSTORM,
 			int[] colorAB, Float sxy, Float sz, Float doc, Float nocpsmm,
-			Float docpsnm, Float bd, Float bspsnm, int frames, Float kOn, Float kOff, int meanPhotonNumber,
+			Float docpsnm, Float bd, Float bspsnm, int frames, Float kOn, Float kOff, Float bleachConst, int meanPhotonNumber,
 			Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility, 
-			Float ilpmm3, Float psfwidth, Boolean mergedPSF, Boolean coupleSigmaIntensity, Float pointSize, Float lineWidth
-			, Color emColor, Color stormColor, Color antibodyColor) {
+			Float ilpmm3, Float psfwidth, Boolean applyBleaching, Boolean mergedPSF, Boolean coupleSigmaIntensity, 
+			Float pointSize, Float lineWidth, Color emColor, Color stormColor, Color antibodyColor) {
 		super();
 		this.loa = loa;
 		this.aoa = aoa;
@@ -76,6 +78,7 @@ public class ParameterSet implements Serializable {
 		this.frames = frames;
 		this.kOff = kOff;
 		this.kOn = kOn;
+		this.bleachConst = bleachConst;
 		this.meanPhotonNumber = meanPhotonNumber;
 		
 		this.generalVisibility = generalVisibility; 
@@ -86,6 +89,7 @@ public class ParameterSet implements Serializable {
 		this.ilpmm3 = ilpmm3;
 		this.psfwidth = psfwidth;
 		
+		this.applyBleaching = applyBleaching;
 		this.mergedPSF = mergedPSF;
 		this.coupleSigmaIntensity = coupleSigmaIntensity;
 		
@@ -119,6 +123,7 @@ public class ParameterSet implements Serializable {
         this.frames = 10000;
         this.kOn = 1.f;
         this.kOff = 2000.f;
+        this.bleachConst = 2.231e-5f; //corresponds to 80 % after 10000 frames
         this.meanPhotonNumber = 4000;
         
         this.generalVisibility = Boolean.FALSE; 
@@ -129,6 +134,7 @@ public class ParameterSet implements Serializable {
 		this.ilpmm3 = new Float(50.f);
 		this.psfwidth = new Float(400.f);
 		
+		this.applyBleaching= Boolean.FALSE;
 		this.mergedPSF = Boolean.FALSE;
 		this.coupleSigmaIntensity = Boolean.TRUE;
 		
@@ -222,6 +228,14 @@ public class ParameterSet implements Serializable {
 	
 	public void setKOff(Float kOff){
 		this.kOff = kOff;
+	}
+	
+	public Float getBleachConst(){
+		return this.bleachConst;
+	}
+	
+	public void setBleachConst(Float bleachConst){
+		this.bleachConst = bleachConst;
 	}
 
 	public int[] getColorEM() {
@@ -409,7 +423,35 @@ public class ParameterSet implements Serializable {
 	public int getMeanPhotonNumber(){
 		return this.meanPhotonNumber;
 	}
+
+	public void setApplyBleaching(boolean applyBleaching) {
+		this.applyBleaching = applyBleaching;
+	}
 	
+	public Boolean getApplyBleaching(){
+		return this.applyBleaching;
+	}
+	
+	public void setStormVisibility(boolean stormVisibility){
+		this.stormVisibility = stormVisibility;
+	}
+	
+	public void setEmVisibility(boolean emVisibility){
+		this.emVisibility = emVisibility;
+	}
+	
+	public void setAntibodyVisibility(boolean abVisibility){
+		this.antibodyVisibility = abVisibility;
+	}
+	
+	public void setGeneralVisibility(boolean generalVisibility){
+		this.generalVisibility = generalVisibility;
+	}
+
+	public Float getLineWidth() {
+		// TODO Auto-generated method stub
+		return this.lineWidth;
+	}
     
     /**
      * 

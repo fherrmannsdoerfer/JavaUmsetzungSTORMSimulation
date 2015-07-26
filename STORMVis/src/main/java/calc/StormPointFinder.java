@@ -3,6 +3,8 @@ package calc;
 
 import gnu.trove.list.array.TIntArrayList;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,20 +29,32 @@ public class StormPointFinder {
 		boolean background = true;
 		float psfWidth = ps.getPsfwidth();
 		float ilpmm3 = ps.getIlpmm3();
-		boolean mergedPSFs = ps.mergedPSF;
-				
+		boolean mergedPSFs = ps.getMergedPSF();
+		boolean applyBleaching = ps.getApplyBleaching();
+		
 		if (background) { //unspecific labeling
 			listEndPoints = addBackground(listEndPoints, ilpmm3);	
     	}
 		if (fpab != 1){
 			listEndPoints = addMultipleFluorophoresPerAntibody(listEndPoints, fpab);
 		}
-		float[][] stormPoints = createStormPoints(listEndPoints, ps, sxy, sz, mergedPSFs, psfWidth, progressBar, calc,ps.getFrames(), ps.getMeanPhotonNumber());
-		stormPoints = assignFrameAndIntensity(stormPoints, ps.getFrames(), ps.getMeanPhotonNumber());
+		float[][] stormPoints;
+		if (applyBleaching){
+			stormPoints = createStormPointsRealisticBleaching(listEndPoints, ps, sxy, sz,  psfWidth, progressBar, 
+					calc,ps.getFrames(), ps.getMeanPhotonNumber(), ps.getBleachConst(), applyBleaching);
+		}
+		else{
+			stormPoints = createStormPoints(listEndPoints, ps, sxy, sz, psfWidth, progressBar,
+					calc, ps.getFrames(), ps.getMeanPhotonNumber());
+		}
 		if (mergedPSFs){
 			stormPoints = mergeOverlappingPSFs(stormPoints, psfWidth, progressBar, calc);
 		}
 		return stormPoints;
+		
+		
+		//stormPoints = assignFrameAndIntensity(stormPoints, ps.getFrames(), ps.getMeanPhotonNumber());
+		//return new float[2][2];
 	}
 	
 	//model for frequency of intensities is exponential decay p(I) = exp(-kI)
@@ -71,12 +85,12 @@ public class StormPointFinder {
 	//creates multiple blinking events based on the enpoints of the antibodies
 	//also multiple fluorophores per antibody are taken into account
 	private static float[][] createStormPoints(float[][] listEndPoints, ParameterSet ps, 
-			float sxy, float sz, boolean mergedPSFs, float psfWidth, JProgressBar progressBar,
+			float sxy, float sz, float psfWidth, JProgressBar progressBar,
 			STORMCalculator calc, int frames, int meanPhotonNumber) {
 		double k = -Math.log(0.5)/(meanPhotonNumber-1000);
 		double factor = 500;
 		ArrayList<Float> intensities = new ArrayList<Float>();
-		for (int i = 1000; i<7*meanPhotonNumber; i++){
+		for (int i = 1000; i<2000*meanPhotonNumber; i++){
 			for (int j = 0; j<Math.ceil(factor * Math.exp(-k*i)); j++){
 				//System.out.println(Math.ceil(factor * Math.exp(-k*i)));
 				intensities.add((float) i);
@@ -97,7 +111,6 @@ public class StormPointFinder {
 		float[][] stormPointsTemp = null;
 		List<float[]> allStormPoints = new ArrayList<float[]>();
 		System.out.println("floor: "+ Math.floor(Calc.max(nbrBlinkingEvents)));
-		int pointCounter = 0;
 		progressBar.setString("Create Localizations");
 		for (int i = 1; i <= Math.floor(Calc.max(nbrBlinkingEvents)); i++) {
 			//if (i%(Math.floor(Calc.max(nbrBlinkingEvents))/100)==0) {
@@ -114,12 +127,18 @@ public class StormPointFinder {
 			float[] x = new float[countOne];
 			float[] y = new float[countOne];
 			float[] z = new float[countOne];
+			int[] frame = new int[countOne];
 			float[] intensity = new float[countOne];
 			
 			float[][] listEndPointsTranspose = Calc.transpose(listEndPoints);
 			
+			//detections in higher frames might already be bleached idxList contains only valid indices
+			ArrayList<Integer> idxList= new ArrayList<Integer>();
+			
 			for (int k1 = 0; k1 < idxArray.size(); k1++) {
-				intensity[k1] = intensities.get((int) (Math.random()*intensities.size()-2));
+				intensity[k1] = intensities.get((int) (Math.random()*intensities.size()-1));
+				frame[k1] = (int) (Math.random()*frames);
+				idxList.add(k1);
 				if (ps.getCoupleSigmaIntensity()){
 					x[k1] = (float) (listEndPointsTranspose[0][idxArray.get(k1).intValue()] + Calc.randn()*(sxy/Math.sqrt(intensity[k1]/meanPhotonNumber)));
 					y[k1] = (float) (listEndPointsTranspose[1][idxArray.get(k1).intValue()] + Calc.randn()*(sxy/Math.sqrt(intensity[k1]/meanPhotonNumber)));
@@ -130,27 +149,96 @@ public class StormPointFinder {
 					y[k1] = (listEndPointsTranspose[1][idxArray.get(k1).intValue()] + Calc.randn()*(sxy));
 					z[k1] = (listEndPointsTranspose[2][idxArray.get(k1).intValue()] + Calc.randn()*(sz));
 				}
+				
 			}
 			
 			// TODO: intensity distribution
-			stormPointsTemp = new float[x.length][5];
+			stormPointsTemp = new float[idxList.size()][5];
 						
-			for(int j = 0; j < x.length; j++) {
-				stormPointsTemp[j][0] = x[j];
-				stormPointsTemp[j][1] = y[j];
-				stormPointsTemp[j][2] = z[j];
-				stormPointsTemp[j][3] = (int) (Math.random()*frames);
-				stormPointsTemp[j][4] = intensity[j];
+			for(int j = 0; j < idxList.size(); j++) {
+				stormPointsTemp[j][0] = x[idxList.get(j)];
+				stormPointsTemp[j][1] = y[idxList.get(j)];
+				stormPointsTemp[j][2] = z[idxList.get(j)];
+				stormPointsTemp[j][3] = frame[idxList.get(j)];
+				stormPointsTemp[j][4] = intensity[idxList.get(j)];
 			
 				allStormPoints.add(stormPointsTemp[j]);
-				pointCounter++;
 			}
 		}
 		stormPoints = Calc.toFloatArray(allStormPoints);
-
+		System.out.println("Number localizations: "+ allStormPoints.size());
+		calc.publicSetProgress((int) (100));
 		return stormPoints;
 	}
 
+	
+	private static float[][] createStormPointsRealisticBleaching(float[][] listEndPoints, ParameterSet ps, 
+			float sxy, float sz, float psfWidth, JProgressBar progressBar,
+			STORMCalculator calc, int frames, int meanPhotonNumber,float kBleach, boolean applyBleaching) {
+		progressBar.setString("Create Localizations");
+		double k = -Math.log(0.5)/(meanPhotonNumber-1000);
+		double factor = 500;
+		ArrayList<Float> intensities = new ArrayList<Float>();
+		for (int i = 1000; i<20*meanPhotonNumber; i++){
+			for (int j = 0; j<Math.ceil(factor * Math.exp(-k*i)); j++){
+				//System.out.println(Math.ceil(factor * Math.exp(-k*i)));
+				intensities.add((float) i);
+			}
+		}
+		factor = 1000;
+		ArrayList<Integer> maxFrames = new ArrayList<Integer>();
+		for (int i = 0; i<listEndPoints.length; i++){
+			while (true){
+				int maxFrame =(int) (Math.random() * frames);
+				if (applyBleaching){ //with bleaching activated higher frames have a lower probability to be populated
+					double randomNumber = Math.random(); //random number is equally distributed between 0 and 1 and it is used
+					double tmp = Math.exp(-kBleach*maxFrame);
+					if (randomNumber < tmp){ //to be tested for the probability that this frame gets this 
+						maxFrames.add(maxFrame); //localization. If it is smaller maxFrame is stored and the while loop is left
+						break;
+					}		//if it is to large a new maxFrame is determined.
+				}
+				else{ //without bleaching each frame is as likely for a certain localization
+					maxFrames.add(maxFrame);
+					break;
+				}
+			}
+		}
+				
+		List<float[]> allStormPoints = new ArrayList<float[]>();
+		float[][] stormPoints = null;
+		float kOn = ps.getKOn();
+		float kOff = ps.getKOff();
+		float x;
+		float y;
+		float z;
+		for (int i = 0; i< listEndPoints.length; i++){
+			calc.publicSetProgress((int) (1.*i/listEndPoints.length*100.));
+			for (int frame = 0; frame < maxFrames.get(i); frame ++){
+				double blinkingTest = Math.random();
+				if (blinkingTest <= (kOn/kOff)){
+					float intensity = intensities.get((int) (Math.random()*intensities.size()-1));
+					if (ps.getCoupleSigmaIntensity()){
+						x = (float) (listEndPoints[i][0] + Calc.randn()*(sxy/Math.sqrt(intensity/meanPhotonNumber)));
+						y = (float) (listEndPoints[i][1] + Calc.randn()*(sxy/Math.sqrt(intensity/meanPhotonNumber)));
+						z = (float) (listEndPoints[i][2] + Calc.randn()*(sz/Math.sqrt(intensity/meanPhotonNumber)));
+					}
+					else {
+						x = (float) (listEndPoints[i][0] + Calc.randn()*(sxy));
+						y = (float) (listEndPoints[i][1] + Calc.randn()*(sxy));
+						z = (float) (listEndPoints[i][2] + Calc.randn()*(sz));
+					}
+					float tmpLoc[] = {x,y,z,frame,intensity};
+					allStormPoints.add(tmpLoc);
+				}
+			}
+		}
+		stormPoints = Calc.toFloatArray(allStormPoints);
+		System.out.println("Number localizations: "+ allStormPoints.size());
+		calc.publicSetProgress((int) (100));
+		return stormPoints;
+	}
+	
 	private static float[][] mergeOverlappingPSFs(float[][] stormPoints, float psfWidth, JProgressBar progressBar,
 			STORMCalculator calc) {
 		ArrayList<float[]> returnList = new ArrayList<float[]>();
@@ -226,7 +314,7 @@ public class StormPointFinder {
 					float int1 = currStormPoints[(locations.get(j)[0])][4];
 					float int2 = currStormPoints[(locations.get(j)[1])][4];
 					for (int k = 0; k < 3; k++) {
-						meanCoords[j][k] = (currStormPoints[(locations.get(j)[0])][k]*int1+ currStormPoints[(locations.get(j)[1])][k]*int2)/(int1+int2);
+						meanCoords[j][k] = (float) ((currStormPoints[(locations.get(j)[0])][k]*Math.pow(int1,1.4)+ currStormPoints[(locations.get(j)[1])][k]*Math.pow(int2,1.4))/(Math.pow(int1,1.4)+Math.pow(int2,1.4)));
 					}
 					meanCoords[j][3] = currStormPoints[(locations.get(j)[0])][3];
 					meanCoords[j][4] = int1 + int2;
@@ -285,6 +373,7 @@ public class StormPointFinder {
 //    			System.out.println("Runtime " + i + " = " + (System.nanoTime()-start)/1e9);
     	}
     	System.out.println("Loop time total: " + (System.nanoTime()-loopStart)/1e9 +" s");
+    	calc.publicSetProgress((int) (100));
     	return Calc.toFloatArray(returnList);
 	}
 
