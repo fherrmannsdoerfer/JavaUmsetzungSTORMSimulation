@@ -91,7 +91,7 @@ public class StormPointFinder {
 		double factor = 500;
 		ArrayList<Float> intensities = new ArrayList<Float>();
 		for (int i = 1000; i<2000*meanPhotonNumber; i++){
-			for (int j = 0; j<Math.ceil(factor * Math.exp(-k*i)); j++){
+			for (int j = 0; j<Math.floor(factor * Math.exp(-k*i)); j++){
 				//System.out.println(Math.ceil(factor * Math.exp(-k*i)));
 				intensities.add((float) i);
 			}
@@ -112,7 +112,7 @@ public class StormPointFinder {
 		List<float[]> allStormPoints = new ArrayList<float[]>();
 		System.out.println("floor: "+ Math.floor(Calc.max(nbrBlinkingEvents)));
 		progressBar.setString("Create Localizations");
-		for (int i = 1; i <= Math.floor(Calc.max(nbrBlinkingEvents)); i++) {
+		for (int i = 0; i <= Math.floor(Calc.max(nbrBlinkingEvents)); i++) {
 			//if (i%(Math.floor(Calc.max(nbrBlinkingEvents))/100)==0) {
 				calc.publicSetProgress((int) (1.*i/Math.floor(Calc.max(nbrBlinkingEvents))*100.));
 			//}
@@ -180,7 +180,7 @@ public class StormPointFinder {
 		double factor = 500;
 		ArrayList<Float> intensities = new ArrayList<Float>();
 		for (int i = 1000; i<20*meanPhotonNumber; i++){
-			for (int j = 0; j<Math.ceil(factor * Math.exp(-k*i)); j++){
+			for (int j = 0; j<Math.floor(factor * Math.exp(-k*i)); j++){
 				//System.out.println(Math.ceil(factor * Math.exp(-k*i)));
 				intensities.add((float) i);
 			}
@@ -305,12 +305,11 @@ public class StormPointFinder {
 					float int1 = currStormPoints[(locations.get(j)[0])][4];
 					float int2 = currStormPoints[(locations.get(j)[1])][4];
 					for (int k = 0; k < 3; k++) {
-						if (dists[locations.get(j)[0]][locations.get(j)[1]]<0.75*psfWidth){
+						if (dists[locations.get(j)[0]][locations.get(j)[1]]<0.75*psfWidth){ // if closer than 0.75 times PSF width the parameter power is equal to 1.4
 							power = 1.4;
 						}
 						else{
-							power = 1.4 + ((dists[locations.get(j)[0]][locations.get(j)[1]]/psfWidth)-0.75)*4;
-							System.out.println(power+" dists[][]:"+dists[locations.get(j)[0]][locations.get(j)[1]]);
+							power = 1.4 + ((dists[locations.get(j)[0]][locations.get(j)[1]]/psfWidth)-0.75)*4; //increase the parameter with larger distances up to 1.25 * PSF width
 						}
 						meanCoords[j][k] = (float) ((currStormPoints[(locations.get(j)[0])][k]*Math.pow(int1,power)+ currStormPoints[(locations.get(j)[1])][k]*Math.pow(int2,power))/(Math.pow(int1,power)+Math.pow(int2,power)));
 					}

@@ -1185,6 +1185,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 							return;
 						}
 						viewStatus = 1;
+					
 					}
 				});
 				horizontalBox_23.add(xyViewButton);
@@ -1205,6 +1206,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 							return;
 						}
 						viewStatus = 2;
+						
 					}
 				});
 			
@@ -1225,6 +1227,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 							return;
 						}
 						viewStatus = 3;
+						
 					}
 				});
 				horizontalBox_23.add(yzViewButton);
@@ -1421,7 +1424,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		plot.viewPoint= new Coord3d((float) sigma, (float) theta, plot.currentChart.getViewPoint().z);
 		plot.viewBounds = plot.currentChart.getView().getBounds();
 		getDrawingParameters();
-		visualize();
+		visualizeAllSelectedData();
 	}
 
 	private void proceedFileImport(File file) {
