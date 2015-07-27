@@ -290,25 +290,15 @@ public class StormPointFinder {
 //    				System.out.println("dists l:" + dists.length);
 				for (int a = 0; a < dists.length; a++) {
 					for (int b = 0; b < dists.length; b++) {
-						if(dists[a][b] < psfWidth) { // < psfwidth // TODO: !!!
+						if(dists[a][b] <affectingFactor* psfWidth) { // < psfwidth // TODO: !!!
 							locations.add(new int[]{a,b});
 //    							System.out.println("a|b : " + a + " | " + b);
 						}
 					}
 				}
 				
-				// Find elements where psfwidth < distance < affecting factor *psfwidth
-				
-				List<int[]> locations2 = new ArrayList<int[]>();
-				for (int a = 0; a < dists.length; a++) {
-					for (int b = 0; b < dists.length; b++) {
-						if(dists[a][b] > psfWidth && dists[a][b] < affectingFactor*psfWidth) {
-							locations2.add(new int[]{a,b});
-//    							System.out.println("2--   a|b : " + a + " | " + b);
-						}
-					}
-				}
-				
+						
+						
 				float[][] meanCoords = new float[locations.size()][5];
 				double power = 1.4;
 				for (int j = 0; j < locations.size(); j++) {
@@ -320,6 +310,7 @@ public class StormPointFinder {
 						}
 						else{
 							power = 1.4 + ((dists[locations.get(j)[0]][locations.get(j)[1]]/psfWidth)-0.75)*4;
+							System.out.println(power+" dists[][]:"+dists[locations.get(j)[0]][locations.get(j)[1]]);
 						}
 						meanCoords[j][k] = (float) ((currStormPoints[(locations.get(j)[0])][k]*Math.pow(int1,power)+ currStormPoints[(locations.get(j)[1])][k]*Math.pow(int2,power))/(Math.pow(int1,power)+Math.pow(int2,power)));
 					}
@@ -327,29 +318,7 @@ public class StormPointFinder {
 					meanCoords[j][4] = int1 + int2;
 				}
 				
-//    				long diffVecTime = System.nanoTime();
-				float[][] diffVec = new float[locations2.size()][2];
-				int locSize = locations2.size();
-				for(int k = 0; k < locSize; k++) {//diffVec will be used to shift point which match this condition psfwidth < distance < affecting factor *psfwidth
-					diffVec[k][0] = currStormPoints[(locations2.get(k)[0])][0] - currStormPoints[(locations2.get(k)[1])][0];
-					diffVec[k][1] = currStormPoints[(locations2.get(k)[0])][1] - currStormPoints[(locations2.get(k)[1])][1];
-				}
-//    				System.out.println("size: "+ diffVec.length);
-				int diffVecLength = diffVec.length;
-				for(int k = 0; k < diffVecLength; k++) {//points are shifted
-					float add = (affectingFactor*psfWidth-Calc.getNorm(diffVec[k]))/(affectingFactor*psfWidth)*0.5f;
-					currStormPoints[(locations2.get(k)[0])][0] = currStormPoints[(locations2.get(k)[0])][0] - add*diffVec[k][0];
-					currStormPoints[(locations2.get(k)[0])][1] = currStormPoints[(locations2.get(k)[0])][1] - add*diffVec[k][1];
-					
-					currStormPoints[(locations2.get(k)[1])][0] = currStormPoints[(locations2.get(k)[1])][0] + add*diffVec[k][0];
-					currStormPoints[(locations2.get(k)[1])][1] = currStormPoints[(locations2.get(k)[1])][1] + add*diffVec[k][1];
-				}
-				
-				
-//    				System.out.println("diff time: " + (System.nanoTime() - diffVecTime)/1e9);
-				
-				
-				
+//    						
 				ArrayList<float[]> stormPointsArrayList = new ArrayList<float[]>();
 				for (int k = 0; k<currStormPoints.length; k++){
 					for (int j = 0; j<locations.size(); j++){
