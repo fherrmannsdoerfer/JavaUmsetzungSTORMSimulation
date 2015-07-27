@@ -242,7 +242,7 @@ public class StormPointFinder {
 	private static float[][] mergeOverlappingPSFs(float[][] stormPoints, float psfWidth, JProgressBar progressBar,
 			STORMCalculator calc) {
 		ArrayList<float[]> returnList = new ArrayList<float[]>();
-		float affectingFactor = (float) 1.5;
+		float affectingFactor = (float) 1.25;
     	int maxInFrameNumbers = (int) Calc.max(stormPoints,3); 
     	System.out.println("maxInFrameNumbers: " + maxInFrameNumbers);
     	long loopStart = System.nanoTime();
@@ -310,11 +310,18 @@ public class StormPointFinder {
 				}
 				
 				float[][] meanCoords = new float[locations.size()][5];
+				double power = 1.4;
 				for (int j = 0; j < locations.size(); j++) {
 					float int1 = currStormPoints[(locations.get(j)[0])][4];
 					float int2 = currStormPoints[(locations.get(j)[1])][4];
 					for (int k = 0; k < 3; k++) {
-						meanCoords[j][k] = (float) ((currStormPoints[(locations.get(j)[0])][k]*Math.pow(int1,1.4)+ currStormPoints[(locations.get(j)[1])][k]*Math.pow(int2,1.4))/(Math.pow(int1,1.4)+Math.pow(int2,1.4)));
+						if (dists[locations.get(j)[0]][locations.get(j)[1]]<0.75*psfWidth){
+							power = 1.4;
+						}
+						else{
+							power = 1.4 + ((dists[locations.get(j)[0]][locations.get(j)[1]]/psfWidth)-0.75)*4;
+						}
+						meanCoords[j][k] = (float) ((currStormPoints[(locations.get(j)[0])][k]*Math.pow(int1,power)+ currStormPoints[(locations.get(j)[1])][k]*Math.pow(int2,power))/(Math.pow(int1,power)+Math.pow(int2,power)));
 					}
 					meanCoords[j][3] = currStormPoints[(locations.get(j)[0])][3];
 					meanCoords[j][4] = int1 + int2;

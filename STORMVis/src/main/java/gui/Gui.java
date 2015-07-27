@@ -626,7 +626,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_15 = Box.createHorizontalBox();
 		verticalBox_11.add(horizontalBox_15);
 		
-		JLabel lblPsfSize = new JLabel("Largest Merging Distance (nm)");
+		JLabel lblPsfSize = new JLabel("FWHM Of PSF (nm)");
 		horizontalBox_15.add(lblPsfSize);
 		
 		Component horizontalGlue_16 = Box.createHorizontalGlue();
@@ -749,7 +749,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				allDataSets.get(currentRow).getParameterSet().setStormVisibility(showStormPointsBox.isSelected());
-				visualizeAllSelectedData();
+				visualize();
 			}
 		});
 		horizontalBox_18.add(showStormPointsBox);
@@ -781,7 +781,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				allDataSets.get(currentRow).getParameterSet().setAntibodyVisibility(showAntibodiesBox.isSelected());
-				visualizeAllSelectedData();
+				visualize();
 			}
 		});
 		horizontalBox_20.add(showAntibodiesBox);
@@ -807,7 +807,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				allDataSets.get(currentRow).getParameterSet().setEmVisibility(showEmBox.isSelected());
-				visualizeAllSelectedData();
+				visualize();
 			}
 		});
 		emColorButton.addActionListener(new ActionListener() {
@@ -831,7 +831,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		chckbxShowAxes.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				visualizeAllSelectedData();
+				visualize();
 			}
 		});
 		chckbxShowAxes.setSelected(true);
@@ -842,7 +842,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		chckbxShowTicks.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				visualizeAllSelectedData();
+				visualize();
 			}
 		});
 		chckbxShowTicks.setSelected(true);
@@ -976,7 +976,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					@Override
 					public void stateChanged(ChangeEvent arg0) {
 						xminField.setText(String.valueOf(xminSlider.getValue()));
-						visualizeAllSelectedData();
+						visualize();
 					}
 				});
 				
@@ -1012,7 +1012,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					@Override
 					public void stateChanged(ChangeEvent arg0) {
 						xmaxField.setText(String.valueOf(xmaxSlider.getValue()));
-						visualizeAllSelectedData();
+						visualize();
 					}
 				});
 				horizontalBox_32.add(xmaxSlider);
@@ -1047,7 +1047,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					@Override
 					public void stateChanged(ChangeEvent arg0) {
 						yminField.setText(String.valueOf(yminSlider.getValue()));
-						visualizeAllSelectedData();
+						visualize();
 					}
 				});
 				horizontalBox_33.add(yminSlider);
@@ -1082,7 +1082,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					@Override
 					public void stateChanged(ChangeEvent arg0) {
 						ymaxField.setText(String.valueOf(ymaxSlider.getValue()));
-						visualizeAllSelectedData();
+						visualize();
 					}
 				});
 				horizontalBox_34.add(ymaxSlider);
@@ -1117,7 +1117,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					@Override
 					public void stateChanged(ChangeEvent arg0) {
 						zminField.setText(String.valueOf(zminSlider.getValue()));
-						visualizeAllSelectedData();
+						visualize();
 					}
 				});
 				horizontalBox_35.add(zminSlider);
@@ -1152,7 +1152,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					@Override
 					public void stateChanged(ChangeEvent arg0) {
 						zmaxField.setText(String.valueOf(zmaxSlider.getValue()));
-						visualizeAllSelectedData();
+						visualize();
 					}
 				});
 				horizontalBox_36.add(zmaxSlider);
@@ -1314,7 +1314,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 						@Override
 						public void run() {
 							// TODO Auto-generated method stub
-							visualizeAllSelectedData();
+							visualize();
 						}
 					});
 				}
@@ -1421,7 +1421,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		plot.viewPoint= new Coord3d((float) sigma, (float) theta, plot.currentChart.getViewPoint().z);
 		plot.viewBounds = plot.currentChart.getView().getBounds();
 		getDrawingParameters();
-		visualizeAllSelectedData();
+		visualize();
 	}
 
 	private void proceedFileImport(File file) {
@@ -1475,7 +1475,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		}
 		if (allDataSets.size()==1){
 			allDataSets.get(0).getParameterSet().setGeneralVisibility(Boolean.TRUE);
-			visualizeAllSelectedData();
+			visualize();
 		}
 	}
 
@@ -1573,7 +1573,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		antibodyColorButton.setOpaque(true);
 		backgroundColorButton.setOpaque(true);
 		mainColorButton.setOpaque(true);
-		visualizeAllSelectedData();
+		visualize();
 	}
 	
 	/**
