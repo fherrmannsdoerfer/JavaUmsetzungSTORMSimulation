@@ -1,6 +1,6 @@
 package inout;
 
-import gui.TriangleLineFilter.Utils;
+import inout.TriangleLineFilter.Utils;
 
 import java.io.File;
 

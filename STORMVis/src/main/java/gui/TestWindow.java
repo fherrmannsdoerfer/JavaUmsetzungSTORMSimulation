@@ -1,6 +1,7 @@
 package gui;
 
 import gui.DataTypeDetector.DataType;
+import inout.TriangleLineFilter;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

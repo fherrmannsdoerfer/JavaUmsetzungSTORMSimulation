@@ -57,7 +57,7 @@ public class Plot3D {
 				LineDataSet lines = (LineDataSet) set;
 				
 				// Check if EM should be shown
-				if(lines.getParameterSet().emVisibility == true) {
+				if(lines.getParameterSet().getEmVisibility() == true) {
 					System.out.println("Show lines EM");
 					int pointNumber = 0;
 					// TODO: count point number in editor?!
@@ -92,7 +92,7 @@ public class Plot3D {
 			        	lineList.add(strip);
 			        }
 			        CompileableComposite comp = new CompileableComposite();
-			        float pointSize = lines.getParameterSet().pointSize;
+			        float pointSize = lines.getParameterSet().getPointSize();
 			        Scatter scatter = new Scatter(points, colors, pointSize);
 			        for (LineStrip line : lineList) {
 			        	if(line.getPoints().size() != 0) {
@@ -106,7 +106,7 @@ public class Plot3D {
 			else if(set.dataType == DataType.TRIANGLES) {
 				float a = 1.f;
 				TriangleDataSet triangles = (TriangleDataSet) set;
-				if(triangles.getParameterSet().emVisibility == true) {
+				if(triangles.getParameterSet().getEmVisibility() == true) {
 					System.out.println("Show triangles EM");
 					CompileableComposite comp = new CompileableComposite();
 					comp.add(triangles.drawableTriangles);
@@ -120,7 +120,7 @@ public class Plot3D {
 			}
 			
 			// check if ABs should be displayed
-			if(set.getParameterSet().antibodyVisibility == true && set.antiBodyEndPoints != null && set.antiBodyStartPoints != null) {
+			if(set.getParameterSet().getAntibodyVisibility() == true && set.antiBodyEndPoints != null && set.antiBodyStartPoints != null) {
 				System.out.println("show ABs");
 				List<LineStrip> lineList = new ArrayList<LineStrip>();
 		        for(int i = 0; i < set.antiBodyEndPoints.length; i++) {
@@ -142,7 +142,7 @@ public class Plot3D {
 			}
 			
 			// Check if STORM should be displayed
-			if(set.getParameterSet().stormVisibility == true && set.stormData != null) {
+			if(set.getParameterSet().getStormVisibility() == true && set.stormData != null) {
 				System.out.println("show storm");
 				float[][] result = set.stormData;
 				Coord3d[] points = new Coord3d[result.length];;
@@ -153,7 +153,7 @@ public class Plot3D {
 					colors[i] = new Color(set.getParameterSet().getStormColor().getRed()/255.f, set.getParameterSet().getStormColor().getGreen()/255.f, set.getParameterSet().getStormColor().getBlue()/255.f, result[i][3]);
 				}
 				CompileableComposite comp = new CompileableComposite();
-		        float pointSize = set.getParameterSet().pointSize;
+		        float pointSize = set.getParameterSet().getPointSize();
 		        Scatter scatter = new Scatter(points, colors, pointSize);
 		        comp.add(scatter);
 		        chart.getScene().getGraph().add(comp);

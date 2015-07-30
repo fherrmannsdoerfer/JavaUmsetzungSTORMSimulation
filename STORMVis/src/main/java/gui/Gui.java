@@ -4,6 +4,7 @@ import editor.Editor;
 import gui.DataTypeDetector.DataType;
 import inout.FileManager;
 import inout.ProjectFileFilter;
+import inout.TriangleLineFilter;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -11,6 +12,10 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -241,10 +246,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setPreferredSize(new Dimension(250, 900));
 		
-		
-		
-		
-
 		model = new DataSetTableModel();
         model.addTableModelListener(this);
 		
@@ -1266,6 +1267,25 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		getContentPane().add(plotPanel, BorderLayout.CENTER);
 		plotPanel.setLayout(new BorderLayout());
 		
+		MyDragDropListener myDragDropListener = new MyDragDropListener();
+
+	    // Connect the label with a drag and drop listener
+	    new DropTarget(loadDataLabel, myDragDropListener);
+	    new DropTarget(contentPane, myDragDropListener);
+	    new DropTarget(plotPanel, myDragDropListener);
+	    
+	    
+	    myDragDropListener.addFileDragAndDropListener(new FileDragAndDropListener(){
+	    	public void FileDragAndDropEventOccured(FileDragAndDropEvent event){
+	    		System.out.println(event.getFile().getPath());
+	    		if (new ProjectFileFilter().accept(event.getFile())){
+	    			proceedProjectImport(event.getFile());
+	    		}
+	    		if (new TriangleLineFilter().accept(event.getFile()))
+	    		proceedFileImport(event.getFile());
+	    	}
+	    });
+		
 		loadDataLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		plotPanel.add(loadDataLabel, BorderLayout.CENTER);
 		
@@ -1300,31 +1320,16 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				fc.setFileFilter(new ProjectFileFilter());
 				fc.setFileSelectionMode(0);
 				int returnValue = fc.showOpenDialog(getContentPane());
-				if(returnValue == JFileChooser.APPROVE_OPTION) {
-					String path = fc.getSelectedFile().getAbsolutePath();
-					Project p = FileManager.openProjectFromFile(path);
-					loadedImage = p.getOriginalImage();
-					allDataSets.clear();
-					model.data.clear();
-					model.visibleSets.clear();
-					allDataSets.addAll(p.dataSets);
-					for(DataSet s : allDataSets) {
-						model.visibleSets.add(s.getParameterSet().getGeneralVisibility());
-					}
-					model.data.addAll(p.dataSets);
-					System.out.println("Number of dss: " + allDataSets.size());
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							// TODO Auto-generated method stub
-							visualize();
-						}
-					});
+				if (returnValue == JFileChooser.APPROVE_OPTION){
+					proceedProjectImport(fc.getSelectedFile());
 				}
 			}
+			
 		});
 		
+		
 		plot = new Plot3D();
+		
 		configureTableListener();
 		
 		JButton openEditorButton = new JButton("Open Editor");
@@ -1894,7 +1899,27 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		}
 		return newBorders;
 	}
-
+	private void proceedProjectImport(File file) {
+		String path = file.getAbsolutePath();
+		Project p = FileManager.openProjectFromFile(path);
+		loadedImage = p.getOriginalImage();
+		allDataSets.clear();
+		model.data.clear();
+		model.visibleSets.clear();
+		allDataSets.addAll(p.dataSets);
+		for(DataSet s : allDataSets) {
+			model.visibleSets.add(s.getParameterSet().getGeneralVisibility());
+		}
+		model.data.addAll(p.dataSets);
+		System.out.println("Number of dss: " + allDataSets.size());
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				visualize();
+			}
+		});
+	}
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if ("progress" == evt.getPropertyName()) {
