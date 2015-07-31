@@ -1912,7 +1912,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			model.visibleSets.add(s.getParameterSet().getGeneralVisibility());
 		}
 		model.data.addAll(p.dataSets);
-		loadParameterSetOfRow(0);
+		if (allDataSets.size()>0){
+			loadParameterSetOfRow(0);
+		}
 		System.out.println("Number of dss: " + allDataSets.size());
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
