@@ -104,12 +104,12 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField labelLengthField; //loa
 	private JTextField fluorophoresPerLabelField; //fpab
 	private JTextField kOnField; //abpf
-	private JTextField averagePhotonOutputField; // TODO: ???
+	private JTextField averagePhotonOutputField; // 
 	private JTextField locPrecisionXYField; //sxy
 	private JTextField locPrecisionZField; //sz
 	private JTextField psfSizeField; //psfwidth aus StormPointFinder
 	private JTextField epitopeDensityField; //bspnm oder bspsnm je nachdem ob Linien oder Dreiecke
-	private JTextField pointSizeField; //das muesste der Parameter a aus Plotter new Color(coord.x/255.f,coord.y/255.f,coord.z/255.f,a); sein
+	private JTextField pointSizeField; //
 	
 	JLabel lblRadiusOfFilaments;
 	
@@ -1908,9 +1908,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		model.visibleSets.clear();
 		allDataSets.addAll(p.dataSets);
 		for(DataSet s : allDataSets) {
+			s.getParameterSet().setGeneralVisibility(true);
 			model.visibleSets.add(s.getParameterSet().getGeneralVisibility());
 		}
 		model.data.addAll(p.dataSets);
+		loadParameterSetOfRow(0);
 		System.out.println("Number of dss: " + allDataSets.size());
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
