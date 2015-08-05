@@ -196,16 +196,16 @@ public class Finder {
 		float partsum = 0;
 	    int counter = 0;
 	    int parts = 10000;
-	    for (int i = 0;i<areas.length;i++) {
-	    	partsum = partsum + areas[i];
-	    	if (partsum > tot/parts*counter) {
+	    for (int i = 0;i<areas.length;i++) { //for faster calculation 
+	    	if (partsum >= tot/parts*counter) {
 	    		startingindices[counter] = i;
 	    		startingsum[counter] = partsum;
 	    		counter = counter + 1;
 	    	}
+	    	partsum = partsum + areas[i];
 	    }
 	    float[] randd = new float[nbrFluorophores];
-	    // random number initialization
+	    // random number initialization used to determine on which triangle the antibody binds
 	    for (int i = 0;i < nbrFluorophores;i++) {
 	    	randd[i] = (float) Math.random();
 	    }
@@ -214,10 +214,10 @@ public class Finder {
 	    	//if (i%(nbrFluorophores/100)==0) {
 				calc.publicSetProgress((int) (1.*i/nbrFluorophores*100.));
 			//}
-	    	float randD = randd[i]*tot;
-	        for (int k = 1; k < startingsum.length;k++) {
-	            if (randD>startingsum[k]) {
-	                startidx = k-1;
+	    	float randD = randd[i]*tot; //randD is a number between 0 and the total area. Later the triangle will be found up to which the cumulative area is smaller but the cumulative area of the next triangle would be larger with this method antibodies are placed based on the are since larger triangles fulfill this criteria more often than smaller triangles 
+	        for (int k = 0; k < startingsum.length;k++) {
+	            if (randD>startingsum[k]) {//startingindices carries the information up to which triangle the cumulative sum has the corresponding cumulative sum stored in startingsum
+	                startidx = k;
 	        	}
 	        }
 	        partsum = startingsum[startidx];
@@ -230,6 +230,7 @@ public class Finder {
 	            	idx = idxcopy;
 	                break;
 	    		}
+	            
 	    	}
 	    }
 //	    for(int i = 0; i < idx.length; i++) {

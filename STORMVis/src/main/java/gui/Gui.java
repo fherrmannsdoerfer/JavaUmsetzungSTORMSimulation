@@ -82,6 +82,7 @@ import java.awt.CardLayout;
 
 import javax.swing.JSlider;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.JComboBox;
 
 
 /**
@@ -132,6 +133,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JRadioButton radioAdvanced;
 	private JRadioButton radioIntermediate;
 	private JRadioButton radioFastest;
+	
+	private JComboBox exampleComboBox;
 	
 	public STORMCalculator calc;
 	
@@ -259,7 +262,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box verticalBox_13 = Box.createVerticalBox();
 		contentPane.add(verticalBox_13);
 		dataSetTable = new JTable(model);
-		dataSetTable.setMinimumSize(new Dimension(30, 60));
+		dataSetTable.setMinimumSize(new Dimension(30, 150));
 		dataSetTable.setPreferredSize(new Dimension(130, 120));
 		verticalBox_13.add(dataSetTable);
 		
@@ -1352,6 +1355,29 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		toolBar.add(rigidArea_2);
 		toolBar.add(openEditorButton);
 		
+		Component rigidArea_3 = Box.createRigidArea(new Dimension(20, 20));
+		toolBar.add(rigidArea_3);
+		
+		exampleComboBox = new JComboBox();
+		exampleComboBox.setMaximumSize(new Dimension(200, 32767));
+		exampleComboBox.setMaximumRowCount(7);
+		exampleComboBox.addItem("Examples");
+		exampleComboBox.addItem("Microtubules 3D");
+		exampleComboBox.addItem("Mitochondria 3D");
+		exampleComboBox.addItem("Crossing Lines 2D");
+		exampleComboBox.addItem("Crossing Lines 3D");
+		exampleComboBox.addItem("Shpere 3D");
+		exampleComboBox.addItem("Triangles 3D");
+		exampleComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (exampleComboBox.getSelectedIndex()>0){
+					loadExamples(exampleComboBox.getSelectedIndex());
+				}
+			}
+		});
+		toolBar.add(exampleComboBox);
+		
 		Component horizontalGlue_24 = Box.createHorizontalGlue();
 		toolBar.add(horizontalGlue_24);
 		
@@ -1405,7 +1431,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					borders.add(Float.valueOf(ymaxField.getText()));
 					borders.add(Float.valueOf(zminField.getText()));
 					borders.add(Float.valueOf(zmaxField.getText()));
-					FileManager.writeProjectionToFile(allDataSets.get(currentRow).stormData, path, viewStatus,borders);
+					FileManager.writeProjectionToFile(allDataSets.get(currentRow), path, viewStatus,borders);
 				}
 			}
 		});
@@ -1418,6 +1444,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	}
 	
 	
+	protected void loadExamples(int selectedIndex) {
+		DataSet data = ExamplesProvidingClass.getDataset(selectedIndex);
+		furtherProceedFileImport(data, data.dataType);
+	}
+
 	protected void updateSlider(float value, JSlider slider) {
 		slider.setValue((int) value);
 	}
@@ -1443,6 +1474,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			e1.printStackTrace();
 		}
 		DataSet data = ParserWrapper.parseFileOfType(file.getAbsolutePath(), type);
+		data.setName(file.getName());
+		furtherProceedFileImport(data,type);
+	}
+	
+	private void furtherProceedFileImport(DataSet data, DataType type){
 		if(data.dataType.equals(DataType.TRIANGLES)) {
 			System.out.println("Triangles parsed correctly.");
 		}
@@ -1452,11 +1488,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		else if(type.equals(DataType.PLY)){
 			System.out.println("PLY file parsed.");
 		}
-		data.setName(file.getName());
+		
 		allDataSets.add(data);
 		model.data.add(data);
 		model.visibleSets.add(Boolean.TRUE);
-		model.fireTableDataChanged();
 		if (shiftX == -1 && shiftY == -1 && shiftZ == -1){
 			dataSetTable.setRowSelectionInterval(0, 0);
 			loadParameterSetOfRow(0);
@@ -1485,8 +1520,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			allDataSets.get(0).getParameterSet().setGeneralVisibility(Boolean.TRUE);
 			visualize();
 		}
+		model.fireTableDataChanged();
 	}
-
 	/**
 	 * Configures the mouse listener for the dataset table. 
 	 * When a line is clicked, its ParameterSet is loaded to the configuration panel.

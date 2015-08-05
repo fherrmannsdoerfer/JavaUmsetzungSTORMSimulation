@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,8 @@ public class TriangleObjectParser {
 	public int limit;
 	public String path;
 	private DataType type;
+	private BufferedReader br;
+	InputStream is = null;
 	
 	public TriangleObjectParser(String path) {
 		this.path = path;
@@ -129,9 +133,9 @@ public class TriangleObjectParser {
         			words.add(line.substring(pos,line.length()));
         		}
         		for (int i = 0; i<3; i++){
-        			Coord3d saveCoord = new Coord3d(listVertices.get(Integer.valueOf(words.get((i+1))))[0]*1.62,
-        					listVertices.get(Integer.valueOf(words.get(i+1)))[1]*1.62,
-        					listVertices.get(Integer.valueOf(words.get(i+1)))[2]*1.62);
+        			Coord3d saveCoord = new Coord3d(listVertices.get(Integer.valueOf(words.get((i+1))))[0],
+        					listVertices.get(Integer.valueOf(words.get(i+1)))[1],
+        					listVertices.get(Integer.valueOf(words.get(i+1)))[2]);
                     Color color = new Color(saveCoord.x/255.f, saveCoord.y/255.f, 1-saveCoord.z/255.f, 1.f);
                     Point newPoint = new Point(saveCoord, color);
                     newTriangle.add(newPoint);
@@ -147,7 +151,15 @@ public class TriangleObjectParser {
 
 	private void importNff() throws NumberFormatException, IOException {
 		long start = System.nanoTime();
-        BufferedReader br = new BufferedReader(new FileReader(path));
+		
+		try {
+			br = new BufferedReader(new FileReader(path));
+		}
+		catch(Exception e){
+			is = ClassLoader.getSystemClassLoader().getResourceAsStream(path);
+		    br = new BufferedReader(new InputStreamReader(is));
+		}
+        
         String line;
         List<String> words = new ArrayList<String>();
         int objectNumber = 0;

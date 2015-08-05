@@ -93,7 +93,8 @@ public class FileManager {
 		return p;
 	}
 
-	public static void writeProjectionToFile(float[][] stormData, String path, int mode,ArrayList<Float> borders) {
+	public static void writeProjectionToFile(DataSet dataset, String path, int mode,ArrayList<Float> borders) {
+		float[][] stormData = dataset.stormData;
 		double pixelsize = 10;
 		double sigma = 20/pixelsize; //in nm sigma to blur localizations
 		int filterwidth = 3; // must be odd
@@ -162,6 +163,82 @@ public class FileManager {
 		ij.IJ.save(colImg.get(2),basename+"blueCh.tif");
 			
 		writeLocalizationsToFile(stormData,basename);
+		writeLogFile(dataset, basename,borders);
+	}
+
+	private static void writeLogFile(DataSet dataset, String basename,ArrayList<Float> borders) {
+		ParameterSet ps = dataset.getParameterSet();
+		try{
+			FileWriter writer = new FileWriter(basename+"Parameters.txt");
+			writer.append("Automatically generated Logfile containing all settings.\n");
+			writer.append("Angle of antibodies [degree]: "+ ps.getAoa()+"\n");
+			writer.append("Bindingsites per nm [nm^-1]: " + ps.getBspnm()+"\n");
+			writer.append("Labeling efficiency [%]: "+ ps.getPabs()+"\n");
+			writer.append("Radius of filament [nm]: " + ps.getRof()+"\n");
+			writer.append("Fluorophores per label: "+ ps.getFpab()+"\n");
+			writer.append(String.format("Color model [r,g,b]: %d, %d, %d\n", ps.getEmColor().getRed(),ps.getEmColor().getGreen(),ps.getEmColor().getBlue()));
+			writer.append(String.format("Color simulation [r,g,b]: %d, %d, %d\n", ps.getStormColor().getRed(),ps.getStormColor().getGreen(),ps.getStormColor().getBlue()));
+			writer.append(String.format("Color label [r,g,b]: %d, %d, %d\n", ps.getAntibodyColor().getRed(),ps.getAntibodyColor().getGreen(),ps.getAntibodyColor().getBlue()));
+			writer.append("Localization precision (sigma x,y) [nm]: "+ps.getSxy()+"\n");
+			writer.append("Localization precision (sigma z) [nm]: "+ps.getSz()+"\n");
+			writer.append("Bindingsites per square nanometer [nm^-2]: "+ps.getBspsnm()+"\n");
+			writer.append("Frames: "+ps.getFrames()+"\n");
+			writer.append("K_On time [AU]: "+ ps.getKOn()+"\n");
+			writer.append("K_Off time [AU]: "+ ps.getKOff()+"\n");
+			writer.append("Bleaching constant [1/10000 frames]: "+ ps.getBleachConst()+"\n");
+			writer.append("Median photon number: "+ps.getMeanPhotonNumber()+"\n");
+			if (ps.getGeneralVisibility()){
+				writer.append("General visibility: TRUE\n");
+			}
+			else{
+				writer.append("General visibility: FALSE\n");
+			}
+			if (ps.getEmVisibility()){
+				writer.append("Model visibility: TRUE\n");
+			}
+			else{
+				writer.append("Model visibility: FALSE\n");
+			}
+			if (ps.getStormVisibility()){
+				writer.append("Simulation visibility: TRUE\n");
+			}
+			else{
+				writer.append("Simulation visibility: FALSE\n");
+			}
+			if (ps.getAntibodyVisibility()){
+				writer.append("Label visibility: TRUE\n");
+			}
+			else{
+				writer.append("Label visibility: FALSE\n");
+			}
+			writer.append("Background per volume [m^-3]: " + ps.getIlpmm3()+"\n");
+			writer.append("FWHM of PSF [nm]: "+ps.getPsfwidth()+"\n");
+			if (ps.getApplyBleaching()){
+				writer.append("Apply bleaching: TRUE\n");
+			}
+			else{
+				writer.append("Apply bleaching: FALSE\n");
+			}
+			if (ps.getMergedPSF()){
+				writer.append("Merge close PSFs: TRUE\n");
+			}
+			else{
+				writer.append("Merge close PSFs: FALSE\n");
+			}
+			if (ps.getCoupleSigmaIntensity()){
+				writer.append("Couple localization error with intensity: TRUE\n");
+			}
+			else{
+				writer.append("Couple localization error with intensity: FALSE\n");
+			}
+			writer.append("Point size: "+ps.getPointSize()+"\n");
+			writer.append("Line width: "+ps.getLineWidth()+"\n");
+			writer.append("Selected borders in x: "+borders.get(0)+" to "+borders.get(1)+"\n");
+			writer.append("Selected borders in y: "+borders.get(2)+" to "+borders.get(3)+"\n");
+			writer.append("Selected borders in z: "+borders.get(4)+" to "+borders.get(5)+"\n");
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {e.printStackTrace();}
 	}
 
 	private static void writeLocalizationsToFile(float[][] stormData, String basename) {

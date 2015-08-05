@@ -1,7 +1,11 @@
 package parsing;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -10,6 +14,7 @@ import java.util.regex.Pattern;
 import model.LineDataSet;
 import model.ParameterSet;
 
+import org.apache.commons.io.FileUtils;
 import org.jzy3d.maths.Coord3d;
 
 
@@ -23,6 +28,8 @@ public class LineObjectParser {
 	public int pointNumber = 0;
 	
 	public String path;
+	InputStream is = null;
+	BufferedReader br;
 	/**
 	 * 
 	 * @param path - abs. file path
@@ -35,9 +42,19 @@ public class LineObjectParser {
 	 * Parses the selected file and puts the results into class field.
 	 * @throws IOException
 	 */
-	public void parse() throws IOException {
+	public List<ArrayList<Coord3d>> parse() throws IOException {
+		return parse(path);
+	}
+	
+	public List<ArrayList<Coord3d>> parse(String path) throws IOException {
 		long start = System.nanoTime();
-        BufferedReader br = new BufferedReader(new FileReader(path));
+		try {
+			br = new BufferedReader(new FileReader(path));
+		}
+		catch(Exception e){
+			is = ClassLoader.getSystemClassLoader().getResourceAsStream(path);
+		    br = new BufferedReader(new InputStreamReader(is));
+		}
         String line;
         List<String> words = new ArrayList<String>();
         jregex.Pattern pattern = new jregex.Pattern(REGEX);
@@ -108,7 +125,7 @@ public class LineObjectParser {
         System.out.printf("Took %f seconds to read lines", time / 1e9);
         System.out.println("Number of objects: "+ objectNumber);
         System.out.println("Number of objects in Array: " + allObjects.size());
-        //System.out.println(allObjects);
+        return allObjects;
 	}
 	
 	/**
