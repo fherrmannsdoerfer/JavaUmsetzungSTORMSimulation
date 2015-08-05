@@ -101,7 +101,7 @@ public class StormPointFinder {
 		float[][] stormPoints = null;
 		//individual number of blinking events per fluorophore
 		float[] nbrBlinkingEvents = new float[listEndPoints.length];
-		float abpf = ps.getFrames() * ps.getKOn() / ps.getKOff(); //average blinking per fluorophore
+		float abpf = ps.getFrames() * ps.getKOn() / ps.getKOff()* ps.getDeff(); //average blinking per fluorophore
 		for (int i = 0; i < listEndPoints.length; i++) {
 			nbrBlinkingEvents[i] = (float) (Calc.randn() * Math.sqrt(abpf) + abpf);
 			if(nbrBlinkingEvents[i] < 0) {
@@ -119,7 +119,7 @@ public class StormPointFinder {
 			List<Integer> idxArray = new ArrayList<Integer>();
 			int countOne = 0;
 			for (int j = 0; j < nbrBlinkingEvents.length; j++) {
-				if(nbrBlinkingEvents[j] >= i) {
+				if(nbrBlinkingEvents[j] > i) {
 					idxArray.add(new Integer(j));
 					countOne++;
 				}

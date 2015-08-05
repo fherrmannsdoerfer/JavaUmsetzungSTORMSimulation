@@ -205,6 +205,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	float zmax =  (float) -9e99;
 	ArrayList<Float> borders = new ArrayList<Float>();
 	private JTextField bleachConstantField;
+	private JTextField detectionEfficiencyField;
 	/**
 	 * Launch the application.
 	 */
@@ -662,8 +663,24 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalGlue_15.setPreferredSize(new Dimension(100, 0));
 		horizontalBox_14.add(horizontalGlue_15);
 		
-		Box horizontalBox_37 = Box.createHorizontalBox();
-		verticalBox_11.add(horizontalBox_37);
+		Component verticalGlue_31 = Box.createVerticalGlue();
+		verticalBox_11.add(verticalGlue_31);
+		
+		Box horizontalBox_38 = Box.createHorizontalBox();
+		verticalBox_11.add(horizontalBox_38);
+		
+		JLabel lblDetectionEfficiency = new JLabel("Detection Efficiency (%)");
+		horizontalBox_38.add(lblDetectionEfficiency);
+		
+		Component horizontalGlue_22 = Box.createHorizontalGlue();
+		horizontalBox_38.add(horizontalGlue_22);
+		
+		detectionEfficiencyField = new JTextField();
+		detectionEfficiencyField.setMinimumSize(new Dimension(6, 10));
+		detectionEfficiencyField.setMaximumSize(new Dimension(60, 22));
+		detectionEfficiencyField.setHorizontalAlignment(SwingConstants.RIGHT);
+		detectionEfficiencyField.setColumns(5);
+		horizontalBox_38.add(detectionEfficiencyField);
 		
 		JButton calcButton = new JButton("Calculate");
 		calcButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -1565,6 +1582,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			}
 			labelingEfficiencyField.setText(String.format(Locale.ENGLISH,"%.2f",set.getPabs()*100)); //pabs                                                                                       
 			meanAngleField.setText(String.format(Locale.ENGLISH,"%.2f", set.getAoa()*180.f/Math.PI)); //aoa     
+			detectionEfficiencyField.setText(String.format(Locale.ENGLISH,"%.2f",set.getDeff()*100)); //pabs
 			backgroundLabelField.setText(set.getIlpmm3().toString()); //ilpmm3 aus StormPointFinder                                                                   
 			labelLengthField.setText(set.getLoa().toString()); //loa                                                                                               
 			fluorophoresPerLabelField.setText(set.getFpab().toString()); //fpab                                                                                     
@@ -1632,6 +1650,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		System.out.println("bspsnm: " + allDataSets.get(currentRow).getParameterSet().getBspsnm());
 		allDataSets.get(currentRow).getParameterSet().setPabs((float) (new Float(labelingEfficiencyField.getText())/100.));
 		allDataSets.get(currentRow).getParameterSet().setAoa((float) ((new Float(meanAngleField.getText()))/180*Math.PI));
+		allDataSets.get(currentRow).getParameterSet().setDeff((float) (new Float(detectionEfficiencyField.getText())/100)); 
 		allDataSets.get(currentRow).getParameterSet().setIlpmm3(new Float(backgroundLabelField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setLoa(new Float(labelLengthField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setFpab(new Float(fluorophoresPerLabelField.getText()));

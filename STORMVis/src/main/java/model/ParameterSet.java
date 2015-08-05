@@ -26,6 +26,7 @@ public class ParameterSet implements Serializable {
     private int frames;
     private Float kOn;
     private Float kOff;
+    private Float deff;
     private Float bleachConst;
     private int meanPhotonNumber;
     
@@ -50,7 +51,7 @@ public class ParameterSet implements Serializable {
     
 	public ParameterSet(Float loa, Float aoa, Float bspnm, Float pabs,
 			Float abpf, Float rof, Float fpab, Float sxy, Float sz, Float doc, Float nocpsmm,
-			Float docpsnm, Float bd, Float bspsnm, int frames, Float kOn, Float kOff, Float bleachConst, int meanPhotonNumber,
+			Float docpsnm, Float bd, Float bspsnm, int frames, Float kOn, Float kOff, Float deff, Float bleachConst, int meanPhotonNumber,
 			Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility, 
 			Float ilpmm3, Float psfwidth, Boolean applyBleaching, Boolean mergedPSF, Boolean coupleSigmaIntensity, 
 			Float pointSize, Float lineWidth, Color emColor, Color stormColor, Color antibodyColor) {
@@ -72,6 +73,7 @@ public class ParameterSet implements Serializable {
 		this.frames = frames;
 		this.kOff = kOff;
 		this.kOn = kOn;
+		this.deff = deff;
 		this.bleachConst = bleachConst;
 		this.meanPhotonNumber = meanPhotonNumber;
 		
@@ -114,6 +116,7 @@ public class ParameterSet implements Serializable {
         this.frames = 10000;
         this.kOn = 1.f;
         this.kOff = 2000.f;
+        this.deff = 1f;
         this.bleachConst = 2.231e-5f; //corresponds to 80 % after 10000 frames
         this.meanPhotonNumber = 4000;
         
@@ -219,6 +222,14 @@ public class ParameterSet implements Serializable {
 	
 	public void setKOff(Float kOff){
 		this.kOff = kOff;
+	}
+	
+	public Float getDeff(){
+		return deff;
+	}
+	
+	public void setDeff(Float deff){
+		this.deff = deff;
 	}
 	
 	public Float getBleachConst(){
@@ -419,39 +430,6 @@ public class ParameterSet implements Serializable {
 		// TODO Auto-generated method stub
 		return this.lineWidth;
 	}
-    
-    /**
-     * 
-     * @return default parameterSet with hard-coded values
-     */
-//    public static ParameterSet defaultParameterSet() {
-//    	Float loa = new Float(1.f); 	
-//        Float aoa = new Float((float) (90./180.*Math.PI));
-//        Float bspnm = new Float(1/2.75f);
-//        Float pabs = new Float(0.1f); 				
-//        Float abpf = new Float(14);		
-//        Float rof = new Float(3.5f);		
-//        Float fpab = new Float(1.5f); 
-//        int[] colorEM = new int[]{0,0,0}; 
-//        int[] colorSTORM = new int[]{1,0,0};
-//        int[] colorAB = new int[]{0,1,0}; 
-//        Float sxy = new Float(1.0f); 
-//        Float sz = new Float(1.0f); 
-//        Float doc = new Float(0.f); 
-//        Float nocpsmm = new Float(1.f); 
-//        Float docpsnm = new Float(0.01f);
-//        Float bd = new Float((float) (3*5*1e-7));
-//        Float bspsnm = new Float(10/600.f); 
-//        
-//        Boolean generalVisibility = Boolean.FALSE; 
-//        Boolean emVisibility = Boolean.FALSE;      
-//        Boolean stormVisibility = Boolean.FALSE;   
-//        Boolean antibodyVisibility = Boolean.FALSE;
-//        
-//        Float ilpmm3 = new Float(50.f);
-//    	return new ParameterSet(loa, aoa, bspnm,pabs, abpf, rof, fpab, colorEM, colorSTORM, colorAB, sxy, sz, doc, nocpsmm, docpsnm, bd, bspsnm, generalVisibility, emVisibility, stormVisibility, antibodyVisibility,ilpmm3);
-//    }
-    
     
     
 }
