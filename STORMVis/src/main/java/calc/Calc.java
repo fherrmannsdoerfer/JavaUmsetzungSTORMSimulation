@@ -636,23 +636,32 @@ public class Calc {
 	    return randomNum;
 	}
 	
+	public static ArrayList<float[][]> fillColorBar(ArrayList<float[][]> colorBar, float zmin, float zmax){
+		int width = colorBar.get(0)[0].length;
+		int height = colorBar.get(0).length;
+		float interval = (zmax-zmin)/height;
+		for (int i = 0; i<height; i++){
+			for (int j =0; j<width; j++){
+				for (int k = 0; k<3; k++){
+					colorBar.get(k)[i][j] = getColor(i*interval, zmax-zmin,k);
+				}
+			}
+		}
+		return colorBar;
+	}
+	
 	public static ArrayList<float[][]> addFilteredPoints3D(ArrayList<float[][]> coloredImage, double sigma, int filterwidth, 
-			double pixelsize, float[][] sd, int mode, ArrayList<Float> borders){
-	//ArrayList<float[][]> addFilteredPoints(ArrayList<float[][]> coloredImage, double sigma, 
-	//		int filterwidth, double pixelsize, ArrayList<StormLocalization> sd){
+			double pixelsize, float[][] sd, int mode, ArrayList<Float> borders, ArrayList<Float> dims){
 		if (filterwidth %2 == 0) {System.err.println("filterwidth must be odd");}
 		double factor = 10000*1/(2*Math.PI*sigma*sigma);
 		double factor2 = -0.5/sigma/sigma;
-		//ArrayList<Double> dims = getDimensions();
-		sd[sd.length-2][2] = -450;
-		sd[sd.length-1][2] = 450;
 
-		float xMin = Calc.min(sd, 0);
-		float xMax = Calc.max(sd, 0);
-		float yMin = Calc.min(sd, 1);
-		float yMax = Calc.max(sd, 1);
-		float zMin = Calc.min(sd, 2);
-		float zMax = Calc.max(sd, 2);
+		float xMin = dims.get(0);
+		float xMax = dims.get(1);
+		float yMin = dims.get(2);
+		float yMax = dims.get(3);
+		float zMin = dims.get(4);
+		float zMax = dims.get(5);
 
 		zMax = zMax - zMin;
 		
@@ -670,12 +679,12 @@ public class Calc {
 					case 1:
 						posX = (sl[0]-xMin)/pixelsize; //position of current localization
 						posY = (sl[1]-yMin)/pixelsize;
-						posZ = (sl[2])-zMin;;
+						posZ = (sl[2])-zMin;
 						break;
 					case 2:
 						posX = (sl[0]-xMin)/pixelsize; //position of current localization
 						posY = (sl[2]-zMin)/pixelsize;
-						posZ = (sl[1])-zMin;;
+						posZ = (sl[1])-zMin;
 						break;
 					case 3:
 						posX = (sl[1]-yMin)/pixelsize; //position of current localization
@@ -692,60 +701,12 @@ public class Calc {
 					for(int l= pixelYStart; l<pixelYStart+ filterwidth;l++){
 						double kk = 1;
 						try{
-							if (inverted){
-								if (posZ < 0.25* zMax){
-									redChannel[k][l] = redChannel[k][l] - (float)((4*posZ / zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									greenChannel[k][l] = greenChannel[k][l] - (float)((4*posZ / zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));	
-								}
-								else if (posZ < 0.5* zMax){
-									redChannel[k][l] = redChannel[k][l] -(float)((4*posZ/zMax - 1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									blueChannel[k][l] = blueChannel[k][l] -(float)((4*posZ/zMax - 1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									greenChannel[k][l] = greenChannel[k][l] - (float)((2 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									redChannel[k][l] = redChannel[k][l] - (float)((2 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									//blueChannel[k][l] = blueChannel[k][l] + (float)((1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								}
-								else if (posZ < 0.75* zMax){
-									
-									redChannel[k][l] = redChannel[k][l] - (float)((4*posZ/zMax - 2)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									blueChannel[k][l] = blueChannel[k][l] - (float)((4*posZ/zMax - 2)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									
-									redChannel[k][l] = redChannel[k][l] - (float)((3 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									greenChannel[k][l] = greenChannel[k][l] - (float)((3 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								}
-								else {
-									greenChannel[k][l] = greenChannel[k][l] - (float)((4*posZ/zMax - 3)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									blueChannel[k][l] = blueChannel[k][l] - (float)((4*posZ/zMax - 3)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									blueChannel[k][l] = blueChannel[k][l] - (float)((4-4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									redChannel[k][l] = redChannel[k][l] - (float)((4-4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								}
-							}
-							else{
-								if (posZ < 0.25* zMax){
-									//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									//greenChannel[k][l] = greenChannel[k][l] + (float)((posZ)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									//blue rises from 0 to 1
-									blueChannel[k][l] = blueChannel[k][l] + (float)((4*posZ / zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									
-								}
-								else if (posZ < 0.5* zMax){
-									//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									//green rises from 0 to 1 blue stays one
-									greenChannel[k][l] = greenChannel[k][l] + (float)((4*posZ/zMax - 1)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									blueChannel[k][l] = blueChannel[k][l] + (float)((2 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								}
-								else if (posZ < 0.75* zMax){
-									//green stays one, blue goes to zero again
-									//redChannel[k][l] = redChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									greenChannel[k][l] = greenChannel[k][l] + (float)((4*posZ/zMax - 2)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									blueChannel[k][l] = blueChannel[k][l] + (float)((3 - 4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								}
-								else {
-									//green goes to zero red rises
-									redChannel[k][l] = redChannel[k][l] + (float)((4*posZ/zMax - 3)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									greenChannel[k][l] = greenChannel[k][l] + (float)((4-4*posZ/zMax)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-									//blueChannel[k][l] = blueChannel[k][l] + (float)((0)*factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-								}
-							}
+							
+							float weight = (float) (factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
+							redChannel[k][l] = redChannel[k][l] + getColor(posZ,zMax,0) * weight;
+							greenChannel[k][l] = greenChannel[k][l] +getColor(posZ,zMax,1) * weight;
+							blueChannel[k][l] = blueChannel[k][l] +getColor(posZ,zMax,2) * weight;
+							
 							
 						} catch(IndexOutOfBoundsException e){e.toString();}
 					}
@@ -779,10 +740,51 @@ public class Calc {
 		return coloredImage;
 	}
 	
+	private static float getColor(double posZ, float zMax, int color) {
+		
+		if (posZ < 0.25* zMax){
+			//blue rises from 0 to 1
+			if (color == 2){
+				return (float) (4*posZ / zMax);
+			}
+		}
+		else if (posZ < 0.5* zMax){
+			//green rises from 0 to 1 blue stays one
+			if (color == 1){
+				return (float)(4*posZ/zMax - 1);
+			}
+			if (color == 2){
+				return (float) 1;//(2 - 4*posZ/zMax)	;
+			}
+		}
+		else if (posZ < 0.75* zMax){
+			//green stays one, blue goes to zero again
+			if (color == 1){
+				return (float) 1;//(4*posZ/zMax - 2);
+			}
+			if (color == 2){
+				return (float) (3 - 4*posZ/zMax);
+			}
+		}
+		else {
+			//green goes to zero red rises
+			if (color == 0){
+				return (float) (4*posZ/zMax - 3);
+			}
+			if (color == 1){
+				return (float) (4-4*posZ/zMax);
+			}
+		}
+		return 0;
+	}
+
 	public static float[][] addFilteredPoints(float[][] image, double sigma, int filterwidth, 
-			double pixelsize, float[][] sd, int mode, double xmin, double ymin, double zmin,
+			double pixelsize, float[][] sd, int mode, ArrayList<Float> dims,
 			ArrayList<Float> borders){
 		if (filterwidth %2 == 0) {System.err.println("filterwidth must be odd");}
+		float xmin = dims.get(0);
+		float ymin = dims.get(2);
+		float zmin = dims.get(4);
 		double factor = 100*1/(2*Math.PI*sigma*sigma);
 		double factor2 = -0.5/sigma/sigma;
 		//System.out.println(sd.getSize());

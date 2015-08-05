@@ -93,7 +93,15 @@ public class FileManager {
 		return p;
 	}
 
-	public static void writeProjectionToFile(DataSet dataset, String path, int mode,ArrayList<Float> borders) {
+	public static void ExportToFile(DataSet dataset, String path, int mode,ArrayList<Float> borders) {
+	
+		String basename = path.substring(0, path.length()-4);
+		writeProjectionToFile(dataset,path,mode,borders);
+		writeLocalizationsToFile(dataset.stormData,basename);
+		writeLogFile(dataset, basename,borders);
+	}
+	
+	private static void writeProjectionToFile(DataSet dataset, String path, int mode, ArrayList<Float> borders){
 		float[][] stormData = dataset.stormData;
 		double pixelsize = 10;
 		double sigma = 20/pixelsize; //in nm sigma to blur localizations
@@ -104,13 +112,20 @@ public class FileManager {
 		float ymax = Calc.max(stormData, 1);
 		float zmin = Calc.min(stormData, 2);
 		float zmax = Calc.max(stormData, 2);
+		ArrayList<Float> dims = new ArrayList<Float>();
+		dims.add(xmin);
+		dims.add(xmax);
+		dims.add(ymin);
+		dims.add(ymax);
+		dims.add(zmin);
+		dims.add(zmax);
 		int pixelX = 0;
 		int pixelY = 0;
 		if (mode == 0){
 			mode = 1;
 		}
 		
-		switch (mode){
+		switch (mode){//which projection is exported
 			case 1://xy
 				pixelX =(int) Math.pow(2, Math.ceil(Math.log((xmax-xmin) / pixelsize)/Math.log(2)));
 				pixelY = (int) Math.pow(2, Math.ceil(Math.log((ymax-ymin) / pixelsize)/Math.log(2)));
@@ -126,22 +141,42 @@ public class FileManager {
 		}
 		
 		float [][] image = new float[pixelX][pixelY];
-		image = Calc.addFilteredPoints(image, sigma, filterwidth, pixelsize, stormData,mode,xmin,ymin,zmin,borders);
+		image = Calc.addFilteredPoints(image, sigma, filterwidth, pixelsize, stormData,mode,dims,borders);
+		write2dImage(pixelX, pixelY, image, path);
+		
+		ArrayList<float[][]> coloredImage = new ArrayList<float[][]>();
+		for (int i = 0; i<3; i++){
+			float[][] ch = new float[pixelX][pixelY];
+			coloredImage.add(ch);
+		}
+		
+		coloredImage = Calc.addFilteredPoints3D(coloredImage, sigma, filterwidth, pixelsize, stormData,mode,borders,dims);
+		write3dImage(pixelX, pixelY, coloredImage, path);
+		
+		ArrayList<float[][]> colorBar = new ArrayList<float[][]>();
+		for (int i = 0; i<3; i++){
+			float[][] ch = new float[512][30];
+			colorBar.add(ch);
+		}
+		colorBar = Calc.fillColorBar(colorBar, dims.get(4), dims.get(5));
+		String tag = "ColorBar_zmin" + dims.get(4)+"_zmax"+dims.get(5); 
+		write3dImage(512,30,colorBar,path,tag);
+
+	}
+	
+
+	private static void write2dImage(int pixelX, int pixelY, float[][] image,String path){
 		ImageProcessor ip = new FloatProcessor(pixelX,pixelY);
 		ip.setFloatArray(image);
 		ImagePlus imgP = new ImagePlus("", ip);
 		//System.out.println("Image rendered ("+imgP.getWidth()+"*"+imgP.getHeight()+")");
 		ij.IJ.save(new ImagePlus("",imgP.getProcessor().convertToByte(false)), path);
 		ij.IJ.save(imgP, path);
-		
-		float [][] imageRed = new float[pixelX][pixelY];
-		float [][] imageGreen = new float[pixelX][pixelY];
-		float [][] imageBlue = new float[pixelX][pixelY];
-		ArrayList<float[][]> coloredImage = new ArrayList<float[][]>();
-		coloredImage.add(imageRed);
-		coloredImage.add(imageGreen);
-		coloredImage.add(imageBlue);
-		coloredImage = Calc.addFilteredPoints3D(coloredImage, sigma, filterwidth, pixelsize, stormData,mode,borders);
+	}
+	private static void write3dImage(int pixelX, int pixelY, ArrayList<float[][]> coloredImage,String path){
+		write3dImage(pixelX, pixelY, coloredImage, path,"");
+	}
+	private static void write3dImage(int pixelX, int pixelY, ArrayList<float[][]> coloredImage,String path,String tag){
 		ImageProcessor ipRed = new FloatProcessor(pixelX,pixelY);
 		ImageProcessor ipGreen = new FloatProcessor(pixelX,pixelY);
 		ImageProcessor ipBlue = new FloatProcessor(pixelX,pixelY);
@@ -158,12 +193,9 @@ public class FileManager {
 		colImg.add(imgPBlue);
 		
 		String basename = path.substring(0, path.length()-4);
-		ij.IJ.save(colImg.get(0),basename+"redCh.tif");
-		ij.IJ.save(colImg.get(1),basename+"greenCh.tif");
-		ij.IJ.save(colImg.get(2),basename+"blueCh.tif");
-			
-		writeLocalizationsToFile(stormData,basename);
-		writeLogFile(dataset, basename,borders);
+		ij.IJ.save(colImg.get(0),basename+tag+"redCh.tif");
+		ij.IJ.save(colImg.get(1),basename+tag+"greenCh.tif");
+		ij.IJ.save(colImg.get(2),basename+tag+"blueCh.tif");
 	}
 
 	private static void writeLogFile(DataSet dataset, String basename,ArrayList<Float> borders) {
