@@ -205,7 +205,7 @@ public class FileManager {
 			writer.append("Automatically generated Logfile containing all settings.\n");
 			writer.append("Angle of antibodies [degree]: "+ ps.getAoa()+"\n");
 			writer.append("Bindingsites per nm [nm^-1]: " + ps.getBspnm()+"\n");
-			writer.append("Labeling efficiency [%]: "+ ps.getPabs()+"\n");
+			writer.append("Labeling efficiency [%]: "+ ps.getPabs()*100+"\n");
 			writer.append("Radius of filament [nm]: " + ps.getRof()+"\n");
 			writer.append("Fluorophores per label: "+ ps.getFpab()+"\n");
 			writer.append(String.format("Color model [r,g,b]: %d, %d, %d\n", ps.getEmColor().getRed(),ps.getEmColor().getGreen(),ps.getEmColor().getBlue()));
@@ -219,6 +219,7 @@ public class FileManager {
 			writer.append("K_Off time [AU]: "+ ps.getKOff()+"\n");
 			writer.append("Bleaching constant [1/10000 frames]: "+ ps.getBleachConst()+"\n");
 			writer.append("Median photon number: "+ps.getMeanPhotonNumber()+"\n");
+			writer.append("Detection efficiency [%]: "+ ps.getDeff()*100+"\n");
 			if (ps.getGeneralVisibility()){
 				writer.append("General visibility: TRUE\n");
 			}

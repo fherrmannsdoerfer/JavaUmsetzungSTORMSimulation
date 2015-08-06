@@ -189,19 +189,15 @@ public class StormPointFinder {
 		ArrayList<Integer> maxFrames = new ArrayList<Integer>();
 		for (int i = 0; i<listEndPoints.length; i++){
 			while (true){
-				int maxFrame =(int) (Math.random() * frames);
-				if (applyBleaching){ //with bleaching activated higher frames have a lower probability to be populated
-					double randomNumber = Math.random(); //random number is equally distributed between 0 and 1 and it is used
-					double tmp = Math.exp(-kBleach*maxFrame);
-					if (randomNumber < tmp){ //to be tested for the probability that this frame gets this 
-						maxFrames.add(maxFrame); //localization. If it is smaller maxFrame is stored and the while loop is left
-						break;
-					}		//if it is to large a new maxFrame is determined.
-				}
-				else{ //without bleaching each frame is as likely for a certain localization
-					maxFrames.add(maxFrame);
+				int maxFrame =(int) (Math.random() * frames*10);
+				//with bleaching activated higher frames have a lower probability to be populated
+				double randomNumber = Math.random(); //random number is equally distributed between 0 and 1 and it is used
+				double tmp = Math.exp(-kBleach*maxFrame);
+				if (randomNumber < tmp){ //to be tested for the probability that this frame gets this 
+					maxFrames.add(maxFrame); //localization. If it is smaller maxFrame is stored and the while loop is left
 					break;
-				}
+				}		//if it is to large a new maxFrame is determined.
+
 			}
 		}
 				
@@ -216,6 +212,9 @@ public class StormPointFinder {
 			calc.publicSetProgress((int) (1.*i/listEndPoints.length*100.));
 			for (int frame = 0; frame < maxFrames.get(i); frame ++){
 				double blinkingTest = Math.random();
+				if (frame>frames){
+					break;
+				}
 				if (blinkingTest <= (kOn/kOff)){
 					float intensity = intensities.get((int) (Math.random()*intensities.size()-1));
 					if (ps.getCoupleSigmaIntensity()){
