@@ -203,6 +203,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	float ymax =  (float) -9e99;
 	float zmin =  (float) +9e99;
 	float zmax =  (float) -9e99;
+	JCheckBox keepBordersChkBox;
 	ArrayList<Float> borders = new ArrayList<Float>();
 	private JTextField bleachConstantField;
 	private JTextField detectionEfficiencyField;
@@ -476,7 +477,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_5 = Box.createHorizontalBox();
 		verticalBox_10.add(horizontalBox_5);
 		
-		JLabel lblMeanAngle = new JLabel("Mean Binding Angle (Degree)");
+		JLabel lblMeanAngle = new JLabel("Binding Angle (Degree)");
 		horizontalBox_5.add(lblMeanAngle);
 		
 		Component horizontalGlue_5 = Box.createHorizontalGlue();
@@ -963,6 +964,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				
 				Component verticalGlue_24 = Box.createVerticalGlue();
 				verticalBox_8.add(verticalGlue_24);
+				
+				keepBordersChkBox = new JCheckBox("Keep Borders");
+				verticalBox_8.add(keepBordersChkBox);
 				
 				Component horizontalGlue_36 = Box.createHorizontalGlue();
 				horizontalBox_30.add(horizontalGlue_36);
@@ -1888,48 +1892,53 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				
 		}
 		else{ // if the dims have changed update sliders
-			xminSlider.setMinimum(maxDims.get(0).intValue());
-			xminSlider.setMaximum(maxDims.get(1).intValue());
-			xminSlider.setValue(xminSlider.getMinimum());
-			
-			xmaxSlider.setMinimum(maxDims.get(0).intValue());
-			xmaxSlider.setMaximum(maxDims.get(1).intValue());
-			xmaxSlider.setValue(xmaxSlider.getMaximum());
-			
-			yminSlider.setMinimum(maxDims.get(2).intValue());
-			yminSlider.setMaximum(maxDims.get(3).intValue());
-			yminSlider.setValue(yminSlider.getMinimum());
-			
-			ymaxSlider.setMinimum(maxDims.get(2).intValue());
-			ymaxSlider.setMaximum(maxDims.get(3).intValue());
-			ymaxSlider.setValue(ymaxSlider.getMaximum());
-			
-			zminSlider.setMinimum(maxDims.get(4).intValue());
-			zminSlider.setMaximum(maxDims.get(5).intValue());
-			zminSlider.setValue(zminSlider.getMinimum());
-			
-			zmaxSlider.setMinimum(maxDims.get(4).intValue());
-			zmaxSlider.setMaximum(maxDims.get(5).intValue());
-			zmaxSlider.setValue(zmaxSlider.getMaximum());
-			xmin = maxDims.get(0);
-			ymin = maxDims.get(2);
-			zmin = maxDims.get(4);
-			xmax = maxDims.get(1);
-			ymax = maxDims.get(3);
-			zmax = maxDims.get(5);
-			xminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(0)));
-			xmaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(1)));
-			yminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(2)));
-			ymaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(3)));
-			zminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(4)));
-			zmaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(5)));
-			borders.clear();
-			borders.add(xmin);
-			borders.add(xmax);
-			borders.add(ymin);
-			borders.add(ymax);
-			borders.add(zmin);
-			borders.add(zmax);
+			if (keepBordersChkBox.isSelected()){
+				
+			}
+			else{
+				xminSlider.setMinimum(maxDims.get(0).intValue());
+				xminSlider.setMaximum(maxDims.get(1).intValue());
+				xminSlider.setValue(xminSlider.getMinimum());
+				
+				xmaxSlider.setMinimum(maxDims.get(0).intValue());
+				xmaxSlider.setMaximum(maxDims.get(1).intValue());
+				xmaxSlider.setValue(xmaxSlider.getMaximum());
+				
+				yminSlider.setMinimum(maxDims.get(2).intValue());
+				yminSlider.setMaximum(maxDims.get(3).intValue());
+				yminSlider.setValue(yminSlider.getMinimum());
+				
+				ymaxSlider.setMinimum(maxDims.get(2).intValue());
+				ymaxSlider.setMaximum(maxDims.get(3).intValue());
+				ymaxSlider.setValue(ymaxSlider.getMaximum());
+				
+				zminSlider.setMinimum(maxDims.get(4).intValue());
+				zminSlider.setMaximum(maxDims.get(5).intValue());
+				zminSlider.setValue(zminSlider.getMinimum());
+				
+				zmaxSlider.setMinimum(maxDims.get(4).intValue());
+				zmaxSlider.setMaximum(maxDims.get(5).intValue());
+				zmaxSlider.setValue(zmaxSlider.getMaximum());
+				xmin = maxDims.get(0);
+				ymin = maxDims.get(2);
+				zmin = maxDims.get(4);
+				xmax = maxDims.get(1);
+				ymax = maxDims.get(3);
+				zmax = maxDims.get(5);
+				xminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(0)));
+				xmaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(1)));
+				yminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(2)));
+				ymaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(3)));
+				zminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(4)));
+				zmaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(5)));
+				borders.clear();
+				borders.add(xmin);
+				borders.add(xmax);
+				borders.add(ymin);
+				borders.add(ymax);
+				borders.add(zmin);
+				borders.add(zmax);
+			}
 		}
 		
 		plot.borders = getBorders();
