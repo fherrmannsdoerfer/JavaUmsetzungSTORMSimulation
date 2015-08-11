@@ -127,8 +127,8 @@ public class FileManager {
 		
 		switch (mode){//which projection is exported
 			case 1://xy
-				pixelX =(int) Math.pow(2, Math.ceil(Math.log((xmax-xmin) / pixelsize)/Math.log(2)));
-				pixelY = (int) Math.pow(2, Math.ceil(Math.log((ymax-ymin) / pixelsize)/Math.log(2)));
+				pixelX =(int) Math.pow(2, Math.ceil(Math.log((30000) / pixelsize)/Math.log(2)));
+				pixelY = (int) Math.pow(2, Math.ceil(Math.log((30000) / pixelsize)/Math.log(2)));
 				break;
 			case 2://xz
 				pixelX =(int) Math.pow(2, Math.ceil(Math.log((xmax-xmin) / pixelsize)/Math.log(2)));
