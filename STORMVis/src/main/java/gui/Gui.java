@@ -36,6 +36,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -1426,6 +1427,12 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			}
 		});
 		
+		Component horizontalGlue_39 = Box.createHorizontalGlue();
+		toolBar.add(horizontalGlue_39);
+		
+		Component horizontalGlue_38 = Box.createHorizontalGlue();
+		toolBar.add(horizontalGlue_38);
+		
 		toolBar.add(saveProjectButton);
 		
 		JButton exportButton = new JButton("Export");
@@ -1460,6 +1467,23 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Component rigidArea = Box.createRigidArea(new Dimension(20, 20));
 		toolBar.add(rigidArea);
 		toolBar.add(exportButton);
+		
+		Component horizontalGlue_25 = Box.createHorizontalGlue();
+		toolBar.add(horizontalGlue_25);
+		
+		JButton aboutButton = new JButton("About");
+		aboutButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				String text = "<html>SuReSim  Copyright (C) 2015  Frank Herrmannsdörfer, Varun Venkataramani, Max Scheurer<p>"
+			      + "This program comes with ABSOLUTELY NO WARRANTY;<p>"
+			      + "This is free software, and you are welcome to redistribute it under certain conditions. <p>"
+			      + "For more details see http://www.gnu.org/licenses/gpl-3.0.html</html>";
+					
+				JOptionPane.showMessageDialog(null, text, "About", JOptionPane.OK_CANCEL_OPTION);
+			}
+		});
+		toolBar.add(aboutButton);
 		
 		calc = new STORMCalculator(null);
 	}
