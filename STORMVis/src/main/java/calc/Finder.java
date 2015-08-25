@@ -40,7 +40,7 @@ public class Finder {
 //		Calc.print2dMatrix(basePointPair.getValue0());
 		float[][] basepoints = basePointPair.getValue0();
 		int[] idx = basePointPair.getValue1();
-		float[][] ep = getEndpoints(basepoints, triangles, idx, loa, aoa);
+		float[][] ep = getEndpoints(basepoints, triangles, idx, loa, aoa,calc);
 		return new Pair<float[][],float[][]>(basepoints,ep);
 	}
 	
@@ -54,8 +54,8 @@ public class Finder {
 		progressBar.setString("Finding Basepoints");
 		for (int f = 0; f < nbrFluorophores; f++) {
 			while(true) {
-				double randx = Math.random();
-				double randy = Math.random();
+				double randx = calc.random.nextDouble();
+				double randy = calc.random.nextDouble();
 				//if (f%(nbrFluorophores/100)==0) {
 					calc.publicSetProgress((int) (1.*f/nbrFluorophores*100.));
 				//}
@@ -163,13 +163,13 @@ public class Finder {
 	}
 	
 	public static float[][] getEndpoints(float[][] basepoints,float[][][] tr,
-			int[] idx,float loa,float aoa) {
+			int[] idx,float loa,float aoa, STORMCalculator calc) {
 		Pair<float[][],float[][]> vecPair = Calc.getVertices(tr);
 		float[][] vec1 = vecPair.getValue0();
 		float[][] vec2 = vecPair.getValue1();
 		float[][] ep = new float[basepoints.length][3]; //x,y,z,frame,intensity
 		for(int i = 0; i < basepoints.length; i++) {
-			float[] vec = Calc.getVectorTri(aoa,loa);
+			float[] vec = Calc.getVectorTri(aoa,loa,calc);
 			float[] normTri = Calc.getCross(vec1[idx[i]],vec2[idx[i]]);
 			float[] vec3 = {0,1,0};
 			float[] normTri3 = {0,1,1};
@@ -207,7 +207,7 @@ public class Finder {
 	    float[] randd = new float[nbrFluorophores];
 	    // random number initialization used to determine on which triangle the antibody binds
 	    for (int i = 0;i < nbrFluorophores;i++) {
-	    	randd[i] = (float) Math.random();
+	    	randd[i] = (float) calc.random.nextFloat();
 	    }
 	    int startidx = 0;
 	    for (int i = 0; i < nbrFluorophores; i++) {

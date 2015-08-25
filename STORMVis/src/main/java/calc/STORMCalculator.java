@@ -6,6 +6,7 @@ import gui.DataTypeDetector.DataType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
@@ -30,9 +31,11 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
     List<float[][]> trList;
     
     DataSet currentDataSet;
+    public Random random;
 	
-	public STORMCalculator(DataSet set) {
+	public STORMCalculator(DataSet set, Random random) {
 		this.currentDataSet = set;
+		this.random = random;
 	}
 	
 	

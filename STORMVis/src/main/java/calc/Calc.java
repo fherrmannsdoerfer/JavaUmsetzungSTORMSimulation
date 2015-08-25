@@ -283,8 +283,8 @@ public class Calc {
 	 * @return vector with antibody angle and length for triangles and lines
 	 */
 	
-	public static float[] getVectorTri(float aoa, float length) {
-		double alpha = Math.random()*2*Math.PI;
+	public static float[] getVectorTri(float aoa, float length, STORMCalculator calc) {
+		double alpha =  calc.random.nextDouble() *2*Math.PI;
 		double x = Math.cos(aoa)*Math.cos(alpha);
 		double y = Math.cos(aoa)*Math.sin(alpha);
 		double z = Math.sin(aoa);
@@ -447,15 +447,6 @@ public class Calc {
 		return m;
 	}
 	
-	/**
-	 * Random number generator
-	 * @param high
-	 * @return float in [0,high];
-	 */
-	
-	public static float rand(float high) {
-		return (float) (Math.random() * high);
-	}
 	
 	/**
 	 * Random vector multiplied with multiplier
@@ -464,10 +455,10 @@ public class Calc {
 	 * @return random Vector * multiplier
 	 */
 	
-	public static float[] randVector(int dimension, float min, float max) {
+	public static float[] randVector(int dimension, float min, float max,STORMCalculator calc) {
 		float[] result = new float[dimension];
 		for(int i = 0; i < dimension; i++) {
-			result[i] = (float) Math.random() * (max - min) + min;
+			result[i] = (float) calc.random.nextFloat() * (max - min) + min;
 		}
 		return result;
 	}
@@ -623,18 +614,7 @@ public class Calc {
 		return result;
 	}
 	
-	private static Random generator = new Random(System.currentTimeMillis());
-	// Normally distributed rnd numbers
-	public static float randn() {
-		double result = generator.nextGaussian();
-		return (float) result;
-	}
-	
-	public static int randInt(int min, int max) {
-	    Random rand = new Random();
-	    int randomNum = rand.nextInt((max - min) + 1) + min;
-	    return randomNum;
-	}
+
 	
 	public static ArrayList<float[][]> fillColorBar(ArrayList<float[][]> colorBar, float zmin, float zmax){
 		int width = colorBar.get(0)[0].length;

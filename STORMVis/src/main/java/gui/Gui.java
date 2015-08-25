@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
@@ -120,7 +121,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JCheckBox showAntibodiesBox;
 	private JCheckBox mergePSFBox;
 	private JCheckBox applyBleachBox;
-	JCheckBox coupleSigmaIntensityBox;
+	private JCheckBox reproducibleOutputchkBox;
+	private JCheckBox coupleSigmaIntensityBox;
 	
 	private final JLabel loadDataLabel = new JLabel("Please import data or select a representation.");
 	private JTable dataSetTable;
@@ -138,6 +140,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JComboBox exampleComboBox;
 	
 	public STORMCalculator calc;
+	
+	private Random random;
 	
 	int fontSize = 12;
 	Font usedFont = new Font("Dialog",Font.BOLD,fontSize);
@@ -684,22 +688,28 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		detectionEfficiencyField.setColumns(5);
 		horizontalBox_38.add(detectionEfficiencyField);
 		
-		JButton calcButton = new JButton("Calculate");
-		calcButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		calcButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				calculate();
-			}
-		});
-		
 		progressBar = new JProgressBar();
 		verticalBox.add(progressBar);
 		progressBar.setStringPainted(true);
 		
 		Component verticalGlue_21 = Box.createVerticalGlue();
 		verticalBox.add(verticalGlue_21);
-		verticalBox.add(calcButton);
+		
+		Box horizontalBox_37 = Box.createHorizontalBox();
+		verticalBox.add(horizontalBox_37);
+		
+		JButton calcButton = new JButton("Calculate");
+		horizontalBox_37.add(calcButton);
+		calcButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		reproducibleOutputchkBox = new JCheckBox("Reproducible Output");
+		horizontalBox_37.add(reproducibleOutputchkBox);
+		calcButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				calculate();
+			}
+		});
 		
 		Component verticalGlue_16 = Box.createVerticalGlue();
 		verticalBox.add(verticalGlue_16);
@@ -1485,7 +1495,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		});
 		toolBar.add(aboutButton);
 		
-		calc = new STORMCalculator(null);
+		calc = new STORMCalculator(null,null);
 	}
 	
 	
@@ -1671,6 +1681,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	 * @throws Exception 
 	 */
 	private void calculate() {
+		setUpRandomNumberGenerator();
 		if (allDataSets.size()<1){
 			return;
 		}
@@ -1703,7 +1714,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setApplyBleaching(applyBleachBox.isSelected());
 		allDataSets.get(currentRow).getParameterSet().setCoupleSigmaIntensity(coupleSigmaIntensityBox.isSelected());
 		
-		calc = new STORMCalculator(allDataSets.get(currentRow));
+		calc = new STORMCalculator(allDataSets.get(currentRow),this.random);
 		//calc = new STORMCalculator(allDataSets.get(currentRow));
 		calc.addPropertyChangeListener(this);
 		calc.execute();
@@ -1712,6 +1723,21 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		//visualizeAllSelectedData();
 	}
 	
+
+	private void setUpRandomNumberGenerator() {
+		if (reproducibleOutputchkBox.isSelected()){
+			this.random = new Random(1);
+		} else {
+			this.random = new Random(System.currentTimeMillis());
+		}
+	}
+	
+//	public double getNextRandomDoubleNumber(){
+//		return this.random.nextDouble();
+//	}
+//	public int getNextRandomIntNumber(){
+//		return this.random.nextInt();
+//	}
 
 	/**
 	 * invoked by visualize button

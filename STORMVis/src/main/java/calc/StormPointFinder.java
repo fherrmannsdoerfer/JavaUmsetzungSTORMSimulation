@@ -33,10 +33,10 @@ public class StormPointFinder {
 		boolean applyBleaching = ps.getApplyBleaching();
 		
 		if (background) { //unspecific labeling
-			listEndPoints = addBackground(listEndPoints, ilpmm3);	
+			listEndPoints = addBackground(listEndPoints, ilpmm3,calc);	
     	}
 		if (fpab != 1){
-			listEndPoints = addMultipleFluorophoresPerAntibody(listEndPoints, fpab);
+			listEndPoints = addMultipleFluorophoresPerAntibody(listEndPoints, fpab,calc);
 		}
 		float[][] stormPoints;
 		if (applyBleaching){
@@ -57,31 +57,6 @@ public class StormPointFinder {
 		//return new float[2][2];
 	}
 	
-	//model for frequency of intensities is exponential decay p(I) = exp(-kI)
-	//no intensities under 1000 photons are assumed to be fitted
-	private static float[][] assignFrameAndIntensity(float[][] listEndPoints,
-			int frames, int meanPhotonNumber) {
-		float[][] augmentEp = new float[listEndPoints.length][5];
-		double k = -Math.log(0.5)/(meanPhotonNumber-1000);
-		double factor = 500;
-		ArrayList<Float> intensities = new ArrayList<Float>();
-		for (int i = 1000; i<7*meanPhotonNumber; i++){
-			for (int j = 0; j<Math.ceil(factor * Math.exp(-k*i)); j++){
-				//System.out.println(Math.ceil(factor * Math.exp(-k*i)));
-				intensities.add((float) i);
-			}
-		}
-		int numberCoordinats = listEndPoints.length;
-		for (int i = 0; i< numberCoordinats; i++){
-			augmentEp[i][0] = listEndPoints[i][0];
-			augmentEp[i][1] = listEndPoints[i][1];
-			augmentEp[i][2] = listEndPoints[i][2];
-			augmentEp[i][3] = (int) (Math.random()*frames);
-			augmentEp[i][4] = intensities.get((int) (Math.random()*intensities.size()-2));
-		}
-		return augmentEp;
-	}
-
 	//creates multiple blinking events based on the enpoints of the antibodies
 	//also multiple fluorophores per antibody are taken into account
 	private static float[][] createStormPoints(float[][] listEndPoints, ParameterSet ps, 
@@ -103,7 +78,7 @@ public class StormPointFinder {
 		float[] nbrBlinkingEvents = new float[listEndPoints.length];
 		float abpf = ps.getFrames() * ps.getKOn() / ps.getKOff()* ps.getDeff(); //average blinking per fluorophore
 		for (int i = 0; i < listEndPoints.length; i++) {
-			nbrBlinkingEvents[i] = (float) (Calc.randn() * Math.sqrt(abpf) + abpf);
+			nbrBlinkingEvents[i] = (float) (calc.random.nextFloat() * Math.sqrt(abpf) + abpf);
 			if(nbrBlinkingEvents[i] < 0) {
 				nbrBlinkingEvents[i] = 0;
 			}
@@ -136,18 +111,18 @@ public class StormPointFinder {
 			ArrayList<Integer> idxList= new ArrayList<Integer>();
 			
 			for (int k1 = 0; k1 < idxArray.size(); k1++) {
-				intensity[k1] = intensities.get((int) (Math.random()*intensities.size()-1));
-				frame[k1] = (int) (Math.random()*frames);
+				intensity[k1] = intensities.get((int) (calc.random.nextDouble()*intensities.size()-1));
+				frame[k1] = (int) (calc.random.nextDouble()*frames);
 				idxList.add(k1);
 				if (ps.getCoupleSigmaIntensity()){
-					x[k1] = (float) (listEndPointsTranspose[0][idxArray.get(k1).intValue()] + Calc.randn()*(sxy/Math.sqrt(intensity[k1]/meanPhotonNumber)));
-					y[k1] = (float) (listEndPointsTranspose[1][idxArray.get(k1).intValue()] + Calc.randn()*(sxy/Math.sqrt(intensity[k1]/meanPhotonNumber)));
-					z[k1] = (float) (listEndPointsTranspose[2][idxArray.get(k1).intValue()] + Calc.randn()*(sz/Math.sqrt(intensity[k1]/meanPhotonNumber)));
+					x[k1] = (float) (listEndPointsTranspose[0][idxArray.get(k1).intValue()] + calc.random.nextFloat()*(sxy/Math.sqrt(intensity[k1]/meanPhotonNumber)));
+					y[k1] = (float) (listEndPointsTranspose[1][idxArray.get(k1).intValue()] + calc.random.nextFloat()*(sxy/Math.sqrt(intensity[k1]/meanPhotonNumber)));
+					z[k1] = (float) (listEndPointsTranspose[2][idxArray.get(k1).intValue()] + calc.random.nextFloat()*(sz/Math.sqrt(intensity[k1]/meanPhotonNumber)));
 				}
 				else {
-					x[k1] = (listEndPointsTranspose[0][idxArray.get(k1).intValue()] + Calc.randn()*(sxy));
-					y[k1] = (listEndPointsTranspose[1][idxArray.get(k1).intValue()] + Calc.randn()*(sxy));
-					z[k1] = (listEndPointsTranspose[2][idxArray.get(k1).intValue()] + Calc.randn()*(sz));
+					x[k1] = (listEndPointsTranspose[0][idxArray.get(k1).intValue()] + calc.random.nextFloat()*(sxy));
+					y[k1] = (listEndPointsTranspose[1][idxArray.get(k1).intValue()] + calc.random.nextFloat()*(sxy));
+					z[k1] = (listEndPointsTranspose[2][idxArray.get(k1).intValue()] + calc.random.nextFloat()*(sz));
 				}
 				
 			}
@@ -189,9 +164,9 @@ public class StormPointFinder {
 		ArrayList<Integer> maxFrames = new ArrayList<Integer>();
 		for (int i = 0; i<listEndPoints.length; i++){
 			while (true){
-				int maxFrame =(int) (Math.random() * frames*10);
+				int maxFrame =(int) (calc.random.nextDouble() * frames*10);
 				//with bleaching activated higher frames have a lower probability to be populated
-				double randomNumber = Math.random(); //random number is equally distributed between 0 and 1 and it is used
+				double randomNumber = calc.random.nextDouble(); //random number is equally distributed between 0 and 1 and it is used
 				double tmp = Math.exp(-kBleach*maxFrame);
 				if (randomNumber < tmp){ //to be tested for the probability that this frame gets this 
 					maxFrames.add(maxFrame); //localization. If it is smaller maxFrame is stored and the while loop is left
@@ -211,21 +186,21 @@ public class StormPointFinder {
 		for (int i = 0; i< listEndPoints.length; i++){
 			calc.publicSetProgress((int) (1.*i/listEndPoints.length*100.));
 			for (int frame = 0; frame < maxFrames.get(i); frame ++){
-				double blinkingTest = Math.random();
+				double blinkingTest = calc.random.nextDouble();
 				if (frame>frames){
 					break;
 				}
 				if (blinkingTest <= (kOn/kOff)){
-					float intensity = intensities.get((int) (Math.random()*intensities.size()-1));
+					float intensity = intensities.get((int) (calc.random.nextDouble()*intensities.size()-1));
 					if (ps.getCoupleSigmaIntensity()){
-						x = (float) (listEndPoints[i][0] + Calc.randn()*(sxy/Math.sqrt(intensity/meanPhotonNumber)));
-						y = (float) (listEndPoints[i][1] + Calc.randn()*(sxy/Math.sqrt(intensity/meanPhotonNumber)));
-						z = (float) (listEndPoints[i][2] + Calc.randn()*(sz/Math.sqrt(intensity/meanPhotonNumber)));
+						x = (float) (listEndPoints[i][0] + calc.random.nextFloat()*(sxy/Math.sqrt(intensity/meanPhotonNumber)));
+						y = (float) (listEndPoints[i][1] + calc.random.nextFloat()*(sxy/Math.sqrt(intensity/meanPhotonNumber)));
+						z = (float) (listEndPoints[i][2] + calc.random.nextFloat()*(sz/Math.sqrt(intensity/meanPhotonNumber)));
 					}
 					else {
-						x = (float) (listEndPoints[i][0] + Calc.randn()*(sxy));
-						y = (float) (listEndPoints[i][1] + Calc.randn()*(sxy));
-						z = (float) (listEndPoints[i][2] + Calc.randn()*(sz));
+						x = (float) (listEndPoints[i][0] + calc.random.nextFloat()*(sxy));
+						y = (float) (listEndPoints[i][1] + calc.random.nextFloat()*(sxy));
+						z = (float) (listEndPoints[i][2] + calc.random.nextFloat()*(sz));
 					}
 					float tmpLoc[] = {x,y,z,frame,intensity};
 					allStormPoints.add(tmpLoc);
@@ -351,10 +326,11 @@ public class StormPointFinder {
     	return Calc.toFloatArray(returnList);
 	}
 
-	private static float[][] addMultipleFluorophoresPerAntibody(float[][] listEndPoints, float fpab) {
+	private static float[][] addMultipleFluorophoresPerAntibody(float[][] listEndPoints, float fpab
+			,STORMCalculator calc) {
 		int[] idx = new int[listEndPoints.length]; 
 		for (int i = 0; i<listEndPoints.length;i++) { //get random number of fluorophore for each antibody
-			idx[i] = (int) Math.abs(Math.floor(Calc.randn() * Math.sqrt(fpab)+fpab));
+			idx[i] = (int) Math.abs(Math.floor(calc.random.nextGaussian() * Math.sqrt(fpab)+fpab));
 		}
 		for (int i = 0; i < idx.length; i++) {//make sure that each antibodie has at least 1 fluorophore
 			if(idx[i] == 0) {
@@ -375,7 +351,7 @@ public class StormPointFinder {
 			for (int c = 0; c < altPoints.length; c++) {
 				for (int u = 0; u < 3; u++) {
 					//find fluorophores in a sphere around the endpoint of the antibody
-					altPoints[c][u] = (float) (altPoints[c][u] + Calc.randn()*1.5);
+					altPoints[c][u] = (float) (altPoints[c][u] + calc.random.nextGaussian()*1.5);
 				}
 			}
 			
@@ -389,7 +365,7 @@ public class StormPointFinder {
 		return listEndPoints;
 	}
 
-	private static float[][] addBackground(float[][] listEndPoints, float ilpmm3) {
+	private static float[][] addBackground(float[][] listEndPoints, float ilpmm3,STORMCalculator calc) {
 		float xmin = Calc.min(listEndPoints, 0);
 		float xmax = Calc.max(listEndPoints, 0);
 		float ymin = Calc.min(listEndPoints, 1);
@@ -402,9 +378,9 @@ public class StormPointFinder {
 		//ilpmm3: //incorrect localizations per micrometer ^3
 		int numberOfIncorrectLocalizations = (int) Math.floor(ilpmm3*(xmax-xmin)/1e3*(ymax-ymin)/1e3*(zmax-zmin)/1e3);
 		System.out.println("noil:" + numberOfIncorrectLocalizations);
-		float[] x = Calc.randVector(numberOfIncorrectLocalizations, xmin, xmax);
-		float[] y = Calc.randVector(numberOfIncorrectLocalizations, ymin, ymax);
-		float[] z = Calc.randVector(numberOfIncorrectLocalizations, zmin, zmax);
+		float[] x = Calc.randVector(numberOfIncorrectLocalizations, xmin, xmax,calc);
+		float[] y = Calc.randVector(numberOfIncorrectLocalizations, ymin, ymax,calc);
+		float[] z = Calc.randVector(numberOfIncorrectLocalizations, zmin, zmax,calc);
 		if(numberOfIncorrectLocalizations == 0) {
 			System.out.println("No coordinates to append.");
 		}

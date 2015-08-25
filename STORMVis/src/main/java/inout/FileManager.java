@@ -208,6 +208,7 @@ public class FileManager {
 			writer.append("Labeling efficiency [%]: "+ ps.getPabs()*100+"\n");
 			writer.append("Radius of filament [nm]: " + ps.getRof()+"\n");
 			writer.append("Fluorophores per label: "+ ps.getFpab()+"\n");
+			writer.append("Label epitope distance [nm]: "+ps.getLoa()+"\n");
 			writer.append(String.format("Color model [r,g,b]: %d, %d, %d\n", ps.getEmColor().getRed(),ps.getEmColor().getGreen(),ps.getEmColor().getBlue()));
 			writer.append(String.format("Color simulation [r,g,b]: %d, %d, %d\n", ps.getStormColor().getRed(),ps.getStormColor().getGreen(),ps.getStormColor().getBlue()));
 			writer.append(String.format("Color label [r,g,b]: %d, %d, %d\n", ps.getAntibodyColor().getRed(),ps.getAntibodyColor().getGreen(),ps.getAntibodyColor().getBlue()));
