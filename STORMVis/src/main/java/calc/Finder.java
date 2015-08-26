@@ -105,7 +105,7 @@ public class Finder {
 				float lengthOfStructure = lengthAndCummulativeLength.getValue0().floatValue();
 				float[] cummulativeLengths = lengthAndCummulativeLength.getValue1();
 				for(int j = 1; j <= Math.floor(bspnm*lengthOfStructure); j++) {
-					float randomNumber = (float) Math.random();
+					float randomNumber = calc.random.nextFloat();
 					
 					if(randomNumber < pabs) {
 						int idx = 0;
@@ -120,7 +120,7 @@ public class Finder {
 						float z = points.get(i).get(idx+1)[2] - points.get(i).get(idx)[2];
 						float[] lineVec = new float[]{x,y,z};
 
-						float alpha = (float) (Math.random()*2*Math.PI);
+						float alpha = (float) (calc.random.nextDouble()*2*Math.PI);
 
 						float[] vecOrth = Calc.getVectorLine((float) (90./180.*Math.PI), rof,alpha);
 						float[] vec = Calc.getVectorLine(aoa, loa,alpha);
