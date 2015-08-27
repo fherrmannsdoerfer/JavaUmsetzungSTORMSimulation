@@ -688,6 +688,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		detectionEfficiencyField.setColumns(5);
 		horizontalBox_38.add(detectionEfficiencyField);
 		
+		reproducibleOutputchkBox = new JCheckBox("Reproducible Output");
+		verticalBox_11.add(reproducibleOutputchkBox);
+		
 		progressBar = new JProgressBar();
 		verticalBox.add(progressBar);
 		progressBar.setStringPainted(true);
@@ -701,9 +704,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		JButton calcButton = new JButton("Calculate");
 		horizontalBox_37.add(calcButton);
 		calcButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		
-		reproducibleOutputchkBox = new JCheckBox("Reproducible Output");
-		horizontalBox_37.add(reproducibleOutputchkBox);
 		calcButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
