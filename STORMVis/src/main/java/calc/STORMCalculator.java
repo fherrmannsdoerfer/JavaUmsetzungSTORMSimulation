@@ -3,12 +3,9 @@ package calc;
 
 import gui.DataTypeDetector.DataType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
 import model.DataSet;
@@ -16,10 +13,6 @@ import model.LineDataSet;
 import model.TriangleDataSet;
 
 import org.javatuples.Pair;
-import org.jzy3d.colors.Color;
-import org.jzy3d.maths.Coord3d;
-
-import common.ScatterDemo;
 
 /**
  * 
