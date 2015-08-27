@@ -774,8 +774,8 @@ public class Calc {
 			double posY = 0;
 			switch (mode){
 				case 1:
-					posX = (sl[0]-xmin+5000)/pixelsize; //position of current localization
-					posY = (sl[1]-ymin+5000)/pixelsize;
+					posX = (sl[0]-xmin)/pixelsize; //position of current localization
+					posY = (sl[1]-ymin)/pixelsize;
 					break;
 				case 2:
 					posX = (sl[0]-xmin)/pixelsize; //position of current localization
