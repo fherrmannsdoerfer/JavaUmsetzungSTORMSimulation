@@ -13,9 +13,6 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -49,13 +46,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
@@ -76,14 +70,11 @@ import javax.swing.JToggleButton;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 
-import java.awt.FlowLayout;
-
 import javax.swing.BoxLayout;
 
 import java.awt.CardLayout;
 
 import javax.swing.JSlider;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.JComboBox;
 
 
@@ -1726,7 +1717,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 
 	private void setUpRandomNumberGenerator() {
 		if (reproducibleOutputchkBox.isSelected()){
-			this.random = new Random(1);
+			this.random = new Random(2);
 		} else {
 			this.random = new Random(System.currentTimeMillis());
 		}
