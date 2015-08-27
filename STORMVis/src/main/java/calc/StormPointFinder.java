@@ -115,14 +115,14 @@ public class StormPointFinder {
 				frame[k1] = (int) (calc.random.nextDouble()*frames);
 				idxList.add(k1);
 				if (ps.getCoupleSigmaIntensity()){
-					x[k1] = (float) (listEndPointsTranspose[0][idxArray.get(k1).intValue()] + calc.random.nextFloat()*(sxy/Math.sqrt(intensity[k1]/meanPhotonNumber)));
-					y[k1] = (float) (listEndPointsTranspose[1][idxArray.get(k1).intValue()] + calc.random.nextFloat()*(sxy/Math.sqrt(intensity[k1]/meanPhotonNumber)));
-					z[k1] = (float) (listEndPointsTranspose[2][idxArray.get(k1).intValue()] + calc.random.nextFloat()*(sz/Math.sqrt(intensity[k1]/meanPhotonNumber)));
+					x[k1] = (float) (listEndPointsTranspose[0][idxArray.get(k1).intValue()] + calc.random.nextGaussian()*(sxy/Math.sqrt(intensity[k1]/meanPhotonNumber)));
+					y[k1] = (float) (listEndPointsTranspose[1][idxArray.get(k1).intValue()] + calc.random.nextGaussian()*(sxy/Math.sqrt(intensity[k1]/meanPhotonNumber)));
+					z[k1] = (float) (listEndPointsTranspose[2][idxArray.get(k1).intValue()] + calc.random.nextGaussian()*(sz/Math.sqrt(intensity[k1]/meanPhotonNumber)));
 				}
 				else {
-					x[k1] = (listEndPointsTranspose[0][idxArray.get(k1).intValue()] + calc.random.nextFloat()*(sxy));
-					y[k1] = (listEndPointsTranspose[1][idxArray.get(k1).intValue()] + calc.random.nextFloat()*(sxy));
-					z[k1] = (listEndPointsTranspose[2][idxArray.get(k1).intValue()] + calc.random.nextFloat()*(sz));
+					x[k1] = (float) (listEndPointsTranspose[0][idxArray.get(k1).intValue()] + calc.random.nextGaussian()*(sxy));
+					y[k1] = (float) (listEndPointsTranspose[1][idxArray.get(k1).intValue()] + calc.random.nextGaussian()*(sxy));
+					z[k1] = (float) (listEndPointsTranspose[2][idxArray.get(k1).intValue()] + calc.random.nextGaussian()*(sz));
 				}
 				
 			}
@@ -193,14 +193,14 @@ public class StormPointFinder {
 				if (blinkingTest <= (kOn/kOff)){
 					float intensity = intensities.get((int) (calc.random.nextDouble()*intensities.size()-1));
 					if (ps.getCoupleSigmaIntensity()){
-						x = (float) (listEndPoints[i][0] + calc.random.nextFloat()*(sxy/Math.sqrt(intensity/meanPhotonNumber)));
-						y = (float) (listEndPoints[i][1] + calc.random.nextFloat()*(sxy/Math.sqrt(intensity/meanPhotonNumber)));
-						z = (float) (listEndPoints[i][2] + calc.random.nextFloat()*(sz/Math.sqrt(intensity/meanPhotonNumber)));
+						x = (float) (listEndPoints[i][0] + calc.random.nextGaussian()*(sxy/Math.sqrt(intensity/meanPhotonNumber)));
+						y = (float) (listEndPoints[i][1] + calc.random.nextGaussian()*(sxy/Math.sqrt(intensity/meanPhotonNumber)));
+						z = (float) (listEndPoints[i][2] + calc.random.nextGaussian()*(sz/Math.sqrt(intensity/meanPhotonNumber)));
 					}
 					else {
-						x = (float) (listEndPoints[i][0] + calc.random.nextFloat()*(sxy));
-						y = (float) (listEndPoints[i][1] + calc.random.nextFloat()*(sxy));
-						z = (float) (listEndPoints[i][2] + calc.random.nextFloat()*(sz));
+						x = (float) (listEndPoints[i][0] + calc.random.nextGaussian()*(sxy));
+						y = (float) (listEndPoints[i][1] + calc.random.nextGaussian()*(sxy));
+						z = (float) (listEndPoints[i][2] + calc.random.nextGaussian()*(sz));
 					}
 					float tmpLoc[] = {x,y,z,frame,intensity};
 					allStormPoints.add(tmpLoc);
