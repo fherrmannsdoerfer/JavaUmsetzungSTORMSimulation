@@ -642,8 +642,9 @@ public class Calc {
 		float yMax = dims.get(3);
 		float zMin = dims.get(4);
 		float zMax = dims.get(5);
-
-		zMax = zMax - zMin;
+zMax = borders.get(5) ;
+zMin = borders.get(4) ;
+zMax = zMax - zMin;
 		
 		System.out.println("zMax: "+zMax+" zMin: "+zMin);
 		float[][] redChannel = coloredImage.get(0);
@@ -722,13 +723,13 @@ public class Calc {
 	
 	private static float getColor(double posZ, float zMax, int color) {
 		
-		if (posZ < 0.25* zMax){
+		if (posZ < 0.25* zMax&& posZ>0){
 			//blue rises from 0 to 1
 			if (color == 2){
 				return (float) (4*posZ / zMax);
 			}
 		}
-		else if (posZ < 0.5* zMax){
+		else if (posZ < 0.5* zMax&& posZ>0){
 			//green rises from 0 to 1 blue stays one
 			if (color == 1){
 				return (float)(4*posZ/zMax - 1);
@@ -737,7 +738,7 @@ public class Calc {
 				return (float) 1;//(2 - 4*posZ/zMax)	;
 			}
 		}
-		else if (posZ < 0.75* zMax){
+		else if (posZ < 0.75* zMax&& posZ>0){
 			//green stays one, blue goes to zero again
 			if (color == 1){
 				return (float) 1;//(4*posZ/zMax - 2);
@@ -746,7 +747,7 @@ public class Calc {
 				return (float) (3 - 4*posZ/zMax);
 			}
 		}
-		else {
+		else if (posZ<zMax) {
 			//green goes to zero red rises
 			if (color == 0){
 				return (float) (4*posZ/zMax - 3);

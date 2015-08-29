@@ -115,9 +115,9 @@ public class TriangleObjectParser {
         			words.add(line.substring(pos,line.length()));
         		}
         		Float[] vertex = new Float[3];
-        		vertex[0] = Float.valueOf(words.get(0));
-        		vertex[1] = Float.valueOf(words.get(1));
-        		vertex[2] = Float.valueOf(words.get(2));
+        		vertex[0] = (float) (Float.valueOf(words.get(0))*1.62);
+        		vertex[1] = (float) (Float.valueOf(words.get(1))*1.62);
+        		vertex[2] = (float) (Float.valueOf(words.get(2))*1.62);
         		listVertices.add(vertex);
         	}
         	else{//create triangles
