@@ -1726,7 +1726,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 
 	private void setUpRandomNumberGenerator() {
 		if (reproducibleOutputchkBox.isSelected()){
-			this.random = new Random(1);
+			this.random = new Random(2);
 		} else {
 			this.random = new Random(System.currentTimeMillis());
 		}
