@@ -117,8 +117,8 @@ public class FileManager {
 		dims.add(xmax);
 		dims.add(ymin);
 		dims.add(ymax);
-		dims.add(zmin);
-		dims.add(zmax);
+		dims.add(borders.get(4));
+		dims.add(borders.get(5));
 		int pixelX = 0;
 		int pixelY = 0;
 		if (mode == 0){
