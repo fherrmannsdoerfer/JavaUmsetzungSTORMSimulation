@@ -684,7 +684,9 @@ zMax = zMax - zMin;
 						try{
 							
 							float weight = (float) (factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-							redChannel[k][l] = redChannel[k][l] + getColor(posZ,zMax,0) * weight;
+							float tmp = getColor(posZ,zMax,0) * weight;
+							System.out.println(tmp);
+							redChannel[k][l] = redChannel[k][l] + tmp;
 							greenChannel[k][l] = greenChannel[k][l] +getColor(posZ,zMax,1) * weight;
 							blueChannel[k][l] = blueChannel[k][l] +getColor(posZ,zMax,2) * weight;
 							
@@ -747,7 +749,7 @@ zMax = zMax - zMin;
 				return (float) (3 - 4*posZ/zMax);
 			}
 		}
-		else if (posZ<zMax) {
+		else if (posZ<zMax&&posZ>0) {
 			//green goes to zero red rises
 			if (color == 0){
 				return (float) (4*posZ/zMax - 3);
