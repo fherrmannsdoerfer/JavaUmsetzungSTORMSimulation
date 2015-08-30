@@ -59,7 +59,7 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 		currentDataSet.getProgressBar().setString("Calculation Done!");
 	}
 	public void doSimulation() {
-		float[][] ep = null; // = {{2,3,0},{3,2,0},{2,2,2},{4,6,8},{1,2,43}};
+		float[][] ep = null; 
 		float[][] ap = null;
 		if(currentDataSet.dataType == DataType.TRIANGLES) {
 			TriangleDataSet currentTrs = (TriangleDataSet) currentDataSet;
