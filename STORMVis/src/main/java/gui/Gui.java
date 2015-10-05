@@ -237,7 +237,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			public void run() {
 				try {
 					Gui frame = new Gui();
-					frame.setTitle("STORMVis");
+					frame.setTitle("SuReSim");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1322,7 +1322,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	    });
 		
 		loadDataLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		plotPanel.add(loadDataLabel, BorderLayout.CENTER);
+		plotPanel.add(loadDataLabel, BorderLayout.SOUTH);
 		
 		JToolBar toolBar = new JToolBar();
 		getContentPane().add(toolBar, BorderLayout.NORTH);

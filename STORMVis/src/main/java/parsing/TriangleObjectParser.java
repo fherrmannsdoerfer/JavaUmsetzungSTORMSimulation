@@ -132,19 +132,24 @@ public class TriangleObjectParser {
         		if (pos<line.length()){
         			words.add(line.substring(pos,line.length()));
         		}
-        		for (int i = 0; i<3; i++){
-        			Coord3d saveCoord = new Coord3d(listVertices.get(Integer.valueOf(words.get((i+1))))[0],
-        					listVertices.get(Integer.valueOf(words.get(i+1)))[1],
-        					listVertices.get(Integer.valueOf(words.get(i+1)))[2]);
-                    Color color = new Color(saveCoord.x/255.f, saveCoord.y/255.f, 1-saveCoord.z/255.f, 1.f);
-                    Point newPoint = new Point(saveCoord, color);
-                    newTriangle.add(newPoint);
-                    primTR[i][0] = saveCoord.x;
-                    primTR[i][1] = saveCoord.y;
-                    primTR[i][2] = saveCoord.z;
+        		try{
+	        		for (int i = 0; i<3; i++){
+	        			Coord3d saveCoord = new Coord3d(listVertices.get(Integer.valueOf(words.get((i+1))))[0],
+	        					listVertices.get(Integer.valueOf(words.get(i+1)))[1],
+	        					listVertices.get(Integer.valueOf(words.get(i+1)))[2]);
+	                    Color color = new Color(saveCoord.x/255.f, saveCoord.y/255.f, 1-saveCoord.z/255.f, 1.f);
+	                    Point newPoint = new Point(saveCoord, color);
+	                    newTriangle.add(newPoint);
+	                    primTR[i][0] = saveCoord.x;
+	                    primTR[i][1] = saveCoord.y;
+	                    primTR[i][2] = saveCoord.z;
+	        		}
+	        		allTriangles.add(newTriangle);
+	            	primitives.add(primTR);
         		}
-        		allTriangles.add(newTriangle);
-            	primitives.add(primTR);
+        		catch(Exception e){
+        			System.out.println(e.getMessage());;
+        		}
         	}
         }
 	}

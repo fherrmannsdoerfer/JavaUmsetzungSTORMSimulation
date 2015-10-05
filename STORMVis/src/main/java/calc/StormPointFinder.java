@@ -238,6 +238,8 @@ public class StormPointFinder {
 					countOne++;
 				}
 			}
+			
+			
 			Float[][] currStormPoints = new Float[idxArray.size()][5];
 			for (int j = 0; j<idxArray.size(); j++){
 				currStormPoints[j][0] = stormPoints[idxArray.get(j)][0];
@@ -258,46 +260,64 @@ public class StormPointFinder {
 			if(stormXY.length !=0) {
 				dists = Calc.pairwiseDistance(stormXY, stormXY);
 				dists = Calc.addToLowerTriangle(dists, 9e9f);
-
-				// Find elements where distance is smaller than psfwidth
-				List<int[]> locations = new ArrayList<int[]>();
-//    				System.out.println("dists l:" + dists.length);
+				ArrayList<Integer> pointsToSkip = new ArrayList<Integer>(); // list of point which will be merged and thus be skipped
+				ArrayList<ArrayList<Integer>> closePoints = new ArrayList<ArrayList<Integer>>(); //set of point which will be merged
+				
 				for (int a = 0; a < dists.length; a++) {
+					closePoints.add(new ArrayList<Integer>());
 					for (int b = 0; b < dists.length; b++) {
-						if(dists[a][b] <affectingFactor* psfWidth) { // < psfwidth // TODO: !!!
-							locations.add(new int[]{a,b});
-//    							System.out.println("a|b : " + a + " | " + b);
+						if (affectingFactor * psfWidth > dists[a][b]){
+							closePoints.get(a).add(b);
+							pointsToSkip.add(b);
 						}
 					}
 				}
 				
 						
+				ArrayList<float[]> meanCoords = new ArrayList<float[]>();		
+				//float[][] meanCoords = new float[locations.size()][5];
+				for (int j = 0; j < closePoints.size(); j++) {
+					if (closePoints.get(j).size()>0){
+						ArrayList<Float> intensities = new ArrayList<Float>();
+						ArrayList<Float> factors = new ArrayList<Float>();
+						for (int k = 0; k < closePoints.get(j).size(); k++){
+							intensities.add(currStormPoints[closePoints.get(j).get(k)][4]);
+							if (dists[j][closePoints.get(j).get(k)]<0.75*psfWidth){ // if closer than 0.75 times PSF width the parameter power is equal to 1.4
+								factors.add((float) 1.4);
+							}
+							else{
+								factors.add((float) (1.4 + ((dists[j][closePoints.get(j).get(k)]/psfWidth)-0.75)*4)); //increase the parameter with larger distances up to 1.25 * PSF width
+							}
+						}
+						float[] mergedPoint = new float[] {0,0,0,0,0};
 						
-				float[][] meanCoords = new float[locations.size()][5];
-				double power = 1.4;
-				for (int j = 0; j < locations.size(); j++) {
-					float int1 = currStormPoints[(locations.get(j)[0])][4];
-					float int2 = currStormPoints[(locations.get(j)[1])][4];
-					for (int k = 0; k < 3; k++) {
-						if (dists[locations.get(j)[0]][locations.get(j)[1]]<0.75*psfWidth){ // if closer than 0.75 times PSF width the parameter power is equal to 1.4
-							power = 1.4;
+						float normalizationFactor = 0;
+						for (int k = 0; k < closePoints.get(j).size(); k++){
+							for (int l = 0; l<3; l++){
+								mergedPoint[l] = (float) (mergedPoint[l] + currStormPoints[closePoints.get(j).get(k)][l]*Math.pow(intensities.get(k), factors.get(k)));
+							}
+							mergedPoint[3] = currStormPoints[0][3];
+							mergedPoint[4] = mergedPoint[4] + intensities.get(k);
+							normalizationFactor +=Math.pow(intensities.get(k), factors.get(k));
 						}
-						else{
-							power = 1.4 + ((dists[locations.get(j)[0]][locations.get(j)[1]]/psfWidth)-0.75)*4; //increase the parameter with larger distances up to 1.25 * PSF width
+						for (int l = 0; l<3 ; l++){
+							mergedPoint[l]/= normalizationFactor;
 						}
-						meanCoords[j][k] = (float) ((currStormPoints[(locations.get(j)[0])][k]*Math.pow(int1,power)+ currStormPoints[(locations.get(j)[1])][k]*Math.pow(int2,power))/(Math.pow(int1,power)+Math.pow(int2,power)));
+						meanCoords.add(mergedPoint);
 					}
-					meanCoords[j][3] = currStormPoints[(locations.get(j)[0])][3];
-					meanCoords[j][4] = int1 + int2;
 				}
 				
 //    						
 				ArrayList<float[]> stormPointsArrayList = new ArrayList<float[]>();
+				boolean localizationMerged = false;
 				for (int k = 0; k<currStormPoints.length; k++){
-					for (int j = 0; j<locations.size(); j++){
-						if (locations.get(j)[0] == k || locations.get(j)[1]==k){
-							continue;
+					for (int j = 0; j<pointsToSkip.size(); j++){
+						if (pointsToSkip.get(j)==k){
+							localizationMerged = true;
 						}
+					}
+					if (localizationMerged){
+						continue;
 					}
 					float[] tmp = new float[5];
 					tmp[0] = currStormPoints[k][0];
@@ -306,11 +326,11 @@ public class StormPointFinder {
 					tmp[3] = currStormPoints[k][3];
 					tmp[4] = currStormPoints[k][4];
 					stormPointsArrayList.add(tmp);
-					
+					localizationMerged = false;
 				}
 				
-				for(int k = 0; k < meanCoords.length; k++) {
-					stormPointsArrayList.add(meanCoords[k]);
+				for(int k = 0; k < meanCoords.size(); k++) {
+					stormPointsArrayList.add(meanCoords.get(k));
 				}
 				returnList.addAll(stormPointsArrayList);
 //    				System.out.println("adding, mergin: " + (System.nanoTime()-addTimeStart)/1e9 + "s");
