@@ -274,6 +274,8 @@ public class FileManager {
 			writer.close();
 		} catch (IOException e) {e.printStackTrace();}
 	}
+	
+	
 
 	private static void writeLocalizationsToFile(float[][] stormData, String basename) {
 		try{
@@ -287,4 +289,17 @@ public class FileManager {
 			writer.close();
 		} catch (IOException e) {e.printStackTrace();}
 	}
-} 
+	private static void writeLocalizationsToFileForFRC(float[][] stormData, String basename) {
+			try{
+				double minx = Calc.min(stormData, 0);
+				double miny = Calc.min(stormData, 1);
+				FileWriter writer = new FileWriter(basename+"LocalizationsForFRCAnalysis.txt");
+				for (int i = 0; i<stormData.length; i++){
+					float[] tmp = stormData[i];
+					writer.append((tmp[0]-minx)/106.6666+" "+(tmp[1]-miny)/106.6666+" "+tmp[3]+"\n");
+				}
+				writer.flush();
+				writer.close();
+			} catch (IOException e) {e.printStackTrace();}
+	}
+}
