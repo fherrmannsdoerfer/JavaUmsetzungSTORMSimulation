@@ -642,9 +642,9 @@ public class Calc {
 		float yMax = dims.get(3);
 		float zMin = dims.get(4);
 		float zMax = dims.get(5);
-zMax = borders.get(5) ;
-zMin = borders.get(4) ;
-zMax = zMax - zMin;
+		zMax = borders.get(5) ;
+		zMin = borders.get(4) ;
+		zMax = zMax - zMin;
 		
 		System.out.println("zMax: "+zMax+" zMin: "+zMin);
 		float[][] redChannel = coloredImage.get(0);
@@ -685,7 +685,7 @@ zMax = zMax - zMin;
 							
 							float weight = (float) (factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
 							float tmp = getColor(posZ,zMax,0) * weight;
-							System.out.println(tmp);
+							//System.out.println(tmp);
 							redChannel[k][l] = redChannel[k][l] + tmp;
 							greenChannel[k][l] = greenChannel[k][l] +getColor(posZ,zMax,1) * weight;
 							blueChannel[k][l] = blueChannel[k][l] +getColor(posZ,zMax,2) * weight;
