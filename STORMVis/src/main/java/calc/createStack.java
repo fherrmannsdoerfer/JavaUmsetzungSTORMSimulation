@@ -37,7 +37,11 @@ public class CreateStack {
 	 * main method to test
 	 */
 	public static void main(String[] args){ 
-
+		System.out.println(symmInt(2, 2, (float) 2.5, (float) 1.5, 1, 1, 1));
+		System.out.println(symmInt(2, 2, (float) 2.5, (float) 2, 1, 1, 1));
+		System.out.println(symmInt(2, 2, (float) 2.5, (float) 2.5, 1, 1, 1));
+		System.out.println(symmInt(2, 2, (float) 3, (float) 2.5, 1, 1, 1));
+		System.out.println(symmInt(2, 2, (float) 3.5, (float) 2.5, 1, 1, 1));
     } 
 	
 	/**
@@ -75,17 +79,39 @@ public class CreateStack {
 	
 	/**
 	 * method createTiffStack creates a tiff-stack out of a list of points
-	 * @param lInput : list of float-arrays as input
-	 * @param resolution : resolution, i.e. ratio pixel per nanometers 
+	 * @param input : list of float tables as input
+	 * @param resolution : resolution, i.e. ratio pixel per nanometres 
 	 * @param emptySpace : empty pixels on the edges
 	 * @param intensityPerPhoton : measure for the intensity contribution of one photon on a pixel
-
+	 * @param frameRate : rate with which frames are taken
+	 * @param decayTime : mean duration of a blinking event
+	 * @param sizePSF : size over which the PSF is spread
+	 * @param modelNumber : kind of model for the PSF
+	 * @parama numerical aperture of the microscope
+	 * @param wavelength of the used light
+	 * @param zFocus : z-plane, in which the focus lies
+	 * @param zDefocus : z-value, for which the microscope defocusses
+	 * @param sigmaNoise : sigma of the Gaussian noise in the whole image
 	 */
-	public static void createTiffStack(List<float[]> lInput, float resolution, int emptySpace, float intensityPerPhoton, float meanPoisson) { 
+	public static void createTiffStack(List<float[][]> input, float resolution, int emptySpace, 
+			float intensityPerPhoton, float meanPoisson, float frameRate, float decayTime, int sizePSF, int modelNumber, 
+			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise) { 
 		
-		//create underground
-		for(int i = 0; i < lInput.size(); i++) {
-			lInput.get(i)[4] += (float) calc.RandomClass.poissonNumber(meanPoisson)*intensityPerPhoton; 
+		//convert List<float[][]> to List<float[]>
+		List<float[]> lInput = convertList(input);
+		
+		//simulate separation in different frames
+		float frameTime = 1 / frameRate;
+		for (int i = 0; i < lInput.size(); i++) {
+			float beginningTime = (float) (Math.random()/frameRate);
+			if (beginningTime + decayTime > frameTime) {
+				float overlap = (beginningTime + decayTime - frameTime)/decayTime;
+				float[] val1 = {lInput.get(i)[0], lInput.get(i)[1], lInput.get(i)[2], lInput.get(i)[3] + 1 , lInput.get(i)[4]*overlap};
+				float[] val2 = {lInput.get(i)[0], lInput.get(i)[1], lInput.get(i)[2], lInput.get(i)[3], lInput.get(i)[4]*(1 - overlap)};
+				lInput.add(val2);
+				lInput.add(val1);
+				lInput.remove(i);
+			}
 		}
 		
 		//find out minimum x- and y-values			
@@ -93,9 +119,9 @@ public class CreateStack {
 		float minY = globalMin(lInput, 1);
 		
 		//subtract minimum values to obtain coordinates in [0, infty]x[0, infty]
-		for (int j = 0; j < lInput.size(); j++) {   	//shifts the window to positive values leaving empty space on the left and lower edge
-			lInput.get(j)[0] -= (minX - (emptySpace/resolution));
-			lInput.get(j)[1] -= (minY - (emptySpace/resolution));
+		for (int j = 0; j < lInput.size(); j++) {   	//shifts the window to positive values
+			lInput.get(j)[0] -= (minX - ((emptySpace + sizePSF)/resolution));
+			lInput.get(j)[1] -= (minY - ((emptySpace + sizePSF)/resolution));
 		}
 		
 	
@@ -104,51 +130,58 @@ public class CreateStack {
 		int pImgHeight = Math.round(globalMax(lInput, 1)*resolution);
 		
 		
-		// find out minimum and maximum intensity to get a normalised (?) metric for the grey-value
-		float minInt = globalMin(lInput, 4);
-		
 		// find out minimum and maximum frame value
 		int maxFr = (int) globalMax(lInput, 3);
 		int minFr = (int) globalMin(lInput, 3);
 		
 		// create new image stack	
 		ImagePlus imgpls = new ImagePlus(""); //initialises an empty image
-		ImageStack stackLeft = new ImageStack(pImgWidth + emptySpace, pImgHeight + emptySpace); // now we have emptySpace on both sides
+		ImageStack stackLeft = new ImageStack(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF); 
+		// now we have emptySpace on both sides
 		ImageProcessor pro = imgpls.getProcessor();
 		
 		// fill image stack with images
 		for (int j = minFr; j < maxFr; j++) {
-			List<float[]> pointsInFrame = findFrame(lInput, j); // looks for all points in the slice which have the correct frame number
 			pro.reset(); 
+			List<float[]> pointsInFrame = findFrame(lInput, j); // looks for all points in the slice which have the correct frame number
 			
-			//goes through real blinking events
-			for (int i = 0; i < pointsInFrame.size(); i++) { // goes through list of blinking events
-				float[] currentPoint = pointsInFrame.get(i);
-				int localX = Math.round(currentPoint[0] / resolution);
-				int localY = Math.round(currentPoint[1] / resolution);
-				//pro.setColor(value); value is either double or int; rgb with equal values represents a shade of grey
-				//pro.drawPixel(localX, localY); 	// draws a point at each blinking event in the frame 
-												// TODO: colour to encode intensity; interpolation according to the model 
-				pro.setf(localX, localY, currentPoint[4]); //attaches a float value to each pixel
-			}
-			
-			//adds Poissonian underground
-			for (int l = 0; l < (pImgWidth + emptySpace); l++) { //goes through whole xy-domain
-				for (int k = 0; k < (pImgHeight + emptySpace); k++) {
-					float val = 0;
-					if (Math.round(pointsInFrame.get(j)[0]) == l && Math.round(pointsInFrame.get(j)[1]) == k) { //if current pixel carries PSF
-						val = (float) calc.RandomClass.poissonNumber(meanPoisson)*intensityPerPhoton + pointsInFrame.get(j)[4];
+			//modelling the form of the PSF
+			for (int i = 0; i < pointsInFrame.size(); i++) {
+				int pixelX = Math.round(pointsInFrame.get(i)[0] / resolution);
+				int pixelY = Math.round(pointsInFrame.get(i)[1] / resolution);
+				switch (modelNumber) {
+				case 1: // symmetric Gaussian
+					for (int k = -sizePSF; k <= sizePSF; k++) {
+						for (int m = -sizePSF; m <= sizePSF; m++) {
+							float intensityPhotons = symmInt(pixelX + k, pixelY + m, pointsInFrame.get(i)[0], 
+									pointsInFrame.get(i)[1], pointsInFrame.get(i)[4], calcSig(pointsInFrame.get(i)[2], numericalAperture, 
+											waveLength, zFocus, zDefocus), resolution)/intensityPerPhoton;
+							pro.setf(pixelX + k + emptySpace + sizePSF, pixelY + m + emptySpace + sizePSF, //conserve empty space
+									calc.RandomClass.poissonNumber(intensityPhotons)*intensityPerPhoton);
+						}
 					}
-					else {
-						val = (float) calc.RandomClass.poissonNumber(meanPoisson)*intensityPerPhoton;
-					}
-					pro.setf(l, k, val); //attaches a float value to each pixel, sets minInt to 0
+					break;
+					
+				case 2: //antisymmetric Gaussian
+					break;
 				}
 			}
+			
+			//add Gaussian underground noise
+			Random rand = new Random();
+			for (int n = emptySpace; n < pImgWidth + sizePSF; n++){
+				for (int p = emptySpace; p < pImgHeight + sizePSF; p++) {
+					float val3 = (float) rand.nextGaussian()*sigmaNoise;
+					val3 += pro.getf(n, p);
+					pro.setf(n, p, val3);
+				}
+			}
+			
 			stackLeft.addSlice(pro); // adds a processor for each frame to the stack
 		}
-
 		
+		
+
 		//save imagestack
 		ImagePlus leftStack = new ImagePlus("", stackLeft);
 		FileSaver fs = new FileSaver(leftStack);
@@ -156,18 +189,7 @@ public class CreateStack {
 	
 	}
 	
-//	/**
-//	 * auxiliary method creates a tiff-file out of one single layer of the input float[][]-list PRELIMINARY
-//	 * @param mInput : input matrix
-//	 * 
-//	 */
-//	private static NewImage createTiff(float[][] m) {
-//		NewImage im = new NewImage();
-//		return im;
-//	}
 
-
-	
 	/**
 	 * auxiliary method subtractCoordinate adds fixed value to one of the coordinates
 	 * @param m : input matrix
@@ -180,6 +202,22 @@ public class CreateStack {
 			m[i][coordinate] = m[i][coordinate] - value;
 		}
 		return m;
+	}
+	
+	/**
+	 * auxiliary method creates a list out of the list of tables of events
+	 * @param input list
+	 * @return output list
+	 */
+	private static List<float[]> convertList (List<float[][]> lInput) {
+		List<float[]> ret = new ArrayList<float[]>();
+		for(int i = 0; i < lInput.size(); i++) {
+			for(int j = 0; j < lInput.get(i).length; j++) {
+				float[] val = {lInput.get(i)[j][0], lInput.get(i)[j][1], lInput.get(i)[j][2], lInput.get(i)[j][3], lInput.get(i)[j][4]};
+				ret.add(val);
+			}
+		}
+		return ret;
 	}
 	
 	/**
@@ -248,5 +286,49 @@ public class CreateStack {
 		}
 		return ret;
 	}
+	
+	/**
+	 * auxiliary method calculates a symmetric-Gaussian-distributed 
+	 * intensity at the value of integer pixels;
+	 * coordinates of a pixel are coordinates of its lower left corner
+	 * nevertheless, the intensity is the intensity in the centre of the pixel
+	 * @param pX : x-coordinate in pixels
+	 * @param pY : y-coordinate in pixels
+	 * @param maxX : float-x-cordinate of the maximum in nm
+	 * @param maxY : float-y-cordinate of the maximum in nm
+	 * @param maxInt : intensity of the maximum at (maxX, maxY)
+	 * @param sig : sigma value of the gaussian distribution
+	 * @param res : resolution, i.e. ratio pixel per nanometres
+	 * @return Gauss-value
+	 */
+	private static float symmInt(int pX, int pY, float maxX, 
+			float maxY, float maxInt, float sig, float res) {
+		
+		float ret = 0;
+		float x = (float) pX;
+		float y = (float) pY;
+		float dx = (float) ((x + 0.5)/res) - maxX; //calculates difference between maximum of PSF-Gauss and current pixel 
+		float dy = (float) ((y + 0.5)/res) - maxY;
+		
+		double exponent = (double) (Math.pow(dx, 2) + Math.pow(dy, 2))/2 /Math.pow(sig, 2);
+		ret = (float) Math.exp(-exponent)*maxInt;
+		return ret;
+	}
+
+	/**
+	 * auxiliary method calculates sigma dependent on z for the symmetric Gaussian
+	 * @param maxZ : z-value of the maximum
+	 * @param numerical aperture of the microscope
+	 * @param Wavelength of the light
+	 * @param zFoc : z-plane, in which the focus lies
+	 * @param zDefoc : z-value, for which the microscope defocusses
+	 * @return sigma for symmetric Gaussian
+	 */
+	private static float calcSig(float maxZ, float numAperture, float waveLgth, float zFoc, float zDefoc) {
+		float s = (float) Math.pow(2, Math.abs((maxZ - zFoc)/(zFoc - zDefoc)));
+		s = s*waveLgth/2 /numAperture;
+		return s;
+	}
+	
 	
 }
