@@ -97,8 +97,8 @@ public class FileManager {
 	
 		String basename = path.substring(0, path.length()-4);
 		writeProjectionToFile(dataset,path,mode,borders);
-		writeLocalizationsToFile(dataset.stormData,basename);
-		writeLocalizationsToFileForFRC(dataset.stormData, basename);
+		writeLocalizationsToFile(dataset.stormData,basename,borders);
+		writeLocalizationsToFileForFRC(dataset.stormData, basename,borders);
 		writeLogFile(dataset, basename,borders);
 	}
 	
@@ -276,27 +276,31 @@ public class FileManager {
 		} catch (IOException e) {e.printStackTrace();}
 	}
 
-	private static void writeLocalizationsToFile(float[][] stormData, String basename) {
+	private static void writeLocalizationsToFile(float[][] stormData, String basename,ArrayList<Float> borders) {
 		try{
 			FileWriter writer = new FileWriter(basename+"Localizations.txt");
 			writer.append("Pos_x Pos_y Pos_z Frame Intensity\n");
 			for (int i = 0; i<stormData.length; i++){
 				float[] tmp = stormData[i];
-				writer.append(tmp[0]+" "+tmp[1]+" "+tmp[2]+" "+tmp[3]+" "+tmp[4]+"\n");
+				if (Calc.isInRange(tmp,borders)){
+					writer.append(tmp[0]+" "+tmp[1]+" "+tmp[2]+" "+tmp[3]+" "+tmp[4]+"\n");
+        		}
 			}
 			writer.flush();
 			writer.close();
 		} catch (IOException e) {e.printStackTrace();}
 	}
 	
-	private static void writeLocalizationsToFileForFRC(float[][] stormData, String basename) {
+	private static void writeLocalizationsToFileForFRC(float[][] stormData, String basename,ArrayList<Float> borders) {
 		try{
 			double minx = Calc.min(stormData, 0);
 			double miny = Calc.min(stormData, 1);
 			FileWriter writer = new FileWriter(basename+"LocalizationsForFRCAnalysis.txt");
 			for (int i = 0; i<stormData.length; i++){
 				float[] tmp = stormData[i];
-				writer.append((tmp[0]-minx)/106.6666+" "+(tmp[1]-miny)/106.6666+" "+tmp[3]+"\n");
+				if (Calc.isInRange(tmp,borders)){
+					writer.append((tmp[0]-minx)/106.6666+" "+(tmp[1]-miny)/106.6666+" "+tmp[3]+"\n");
+        		}
 			}
 			writer.flush();
 			writer.close();

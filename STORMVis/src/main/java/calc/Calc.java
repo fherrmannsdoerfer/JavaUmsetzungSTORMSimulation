@@ -9,6 +9,7 @@ import java.util.Random;
 
 import javax.vecmath.Vector3d;
 
+import model.DataSet;
 import model.LineDataSet;
 import model.TriangleDataSet;
 
@@ -956,6 +957,23 @@ public class Calc {
 			}
 		}
 		return toFloatArray(retList);
+	}
+
+	public static int countVisibleLocs(ArrayList<Float> borders,
+			DataSet dataSet) {
+		int counter = 0;
+		float[][] stromPoints = dataSet.stormData;
+		for (int i = 0; i<dataSet.stormData.length; i++){
+			if (isInRange(stromPoints[i],borders)){
+				counter += 1;
+			}
+		}
+		return counter;
+	}
+
+	public static boolean isInRange(float[] tmp, ArrayList<Float> borders) {
+		// TODO Auto-generated method stub
+		return (tmp[0]>borders.get(0)&&tmp[0]<borders.get(1)&&tmp[1]>borders.get(2)&&tmp[1]<borders.get(3)&&tmp[2]>borders.get(4)&&tmp[2]<borders.get(5));
 	}
 
 

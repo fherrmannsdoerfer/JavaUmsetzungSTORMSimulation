@@ -31,9 +31,11 @@ import java.util.Random;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.InputVerifier;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -85,6 +87,7 @@ import java.awt.CardLayout;
 import javax.swing.JSlider;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 
 
 /**
@@ -111,7 +114,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField locPrecisionXYField; //sxy
 	private JTextField locPrecisionZField; //sz
 	private JTextField psfSizeField; //psfwidth aus StormPointFinder
-	private JTextField epitopeDensityField; //bspnm oder bspsnm je nachdem ob Linien oder Dreiecke
+	private JFormattedTextField epitopeDensityField; //bspnm oder bspsnm je nachdem ob Linien oder Dreiecke
 	private JTextField pointSizeField; //
 	
 	JLabel lblRadiusOfFilaments;
@@ -173,6 +176,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField kOffField;
 	private JTextField recordedFramesField;
 	private JTextField lineWidthField;
+	private JLabel numberOfVisibleLocalizationsLabel;
 	
 	final JToggleButton xyViewButton;
 	final JToggleButton xzViewButton;
@@ -304,7 +308,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Component horizontalGlue = Box.createHorizontalGlue();
 		horizontalBox.add(horizontalGlue);
 		
-		epitopeDensityField = new JTextField();
+		epitopeDensityField = new JFormattedTextField();
+		epitopeDensityField.getDocument().addDocumentListener(new MyDocumentListener(epitopeDensityField));
 		epitopeDensityField.setHorizontalAlignment(SwingConstants.RIGHT);
 		epitopeDensityField.setMinimumSize(new Dimension(6, 10));
 		epitopeDensityField.setMaximumSize(new Dimension(60, 22));
@@ -325,6 +330,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_1.add(horizontalGlue_1);
 		
 		radiusOfFilamentsField = new JTextField();
+		radiusOfFilamentsField.getDocument().addDocumentListener(new MyDocumentListener(radiusOfFilamentsField));
 		radiusOfFilamentsField.setHorizontalAlignment(SwingConstants.RIGHT);
 		radiusOfFilamentsField.setMinimumSize(new Dimension(6, 10));
 		radiusOfFilamentsField.setMaximumSize(new Dimension(60, 22));
@@ -354,6 +360,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_4.add(horizontalGlue_4);
 		
 		labelingEfficiencyField = new JTextField();
+		labelingEfficiencyField.getDocument().addDocumentListener(new MyDocumentListener(labelingEfficiencyField));
 		labelingEfficiencyField.setHorizontalAlignment(SwingConstants.RIGHT);
 		labelingEfficiencyField.setMinimumSize(new Dimension(6, 10));
 		labelingEfficiencyField.setMaximumSize(new Dimension(60, 22));
@@ -383,6 +390,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_8.add(horizontalGlue_8);
 		
 		labelLengthField = new JTextField();
+		labelLengthField.getDocument().addDocumentListener(new MyDocumentListener(labelLengthField));
 		labelLengthField.setHorizontalAlignment(SwingConstants.RIGHT);
 		labelLengthField.setMinimumSize(new Dimension(6, 10));
 		labelLengthField.setMaximumSize(new Dimension(60, 22));
@@ -402,6 +410,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_9.add(horizontalGlue_9);
 		
 		fluorophoresPerLabelField = new JTextField();
+		fluorophoresPerLabelField.getDocument().addDocumentListener(new MyDocumentListener(fluorophoresPerLabelField));
 		fluorophoresPerLabelField.setHorizontalAlignment(SwingConstants.RIGHT);
 		fluorophoresPerLabelField.setMinimumSize(new Dimension(6, 10));
 		fluorophoresPerLabelField.setMaximumSize(new Dimension(60, 22));
@@ -428,6 +437,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_12.add(horizontalGlue_13);
 		
 		locPrecisionXYField = new JTextField();
+		locPrecisionXYField.getDocument().addDocumentListener(new MyDocumentListener(locPrecisionXYField));
 		locPrecisionXYField.setHorizontalAlignment(SwingConstants.RIGHT);
 		locPrecisionXYField.setMinimumSize(new Dimension(6, 10));
 		locPrecisionXYField.setMaximumSize(new Dimension(60, 22));
@@ -447,6 +457,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_13.add(horizontalGlue_14);
 		
 		locPrecisionZField = new JTextField();
+		locPrecisionZField.getDocument().addDocumentListener(new MyDocumentListener(locPrecisionZField));
 		locPrecisionZField.setHorizontalAlignment(SwingConstants.RIGHT);
 		locPrecisionZField.setMinimumSize(new Dimension(6, 10));
 		locPrecisionZField.setMaximumSize(new Dimension(60, 22));
@@ -466,6 +477,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_22.add(horizontalGlue_26);
 		
 		recordedFramesField = new JTextField();
+		recordedFramesField.getDocument().addDocumentListener(new MyDocumentListener(recordedFramesField));
 		recordedFramesField.setHorizontalAlignment(SwingConstants.RIGHT);
 		recordedFramesField.setMinimumSize(new Dimension(6, 10));
 		recordedFramesField.setMaximumSize(new Dimension(60, 22));
@@ -489,6 +501,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_5.add(horizontalGlue_5);
 		
 		meanAngleField = new JTextField();
+		meanAngleField.getDocument().addDocumentListener(new MyDocumentListener(meanAngleField));
 		meanAngleField.setHorizontalAlignment(SwingConstants.RIGHT);
 		meanAngleField.setMinimumSize(new Dimension(6, 10));
 		meanAngleField.setMaximumSize(new Dimension(60, 22));
@@ -512,6 +525,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_10.add(horizontalGlue_10);
 		
 		kOnField = new JTextField();
+		kOnField.getDocument().addDocumentListener(new MyDocumentListener(kOnField));
 		kOnField.setHorizontalAlignment(SwingConstants.RIGHT);
 		kOnField.setMinimumSize(new Dimension(6, 10));
 		kOnField.setMaximumSize(new Dimension(60, 22));
@@ -531,6 +545,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_17.add(horizontalGlue_3);
 		
 		kOffField = new JTextField();
+		kOffField.getDocument().addDocumentListener(new MyDocumentListener(kOffField));
 		kOffField.setHorizontalAlignment(SwingConstants.RIGHT);
 		kOffField.setMinimumSize(new Dimension(6, 10));
 		kOffField.setMaximumSize(new Dimension(60, 22));
@@ -563,6 +578,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_29.add(horizontalGlue_19);
 		
 		bleachConstantField = new JTextField();
+		bleachConstantField.getDocument().addDocumentListener(new MyDocumentListener(bleachConstantField));
 		bleachConstantField.setMinimumSize(new Dimension(6, 10));
 		bleachConstantField.setMaximumSize(new Dimension(60, 22));
 		bleachConstantField.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -585,6 +601,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_11.add(horizontalGlue_11);
 		
 		averagePhotonOutputField = new JTextField();
+		averagePhotonOutputField.getDocument().addDocumentListener(new MyDocumentListener(averagePhotonOutputField));
 		averagePhotonOutputField.setHorizontalAlignment(SwingConstants.RIGHT);
 		averagePhotonOutputField.setMinimumSize(new Dimension(6, 10));
 		averagePhotonOutputField.setMaximumSize(new Dimension(60, 22));
@@ -625,6 +642,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_6.add(horizontalGlue_6);
 		
 		backgroundLabelField = new JTextField();
+		backgroundLabelField.getDocument().addDocumentListener(new MyDocumentListener(backgroundLabelField));
 		horizontalBox_6.add(backgroundLabelField);
 		backgroundLabelField.setHorizontalAlignment(SwingConstants.RIGHT);
 		backgroundLabelField.setMinimumSize(new Dimension(6, 10));
@@ -644,6 +662,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_15.add(horizontalGlue_16);
 		
 		psfSizeField = new JTextField();
+		psfSizeField.getDocument().addDocumentListener(new MyDocumentListener(psfSizeField));
 		psfSizeField.setHorizontalAlignment(SwingConstants.RIGHT);
 		psfSizeField.setMinimumSize(new Dimension(6, 10));
 		psfSizeField.setMaximumSize(new Dimension(60, 22));
@@ -655,9 +674,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		Box horizontalBox_14 = Box.createHorizontalBox();
 		verticalBox_11.add(horizontalBox_14);
-		
-		JLabel lblMergeClosePsfs = new JLabel("Merge Close PSFs");
-		horizontalBox_14.add(lblMergeClosePsfs);
 		
 		Component horizontalGlue_17 = Box.createHorizontalGlue();
 		horizontalBox_14.add(horizontalGlue_17);
@@ -682,6 +698,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_38.add(horizontalGlue_22);
 		
 		detectionEfficiencyField = new JTextField();
+		detectionEfficiencyField.getDocument().addDocumentListener(new MyDocumentListener(detectionEfficiencyField));
 		detectionEfficiencyField.setMinimumSize(new Dimension(6, 10));
 		detectionEfficiencyField.setMaximumSize(new Dimension(60, 22));
 		detectionEfficiencyField.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -734,6 +751,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_16.add(horizontalGlue_2);
 		
 		pointSizeField = new JTextField();
+		pointSizeField.getDocument().addDocumentListener(new MyDocumentListener(pointSizeField));
 		pointSizeField.setHorizontalAlignment(SwingConstants.RIGHT);
 		pointSizeField.setMinimumSize(new Dimension(6, 10));
 		pointSizeField.setMaximumSize(new Dimension(60, 22));
@@ -753,6 +771,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_24.add(horizontalGlue_31);
 		
 		lineWidthField = new JTextField();
+		lineWidthField.getDocument().addDocumentListener(new MyDocumentListener(lineWidthField));
 		lineWidthField.setMinimumSize(new Dimension(6, 10));
 		lineWidthField.setMaximumSize(new Dimension(60, 22));
 		lineWidthField.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -957,13 +976,14 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				
 				radioNicest = new JRadioButton("Nicest");
 				verticalBox_8.add(radioNicest);
-				radioNicest.setSelected(true);
+				radioNicest.setSelected(false);
 				
 				radioAdvanced = new JRadioButton("Advanced");
 				verticalBox_8.add(radioAdvanced);
 				
 				radioIntermediate = new JRadioButton("Intermediate");
 				verticalBox_8.add(radioIntermediate);
+				radioIntermediate.setSelected(true);
 				
 				radioFastest = new JRadioButton("Fastest");
 				verticalBox_8.add(radioFastest);
@@ -992,6 +1012,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				verticalBox_15.add(horizontalBox_31);
 				
 				xminField = new JTextField();
+				xminField.getDocument().addDocumentListener(new MyDocumentListener(xminField));
 				xminField.setHorizontalAlignment(SwingConstants.RIGHT);
 				xminField.setText("0");
 				xminField.setMaximumSize(new Dimension(60, 22));
@@ -1028,6 +1049,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				verticalBox_15.add(horizontalBox_32);
 				
 				xmaxField = new JTextField();
+				xmaxField.getDocument().addDocumentListener(new MyDocumentListener(xmaxField));
 				xmaxField.setHorizontalAlignment(SwingConstants.RIGHT);
 				xmaxField.setText("0");
 				xmaxField.setMaximumSize(new Dimension(60, 22));
@@ -1063,6 +1085,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				verticalBox_15.add(horizontalBox_33);
 				
 				yminField = new JTextField();
+				yminField.getDocument().addDocumentListener(new MyDocumentListener(yminField));
 				yminField.setHorizontalAlignment(SwingConstants.RIGHT);
 				yminField.setText("0");
 				yminField.setMaximumSize(new Dimension(60, 22));
@@ -1098,6 +1121,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				verticalBox_15.add(horizontalBox_34);
 				
 				ymaxField = new JTextField();
+				ymaxField.getDocument().addDocumentListener(new MyDocumentListener(ymaxField));
 				ymaxField.setText("0");
 				ymaxField.setHorizontalAlignment(SwingConstants.RIGHT);
 				ymaxField.setMaximumSize(new Dimension(60, 22));
@@ -1133,6 +1157,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				verticalBox_15.add(horizontalBox_35);
 				
 				zminField = new JTextField();
+				zminField.getDocument().addDocumentListener(new MyDocumentListener(zminField));
 				zminField.setHorizontalAlignment(SwingConstants.RIGHT);
 				zminField.setText("0");
 				zminField.setMaximumSize(new Dimension(60, 22));
@@ -1168,6 +1193,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				verticalBox_15.add(horizontalBox_36);
 				
 				zmaxField = new JTextField();
+				zmaxField.getDocument().addDocumentListener(new MyDocumentListener(zmaxField));
 				zmaxField.setText("0");
 				zmaxField.setHorizontalAlignment(SwingConstants.RIGHT);
 				zmaxField.setMaximumSize(new Dimension(60, 22));
@@ -1285,6 +1311,18 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				JButton visButton = new JButton("Visualize");
 				verticalBox.add(visButton);
 				visButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+				
+				Box horizontalBox_39 = Box.createHorizontalBox();
+				verticalBox.add(horizontalBox_39);
+				
+				Component horizontalGlue_40 = Box.createHorizontalGlue();
+				horizontalBox_39.add(horizontalGlue_40);
+				
+				JLabel lblNewLabel_6 = new JLabel("Number Of Visible Localizations:  ");
+				horizontalBox_39.add(lblNewLabel_6);
+				
+				numberOfVisibleLocalizationsLabel = new JLabel("0");
+				horizontalBox_39.add(numberOfVisibleLocalizationsLabel);
 				visButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -1499,6 +1537,15 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	}
 	
 	
+	protected void updateCounter() {
+		int nbrVisLocs = 0;
+		if (allDataSets.get(currentRow).stormData!= null){
+			nbrVisLocs = Calc.countVisibleLocs(borders, allDataSets.get(currentRow));
+		}
+		numberOfVisibleLocalizationsLabel.setText(nbrVisLocs+"");
+		
+	}
+
 	protected void loadExamples(int selectedIndex) {
 		DataSet data = ExamplesProvidingClass.getDataset(selectedIndex);
 		furtherProceedFileImport(data, data.dataType);
@@ -1747,13 +1794,13 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			getDrawingParameters();
 			if(saveViewpointButton.isSelected()) {
 				setViewPointAndScale();
-				
 			}
 			else {
 				plot.viewPoint = null;
 				plot.viewBounds = null;
 			}
 			visualizeAllSelectedData();
+			updateCounter();
 		}
 	}
 	
@@ -2043,5 +2090,35 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
             int progress = (Integer) evt.getNewValue();
             progressBar.setValue(progress);
 		}
+	}
+	
+	class MyDocumentListener implements DocumentListener{
+		JTextField tf;
+		MyDocumentListener(JTextField tf){
+			this.tf = tf;
+		}
+		  public void changedUpdate(DocumentEvent e) {
+			  SwingUtilities.invokeLater(warn);
+		  }
+		  public void removeUpdate(DocumentEvent e) {
+			  SwingUtilities.invokeLater(warn);
+		  }
+		  public void insertUpdate(DocumentEvent e) {
+			  SwingUtilities.invokeLater(warn);
+		  }
+		  Runnable warn = new Runnable() {
+		        @Override
+		        public void run() {
+		        	try{ Float.parseFloat(tf.getText());}
+					catch (NumberFormatException e){
+					   JOptionPane.showMessageDialog(null,
+					      "Error: Please enter a valid number", "Error Massage",
+					      JOptionPane.ERROR_MESSAGE);
+					   tf.setText("0");
+					}		        
+	        	}
+		    };       
+		   
+
 	}
 }
