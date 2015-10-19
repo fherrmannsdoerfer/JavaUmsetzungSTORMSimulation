@@ -7,18 +7,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.FileSaver;
 
-import ij.*;
-import ij.gui.*;
 import ij.process.*;
-import ij.measure.*;
-import java.lang.*;
-import java.awt.*;
-
-import ij.util.*;
-import ij.plugin.*;
-import ij.plugin.filter.*;
-import ij.plugin.frame.*;
-
 
 import java.util.Random;
 
@@ -37,45 +26,31 @@ public class CreateStack {
 	 * main method to test
 	 */
 	public static void main(String[] args){ 
-		System.out.println(symmInt(2, 2, (float) 2.5, (float) 1.5, 1, 1, 1));
-		System.out.println(symmInt(2, 2, (float) 2.5, (float) 2, 1, 1, 1));
-		System.out.println(symmInt(2, 2, (float) 2.5, (float) 2.5, 1, 1, 1));
-		System.out.println(symmInt(2, 2, (float) 3, (float) 2.5, 1, 1, 1));
-		System.out.println(symmInt(2, 2, (float) 3.5, (float) 2.5, 1, 1, 1));
+		
+		//random creation of a list of tables as input
+		List<float[][]> b = new ArrayList<float[][]>();
+		for (int i = 0; i < 2; i++) {
+			float[][] c = new float[30][5];
+			for (int j = 0; j < 3; j++) {
+				c[j][0] = (float) (Math.random()*30);
+				c[j][1] = (float) (Math.random()*30);
+				c[j][2] = (float) (Math.random()*20);
+				c[j][3] = (float) (Math.random()*4);
+				c[j][4] = (float) (Math.random()*10);
+			}
+			b.add(c);
+		}
+		System.out.println("finished simulation");
+//		List<float[]> ba = convertList(b);
+//		System.out.println("finished conversion");
+//		distributePSF(ba, 20, (float) 0.2);
+//		System.out.println("finished distribution");
+		createTiffStack(b, 1 , 10, 2, (float) 0.5, 3, 2, 3, 1, //model nr 1 
+				(float) 0.4, 400, 10, 15, 1);
+
     } 
 	
-	/**
-	 * method simulateData creates a simulated data set
-	 * @param numberPSF : number of PSFs
-	 * @param domainSize : size of the domain area in nanometers
-	 * @param domainSizeZ : size of the domain in z-direction
-	 * @param frameNumber
-	 * @param meanPoissonPSF : mean value of the Poisson-distribution for the intensity of a PSF
-	 * @param intensityPerPhoton
-	 */
-	public static List<float[]> simulateData (int numberPSF, 
-			float domainSize, float domainSizeZ, int frameNumber, float meanPoissonPSF, float intensityPerPhoton) {
-		List<float[]> dataEvents = new ArrayList<float[]>();
-		
-		//simulate position of PSFs
-		float[][] positions = new float[numberPSF][3]; 
-		for(int i = 0; i < numberPSF; i++) {
-			positions[i][0] = (float) Math.random()*domainSize;
-			positions[i][1] = (float) Math.random()*domainSize;
-			positions[i][2] = (float) Math.random()*domainSizeZ; 
-		}
-		
-		//simulate time when PSFs blink
-		Random rand = new Random();
-		for (int j = 0; j < frameNumber; j++) {
-			int a = rand.nextInt(numberPSF);
-			float d = (float) calc.RandomClass.poissonNumber(meanPoissonPSF)*intensityPerPhoton; //random intensity
-			float[] b = {positions[a][0], positions[a][1], positions[a][2], (float) j, d};
-			dataEvents.add(b);
-		}
-		
-		return dataEvents;
-	}
+	
 	
 	/**
 	 * method createTiffStack creates a tiff-stack out of a list of points
@@ -99,20 +74,11 @@ public class CreateStack {
 		
 		//convert List<float[][]> to List<float[]>
 		List<float[]> lInput = convertList(input);
+		System.out.println("finished conversion");
 		
-		//simulate separation in different frames
-		float frameTime = 1 / frameRate;
-		for (int i = 0; i < lInput.size(); i++) {
-			float beginningTime = (float) (Math.random()/frameRate);
-			if (beginningTime + decayTime > frameTime) {
-				float overlap = (beginningTime + decayTime - frameTime)/decayTime;
-				float[] val1 = {lInput.get(i)[0], lInput.get(i)[1], lInput.get(i)[2], lInput.get(i)[3] + 1 , lInput.get(i)[4]*overlap};
-				float[] val2 = {lInput.get(i)[0], lInput.get(i)[1], lInput.get(i)[2], lInput.get(i)[3], lInput.get(i)[4]*(1 - overlap)};
-				lInput.add(val2);
-				lInput.add(val1);
-				lInput.remove(i);
-			}
-		}
+		//simulate distribution of the intensity over different frames
+		//distributePSF(lInput, frameRate, decayTime);
+		System.out.println("finished distribution");
 		
 		//find out minimum x- and y-values			
 		float minX = globalMin(lInput, 0); 
@@ -135,74 +101,74 @@ public class CreateStack {
 		int minFr = (int) globalMin(lInput, 3);
 		
 		// create new image stack	
-		ImagePlus imgpls = new ImagePlus(""); //initialises an empty image
+		//ImagePlus imgpls = new ImagePlus(""); //initialises an empty image
 		ImageStack stackLeft = new ImageStack(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF); 
 		// now we have emptySpace on both sides
-		ImageProcessor pro = imgpls.getProcessor();
+		//ImageProcessor pro = imgpls.getProcessor();
+		System.out.println("finished initialisation of image devices");
+		
+		//performing sorting operation by quicksort algorithm
+		SortClass s = new SortClass(lInput);
+		s.quickSort(0, lInput.size() - 1);
+		lInput = s.getList(); 
 		
 		// fill image stack with images
 		for (int j = minFr; j < maxFr; j++) {
-			pro.reset(); 
-			List<float[]> pointsInFrame = findFrame(lInput, j); // looks for all points in the slice which have the correct frame number
+			//ImagePlus imgpls = new ImagePlus(""); //initialises an empty image
+			//imgpls = imgpls.createImagePlus();
+			FloatProcessor pro = new FloatProcessor(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF);
 			
 			//modelling the form of the PSF
-			for (int i = 0; i < pointsInFrame.size(); i++) {
-				int pixelX = Math.round(pointsInFrame.get(i)[0] / resolution);
-				int pixelY = Math.round(pointsInFrame.get(i)[1] / resolution);
-				switch (modelNumber) {
-				case 1: // symmetric Gaussian
+			for (int i = 0; i < lInput.size(); i++) {
+				int pixelX = Math.round(lInput.get(i)[0] / resolution);
+				int pixelY = Math.round(lInput.get(i)[1] / resolution);
+				if(modelNumber == 1) { // symmetric Gaussian
 					for (int k = -sizePSF; k <= sizePSF; k++) {
 						for (int m = -sizePSF; m <= sizePSF; m++) {
-							float intensityPhotons = symmInt(pixelX + k, pixelY + m, pointsInFrame.get(i)[0], 
-									pointsInFrame.get(i)[1], pointsInFrame.get(i)[4], calcSig(pointsInFrame.get(i)[2], numericalAperture, 
+							float intensityPhotons = symmInt(pixelX + k, pixelY + m, lInput.get(i)[0], 
+									lInput.get(i)[1], lInput.get(i)[4], calcSig(lInput.get(i)[2], numericalAperture, 
 											waveLength, zFocus, zDefocus), resolution)/intensityPerPhoton;
-							pro.setf(pixelX + k + emptySpace + sizePSF, pixelY + m + emptySpace + sizePSF, //conserve empty space
-									calc.RandomClass.poissonNumber(intensityPhotons)*intensityPerPhoton);
+							float val4 = pro.getf(pixelX + k, pixelY + m);
+							val4 += calc.RandomClass.poissonNumber(intensityPhotons)*intensityPerPhoton;
+							pro.setf(pixelX + k + emptySpace + sizePSF, pixelY + m + emptySpace + sizePSF, val4);
 						}
 					}
-					break;
-					
-				case 2: //antisymmetric Gaussian
-					break;
+				}
+				else { 
+					if(modelNumber == 2) { //calibration file Gaussian
+						
+					}
+					else {
+						System.out.println("model number not valid");
+						return;
+					}
 				}
 			}
 			
 			//add Gaussian underground noise
-			Random rand = new Random();
-			for (int n = emptySpace; n < pImgWidth + sizePSF; n++){
-				for (int p = emptySpace; p < pImgHeight + sizePSF; p++) {
-					float val3 = (float) rand.nextGaussian()*sigmaNoise;
-					val3 += pro.getf(n, p);
-					pro.setf(n, p, val3);
-				}
-			}
+			pro.noise(sigmaNoise);
+//			Random rand = new Random();
+//			for (int n = 0; n < pImgWidth + sizePSF + emptySpace; n++){
+//				for (int p = 0; p < pImgHeight + sizePSF + emptySpace; p++) {
+//					float val3 = (float) rand.nextGaussian()*sigmaNoise;
+//					val3 += pro.getf(n, p);
+//					pro.setf(n, p, val3);
+//				}
+//			}
 			
 			stackLeft.addSlice(pro); // adds a processor for each frame to the stack
 		}
-		
+		System.out.println("finished procession");
 		
 
 		//save imagestack
 		ImagePlus leftStack = new ImagePlus("", stackLeft);
 		FileSaver fs = new FileSaver(leftStack);
 		fs.saveAsTiffStack("C:\\Users\\Niels\\Desktop\\Documents\\STORMVis_HiWi\\tiffstack.tif");
-	
-	}
-	
+		System.out.println("file succesfully saved");
+	}	
 
-	/**
-	 * auxiliary method subtractCoordinate adds fixed value to one of the coordinates
-	 * @param m : input matrix
-	 * @param value : value to subtract
-	 * @param coordinate : coordinate, in which the the subtraction takes place
-	 * @return returns matrix with subtracted coordinate
-	 */
-	private static float[][] subtractCoordinate(float[][] m, float value, int coordinate) {
-		for(int i=0; i<m.length;i++) {
-			m[i][coordinate] = m[i][coordinate] - value;
-		}
-		return m;
-	}
+
 	
 	/**
 	 * auxiliary method creates a list out of the list of tables of events
@@ -218,24 +184,8 @@ public class CreateStack {
 			}
 		}
 		return ret;
-	}
-	
-	/**
-	 * auxiliary method createUnderground creates a random Gauss-distributed underground 
-	 * intensity in the domain area
-	 * @param var : variance of the distribution 
-	 * @return collection of points with normally-distributed underground intensity
-	 */
-	private static float[][] createUnderground(int nPoints, double var) {
-		Random r= new Random();
-		float[][] h= new float[nPoints][4];
-		for(int i = 0; i < nPoints; i++) {
-			h[i][4] = (float)(r.nextGaussian()*var); //creates Gaussian distributed number in [0,1], multiply by variance
-		}
-		return h;
-		
-	}
-		
+	}	
+
 	
 	
 	/**
@@ -270,22 +220,24 @@ public class CreateStack {
 		return min;
 	}
 	
+	
+	//method no more needed, replaced by operation in SortClass
 	/**
 	 * auxiliary method findFrame finds all data sets with a given frame number
 	 * @param frNr : frame Number
 	 * @param input : input array list
 	 * @return returns a list of all data sets 
 	 */
-	private static List<float[]> findFrame(List<float[]> input, int frNr) {
-		List<float[]> ret = new ArrayList<float[]>();
-		for(int i = 0; i < input.size(); i++) {
-			if(input.get(i)[3] == frNr) {
-				float[] data = {input.get(i)[0], input.get(i)[1], input.get(i)[2], input.get(i)[3], input.get(i)[4]};
-				ret.add(data);
-			}
-		}
-		return ret;
-	}
+//	private static List<float[]> findFrame(List<float[]> input, int frNr) {
+//		List<float[]> ret = new ArrayList<float[]>();
+//		for(int i = 0; i < input.size(); i++) {
+//			if(input.get(i)[3] == frNr) {
+//				float[] data = {input.get(i)[0], input.get(i)[1], input.get(i)[2], input.get(i)[3], input.get(i)[4]};
+//				ret.add(data);
+//			}
+//		}
+//		return ret;
+//	}
 	
 	/**
 	 * auxiliary method calculates a symmetric-Gaussian-distributed 
@@ -330,5 +282,45 @@ public class CreateStack {
 		return s;
 	}
 	
+	/**
+	 * auxiliary method distributePSF distributes the PSF in an amount different frames
+	 * @param iInp : input list 
+	 * @param frRate : rate in which frames are taken
+	 * @param decTime : time interval, over which the PSF distributes its intensity
+	 */
+	private static List<float[]> distributePSF(List<float[]> lInp, float frRate, float decTime) {
+		float frameTime = 1 / frRate;
+		
+		for (int i = 0; i < lInp.size(); i++) {
+			// simulation of a random beginning time
+			float beginningTime = (float) (Math.random() / frRate);
+			float t = beginningTime + decTime;
+			// spreads the intensity of the PSF on arbitrarily many frames
+			if (t > frameTime) {
+				float d = decTime;
+				float overlap1 = (frameTime - beginningTime) / decTime; // fraction of decay time in original frame
+				float[] val1 = { lInp.get(i)[0], lInp.get(i)[1], lInp.get(i)[2], lInp.get(i)[3],
+						lInp.get(i)[4] * overlap1 };
+				d -= frameTime - beginningTime;
+				lInp.remove(i);
+				lInp.add(i, val1);
+				float overlap2 = frameTime / decTime; // fraction full frame over decay time
+				int n = 0;
+				while (d > frameTime) {
+					float[] val2 = { lInp.get(i)[0], lInp.get(i)[1], lInp.get(i)[2], lInp.get(i)[3] + n + 1,
+							lInp.get(i)[4] * overlap2 };
+					d = d - frameTime;
+					n++;
+					lInp.add(val2);
+				}
+				float overlap3 = d / decTime; // fraction of the rest
+				float[] val3 = { lInp.get(i)[0], lInp.get(i)[1], lInp.get(i)[2], lInp.get(i)[3] + n + 1,
+						lInp.get(i)[4] * overlap3 };
+				lInp.add(val3);
+			}
+		}
+		return lInp;
+	}
 	
+
 }
