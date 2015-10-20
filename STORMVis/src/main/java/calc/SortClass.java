@@ -11,9 +11,9 @@ public class SortClass {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		float[] a = {0, 0, 0, 2, 0};
-		float[] b = {0, 0, 0, 1, 0};
-		float[] c = {0, 0, 1, 8, 0};
+		float[] a = {1, 0, 0, 2, 9};
+		float[] b = {7, 0, 0, 1, 10};
+		float[] c = {0, 0, 1, 8, 70};
 		float[] d = {1, 1, 2, 9, 6};
 		float[] e = {5, 5, 5, 50, 7};
 		List<float[]> li = new ArrayList<float[]>();
@@ -30,11 +30,11 @@ public class SortClass {
 		System.out.println(h.getVal(3, 3));
 		System.out.println(h.getVal(4, 3));
 		System.out.println("\n");
-		System.out.println(h.getVal(0, 4));
-		System.out.println(h.getVal(1, 4));
-		System.out.println(h.getVal(2, 4));
-		System.out.println(h.getVal(3, 4));
-		System.out.println(h.getVal(4, 4));
+		System.out.println(h.getVal(0, 0));
+		System.out.println(h.getVal(1, 0));
+		System.out.println(h.getVal(2, 0));
+		System.out.println(h.getVal(3, 0));
+		System.out.println(h.getVal(4, 0));
 	}
 	
 	/**

@@ -160,8 +160,7 @@ public class Plot3D {
 			        	LineStrip strip = new LineStrip();
 			    		strip.setWidth(set.getParameterSet().getLineWidth());
 			    		strip.setWireframeColor(new Color(set.getParameterSet().getAntibodyColor().getRed()/255.f, set.getParameterSet().getAntibodyColor().getGreen()/255.f, set.getParameterSet().getAntibodyColor().getBlue()/255.f, 1.f));
-			        	
-			    		
+
 			    		strip.add(new Point(new Coord3d(currentRowStart[0],currentRowStart[1],currentRowStart[2])));
 			    		strip.add(new Point(new Coord3d(currentRowEnd[0],currentRowEnd[1],currentRowEnd[2])));
 			    		comp.add(strip);
@@ -175,15 +174,16 @@ public class Plot3D {
 			// Check if STORM should be displayed
 			if(set.getParameterSet().getStormVisibility() == true && set.stormData != null) {
 				//System.out.println("show storm");
-				float[][] result = Calc.findStormDataInRange(set.stormData, borders);
-				Coord3d[] points = new Coord3d[result.length];;
-				Color[] colors = new Color[result.length];
-				for (int i = 0; i < result.length; i++) {
-					Coord3d coord = new Coord3d(result[i][0], result[i][1], result[i][2]);
+				ArrayList<Integer> idxInRange = Calc.findStormDataInRange(set.stormData, borders);
+				Coord3d[] points = new Coord3d[idxInRange.size()];;
+				Color[] colors = new Color[idxInRange.size()];
+				for (int i = 0; i < idxInRange.size(); i++) {
+					int currIdx = idxInRange.get(i);
+					Coord3d coord = new Coord3d(set.stormData[currIdx][0], set.stormData[currIdx][1], set.stormData[currIdx][2]);
 					points[i] = coord;
-					colors[i] = new Color(set.getParameterSet().getStormColor().getRed()/255.f, set.getParameterSet().getStormColor().getGreen()/255.f, set.getParameterSet().getStormColor().getBlue()/255.f, result[i][3]);
+					colors[i] = new Color(set.getParameterSet().getStormColor().getRed()/255.f, set.getParameterSet().getStormColor().getGreen()/255.f, set.getParameterSet().getStormColor().getBlue()/255.f, set.stormData[currIdx][3]);
 				}
-				if (result.length != 0){
+				if (idxInRange.size() != 0){
 					CompileableComposite comp = new CompileableComposite();
 			        float pointSize = set.getParameterSet().getPointSize();
 			        Scatter scatter = new Scatter(points, colors, pointSize);

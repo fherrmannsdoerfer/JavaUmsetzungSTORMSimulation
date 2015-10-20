@@ -1,8 +1,10 @@
 package batchProcessing;
 
 import gui.DataTypeDetector;
+import gui.ExamplesProvidingClass;
 import gui.ParserWrapper;
 import gui.DataTypeDetector.DataType;
+import ij.gui.GUI;
 import inout.FileManager;
 
 import java.io.File;
@@ -24,10 +26,13 @@ public class startBatchProcessing {
 	static List<DataSet> allDataSets = new ArrayList<DataSet>();
 	private static Random random;
 	private static String EXTENSIONIMAGEOUTPUT = ".tif";
+	private static String outputFolder = "Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\MicrotubulesCrossingSiteSimulation\\";
 	
 	public static void main(String[] args) {
-		File file = new File("C:\\Users\\herrmannsdoerfer\\Desktop\\OLD\\Models\\Microtubule-CrossingSiterescaled.wimp");
+		File file = new File("Y:\\Users_shared\\SuReSim-Software Project\\Poster, Paper, Progress Reports, Meeting Protocols\\Paper\\Figures\\150823Figure1\\1d-e\\1d-Model-Microtubule3D-Nachgezeichnet\\Microtubule-CrossingSiterescaled.wimp");
 		proceedFileImport(file);
+//		DataSet data = ExamplesProvidingClass.getDataset(1);
+//		furtherProceedFileImport(data, data.dataType);
 		SimulationParameter params = new SimulationParameter();
 		params.backgroundPerMicroMeterCubed = 50;
 		params.coupleSigmaIntensity = true;
@@ -39,29 +44,43 @@ public class startBatchProcessing {
 		params.labelEpitopeDistance = 16;
 		params.labelingEfficiency = 10;
 		params.makeItReproducible = true;
-		params.MeanPhotonNumber = 3000;
-		params.radiusOfFilament = 10;
+		params.MeanPhotonNumber = 4000;
+		params.radiusOfFilament = (float) 12.5;
 		params.recordedFrames = 10000;
 		params.sigmaXY = 4;
 		params.sigmaZ = 8;
 		params.viewStatus = 1;
-		ArrayList<Float> sigmas = new ArrayList(Arrays.asList(1.f,4.f,8.f,12.f));
+		ArrayList<Float> sigmas = new ArrayList(Arrays.asList(12.f));
 		ArrayList<Float> le = new ArrayList(Arrays.asList(1.f,5.f,10.f,50.f));
+		ArrayList<Integer> koff = new ArrayList(Arrays.asList(2000));
+		ArrayList<String> listNames = new ArrayList(Arrays.asList("sigma","labelingEff"));
+		allDataSets.get(0).setProgressBar(new JProgressBar());
 		int counter = 0;
 		for (int i =0; i<sigmas.size(); i++){
 			for (int j = 0;j< le.size(); j++){
-				counter += 1;
-				params.labelingEfficiency = le.get(j);
-				params.sigmaXY = sigmas.get(i);
-				params.sigmaZ = 2*sigmas.get(i);
-				calculate(params);
-				params.borders = getBorders();
-				exportData("c:\\testoutput\\",counter+"", params);
+				for (int k = 0;k<koff.size(); k++){
+					counter += 1;
+					params.labelingEfficiency = le.get(j);
+					params.sigmaXY = sigmas.get(i);
+					params.sigmaZ = 2*sigmas.get(i);
+					params.kOff = koff.get(k);
+					calculate(params);
+					params.borders = getBorders();
+					String fname = String.format("sigmas%1.0f_%1.0flabelingEff%1.0fPercentKOFF%1.0f", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.kOff);
+					new File(outputFolder+fname+"\\").mkdir();
+					exportData(outputFolder+fname+"\\",fname, params);
+				}
 			}
 		}
 		
 		
 		
+	}
+	
+	private static String getShortFilename(ArrayList<String> names, ArrayList<String> values){
+		String filename = "";
+		
+		return filename;
 	}
 	
 	private static String getFilename(SimulationParameter params){
@@ -175,12 +194,10 @@ public class startBatchProcessing {
 	}
 	
 	private static void exportData(String path, String name, SimulationParameter params){
-		if (!path.endsWith(EXTENSIONIMAGEOUTPUT)) {
-		    path += EXTENSIONIMAGEOUTPUT;
+		if(!name.endsWith(EXTENSIONIMAGEOUTPUT)){
+			name = name += EXTENSIONIMAGEOUTPUT;
 		}
-		if(name.endsWith(EXTENSIONIMAGEOUTPUT)){
-			name = name.substring(0, name.length()-4);
-		}
+		path = path + name;
 		System.out.println("Path to write project: " + path);
 		System.out.println("project name: " + name);
 		FileManager.ExportToFile(allDataSets.get(0), path, params.viewStatus,params.borders);

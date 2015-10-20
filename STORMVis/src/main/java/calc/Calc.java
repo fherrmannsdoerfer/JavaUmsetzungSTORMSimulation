@@ -943,20 +943,19 @@ public class Calc {
 	
 
 
-	public static float[][] findStormDataInRange(float[][] stormData,
+	public static ArrayList<Integer> findStormDataInRange(float[][] stormData,
 			ArrayList<Float> borders) {
-		ArrayList<float[]> retList = new ArrayList<float[]>();
+		ArrayList<Integer> retList = new ArrayList<Integer>();
 		for (int i = 0; i < stormData.length; i++) {
 			Coord3d coord = new Coord3d(stormData[i][0], stormData[i][1], stormData[i][2]);
 			if (coord.x<borders.get(0)||coord.x>borders.get(1)||coord.y<borders.get(2)||coord.y>borders.get(3)||coord.z<borders.get(4)||coord.z>borders.get(5)){
 				
 			}
 			else{
-				float[] tmp = {stormData[i][0],stormData[i][1],stormData[i][2],stormData[i][3],stormData[i][4]};
-				retList.add(tmp);
+				retList.add(i);
 			}
 		}
-		return toFloatArray(retList);
+		return retList;
 	}
 
 	public static int countVisibleLocs(ArrayList<Float> borders,
