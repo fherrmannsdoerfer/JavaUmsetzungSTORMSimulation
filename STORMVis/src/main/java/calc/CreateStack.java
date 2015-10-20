@@ -26,27 +26,23 @@ public class CreateStack {
 	 * main method to test
 	 */
 	public static void main(String[] args){ 
-		
+		int nbrPoints = 30;
+		float[][] c = new float[nbrPoints][5];
 		//random creation of a list of tables as input
-		List<float[][]> b = new ArrayList<float[][]>();
-		for (int i = 0; i < 2; i++) {
-			float[][] c = new float[30][5];
-			for (int j = 0; j < 3; j++) {
-				c[j][0] = (float) (Math.random()*300);
-				c[j][1] = (float) (Math.random()*300);
-				c[j][2] = (float) (Math.random()*200);
-				c[j][3] = (float) Math.round(Math.random()*400);
-				c[j][4] = (float) (Math.random()*1000);
-			}
-			b.add(c);
+		for (int j = 0; j < nbrPoints; j++) {
+			c[j][0] = (float) (Math.random()*30000);
+			c[j][1] = (float) (Math.random()*30000);
+			c[j][2] = (float) (Math.random()*800);
+			c[j][3] = (float) Math.round(Math.random()*10);
+			c[j][4] = (float) (Math.random()*1000+1000);
 		}
 		System.out.println("finished simulation");
 //		List<float[]> ba = convertList(b);
 //		System.out.println("finished conversion");
 //		List<float[]> r = distributePSF(ba, 20, (float) 0.2);
 //		System.out.println("finished distribution");
-		createTiffStack(b, 1 , 10, 2, (float) 0.5, 3, 2, 10, 1, //model nr 1 
-				(float) 0.4, 400, 10, 15, 1);
+		createTiffStack(c, 1/100.f , 10, 2, (float) 0.5, 3, 2, 10, 1, //model nr 1 
+				(float) 1.4, 680, 400, 800, 5);
 //		ba.addAll(r);
 //		System.out.println("finished merging");
 
@@ -70,7 +66,7 @@ public class CreateStack {
 	 * @param zDefocus : z-value, for which the microscope defocusses
 	 * @param sigmaNoise : sigma of the Gaussian noise in the whole image
 	 */
-	public static void createTiffStack(List<float[][]> input, float resolution, int emptySpace, 
+	public static void createTiffStack(float[][] input, float resolution, int emptySpace, 
 			float intensityPerPhoton, float meanPoisson, float frameRate, float decayTime, int sizePSF, int modelNumber, 
 			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise) { 
 		
@@ -156,7 +152,7 @@ public class CreateStack {
 		//save imagestack
 		ImagePlus leftStack = new ImagePlus("", stackLeft);
 		FileSaver fs = new FileSaver(leftStack);
-		fs.saveAsTiffStack("C:\\Users\\Niels\\Desktop\\Documents\\STORMVis_HiWi\\tiffstack3.tif");
+		fs.saveAsTiffStack("C:\\Users\\Herrmannsdoerfer\\Desktop\\tiffstack4.tif");
 		System.out.println("file succesfully saved");
 	}	
 
@@ -167,14 +163,13 @@ public class CreateStack {
 	 * @param input list
 	 * @return output list
 	 */
-	private static List<float[]> convertList (List<float[][]> lInput) {
+	private static List<float[]> convertList (float[][] lInput) {
 		List<float[]> ret = new ArrayList<float[]>();
-		for(int i = 0; i < lInput.size(); i++) {
-			for(int j = 0; j < lInput.get(i).length; j++) {
-				float[] val = {lInput.get(i)[j][0], lInput.get(i)[j][1], lInput.get(i)[j][2], lInput.get(i)[j][3], lInput.get(i)[j][4]};
-				ret.add(val);
-			}
+		for(int j = 0; j < lInput.length; j++) {
+			float[] val = {lInput[j][0], lInput[j][1], lInput[j][2], lInput[j][3], lInput[j][4]};
+			ret.add(val);
 		}
+	
 		return ret;
 	}	
 
@@ -303,3 +298,6 @@ public class CreateStack {
 
 }
 
+
+//Input fuer Astigmatismus: List<Float> calib; //  {0 , 140, 333},{100 , 150, 333},{200 , 160, 300},{300 , 180, 260},... beliebig viele Trippel
+													
