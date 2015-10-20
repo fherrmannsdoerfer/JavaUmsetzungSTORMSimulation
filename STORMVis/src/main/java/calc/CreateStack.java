@@ -32,11 +32,11 @@ public class CreateStack {
 		for (int i = 0; i < 2; i++) {
 			float[][] c = new float[30][5];
 			for (int j = 0; j < 3; j++) {
-				c[j][0] = (float) (Math.random()*30);
-				c[j][1] = (float) (Math.random()*30);
-				c[j][2] = (float) (Math.random()*20);
-				c[j][3] = (float) (Math.random()*4);
-				c[j][4] = (float) (Math.random()*10);
+				c[j][0] = (float) (Math.random()*300);
+				c[j][1] = (float) (Math.random()*300);
+				c[j][2] = (float) (Math.random()*200);
+				c[j][3] = (float) Math.round(Math.random()*400);
+				c[j][4] = (float) (Math.random()*1000);
 			}
 			b.add(c);
 		}
@@ -45,10 +45,10 @@ public class CreateStack {
 //		System.out.println("finished conversion");
 //		List<float[]> r = distributePSF(ba, 20, (float) 0.2);
 //		System.out.println("finished distribution");
-		createTiffStack(b, 1 , 10, 2, (float) 0.5, 3, 2, 3, 1, //model nr 1 
+		createTiffStack(b, 1 , 10, 2, (float) 0.5, 3, 2, 10, 1, //model nr 1 
 				(float) 0.4, 400, 10, 15, 1);
 //		ba.addAll(r);
-		System.out.println("finished merging");
+//		System.out.println("finished merging");
 
     } 
 	
@@ -102,9 +102,8 @@ public class CreateStack {
 		pImgHeight++;
 		
 		//create new image stack	
-		//ImagePlus imgpls = new ImagePlus(""); //initialises an empty image
 		ImageStack stackLeft = new ImageStack(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF); //emptySpace on both sides
-		System.out.println("finished initialisation of image devices");
+		//System.out.println("finished initialisation of image devices");
 		
 		//performing sorting operation by quicksort algorithm
 		SortClass s = new SortClass(lInput);

@@ -87,27 +87,31 @@ public class Plot3D {
 			        Color[] colors = new Color[pointNumber];
 			        
 			        List<LineStrip> lineList = new ArrayList<LineStrip>();
-					int i = 0;
+					
 			        for(ArrayList<Coord3d> obj : lines.data) {
-			        	boolean showThisLine = true;
+			        	int i = 0;
 			        	for(Coord3d coord : obj){
 			        		if (coord.x<borders.get(0)||coord.x>borders.get(1)||coord.y<borders.get(2)||coord.y>borders.get(3)||coord.z<borders.get(4)||coord.z>borders.get(5)){
-			        			showThisLine = false;
+			        			
+			        		}
+			        		else{
+			        			LineStrip strip = new LineStrip();
+			        			strip.setWidth(lines.getParameterSet().getLineWidth());
+			        			strip.setWireframeColor(new Color(lines.getParameterSet().getEmColor().getRed()/255.f, lines.getParameterSet().getEmColor().getGreen()/255.f, lines.getParameterSet().getEmColor().getBlue()/255.f,1.f));
+			        			points[i] = coord;
+				        		float a = 1.f;
+				        		colors[i] = new Color(lines.getParameterSet().getEmColor().getRed()/255.f, lines.getParameterSet().getEmColor().getGreen()/255.f, lines.getParameterSet().getEmColor().getBlue()/255.f,a);
+				        		if (i>0){
+				        			strip.add(new Point(points[i-1]));
+				        			strip.add(new Point(points[i]));
+				        		}
+				        		i++;
+				        		lineList.add(strip);
 			        		}
 			        	}
-			        	LineStrip strip = new LineStrip();
-			    		strip.setWidth(lines.getParameterSet().getLineWidth());
-			    		strip.setWireframeColor(new Color(lines.getParameterSet().getEmColor().getRed()/255.f, lines.getParameterSet().getEmColor().getGreen()/255.f, lines.getParameterSet().getEmColor().getBlue()/255.f,1.f));
-			        	for(Coord3d coord : obj) {
-			        		points[i] = coord;
-			        		float a = 1.f;
-			        		colors[i] = new Color(lines.getParameterSet().getEmColor().getRed()/255.f, lines.getParameterSet().getEmColor().getGreen()/255.f, lines.getParameterSet().getEmColor().getBlue()/255.f,a);
-			        		if(showLines && showThisLine) {
-			        			strip.add(new Point(coord));
-			        		}
-			        		i++;
-			        	}
-			        	lineList.add(strip);
+			        	
+			       
+			        	
 			        }
 
 			        for (LineStrip line : lineList) {
