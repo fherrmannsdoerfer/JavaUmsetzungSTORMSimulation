@@ -974,6 +974,4 @@ public class Calc {
 		// TODO Auto-generated method stub
 		return (tmp[0]>borders.get(0)&&tmp[0]<borders.get(1)&&tmp[1]>borders.get(2)&&tmp[1]<borders.get(3)&&tmp[2]>borders.get(4)&&tmp[2]<borders.get(5));
 	}
-
-
 }
