@@ -42,7 +42,7 @@ public class CreateStack {
 //		List<float[]> r = distributePSF(ba, 20, (float) 0.2);
 //		System.out.println("finished distribution");
 		createTiffStack(c, 1/100.f , 10, 2, (float) 0.5, 3, 2, 10, 1, //model nr 1 
-				(float) 1.4, 680, 400, 800, 5);
+				(float) 1.4, 680, 400, 800, 5,200.f);
 //		ba.addAll(r);
 //		System.out.println("finished merging");
 
@@ -65,10 +65,11 @@ public class CreateStack {
 	 * @param zFocus : z-plane, in which the focus lies
 	 * @param zDefocus : z-value, for which the microscope defocusses
 	 * @param sigmaNoise : sigma of the Gaussian noise in the whole image
+	 * @param offset : constant offset
 	 */
 	public static void createTiffStack(float[][] input, float resolution, int emptySpace, 
 			float intensityPerPhoton, float meanPoisson, float frameRate, float decayTime, int sizePSF, int modelNumber, 
-			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise) { 
+			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, float offset) { 
 		
 		//convert List<float[][]> to List<float[]>
 		List<float[]> lInput = convertList(input);
@@ -143,7 +144,7 @@ public class CreateStack {
 			}
 					
 			pro.noise(sigmaNoise); //add Gaussian underground noise
-			
+			pro.add(offset); // add constant offset
 			stackLeft.addSlice(pro); // adds a processor for each frame to the stack
 		}
 		System.out.println("finished procession");
