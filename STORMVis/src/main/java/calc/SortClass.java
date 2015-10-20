@@ -1,3 +1,9 @@
+/**
+ * auxiliary class for quicksort algorithm
+ * @author Niels Schlusser
+ * @date 20.10.2015
+ */
+
 package calc;
 
 import java.util.List;

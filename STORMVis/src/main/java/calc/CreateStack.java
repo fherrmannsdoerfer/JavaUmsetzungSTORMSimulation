@@ -1,3 +1,10 @@
+/**
+ * class creates a Tiff-Stack out of a table of blinking events
+ * it takes account for random processes like noise
+ * @author Niels Schlusser
+ * @date 20.10.2015
+ */
+
 package calc;
 
 import java.util.List;
@@ -9,7 +16,6 @@ import ij.io.FileSaver;
 
 import ij.process.*;
 
-import java.util.Random;
 
 
 
@@ -34,15 +40,18 @@ public class CreateStack {
 			c[j][1] = (float) (Math.random()*30000);
 			c[j][2] = (float) (Math.random()*800);
 			c[j][3] = (float) Math.round(Math.random()*10);
-			c[j][4] = (float) (Math.random()*1000+1000);
+			c[j][4] = (float) (Math.random()*100000);
 		}
 		System.out.println("finished simulation");
 //		List<float[]> ba = convertList(b);
 //		System.out.println("finished conversion");
 //		List<float[]> r = distributePSF(ba, 20, (float) 0.2);
 //		System.out.println("finished distribution");
-		createTiffStack(c, 1/100.f , 10, 2, (float) 0.5, 3, 2, 10, 1, //model nr 1 
-				(float) 1.4, 680, 400, 800, 5,200.f);
+		createTiffStack(c, 1/100.f/**resolution*/ , 10/**emptyspace*/, 
+				2/**intensityPerPhoton*/, (float) 0.5/**frameRate*/, 
+				3/**decayTime*/, 10/**sizePSF*/, 1/**modelNR*/, 
+				(float) 1.4/**NA*/, 680/**waveLength*/, 400/**zFocus*/, 
+				800/**zDefocus*/, 5/**sigmaNoise*/, 20.f/**constant offset*/);
 //		ba.addAll(r);
 //		System.out.println("finished merging");
 
@@ -68,7 +77,7 @@ public class CreateStack {
 	 * @param offset : constant offset
 	 */
 	public static void createTiffStack(float[][] input, float resolution, int emptySpace, 
-			float intensityPerPhoton, float meanPoisson, float frameRate, float decayTime, int sizePSF, int modelNumber, 
+			float intensityPerPhoton, float frameRate, float decayTime, int sizePSF, int modelNumber, 
 			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, float offset) { 
 		
 		//convert List<float[][]> to List<float[]>
@@ -86,16 +95,16 @@ public class CreateStack {
 		//subtract minimum values to obtain coordinates in [0, infty]x[0, infty]
 		for (int j = 0; j < lInput.size(); j++) {   	//shifts the window to positive values
 			lInput.get(j)[0] -= minX; 
-			lInput.get(j)[0] +=	(emptySpace + sizePSF)/resolution;
+			lInput.get(j)[0] +=	(emptySpace + sizePSF)/ resolution;
 			lInput.get(j)[1] -= minY;
-			lInput.get(j)[1] += (emptySpace + sizePSF)/resolution;
+			lInput.get(j)[1] += (emptySpace + sizePSF)/ resolution;
 		}
 		
 	
 		//find out required height and width of the image in nm as global maxima in the list; convert into pixel		
-		int pImgWidth = (int) (globalMax(lInput, 0)*resolution);
+		int pImgWidth = (int) (globalMax(lInput, 0)* resolution);
 		pImgWidth++; //ensures rounding up
-		int pImgHeight = (int) (globalMax(lInput, 1)*resolution);
+		int pImgHeight = (int) (globalMax(lInput, 1)* resolution);
 		pImgHeight++;
 		
 		//create new image stack	
@@ -105,56 +114,84 @@ public class CreateStack {
 		//performing sorting operation by quicksort algorithm
 		SortClass s = new SortClass(lInput);
 		s.quickSort(0, lInput.size() - 1);
-		lInput = s.getList(); 
-		
-		//find out minimum and maximum frame value
-		int maxFr = (int) lInput.get(lInput.size()-1)[3];
-		int minFr = (int) lInput.get(0)[3];
-		
+		lInput = s.getList(); 		
+
 		// fill image stack with images
-		for (int j = minFr; j < maxFr; j++) {
-			//ImagePlus imgpls = new ImagePlus(""); //initialises an empty image
-			FloatProcessor pro = new FloatProcessor(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF);
+		for (int i = 0; i < lInput.size(); i++) {
 			
 			//modelling the form of the PSF
-			for (int i = 0; i < lInput.size(); i++) {
-				int pixelX = Math.round(lInput.get(i)[0] * resolution);
-				int pixelY = Math.round(lInput.get(i)[1] * resolution);
-				if(modelNumber == 1) { // symmetric Gaussian
-					for (int k = -sizePSF; k <= sizePSF; k++) {
-						for (int m = -sizePSF; m <= sizePSF; m++) {
-							float intensityPhotons = symmInt(pixelX + k, pixelY + m, lInput.get(i)[0], 
-									lInput.get(i)[1], lInput.get(i)[4], calcSig(lInput.get(i)[2], numericalAperture, 
-											waveLength, zFocus, zDefocus), resolution)/intensityPerPhoton;
-							float val4 = pro.getf(pixelX + k, pixelY + m); 
-							val4 += calc.RandomClass.poissonNumber(intensityPhotons)*intensityPerPhoton;
-							pro.setf(pixelX + k, pixelY + m, val4); //exception, probably out of bounds
-						}
+			FloatProcessor pro = new FloatProcessor(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF);
+			
+			//at least once
+			int pixelX = Math.round(lInput.get(i)[0]* resolution);
+			int pixelY = Math.round(lInput.get(i)[1]* resolution);
+
+			
+			switch(modelNumber) { // symmetric Gaussian
+			case 1:
+				for (int k = -sizePSF; k <= sizePSF; k++) {
+					for (int m = -sizePSF; m <= sizePSF; m++) {
+						float sig = calcSig(lInput.get(i)[2], numericalAperture, waveLength, zFocus, zDefocus);
+						float intensityPhotons = (float) (symmInt(pixelX + k, pixelY + m, lInput.get(i)[0],
+								lInput.get(i)[1], lInput.get(i)[4],
+								sig, resolution)/ intensityPerPhoton);
+						float val4 = pro.getf(pixelX + k, pixelY + m);
+						val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
+						pro.setf(pixelX + k, pixelY + m, val4);
 					}
 				}
-				else { 
-					if(modelNumber == 2) { //calibration file Gaussian
-						
-					}
-					else {
-						System.out.println("model number not valid");
-						return;
-					}
-				}
+				break;
+				
+			case 2: //asymmetric Gaussian
+				break;	
 			}
+			
+			
+			//going through all other PSFs in the current frame
+			int j = 0;
+			if (i < lInput.size() - 1) {
+				while (i + j < lInput.size() - 2 && lInput.get(i + j)[3] == lInput.get(i + j + 1)[3]) {
+
+					pixelX = Math.round(lInput.get(i + j + 1)[0]* resolution);
+					pixelY = Math.round(lInput.get(i + j + 1)[1]* resolution);
+
+					float sig = calcSig(lInput.get(i + j + 1)[2], numericalAperture, waveLength, zFocus, zDefocus);
 					
+					switch(modelNumber) { // symmetric Gaussian
+					case 1:
+						for (int k = -sizePSF; k <= sizePSF; k++) {
+							for (int m = -sizePSF; m <= sizePSF; m++) {
+								float intensityPhotons = (float) (symmInt(pixelX + k, pixelY + m, lInput.get(i + j + 1)[0],
+										lInput.get(i + j + 1)[1], lInput.get(i + j + 1)[4],
+										sig, resolution)/ intensityPerPhoton);
+								float val4 = pro.getf(pixelX + k, pixelY + m);
+								val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
+								pro.setf(pixelX + k, pixelY + m, val4);
+							}
+						}
+						break;
+						
+					case 2: //asymmetric Gaussian
+						break;	
+					}
+					
+					j++;
+				}
+				i += j;
+			}
+
 			pro.noise(sigmaNoise); //add Gaussian underground noise
-			pro.add(offset); // add constant offset
-			stackLeft.addSlice(pro); // adds a processor for each frame to the stack
+			pro.add(offset); //add constant offset
+			stackLeft.addSlice(pro); //adds a processor for each frame to the stack
 		}
 		System.out.println("finished procession");
-		
 
 		//save imagestack
 		ImagePlus leftStack = new ImagePlus("", stackLeft);
 		FileSaver fs = new FileSaver(leftStack);
-		fs.saveAsTiffStack("C:\\Users\\Herrmannsdoerfer\\Desktop\\tiffstack4.tif");
+		fs.saveAsTiffStack("C:\\Users\\Niels\\Desktop\\Documents\\STORMVis_HiWi\\tiffstack4.tif");
 		System.out.println("file succesfully saved");
+		
 	}	
 
 
@@ -210,7 +247,7 @@ public class CreateStack {
 	
 	
 	/**
-	 * auxiliary method calculates a symmetric-Gaussian-distributed 
+	 * auxiliary method calculates a normalised, symmetric Gaussian-distributed 
 	 * intensity at the value of integer pixels;
 	 * coordinates of a pixel are coordinates of its lower left corner
 	 * nevertheless, the intensity is the intensity in the centre of the pixel
@@ -234,6 +271,8 @@ public class CreateStack {
 		
 		double exponent = (double) (Math.pow(dx, 2) + Math.pow(dy, 2))/2 /Math.pow(sig, 2);
 		ret = (float) Math.exp(-exponent)*maxInt;
+		ret /= Math.sqrt(2* Math.PI);
+		ret /= sig;
 		return ret;
 	}
 
@@ -295,6 +334,8 @@ public class CreateStack {
 		}
 		return ret;
 	}
+	
+
 	
 
 }
