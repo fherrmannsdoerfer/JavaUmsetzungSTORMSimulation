@@ -2,6 +2,8 @@ package gui;
 
 import gui.DataTypeDetector.DataType;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +26,9 @@ import org.jzy3d.plot3d.rendering.canvas.Quality;
 
 import calc.Calc;
 
-public class Plot3D {
+public class Plot3D extends NotifyingThread{
 
+	public boolean chartCreationRunning = false;
 	public List<DataSet> dataSets = new ArrayList<DataSet>();
 	public Quality chartQuality;
 	public boolean squared = false;
@@ -45,6 +48,18 @@ public class Plot3D {
 	 */
 	public boolean showLines = true;
 	
+	private static PropertyChangeSupport propertyChangeSupport =
+		       new PropertyChangeSupport(Plot3D.class);
+	
+	public static void addPropertyChangeListener(PropertyChangeListener listener) {
+	       propertyChangeSupport.addPropertyChangeListener(listener);
+	   }
+
+	   public static synchronized void setProgress(String messageName, int val) {
+		  String message = Integer.toString(val);
+		  propertyChangeSupport.firePropertyChange(messageName, 0, val);
+	   }
+	
 	public Plot3D() {
 		chartQuality = Quality.Nicest;
 	}
@@ -63,10 +78,9 @@ public class Plot3D {
 	
 	
 	public Chart createChart() {
-		
 		Chart chart =AWTChartComponentFactory.chart(chartQuality, Toolkit.awt.name());
 		for(DataSet set : dataSets) {
-			
+			set.progressBar.setString("Visualizing");
 			if(set.dataType == DataType.LINES) {
 				LineDataSet lines = (LineDataSet) set;
 				
@@ -164,6 +178,7 @@ public class Plot3D {
 			    		strip.add(new Point(new Coord3d(currentRowStart[0],currentRowStart[1],currentRowStart[2])));
 			    		strip.add(new Point(new Coord3d(currentRowEnd[0],currentRowEnd[1],currentRowEnd[2])));
 			    		comp.add(strip);
+			    		setProgress("progress",(int) (50*(i/(float)set.antiBodyEndPoints.length)));
 		    		}
 		        }
 		        if (comp.size()!=0){
@@ -182,6 +197,8 @@ public class Plot3D {
 					Coord3d coord = new Coord3d(set.stormData[currIdx][0], set.stormData[currIdx][1], set.stormData[currIdx][2]);
 					points[i] = coord;
 					colors[i] = new Color(set.getParameterSet().getStormColor().getRed()/255.f, set.getParameterSet().getStormColor().getGreen()/255.f, set.getParameterSet().getStormColor().getBlue()/255.f, set.stormData[currIdx][3]);
+					 
+					setProgress("progress",(int) (50+50*(i/(float)idxInRange.size())));
 				}
 				if (idxInRange.size() != 0){
 					CompileableComposite comp = new CompileableComposite();
@@ -189,6 +206,7 @@ public class Plot3D {
 			        Scatter scatter = new Scatter(points, colors, pointSize);
 			        comp.add(scatter);
 			        chart.getScene().getGraph().add(comp);
+			       
 				}
 			}
 			
@@ -211,7 +229,18 @@ public class Plot3D {
 		chart.getAxeLayout().setZTickLabelDisplayed(showTicks);
 		
 		currentChart = chart;
+		dataSets.get(0).getProgressBar().setValue(100);
 		return chart;
 	}
+	
+	public Chart getChart(){
+		return currentChart;
+	}
+
+	@Override
+	public void doRun() {
+		createChart();
+	}
+
 	
 }

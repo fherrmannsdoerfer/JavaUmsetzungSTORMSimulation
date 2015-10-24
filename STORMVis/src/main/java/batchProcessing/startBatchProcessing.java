@@ -26,14 +26,75 @@ public class startBatchProcessing {
 	static List<DataSet> allDataSets = new ArrayList<DataSet>();
 	private static Random random;
 	private static String EXTENSIONIMAGEOUTPUT = ".tif";
-	private static String outputFolder = "Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\MicrotubulesCrossingSiteSimulation\\";
+	private static String outputFolder = "Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\141107-Microtubules-Nachgezeichnet\\SuReSimResult\\";
 	
 	public static void main(String[] args) {
-		File file = new File("Y:\\Users_shared\\SuReSim-Software Project\\Poster, Paper, Progress Reports, Meeting Protocols\\Paper\\Figures\\150823Figure1\\1d-e\\1d-Model-Microtubule3D-Nachgezeichnet\\Microtubule-CrossingSiterescaled.wimp");
+		File file = new File("Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\141107-Microtubules-Nachgezeichnet\\141107-MT-Modelrescaled1d.wimp");
 		proceedFileImport(file);
 //		DataSet data = ExamplesProvidingClass.getDataset(1);
 //		furtherProceedFileImport(data, data.dataType);
+		
+		SimulationParameter params = standardParameterActin();
+		
+		
+		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(4.f,8.f,12.f,25.f));
+		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(8.f,30.f,40.f,50.f));
+		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(10.f,50.f,100.f));
+		ArrayList<Float> de = new ArrayList<Float>(Arrays.asList(10.f,20.f,50.f,100.f));
+		ArrayList<Integer> koff = new ArrayList<Integer>(Arrays.asList(500,1000,2000,5000,10000));
+		ArrayList<Integer> frames = new ArrayList<Integer>(Arrays.asList(10000,45000,60000));
+	
+		allDataSets.get(0).setProgressBar(new JProgressBar());
+		int counter = 0;
+		for (int i =0; i<sigmaXY.size(); i++){
+			for (int j = 0;j< le.size(); j++){
+				for (int k = 0;k<koff.size(); k++){
+					counter += 1;
+					params.labelingEfficiency = le.get(j);
+					params.sigmaXY = sigmaXY.get(i);
+					params.sigmaZ = sigmaZ.get(i);
+					params.kOff = koff.get(k);
+					calculate(params);
+					params.detectionEfficiency = de.get(i);
+					params.recordedFrames = frames.get(i);
+					params.borders = getBorders();
+					
+					String fname = String.format("sigmas%1.0f_%1.0flabelingEff%1.0fPercentKOFF%1.0f", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.kOff);
+					new File(outputFolder+fname+"\\").mkdir();
+					exportData(outputFolder+fname+"\\",fname, params);
+					System.out.println(String.format("run %d of %d",counter,sigmaXY.size()*koff.size()*le.size()));
+				}
+			}
+		}
+		
+		
+		
+	}
+	
+	private static SimulationParameter standardParameterActin() {
 		SimulationParameter params = new SimulationParameter();
+		params.angleOfLabel = (float) (Math.PI/2);
+		params.backgroundPerMicroMeterCubed = 0;
+		params.coupleSigmaIntensity = true;
+		params.detectionEfficiency = 100;
+		params.epitopeDensity = (float) 0.0115;
+		params.fluorophoresPerLabel = 1;
+		params.kOff = 2000;
+		params.kOn = 1;
+		params.labelEpitopeDistance = 1;
+		params.labelingEfficiency = 10;
+		params.makeItReproducible = true;
+		params.MeanPhotonNumber = 4000;
+		params.radiusOfFilament = (float) 12.5;
+		params.recordedFrames = 10000;
+		params.sigmaXY = 8;
+		params.sigmaZ = 30;
+		params.viewStatus = 1;
+		return params;
+	}
+	private static SimulationParameter standardParameterMicrotubules() {
+		SimulationParameter params = new SimulationParameter();
+		params.angleOfLabel = (float) (Math.PI/2);
 		params.backgroundPerMicroMeterCubed = 50;
 		params.coupleSigmaIntensity = true;
 		params.detectionEfficiency = 100;
@@ -50,33 +111,31 @@ public class startBatchProcessing {
 		params.sigmaXY = 4;
 		params.sigmaZ = 8;
 		params.viewStatus = 1;
-		ArrayList<Float> sigmas = new ArrayList(Arrays.asList(12.f));
-		ArrayList<Float> le = new ArrayList(Arrays.asList(1.f,5.f,10.f,50.f));
-		ArrayList<Integer> koff = new ArrayList(Arrays.asList(2000));
-		ArrayList<String> listNames = new ArrayList(Arrays.asList("sigma","labelingEff"));
-		allDataSets.get(0).setProgressBar(new JProgressBar());
-		int counter = 0;
-		for (int i =0; i<sigmas.size(); i++){
-			for (int j = 0;j< le.size(); j++){
-				for (int k = 0;k<koff.size(); k++){
-					counter += 1;
-					params.labelingEfficiency = le.get(j);
-					params.sigmaXY = sigmas.get(i);
-					params.sigmaZ = 2*sigmas.get(i);
-					params.kOff = koff.get(k);
-					calculate(params);
-					params.borders = getBorders();
-					String fname = String.format("sigmas%1.0f_%1.0flabelingEff%1.0fPercentKOFF%1.0f", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.kOff);
-					new File(outputFolder+fname+"\\").mkdir();
-					exportData(outputFolder+fname+"\\",fname, params);
-				}
-			}
-		}
-		
-		
-		
+		return params;
 	}
 	
+	private static SimulationParameter standardParameterVesicles() {
+		SimulationParameter params = new SimulationParameter();
+		params.angleOfLabel = (float) (Math.PI/2);
+		params.backgroundPerMicroMeterCubed = 50;
+		params.coupleSigmaIntensity = true;
+		params.detectionEfficiency = 100;
+		params.epitopeDensity = (float) 0.00626;
+		params.fluorophoresPerLabel = 1;
+		params.kOff = 2000;
+		params.kOn = 1;
+		params.labelEpitopeDistance = 16;
+		params.labelingEfficiency = 10;
+		params.makeItReproducible = true;
+		params.MeanPhotonNumber = 4000;
+		params.radiusOfFilament = (float) 12.5;
+		params.recordedFrames = 10000;
+		params.sigmaXY = 4;
+		params.sigmaZ = 8;
+		params.viewStatus = 1;
+		return params;
+	}
+
 	private static String getShortFilename(ArrayList<String> names, ArrayList<String> values){
 		String filename = "";
 		
@@ -120,8 +179,12 @@ public class startBatchProcessing {
 		
 		allDataSets.add(data);
 		
-		LineDataSet lines = (LineDataSet) allDataSets.get(allDataSets.size()-1);
-		
+		if (allDataSets.get(allDataSets.size()-1).dataType == DataType.LINES){
+			LineDataSet lines = (LineDataSet) allDataSets.get(allDataSets.size()-1);
+		}
+		else{
+			TriangleDataSet triangles = (TriangleDataSet) allDataSets.get(allDataSets.size()-1);
+		}
 	
 		
 	}
@@ -206,6 +269,7 @@ public class startBatchProcessing {
 
 
 class SimulationParameter{
+	float angleOfLabel;
 	float labelingEfficiency;
 	float detectionEfficiency;
 	float backgroundPerMicroMeterCubed;

@@ -143,6 +143,9 @@ public class Calc {
 		for (int i = 0; i < vec.length; i++) {
 			sum += Math.pow(vec[i], 2);
 		}
+		if (Float.isNaN(sum)){
+			return 0;
+		}
 		return (float) Math.sqrt(sum);
 	}
 	

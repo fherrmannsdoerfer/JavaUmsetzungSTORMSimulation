@@ -13,9 +13,6 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -31,11 +28,9 @@ import java.util.Random;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
-import javax.swing.InputVerifier;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -51,7 +46,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -77,15 +71,11 @@ import calc.STORMCalculator;
 import javax.swing.JToggleButton;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
-
-import java.awt.FlowLayout;
-
 import javax.swing.BoxLayout;
 
 import java.awt.CardLayout;
 
 import javax.swing.JSlider;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 
@@ -99,7 +89,7 @@ import javax.swing.JFormattedTextField;
  * 
  */
 
-public class Gui extends JFrame implements TableModelListener,PropertyChangeListener {
+public class Gui extends JFrame implements TableModelListener,PropertyChangeListener,ThreadCompleteListener {
 
 	private JPanel contentPane;
 	private JLabel epitopeDensityLabel;
@@ -1033,7 +1023,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					@Override
 					public void stateChanged(ChangeEvent arg0) {
 						xminField.setText(String.valueOf(xminSlider.getValue()));
-						visualize();
 					}
 				});
 				
@@ -1070,7 +1059,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					@Override
 					public void stateChanged(ChangeEvent arg0) {
 						xmaxField.setText(String.valueOf(xmaxSlider.getValue()));
-						visualize();
 					}
 				});
 				horizontalBox_32.add(xmaxSlider);
@@ -1106,7 +1094,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					@Override
 					public void stateChanged(ChangeEvent arg0) {
 						yminField.setText(String.valueOf(yminSlider.getValue()));
-						visualize();
 					}
 				});
 				horizontalBox_33.add(yminSlider);
@@ -1142,7 +1129,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					@Override
 					public void stateChanged(ChangeEvent arg0) {
 						ymaxField.setText(String.valueOf(ymaxSlider.getValue()));
-						visualize();
 					}
 				});
 				horizontalBox_34.add(ymaxSlider);
@@ -1178,7 +1164,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					@Override
 					public void stateChanged(ChangeEvent arg0) {
 						zminField.setText(String.valueOf(zminSlider.getValue()));
-						visualize();
 					}
 				});
 				horizontalBox_35.add(zminSlider);
@@ -1214,7 +1199,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					@Override
 					public void stateChanged(ChangeEvent arg0) {
 						zmaxField.setText(String.valueOf(zmaxSlider.getValue()));
-						visualize();
 					}
 				});
 				horizontalBox_36.add(zmaxSlider);
@@ -1228,107 +1212,114 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				
 				
 				
-				Box horizontalBox_23 = Box.createHorizontalBox();
-				verticalBox.add(horizontalBox_23);
-				
-				Component horizontalGlue_29 = Box.createHorizontalGlue();
-				horizontalBox_23.add(horizontalGlue_29);
-				
-				xyViewButton = new JToggleButton("xy");
-				xyViewButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						System.out.println(viewStatus);
-						setViewPoint(0,Math.PI/2);
-						xzViewButton.setSelected(false);
-						yzViewButton.setSelected(false);
-						if (viewStatus == 1){
-							viewStatus = 0;
-							return;
-						}
-						viewStatus = 1;
-					
-					}
-				});
-				horizontalBox_23.add(xyViewButton);
-				
-				Component horizontalGlue_27 = Box.createHorizontalGlue();
-				horizontalBox_23.add(horizontalGlue_27);
-				
-				xzViewButton = new JToggleButton("xz");
-				xzViewButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						System.out.println(viewStatus);
-						setViewPoint(Math.PI/2,0);
-						xyViewButton.setSelected(false);
-						yzViewButton.setSelected(false);
-						if (viewStatus == 2){
-							viewStatus = 0;
-							return;
-						}
-						viewStatus = 2;
-						
-					}
-				});
+		Box horizontalBox_23 = Box.createHorizontalBox();
+		verticalBox.add(horizontalBox_23);
+		
+		Component horizontalGlue_29 = Box.createHorizontalGlue();
+		horizontalBox_23.add(horizontalGlue_29);
+		
+		xyViewButton = new JToggleButton("xy");
+		xyViewButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(viewStatus);
+				setViewPoint(0,Math.PI/2);
+				xzViewButton.setSelected(false);
+				yzViewButton.setSelected(false);
+				if (viewStatus == 1){
+					viewStatus = 0;
+					return;
+				}
+				viewStatus = 1;
 			
-				horizontalBox_23.add(xzViewButton);
+			}
+		});
+		horizontalBox_23.add(xyViewButton);
+		
+		Component horizontalGlue_27 = Box.createHorizontalGlue();
+		horizontalBox_23.add(horizontalGlue_27);
+		
+		xzViewButton = new JToggleButton("xz");
+		xzViewButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(viewStatus);
+				setViewPoint(Math.PI/2,0);
+				xyViewButton.setSelected(false);
+				yzViewButton.setSelected(false);
+				if (viewStatus == 2){
+					viewStatus = 0;
+					return;
+				}
+				viewStatus = 2;
 				
-				Component horizontalGlue_28 = Box.createHorizontalGlue();
-				horizontalBox_23.add(horizontalGlue_28);
+			}
+		});
+	
+		horizontalBox_23.add(xzViewButton);
+		
+		Component horizontalGlue_28 = Box.createHorizontalGlue();
+		horizontalBox_23.add(horizontalGlue_28);
+		
+		yzViewButton = new JToggleButton("yz");
+		yzViewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(viewStatus);
+				setViewPoint(0,0);
+				xyViewButton.setSelected(false);
+				xzViewButton.setSelected(false);
+				if (viewStatus == 3){
+					viewStatus = 0;
+					return;
+				}
+				viewStatus = 3;
 				
-				yzViewButton = new JToggleButton("yz");
-				yzViewButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						System.out.println(viewStatus);
-						setViewPoint(0,0);
-						xyViewButton.setSelected(false);
-						xzViewButton.setSelected(false);
-						if (viewStatus == 3){
-							viewStatus = 0;
-							return;
-						}
-						viewStatus = 3;
+			}
+		});
+		horizontalBox_23.add(yzViewButton);
+		
 						
-					}
-				});
-				horizontalBox_23.add(yzViewButton);
-				
-								
-				Component horizontalGlue_30 = Box.createHorizontalGlue();
-				horizontalBox_23.add(horizontalGlue_30);
-				
-				Component verticalGlue_3 = Box.createVerticalGlue();
-				verticalBox.add(verticalGlue_3);
-				
-				saveViewpointButton = new JToggleButton("Fix Viewpoint");
-				saveViewpointButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-				verticalBox.add(saveViewpointButton);
-				
-				Component verticalGlue_14 = Box.createVerticalGlue();
-				verticalBox.add(verticalGlue_14);
-				
-				JButton visButton = new JButton("Visualize");
-				verticalBox.add(visButton);
-				visButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-				
-				Box horizontalBox_39 = Box.createHorizontalBox();
-				verticalBox.add(horizontalBox_39);
-				
-				Component horizontalGlue_40 = Box.createHorizontalGlue();
-				horizontalBox_39.add(horizontalGlue_40);
-				
-				JLabel lblNewLabel_6 = new JLabel("Number Of Visible Localizations:  ");
-				horizontalBox_39.add(lblNewLabel_6);
-				
-				numberOfVisibleLocalizationsLabel = new JLabel("0");
-				horizontalBox_39.add(numberOfVisibleLocalizationsLabel);
-				visButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						visualize();
-					}
-				});
+		Component horizontalGlue_30 = Box.createHorizontalGlue();
+		horizontalBox_23.add(horizontalGlue_30);
+		
+		Component verticalGlue_3 = Box.createVerticalGlue();
+		verticalBox.add(verticalGlue_3);
+		
+		saveViewpointButton = new JToggleButton("Fix Viewpoint");
+		saveViewpointButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		verticalBox.add(saveViewpointButton);
+		
+		Component verticalGlue_14 = Box.createVerticalGlue();
+		verticalBox.add(verticalGlue_14);
+		
+		JButton visButton = new JButton("Visualize");
+		verticalBox.add(visButton);
+		visButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		Box horizontalBox_39 = Box.createHorizontalBox();
+		verticalBox.add(horizontalBox_39);
+		
+		Component horizontalGlue_40 = Box.createHorizontalGlue();
+		horizontalBox_39.add(horizontalGlue_40);
+		
+		JLabel lblNewLabel_6 = new JLabel("Number Of Visible Localizations:  ");
+		horizontalBox_39.add(lblNewLabel_6);
+		
+		numberOfVisibleLocalizationsLabel = new JLabel("0");
+		horizontalBox_39.add(numberOfVisibleLocalizationsLabel);
+		
+		visButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+//				Thread t = new Thread(){
+//					@Override
+//					public void run(){
+						visualize(); 
+//					}
+//				};
+//				t.start();
+			}
+		});
 		dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
 		jsp.setAlignmentX(Component.LEFT_ALIGNMENT);
 		jsp.setPreferredSize(new Dimension(350, 600));
@@ -1402,7 +1393,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		
 		plot = new Plot3D();
-		
+		plot.addListener(this);
+		plot.addPropertyChangeListener(this);
 		configureTableListener();
 		
 		JButton openEditorButton = new JButton("Open Editor");
@@ -1732,7 +1724,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		if (allDataSets.size()<1){
 			return;
 		}
-		allDataSets.get(currentRow).setProgressBar(progressBar);
 		System.out.println("bspsnm: " + allDataSets.get(currentRow).getParameterSet().getBspsnm());
 		allDataSets.get(currentRow).getParameterSet().setPabs((float) (new Float(labelingEfficiencyField.getText())/100.));
 		allDataSets.get(currentRow).getParameterSet().setAoa((float) ((new Float(meanAngleField.getText()))/180*Math.PI));
@@ -1849,49 +1840,67 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		setSelectedListsForDrawing();
+		visualizeAllSelectedData();
 	}
 	
 	/**
-	 * Checks which data sets are generally visible and creates a new Plot3D with the dataSets
-	 */
-	public void setSelectedListsForDrawing() {
-		List<DataSet> sets = new ArrayList<DataSet>();
-		for(int i = 0; i < model.data.size(); i++) {
-			if(model.visibleSets.get(i) == true) {
-				sets.add(model.data.get(i));
-				allDataSets.get(i).getParameterSet().setGeneralVisibility(Boolean.TRUE);
-			}
-			else {
-				allDataSets.get(i).getParameterSet().setGeneralVisibility(Boolean.FALSE);
-			}
-		}
-		model.data.clear();
-		model.data.addAll(allDataSets);
-		updateMinMax();
-		if(sets.size() > 0) {
-			plot.dataSets.clear();
-			plot.addAllDataSets(sets);
-			plotPanel.removeAll();
-			graphComponent = (Component) plot.createChart().getCanvas();
-			plotPanel.add(graphComponent);
-			plotPanel.revalidate();
-			plotPanel.repaint();
-			graphComponent.revalidate();
-		}
-		else if(sets.size() == 0) {
-			System.out.println("empty!!!");
-			plot.dataSets.clear();
-			plotPanel.removeAll();
-			plotPanel.add(loadDataLabel);
-			plotPanel.revalidate();
-			plotPanel.repaint();
-		}
-	}	
-	
+//	 * Checks which data sets are generally visible and creates a new Plot3D with the dataSets
+//	 */
+//	public void setSelectedListsForDrawing2() {
+//		List<DataSet> sets = new ArrayList<DataSet>();
+//		for(int i = 0; i < model.data.size(); i++) {
+//			if(model.visibleSets.get(i) == true) {
+//				sets.add(model.data.get(i));
+//				allDataSets.get(i).getParameterSet().setGeneralVisibility(Boolean.TRUE);
+//			}
+//			else {
+//				allDataSets.get(i).getParameterSet().setGeneralVisibility(Boolean.FALSE);
+//			}
+//		}
+//		model.data.clear();
+//		model.data.addAll(allDataSets);
+//		updateMinMax();
+//		if(sets.size() > 0) {
+//			plot.dataSets.clear();
+//			plot.addAllDataSets(sets);
+//			plotPanel.removeAll();
+////			while(plot.chartCreationRunning){
+////				try {
+////					Thread.sleep(100);
+////				} catch (InterruptedException e) {
+////					// TODO Auto-generated catch block
+////					e.printStackTrace();
+////				}
+////			}
+//			Thread t = new Thread(){
+//				@Override
+//				public 
+//				void run(){
+//					plot.getChart();
+//				}
+//			};
+//			t.start();
+//			graphComponent =(Component) plot.getChart().getCanvas();
+//			//graphComponent = (Component) plot.createChart().getCanvas();
+//			plotPanel.add(graphComponent);
+//			plotPanel.revalidate();
+//			plotPanel.repaint();
+//			graphComponent.revalidate();
+//		}
+//		else if(sets.size() == 0) {
+//			System.out.println("empty!!!");
+//			plot.dataSets.clear();
+//			plotPanel.removeAll();
+//			plotPanel.add(loadDataLabel);
+//			plotPanel.revalidate();
+//			plotPanel.repaint();
+//		}
+//	}	
+//	
 	private void visualizeAllSelectedData() {
 		List<DataSet> sets = new ArrayList<DataSet>();
 		for(int i = 0; i < allDataSets.size(); i++) {
+			allDataSets.get(currentRow).setProgressBar(progressBar);
 			if(allDataSets.get(i).getParameterSet().getGeneralVisibility() == true) {
 				model.visibleSets.add(Boolean.TRUE);
 				sets.add(model.data.get(i));
@@ -1914,11 +1923,19 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			plot.dataSets.clear();
 			plot.addAllDataSets(sets);
 			plotPanel.removeAll();
-			graphComponent = (Component) plot.createChart().getCanvas();
-			plotPanel.add(graphComponent);
-			plotPanel.revalidate();
-			plotPanel.repaint();
-			graphComponent.revalidate();
+			Thread t = new Thread(){
+				@Override
+				public void run(){
+					plot.run();
+				}
+			};
+			t.start();
+		
+//			try{
+//				plot.run();
+//			}
+//			catch (IllegalThreadStateException e){System.out.println("Thread already started");}
+			
 		}
 		else if(sets.size() == 0) {
 			System.out.println("empty!!!");
@@ -2121,4 +2138,16 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		   
 
 	}
+
+	@Override
+	public void notifyOfThreadComplete(NotifyingThread notifyingThread) {
+		// TODO Auto-generated method stub
+		graphComponent = (Component) plot.createChart().getCanvas();
+		plotPanel.add(graphComponent);
+		plotPanel.revalidate();
+		plotPanel.repaint();
+		graphComponent.revalidate();
+	}
+
+
 }
