@@ -12,15 +12,20 @@ public class SplineCalculator {
 	
 	float[][] splineX; //table[points.length-1][4] saves the sigX-Spline coeffs 
 	float[][] splineY; //table[points.length-1][4] saves the sigY-Spline coeffs 
+	
+	
 	/**
 	 * main method
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		float[][] a = {{0,3.2f,2},{1,5.3f,2},{2,6.9f,2}};
+		float[][] a = {{0,3.2f,2},{1,5.3f,2},{2,6.9f,2},{3,0.9f,2},{4,2.1f,2}};
 		SplineCalculator s = new SplineCalculator(a);
 		s.splines();
-		
+		float[] r = s.getSig(3.5f);
+		System.out.println("\n");
+		System.out.println(r[0]);
+		System.out.println(r[1]);
 		
 		
 //		float[][] k = {{2.8f, 1, 0, 1, 1},{0, 1, 1, 0, 2},{0, 1, -1, 0, 3},{0, 0, 0, 19.5f, 4}};
@@ -46,8 +51,11 @@ public class SplineCalculator {
 	 * degree of spline is dependent on the number of coefficients
 	 */
 	public void splines() {
+		//sort calibration file
+		SortClass s = new SortClass(points);
+		s.quickSortA(0, points.length - 1);
 		
-		if(points.length > 2) {
+		if(points.length >= 2) {
 			// first step
 			float z0 = points[0][0];
 
@@ -72,7 +80,7 @@ public class SplineCalculator {
 			}
 
 			// spline for sigmaX and sigmaY
-			for (int i = 2; i < points.length - 1; i++) {
+			for (int i = 2; i <= splineX.length; i++) {
 				// calculate spline-coeffs
 				float pZ = points[i - 1][0]; // position on the left edge
 				// input matrices for both of the splines
@@ -95,71 +103,40 @@ public class SplineCalculator {
 				for (int j = 0; j < 4; j++) {
 					float[] tmpX = solveGauss(inX);
 					float[] tmpY = solveGauss(inY);
-					splineX[i][j] = tmpX[j];
-					splineY[i][j] = tmpY[j];
+					splineX[i-1][j] = tmpX[j];
+					splineY[i-1][j] = tmpY[j];
 				}
 			}
 		
-		//last step
-			int posL = points.length - 1; // right edge
-			float zl = points[posL][0];
-
-			float[][] in01 = {
-					{ 1, points[posL - 1][0],
-							(float) Math.pow(points[posL - 1][0], 2),
-							(float) Math.pow(points[posL - 1][0], 3), points[0][1] },
-					{ 1, zl, (float) Math.pow(zl, 2), (float) Math.pow(zl, 3), points[0][1] },
-					{ 0, 0, 2, 6 * points[posL - 1][0],
-							(float) (splineX[posL - 1][1] + 2 * splineX[posL - 1][2] * points[posL - 1][0]
-									+ 3 * splineX[posL - 1][3] * Math.pow(points[posL - 1][0], 2)) },
-					{ 0, 0, 2, 6 * points[posL - 1][0],
-							(float) (2 * splineX[posL - 1][2] + 6 * splineX[posL - 1][3] * points[posL - 1][0]) } };
-			float[][] in02 = {
-					{ 1, zl, (float) Math.pow(zl, 2), (float) Math.pow(zl, 3),points[0][2] },
-					{ 1, points[0][0], (float) Math.pow(points[0][0], 2), (float) Math.pow(points[0][0], 3),
-							points[0][2] },
-					{ 0, 1, (float) 2 * zl, (float) ((float) 3 * Math.pow(zl, 2)),
-							(float) (splineY[posL - 1][1] + 2 * splineY[posL - 1][2] * points[posL - 1][0]
-									+ 3 * splineY[posL - 1][3] * Math.pow(points[posL - 1][0], 2)) },
-					{ 0, 0, 2, 6 * points[posL - 1][0],
-							(float) (2 * splineY[posL - 1][2] + 6 * splineY[posL - 1][3] * points[posL - 1][0]) } };
-
-			// writing results in solution vector
-			for (int j = 0; j < 4; j++) {
-				float[] tmpX = solveGauss(in01);
-				float[] tmpY = solveGauss(in02);
-				splineX[posL - 1][j] = tmpX[j];
-				splineY[posL - 1][j] = tmpY[j];
-			}
 		}
 		else {
 			System.out.println("not enough data points for calibration");
 		}	
-		
-		System.out.println(splineX[0][0]);
-		System.out.println(splineX[0][1]);
-		System.out.println(splineX[0][2]);
-		System.out.println(splineX[0][3]);
-		System.out.println("\n");
-		System.out.println(splineX[1][0]);
-		System.out.println(splineX[1][1]);
-		System.out.println(splineX[1][2]);
-		System.out.println(splineX[1][3]);
 		
 	}
 	
 	/**
 	 * method returns {sigX,sigY} for given z-value of the PSF
 	 * @param z : z-coordinate
-	 * @return array containing {sigX,sigY}
+	 * @return array {sigX,sigY}
 	 */
 	public float[] getSig(float z) {
 		float[] ret = new float[2];
 		
 		if(z > points[0][0] && z < points[points.length-1][0]) { //z in range?
+			//find out index
+			int ind = 0;
+			while (ind < points.length - 1 && points[ind+1][0] < z) ind++; 
+			
+			// calculate sigmas out of spline coeff's
+			for (int i = 0; i < splineX[0].length; i++) {
+				ret[0] += splineX[ind][i]*Math.pow(z, i);
+				ret[1] += splineY[ind][i]*Math.pow(z, i);
+			}
 			return ret;
 		}
 		else {
+			System.out.println("z-value not in calibration range");
 			return null;
 		}
 		

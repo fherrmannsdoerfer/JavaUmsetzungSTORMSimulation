@@ -10,37 +10,30 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class SortClass {
+	
 	List<float[]> list;
+	
+	float[][] arr;
 
 	/**
 	 * main method for testing issues
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		float[] a = {1, 0, 0, 2, 9};
-		float[] b = {7, 0, 0, 1, 10};
-		float[] c = {0, 0, 1, 8, 70};
-		float[] d = {1, 1, 2, 9, 6};
-		float[] e = {5, 5, 5, 50, 7};
-		List<float[]> li = new ArrayList<float[]>();
-		li.add(a);
-		li.add(b);
-		li.add(c);
-		li.add(d);
-		li.add(e);
-		SortClass h = new SortClass(li);
-		h.quickSort(0, li.size() - 1);
-		System.out.println(h.getVal(0, 3));
-		System.out.println(h.getVal(1, 3));
-		System.out.println(h.getVal(2, 3));
-		System.out.println(h.getVal(3, 3));
-		System.out.println(h.getVal(4, 3));
+		float[][] a = {{1, 0, 0, 2, 9},{7, 0, 0, 1, 10},{0, 0, 1, 8, 70},{1, 1, 2, 9, 6},{5, 5, 5, 50, 7}};
+		SortClass h = new SortClass(a);
+		h.quickSortA(0, a.length - 1);
+		System.out.println(h.getValA(0, 3));
+		System.out.println(h.getValA(1, 3));
+		System.out.println(h.getValA(2, 3));
+		System.out.println(h.getValA(3, 3));
+		System.out.println(h.getValA(4, 3));
 		System.out.println("\n");
-		System.out.println(h.getVal(0, 0));
-		System.out.println(h.getVal(1, 0));
-		System.out.println(h.getVal(2, 0));
-		System.out.println(h.getVal(3, 0));
-		System.out.println(h.getVal(4, 0));
+		System.out.println(h.getValA(0, 0));
+		System.out.println(h.getValA(1, 0));
+		System.out.println(h.getValA(2, 0));
+		System.out.println(h.getValA(3, 0));
+		System.out.println(h.getValA(4, 0));
 	}
 	
 	/**
@@ -49,6 +42,14 @@ public class SortClass {
 	 */
 	public SortClass(List<float[]> pList) {
 		list = pList;
+	}
+	
+	/**
+	 * constructor constructs an object of the class
+	 * @param pList : array to be sorted
+	 */
+	public SortClass(float[][] pArr) {
+		arr = pArr;
 	}
 	
 	/**
@@ -74,6 +75,32 @@ public class SortClass {
         // recursion
         if (lo<j) quickSort(lo, j);
         if (i<hi) quickSort(i, hi);
+        
+	}
+	
+	/**
+	 * method for recursive quicksort algorithm
+	 * @param lo : lower domain boundary index
+	 * @param hi : upper domain boundary index
+	 */
+	public void quickSortA(int lo, int hi) {
+		int i = lo, j = hi;
+		float x = arr[(int) (lo + hi)/2][0]; //initialise Pivot-element
+		
+		while (i<=j)
+        {    
+            while (arr[i][0] < x) i++; 
+            while (arr[j][0] > x) j--;
+            if (i<=j)
+            {
+                exchangeA(i, j);
+                i++; j--;
+            }
+        }
+
+        // recursion
+        if (lo<j) quickSortA(lo, j);
+        if (i<hi) quickSortA(i, hi);
 		
 		
 	}
@@ -101,10 +128,35 @@ public class SortClass {
 	}
 	
 	/**
+	 * auxiliary method for quicksort; swaps two elements of an array
+	 * @param i : first array index
+	 * @param j : second array index
+	 */
+	private void exchangeA(int i, int j) {
+		float [] tempI = new float[arr[0].length];
+		for (int k = 0; k < arr[0].length; k++) {
+			tempI[k] = arr[i][k];
+		}
+		for (int k = 0; k < arr[0].length; k++) {
+			 arr[i][k] = arr[j][k];
+		}
+		for (int k = 0; k < arr[0].length; k++) {
+			 arr[j][k] = tempI[k];
+		}
+	}
+	
+	/**
 	 * method returns required column value of required list element
 	 */
 	public float getVal(int e, int col) {
 		return list.get(e)[col];
+	}
+	
+	/**
+	 * method returns required value of the arrray
+	 */
+	public float getValA(int line, int col) {
+		return arr[line][col];
 	}
 
 }
