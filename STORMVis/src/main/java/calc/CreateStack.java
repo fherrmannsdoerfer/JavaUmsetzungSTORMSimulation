@@ -1,3 +1,10 @@
+/**
+ * class creates a Tiff-Stack out of a table of blinking events
+ * it takes account for random processes like noise
+ * @author Niels Schlusser
+ * @date 20.10.2015
+ */
+
 package calc;
 
 import java.util.List;
@@ -9,7 +16,6 @@ import ij.io.FileSaver;
 
 import ij.process.*;
 
-import java.util.Random;
 
 
 
@@ -34,17 +40,20 @@ public class CreateStack {
 			c[j][1] = (float) (Math.random()*30000);
 			c[j][2] = (float) (Math.random()*800);
 			c[j][3] = (float) Math.round(Math.random()*10);
-			c[j][4] = (float) (Math.random()*1000+1000);
+			c[j][4] = (float) (Math.random()*10000000);
 		}
 		System.out.println("finished simulation");
-//		List<float[]> ba = convertList(b);
-//		System.out.println("finished conversion");
-//		List<float[]> r = distributePSF(ba, 20, (float) 0.2);
-//		System.out.println("finished distribution");
-		createTiffStack(c, 1/100.f , 10, 2, (float) 0.5, 3, 2, 10, 1, //model nr 1 
-				(float) 1.4, 680, 400, 800, 5,200.f);
-//		ba.addAll(r);
-//		System.out.println("finished merging");
+		float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
+				{202.222f,134.992f,229.455f},{303.333f,140.171f,197.503f},{404.444f,149.645f,175.083f},
+				{505.556f,169.047f,164.861f},{606.667f,196.601f,161.998f},{707.778f,235.912f,169.338f},
+				{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
+
+		
+		createTiffStack(c, 1/100.f/**resolution*/ , 10/**emptyspace*/, 
+				2/**intensityPerPhoton*/, (float) 0.5/**frameRate*/, 
+				3/**decayTime*/, 10/**sizePSF*/, 2/**modelNR*/, 
+				(float) 1.4/**NA*/, 680/**waveLength*/, 400/**zFocus*/, 
+				800/**zDefocus*/, 5/**sigmaNoise*/, 2/**constant offset*/, calibr/**calibration file*/);
 
     } 
 	
@@ -66,10 +75,12 @@ public class CreateStack {
 	 * @param zDefocus : z-value, for which the microscope defocusses
 	 * @param sigmaNoise : sigma of the Gaussian noise in the whole image
 	 * @param offset : constant offset
+	 * @param calib : calibration file for asymmetric gaussian
 	 */
 	public static void createTiffStack(float[][] input, float resolution, int emptySpace, 
-			float intensityPerPhoton, float meanPoisson, float frameRate, float decayTime, int sizePSF, int modelNumber, 
-			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, float offset) { 
+			float intensityPerPhoton, float frameRate, float decayTime, int sizePSF, int modelNumber, 
+			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, 
+			float offset, float[][] calib) { 
 		
 		//convert List<float[][]> to List<float[]>
 		List<float[]> lInput = convertList(input);
@@ -86,16 +97,16 @@ public class CreateStack {
 		//subtract minimum values to obtain coordinates in [0, infty]x[0, infty]
 		for (int j = 0; j < lInput.size(); j++) {   	//shifts the window to positive values
 			lInput.get(j)[0] -= minX; 
-			lInput.get(j)[0] +=	(emptySpace + sizePSF)/resolution;
+			lInput.get(j)[0] +=	(emptySpace + sizePSF)/ resolution;
 			lInput.get(j)[1] -= minY;
-			lInput.get(j)[1] += (emptySpace + sizePSF)/resolution;
+			lInput.get(j)[1] += (emptySpace + sizePSF)/ resolution;
 		}
 		
 	
 		//find out required height and width of the image in nm as global maxima in the list; convert into pixel		
-		int pImgWidth = (int) (globalMax(lInput, 0)*resolution);
+		int pImgWidth = (int) (globalMax(lInput, 0)* resolution);
 		pImgWidth++; //ensures rounding up
-		int pImgHeight = (int) (globalMax(lInput, 1)*resolution);
+		int pImgHeight = (int) (globalMax(lInput, 1)* resolution);
 		pImgHeight++;
 		
 		//create new image stack	
@@ -105,56 +116,108 @@ public class CreateStack {
 		//performing sorting operation by quicksort algorithm
 		SortClass s = new SortClass(lInput);
 		s.quickSort(0, lInput.size() - 1);
-		lInput = s.getList(); 
-		
-		//find out minimum and maximum frame value
-		int maxFr = (int) lInput.get(lInput.size()-1)[3];
-		int minFr = (int) lInput.get(0)[3];
-		
+		lInput = s.getList(); 		
+
 		// fill image stack with images
-		for (int j = minFr; j < maxFr; j++) {
-			//ImagePlus imgpls = new ImagePlus(""); //initialises an empty image
-			FloatProcessor pro = new FloatProcessor(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF);
+		for (int i = 0; i < lInput.size(); i++) {
 			
 			//modelling the form of the PSF
-			for (int i = 0; i < lInput.size(); i++) {
-				int pixelX = Math.round(lInput.get(i)[0] * resolution);
-				int pixelY = Math.round(lInput.get(i)[1] * resolution);
-				if(modelNumber == 1) { // symmetric Gaussian
-					for (int k = -sizePSF; k <= sizePSF; k++) {
-						for (int m = -sizePSF; m <= sizePSF; m++) {
-							float intensityPhotons = symmInt(pixelX + k, pixelY + m, lInput.get(i)[0], 
-									lInput.get(i)[1], lInput.get(i)[4], calcSig(lInput.get(i)[2], numericalAperture, 
-											waveLength, zFocus, zDefocus), resolution)/intensityPerPhoton;
-							float val4 = pro.getf(pixelX + k, pixelY + m); 
-							val4 += calc.RandomClass.poissonNumber(intensityPhotons)*intensityPerPhoton;
-							pro.setf(pixelX + k, pixelY + m, val4); //exception, probably out of bounds
-						}
+			FloatProcessor pro = new FloatProcessor(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF);
+			
+			//at least once
+			int pixelX = Math.round(lInput.get(i)[0]* resolution);
+			int pixelY = Math.round(lInput.get(i)[1]* resolution);
+
+			
+			switch(modelNumber) { // symmetric Gaussian
+			case 1:
+				for (int k = -sizePSF; k <= sizePSF; k++) {
+					for (int m = -sizePSF; m <= sizePSF; m++) {
+						float sig = calcSig(lInput.get(i)[2], numericalAperture, waveLength, zFocus, zDefocus);
+						float intensityPhotons = (float) (symmInt(pixelX + k, pixelY + m, lInput.get(i)[0],
+								lInput.get(i)[1], lInput.get(i)[4],
+								sig, resolution)/ intensityPerPhoton);
+						float val4 = pro.getf(pixelX + k, pixelY + m);
+						val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
+						pro.setf(pixelX + k, pixelY + m, val4);
 					}
 				}
-				else { 
-					if(modelNumber == 2) { //calibration file Gaussian
-						
-					}
-					else {
-						System.out.println("model number not valid");
-						return;
+				break;
+				
+			case 2: //asymmetric Gaussian
+				SplineCalculator spl = new SplineCalculator(calib);
+				spl.splines();
+				for (int k = -sizePSF; k <= sizePSF; k++) {
+					for (int m = -sizePSF; m <= sizePSF; m++) {
+						float intensityPhotons = (float) (aSymmInt(pixelX + k, pixelY + m, lInput.get(i)[0],
+								lInput.get(i)[1], lInput.get(i)[4],
+								spl.getSig(lInput.get(i)[2]), resolution)/ intensityPerPhoton);
+						float val4 = pro.getf(pixelX + k, pixelY + m);
+						val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
+						pro.setf(pixelX + k, pixelY + m, val4);
 					}
 				}
+				break;	
 			}
+			
+			
+			//going through all other PSFs in the current frame
+			int j = 0;
+			if (i < lInput.size() - 1) {
+				while (i + j < lInput.size() - 2 && lInput.get(i + j)[3] == lInput.get(i + j + 1)[3]) {
+
+					pixelX = Math.round(lInput.get(i + j + 1)[0]* resolution);
+					pixelY = Math.round(lInput.get(i + j + 1)[1]* resolution);
+
+					float sig = calcSig(lInput.get(i + j + 1)[2], numericalAperture, waveLength, zFocus, zDefocus);
 					
+					switch(modelNumber) { // symmetric Gaussian
+					case 1:
+						for (int k = -sizePSF; k <= sizePSF; k++) {
+							for (int m = -sizePSF; m <= sizePSF; m++) {
+								float intensityPhotons = (float) (symmInt(pixelX + k, pixelY + m, lInput.get(i + j + 1)[0],
+										lInput.get(i + j + 1)[1], lInput.get(i + j + 1)[4],
+										sig, resolution)/ intensityPerPhoton);
+								float val4 = pro.getf(pixelX + k, pixelY + m);
+								val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
+								pro.setf(pixelX + k, pixelY + m, val4);
+							}
+						}
+						break;
+						
+					case 2: //asymmetric Gaussian
+						SplineCalculator spl = new SplineCalculator(calib);
+						spl.splines();
+						for (int k = -sizePSF; k <= sizePSF; k++) {
+							for (int m = -sizePSF; m <= sizePSF; m++) {
+								float intensityPhotons = (float) (aSymmInt(pixelX + k, pixelY + m, lInput.get(i + j + 1)[0],
+										lInput.get(i + j + 1)[1], lInput.get(i + j + 1)[4],
+										spl.getSig(lInput.get(i + j + 1)[2]), resolution)/ intensityPerPhoton);
+								float val4 = pro.getf(pixelX + k, pixelY + m);
+								val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
+								pro.setf(pixelX + k, pixelY + m, val4);
+							}
+						}
+						break;	
+					}
+					
+					j++;
+				}
+				i += j;
+			}
+
 			pro.noise(sigmaNoise); //add Gaussian underground noise
-			pro.add(offset); // add constant offset
-			stackLeft.addSlice(pro); // adds a processor for each frame to the stack
+			pro.add(offset); //add constant offset
+			stackLeft.addSlice(pro); //adds a processor for each frame to the stack
 		}
 		System.out.println("finished procession");
-		
 
 		//save imagestack
 		ImagePlus leftStack = new ImagePlus("", stackLeft);
 		FileSaver fs = new FileSaver(leftStack);
-		fs.saveAsTiffStack("C:\\Users\\Herrmannsdoerfer\\Desktop\\tiffstack4.tif");
+		fs.saveAsTiffStack("C:\\Users\\Niels\\Desktop\\Documents\\STORMVis_HiWi\\tiffstack0.tif");
 		System.out.println("file succesfully saved");
+		
 	}	
 
 
@@ -210,7 +273,7 @@ public class CreateStack {
 	
 	
 	/**
-	 * auxiliary method calculates a symmetric-Gaussian-distributed 
+	 * auxiliary method calculates a normalised, symmetric Gaussian-distributed 
 	 * intensity at the value of integer pixels;
 	 * coordinates of a pixel are coordinates of its lower left corner
 	 * nevertheless, the intensity is the intensity in the centre of the pixel
@@ -219,7 +282,7 @@ public class CreateStack {
 	 * @param maxX : float-x-cordinate of the maximum in nm
 	 * @param maxY : float-y-cordinate of the maximum in nm
 	 * @param maxInt : intensity of the maximum at (maxX, maxY)
-	 * @param sig : sigma value of the gaussian distribution
+	 * @param sig : sigma value of the gaussian distribution in nm
 	 * @param res : resolution, i.e. ratio pixel per nanometres
 	 * @return Gauss-value
 	 */
@@ -229,13 +292,48 @@ public class CreateStack {
 		float ret = 0;
 		float x = (float) pX;
 		float y = (float) pY;
-		float dx = (float) ((x + 0.5)/res) - maxX; //calculates difference between maximum of PSF-Gauss and current pixel 
+		float dx = (float) ((x + 0.5)/res) - maxX; //difference between maximum of PSF-Gauss and current pixel in nm
 		float dy = (float) ((y + 0.5)/res) - maxY;
 		
 		double exponent = (double) (Math.pow(dx, 2) + Math.pow(dy, 2))/2 /Math.pow(sig, 2);
 		ret = (float) Math.exp(-exponent)*maxInt;
+		ret /= (2* Math.PI);
+		ret /= Math.pow(sig, 2);
 		return ret;
 	}
+	
+	
+	/**
+	 * auxiliary method calculates a normalised, asymmetric Gaussian-distributed 
+	 * intensity at the value of integer pixels;
+	 * coordinates of a pixel are coordinates of its lower left corner
+	 * nevertheless, the intensity is the intensity in the centre of the pixel
+	 * @param pX : x-coordinate in pixels
+	 * @param pY : y-coordinate in pixels
+	 * @param maxX : float-x-cordinate of the maximum in nm
+	 * @param maxY : float-y-cordinate of the maximum in nm
+	 * @param maxInt : intensity of the maximum at (maxX, maxY)
+	 * @param sig : array with both sigma values
+	 * @param res : resolution, i.e. ratio pixel per nanometres
+	 * @return Gauss-value
+	 */
+	private static float aSymmInt(int pX, int pY, float maxX, 
+			float maxY, float maxInt, float[] sig, float res) {
+		
+		float ret = 0;
+		float x = (float) pX;
+		float y = (float) pY;
+		float dx = (float) ((x + 0.5)/res) - maxX; //difference between maximum of PSF-Gauss and current pixel in nm
+		float dy = (float) ((y + 0.5)/res) - maxY;
+		
+		double exponent = (double) Math.pow(dx, 2)/Math.pow(sig[0], 2)/2 + Math.pow(dy, 2)/Math.pow(sig[1], 2)/2;
+		ret = (float) Math.exp(-exponent)*maxInt;
+		ret /= (2* Math.PI);
+		ret /= sig[0];
+		ret /= sig[1];
+		return ret;
+	}
+	
 
 	/**
 	 * auxiliary method calculates sigma dependent on z for the symmetric Gaussian
@@ -251,6 +349,7 @@ public class CreateStack {
 		s = s*waveLgth/2 /numAperture;
 		return s;
 	}
+	
 	
 	/**
 	 * auxiliary method distributePSF distributes the PSF in an amount different frames
@@ -297,8 +396,10 @@ public class CreateStack {
 	}
 	
 
+	
+
 }
 
 
-//Input fuer Astigmatismus: List<Float> calib; //  {0 , 140, 333},{100 , 150, 333},{200 , 160, 300},{300 , 180, 260},... beliebig viele Trippel
+//Input fuer Astigmatismus: List<Float> calib
 													

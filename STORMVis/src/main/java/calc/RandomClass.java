@@ -1,3 +1,9 @@
+/**
+ * auxiliary class for calculation of Poisson distributed numbers
+ * @author Niels Schlusser
+ * @date 20.10.2015
+ */
+
 package calc;
 
 public class RandomClass {
