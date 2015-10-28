@@ -26,23 +26,23 @@ public class startBatchProcessing {
 	static List<DataSet> allDataSets = new ArrayList<DataSet>();
 	private static Random random;
 	private static String EXTENSIONIMAGEOUTPUT = ".tif";
-	private static String outputFolder = "Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\141107-Microtubules-Nachgezeichnet\\SuReSimResult\\";
+	private static String outputFolder = "Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\Localisation Precision Experiment\\V14-2-Simulation-1000frames\\";
 	
 	public static void main(String[] args) {
-		File file = new File("Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\141107-Microtubules-Nachgezeichnet\\141107-MT-Modelrescaled1d.wimp");
+		File file = new File("Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\Localisation Precision Experiment\\V14-2-Simulation-1000frames\\NachgezeichnetV14-2rescaled1d.wimp");
 		proceedFileImport(file);
 //		DataSet data = ExamplesProvidingClass.getDataset(1);
 //		furtherProceedFileImport(data, data.dataType);
 		
-		SimulationParameter params = standardParameterActin();
+		SimulationParameter params = standardParameterVesicles();
 		
 		
 		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(4.f,8.f,12.f,25.f));
 		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(8.f,30.f,40.f,50.f));
 		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(10.f,50.f,100.f));
-		ArrayList<Float> de = new ArrayList<Float>(Arrays.asList(10.f,20.f,50.f,100.f));
-		ArrayList<Integer> koff = new ArrayList<Integer>(Arrays.asList(500,1000,2000,5000,10000));
-		ArrayList<Integer> frames = new ArrayList<Integer>(Arrays.asList(10000,45000,60000));
+		//ArrayList<Float> de = new ArrayList<Float>(Arrays.asList(10.f,20.f,50.f,100.f));
+		ArrayList<Integer> koff = new ArrayList<Integer>(Arrays.asList(2000));
+		//ArrayList<Integer> frames = new ArrayList<Integer>(Arrays.asList(10000));
 	
 		allDataSets.get(0).setProgressBar(new JProgressBar());
 		int counter = 0;
@@ -55,8 +55,8 @@ public class startBatchProcessing {
 					params.sigmaZ = sigmaZ.get(i);
 					params.kOff = koff.get(k);
 					calculate(params);
-					params.detectionEfficiency = de.get(i);
-					params.recordedFrames = frames.get(i);
+					//params.detectionEfficiency = de.get(i);
+					//params.recordedFrames = frames.get(i);
 					params.borders = getBorders();
 					
 					String fname = String.format("sigmas%1.0f_%1.0flabelingEff%1.0fPercentKOFF%1.0f", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.kOff);
@@ -77,16 +77,16 @@ public class startBatchProcessing {
 		params.backgroundPerMicroMeterCubed = 0;
 		params.coupleSigmaIntensity = true;
 		params.detectionEfficiency = 100;
-		params.epitopeDensity = (float) 0.0115;
+		params.epitopeDensity = (float) 0.00625;
 		params.fluorophoresPerLabel = 1;
 		params.kOff = 2000;
 		params.kOn = 1;
-		params.labelEpitopeDistance = 1;
+		params.labelEpitopeDistance = 16;
 		params.labelingEfficiency = 10;
 		params.makeItReproducible = true;
 		params.MeanPhotonNumber = 4000;
 		params.radiusOfFilament = (float) 12.5;
-		params.recordedFrames = 10000;
+		params.recordedFrames = 1000;
 		params.sigmaXY = 8;
 		params.sigmaZ = 30;
 		params.viewStatus = 1;
@@ -102,7 +102,28 @@ public class startBatchProcessing {
 		params.fluorophoresPerLabel = 1;
 		params.kOff = 2000;
 		params.kOn = 1;
-		params.labelEpitopeDistance = 16;
+		params.labelEpitopeDistance = 1;
+		params.labelingEfficiency = 10;
+		params.makeItReproducible = true;
+		params.MeanPhotonNumber = 4000;
+		params.radiusOfFilament = (float) 12.5;
+		params.recordedFrames = 10000;
+		params.sigmaXY = 4;
+		params.sigmaZ = 8;
+		params.viewStatus = 1;
+		return params;
+	}
+	private static SimulationParameter standardParameterMicrotubules1nm() {
+		SimulationParameter params = new SimulationParameter();
+		params.angleOfLabel = (float) (Math.PI/2);
+		params.backgroundPerMicroMeterCubed = 50;
+		params.coupleSigmaIntensity = true;
+		params.detectionEfficiency = 100;
+		params.epitopeDensity = (float) 1.625;
+		params.fluorophoresPerLabel = 1;
+		params.kOff = 2000;
+		params.kOn = 1;
+		params.labelEpitopeDistance = 1;
 		params.labelingEfficiency = 10;
 		params.makeItReproducible = true;
 		params.MeanPhotonNumber = 4000;
@@ -116,7 +137,7 @@ public class startBatchProcessing {
 	
 	private static SimulationParameter standardParameterVesicles() {
 		SimulationParameter params = new SimulationParameter();
-		params.angleOfLabel = (float) (Math.PI/2);
+		params.angleOfLabel = (float) (-Math.PI/2);
 		params.backgroundPerMicroMeterCubed = 50;
 		params.coupleSigmaIntensity = true;
 		params.detectionEfficiency = 100;
