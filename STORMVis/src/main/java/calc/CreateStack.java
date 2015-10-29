@@ -32,15 +32,15 @@ public class CreateStack {
 	 * main method to test
 	 */
 	public static void main(String[] args){ 
-		int nbrPoints = 30;
+		int nbrPoints = 3000;
 		float[][] c = new float[nbrPoints][5];
 		//random creation of a list of tables as input
 		for (int j = 0; j < nbrPoints; j++) {
 			c[j][0] = (float) (Math.random()*30000);
 			c[j][1] = (float) (Math.random()*30000);
-			c[j][2] = (float) (Math.random()*800);
-			c[j][3] = (float) Math.round(Math.random()*10);
-			c[j][4] = (float) (Math.random()*10000000);
+			c[j][2] = (float) 200;//(Math.random()*800);
+			c[j][3] = (float) Math.round(Math.random()*1000);
+			c[j][4] = (float) (Math.random()*10000+1000);
 		}
 		System.out.println("finished simulation");
 		float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
@@ -50,10 +50,10 @@ public class CreateStack {
 
 		
 		createTiffStack(c, 1/100.f/**resolution*/ , 10/**emptyspace*/, 
-				2/**intensityPerPhoton*/, (float) 0.5/**frameRate*/, 
-				3/**decayTime*/, 10/**sizePSF*/, 2/**modelNR*/, 
+				2/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
+				0.06f/**decayTime*/, 10/**sizePSF*/, 2/**modelNR*/, 
 				(float) 1.4/**NA*/, 680/**waveLength*/, 400/**zFocus*/, 
-				800/**zDefocus*/, 5/**sigmaNoise*/, 2/**constant offset*/, calibr/**calibration file*/);
+				800/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/);
 
     } 
 	
@@ -188,16 +188,19 @@ public class CreateStack {
 					case 2: //asymmetric Gaussian
 						SplineCalculator spl = new SplineCalculator(calib);
 						spl.splines();
+						double sum = 0;
 						for (int k = -sizePSF; k <= sizePSF; k++) {
 							for (int m = -sizePSF; m <= sizePSF; m++) {
 								float intensityPhotons = (float) (aSymmInt(pixelX + k, pixelY + m, lInput.get(i + j + 1)[0],
 										lInput.get(i + j + 1)[1], lInput.get(i + j + 1)[4],
 										spl.getSig(lInput.get(i + j + 1)[2]), resolution)/ intensityPerPhoton);
+								sum = sum + intensityPhotons;
 								float val4 = pro.getf(pixelX + k, pixelY + m);
 								val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
 								pro.setf(pixelX + k, pixelY + m, val4);
 							}
 						}
+						System.out.println("current Intensity: "+ lInput.get(i+j+1)[4]+" intensity gaussian: "+sum);
 						break;	
 					}
 					
@@ -215,7 +218,7 @@ public class CreateStack {
 		//save imagestack
 		ImagePlus leftStack = new ImagePlus("", stackLeft);
 		FileSaver fs = new FileSaver(leftStack);
-		fs.saveAsTiffStack("C:\\Users\\Niels\\Desktop\\Documents\\STORMVis_HiWi\\tiffstack0.tif");
+		fs.saveAsTiffStack("C:\\Users\\Herrmannsdoerfer\\Desktop\\tiffstack1.tif");
 		System.out.println("file succesfully saved");
 		
 	}	
