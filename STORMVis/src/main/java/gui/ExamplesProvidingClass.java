@@ -101,24 +101,27 @@ public class ExamplesProvidingClass {
 
 	private static DataSet importShpere() {
 		TriangleDataSet set = new TriangleDataSet(new ParameterSet());
-		float[] z = new float[201];
-		for (int i=0, val = -100;i<201;i=i+1, val++){
+		int zsteps = 201;
+		int steps = 40;
+		float[] z = new float[zsteps];
+		
+		for (int i=0, val = -100;i<zsteps;i=i+1, val++){
 			z[i]=val/100.f;
 		}
-		float[][] x = new float[201][240];
-		float[][] y = new float[201][240];
-		float[][] zz =new float[201][240];
+		float[][] x = new float[zsteps][steps];
+		float[][] y = new float[zsteps][steps];
+		float[][] zz =new float[zsteps][steps];
 		float factor = 20;
 		for (int i = 0; i<z.length; i++){
-			for (int j=0; j<240; j++){
-				x[i][j] = (float) (Math.pow(1-Math.pow(z[i],2),0.5)*Math.cos(Math.PI*j/120))*factor;
-				y[i][j] = (float) (Math.pow(1-Math.pow(z[i],2),0.5)*Math.sin(Math.PI*j/120))*factor;
+			for (int j=0; j<steps; j++){
+				x[i][j] = (float) (Math.pow(1-Math.pow(z[i],2),0.5)*Math.cos(Math.PI*j/(steps/2)))*factor;
+				y[i][j] = (float) (Math.pow(1-Math.pow(z[i],2),0.5)*Math.sin(Math.PI*j/(steps/2)))*factor;
 				zz[i][j]= z[i]*factor;
 			}
 		}
 		List<Polygon> newList = new ArrayList<Polygon>();
 		for (int i = 0; i<z.length-1; i++){
-			for (int j = 0; j<240-1; j++){
+			for (int j = 0; j<steps-1; j++){
 				Polygon pNew = new Polygon();
 	    		pNew.add(new Point(new Coord3d(x[i][j], y[i][j], zz[i][j])));
 	    		pNew.add(new Point(new Coord3d(x[i+1][j+1],y[i+1][j+1],zz[i+1][j+1])));
@@ -130,7 +133,7 @@ public class ExamplesProvidingClass {
 	    		pNew2.add(new Point(new Coord3d(x[i+1][j+1],y[i+1][j+1],zz[i+1][j+1])));
 	    		newList.add(pNew2);
 			}
-			int j = 238;
+			int j = steps - 2;
 			Polygon pNew = new Polygon();
     		pNew.add(new Point(new Coord3d(x[i][j+1], y[i][j+1], zz[i][j+1])));
     		pNew.add(new Point(new Coord3d(x[i+1][0],y[i+1][0],zz[i+1][0])));

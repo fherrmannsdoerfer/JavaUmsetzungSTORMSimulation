@@ -1840,65 +1840,59 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		visualizeAllSelectedData();
+		//visualizeAllSelectedData();
+		setSelectedListsForDrawing();
 	}
 	
 	/**
 //	 * Checks which data sets are generally visible and creates a new Plot3D with the dataSets
 //	 */
-//	public void setSelectedListsForDrawing2() {
-//		List<DataSet> sets = new ArrayList<DataSet>();
-//		for(int i = 0; i < model.data.size(); i++) {
-//			if(model.visibleSets.get(i) == true) {
-//				sets.add(model.data.get(i));
-//				allDataSets.get(i).getParameterSet().setGeneralVisibility(Boolean.TRUE);
-//			}
-//			else {
-//				allDataSets.get(i).getParameterSet().setGeneralVisibility(Boolean.FALSE);
-//			}
-//		}
-//		model.data.clear();
-//		model.data.addAll(allDataSets);
-//		updateMinMax();
-//		if(sets.size() > 0) {
-//			plot.dataSets.clear();
-//			plot.addAllDataSets(sets);
-//			plotPanel.removeAll();
-////			while(plot.chartCreationRunning){
-////				try {
-////					Thread.sleep(100);
-////				} catch (InterruptedException e) {
-////					// TODO Auto-generated catch block
-////					e.printStackTrace();
-////				}
-////			}
-//			Thread t = new Thread(){
-//				@Override
-//				public 
-//				void run(){
-//					plot.getChart();
-//				}
-//			};
-//			t.start();
-//			graphComponent =(Component) plot.getChart().getCanvas();
-//			//graphComponent = (Component) plot.createChart().getCanvas();
-//			plotPanel.add(graphComponent);
-//			plotPanel.revalidate();
-//			plotPanel.repaint();
-//			graphComponent.revalidate();
-//		}
-//		else if(sets.size() == 0) {
-//			System.out.println("empty!!!");
-//			plot.dataSets.clear();
-//			plotPanel.removeAll();
-//			plotPanel.add(loadDataLabel);
-//			plotPanel.revalidate();
-//			plotPanel.repaint();
-//		}
-//	}	
+	public void setSelectedListsForDrawing() {
+		List<DataSet> sets = new ArrayList<DataSet>();
+		for(int i = 0; i < model.data.size(); i++) {
+			allDataSets.get(i).setProgressBar(progressBar);
+			if(model.visibleSets.get(i) == true) {
+				sets.add(model.data.get(i));
+				allDataSets.get(i).getParameterSet().setGeneralVisibility(Boolean.TRUE);
+			}
+			else {
+				allDataSets.get(i).getParameterSet().setGeneralVisibility(Boolean.FALSE);
+			}
+		}
+		model.data.clear();
+		model.data.addAll(allDataSets);
+		updateMinMax();
+		if(sets.size() > 0) {
+			plot.dataSets.clear();
+			plot.addAllDataSets(sets);
+			plotPanel.removeAll();
+			Thread t = new Thread(){
+			@Override
+				public void run(){
+					plot.run();
+				}
+			};
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			t.start();
+		}
+		else if(sets.size() == 0) {
+			System.out.println("empty!!!");
+			plot.dataSets.clear();
+			plotPanel.removeAll();
+			plotPanel.add(loadDataLabel);
+			plotPanel.revalidate();
+			plotPanel.repaint();
+		}
+	}	
 //	
 	private void visualizeAllSelectedData() {
 		List<DataSet> sets = new ArrayList<DataSet>();
+		model.visibleSets.clear();
 		for(int i = 0; i < allDataSets.size(); i++) {
 			allDataSets.get(currentRow).setProgressBar(progressBar);
 			if(allDataSets.get(i).getParameterSet().getGeneralVisibility() == true) {
@@ -2141,7 +2135,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 
 	@Override
 	public void notifyOfThreadComplete(NotifyingThread notifyingThread) {
-		// TODO Auto-generated method stub
 		graphComponent = (Component) plot.createChart().getCanvas();
 		plotPanel.add(graphComponent);
 		plotPanel.revalidate();
