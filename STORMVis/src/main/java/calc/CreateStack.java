@@ -7,13 +7,14 @@
 
 package calc;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
 
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.FileSaver;
-
 import ij.process.*;
 
 
@@ -114,10 +115,17 @@ public class CreateStack {
 		//System.out.println("finished initialisation of image devices");
 		
 		//performing sorting operation by quicksort algorithm
-		SortClass s = new SortClass(lInput);
-		s.quickSort(0, lInput.size() - 1);
-		lInput = s.getList(); 		
-
+		Collections.sort(lInput, new Comparator<float[]>() {
+		    @Override
+		    public int compare(float[] o1, float[] o2) {
+		        if (o1[3] > o2[3]){
+		            return 1;
+		        }else if(o1[3] < o2[3]){
+		            return -1;
+		        }
+		        return 0;
+		    }
+		});
 		// fill image stack with images
 		for (int i = 0; i < lInput.size(); i++) {
 			
