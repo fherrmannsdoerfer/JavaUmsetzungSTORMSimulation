@@ -32,15 +32,15 @@ public class CreateStack {
 	 * main method to test
 	 */
 	public static void main(String[] args){ 
-		int nbrPoints = 3000;
+		int nbrPoints = 30000;
 		float[][] c = new float[nbrPoints][5];
 		//random creation of a list of tables as input
 		for (int j = 0; j < nbrPoints; j++) {
 			c[j][0] = (float) (Math.random()*30000);
 			c[j][1] = (float) (Math.random()*30000);
-			c[j][2] = (float) 200;//(Math.random()*800);
-			c[j][3] = (float) Math.round(Math.random()*1000);
-			c[j][4] = (float) (Math.random()*10000+1000);
+			c[j][2] = (float) (Math.random()*3000);
+			c[j][3] = (float) Math.round(Math.random()*100);
+			c[j][4] = (float) (Math.random()*6000+1000);
 		}
 		System.out.println("finished simulation");
 		float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
@@ -51,7 +51,7 @@ public class CreateStack {
 		
 		createTiffStack(c, 1/100.f/**resolution*/ , 10/**emptyspace*/, 
 				2/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
-				0.06f/**decayTime*/, 10/**sizePSF*/, 2/**modelNR*/, 
+				0.06f/**decayTime*/, 10/**sizePSF*/, 1/**modelNR*/, 
 				(float) 1.4/**NA*/, 680/**waveLength*/, 400/**zFocus*/, 
 				800/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/);
 
@@ -330,7 +330,7 @@ public class CreateStack {
 		float dy = (float) ((y + 0.5)/res) - maxY;
 		
 		double exponent = (double) Math.pow(dx, 2)/Math.pow(sig[0], 2)/2 + Math.pow(dy, 2)/Math.pow(sig[1], 2)/2;
-		ret = (float) Math.exp(-exponent)*maxInt;
+		ret = (float) Math.exp(-exponent)*maxInt*20000;
 		ret /= (2* Math.PI);
 		ret /= sig[0];
 		ret /= sig[1];
