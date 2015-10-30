@@ -10,6 +10,7 @@ public class ParameterSet implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Float loa;	
     private Float aoa; 
+    private Float soa;
     private Float bspnm;
     private Float pabs; 				
     private Float abpf;		
@@ -49,7 +50,7 @@ public class ParameterSet implements Serializable {
 	private Color antibodyColor;
     
     
-	public ParameterSet(Float loa, Float aoa, Float bspnm, Float pabs,
+	public ParameterSet(Float loa, Float aoa, Float soa, Float bspnm, Float pabs,
 			Float abpf, Float rof, Float fpab, Float sxy, Float sz, Float doc, Float nocpsmm,
 			Float docpsnm, Float bd, Float bspsnm, int frames, Float kOn, Float kOff, Float deff, Float bleachConst, int meanPhotonNumber,
 			Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility, 
@@ -58,6 +59,7 @@ public class ParameterSet implements Serializable {
 		super();
 		this.loa = loa;
 		this.aoa = aoa;
+		this.soa = soa;
 		this.bspnm = bspnm;
 		this.pabs = pabs;
 		this.abpf = abpf;
@@ -101,6 +103,7 @@ public class ParameterSet implements Serializable {
     	super();
     	this.loa = new Float(16.f); 	
         this.aoa = new Float((float) (90./180.*Math.PI));
+        this.soa = new Float(0.f);
         this.bspnm = new Float(13.f/8.f);
         this.pabs = new Float(0.1f); 				
         this.abpf = new Float(14);		
@@ -158,6 +161,14 @@ public class ParameterSet implements Serializable {
 
 	public void setAoa(Float aoa) {
 		this.aoa = aoa;
+	}
+	
+	public Float getSoa(){
+		return this.soa;
+	}
+	
+	public void setSoa(Float soa){
+		this.soa = soa;
 	}
 
 	public Float getBspnm() {

@@ -112,7 +112,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JCheckBox showEmBox;
 	private JCheckBox showStormPointsBox;
 	private JCheckBox showAntibodiesBox;
-	private JCheckBox mergePSFBox;
 	private JCheckBox applyBleachBox;
 	private JCheckBox reproducibleOutputchkBox;
 	private JCheckBox coupleSigmaIntensityBox;
@@ -206,6 +205,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	ArrayList<Float> borders = new ArrayList<Float>();
 	private JTextField bleachConstantField;
 	private JTextField detectionEfficiencyField;
+	private JTextField angularDistributionField;
 	/**
 	 * Launch the application.
 	 */
@@ -498,6 +498,26 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		meanAngleField.setColumns(5);
 		horizontalBox_5.add(meanAngleField);
 		
+		JLabel lblNewLabel_7 = new JLabel("");
+		horizontalBox_5.add(lblNewLabel_7);
+		
+		Box horizontalBox_40 = Box.createHorizontalBox();
+		verticalBox_10.add(horizontalBox_40);
+		
+		JLabel lblNewLabel_8 = new JLabel("Sigma Of Angular Distribution");
+		horizontalBox_40.add(lblNewLabel_8);
+		
+		Component horizontalGlue_41 = Box.createHorizontalGlue();
+		horizontalBox_40.add(horizontalGlue_41);
+		
+		angularDistributionField = new JTextField();
+		angularDistributionField.getDocument().addDocumentListener(new MyDocumentListener(angularDistributionField));
+		angularDistributionField.setHorizontalAlignment(SwingConstants.RIGHT);
+		angularDistributionField.setMinimumSize(new Dimension(60, 22));
+		angularDistributionField.setMaximumSize(new Dimension(60, 22));
+		horizontalBox_40.add(angularDistributionField);
+		angularDistributionField.setColumns(5);
+		
 		Component verticalGlue_6 = Box.createVerticalGlue();
 		verticalBox_9.add(verticalGlue_6);
 		
@@ -667,9 +687,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		Component horizontalGlue_17 = Box.createHorizontalGlue();
 		horizontalBox_14.add(horizontalGlue_17);
-		
-		mergePSFBox = new JCheckBox("");
-		horizontalBox_14.add(mergePSFBox);
 		
 		Component horizontalGlue_15 = Box.createHorizontalGlue();
 		horizontalGlue_15.setPreferredSize(new Dimension(100, 0));
@@ -1666,7 +1683,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				epitopeDensityLabel.setText("<html>Epitope Density (nm<sup>-2</sup>)</html>");
 			}
 			labelingEfficiencyField.setText(String.format(Locale.ENGLISH,"%.2f",set.getPabs()*100)); //pabs                                                                                       
-			meanAngleField.setText(String.format(Locale.ENGLISH,"%.2f", set.getAoa()*180.f/Math.PI)); //aoa     
+			meanAngleField.setText(String.format(Locale.ENGLISH,"%.2f", set.getAoa()*180.f/Math.PI)); //aoa   
+			angularDistributionField.setText(String.format(Locale.ENGLISH,"%.2f", set.getSoa()*180.f/Math.PI));
 			detectionEfficiencyField.setText(String.format(Locale.ENGLISH,"%.2f",set.getDeff()*100)); //pabs
 			backgroundLabelField.setText(set.getIlpmm3().toString()); //ilpmm3 aus StormPointFinder                                                                   
 			labelLengthField.setText(set.getLoa().toString()); //loa                                                                                               
@@ -1693,7 +1711,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			showAntibodiesBox.setSelected(set.getAntibodyVisibility());
 			showEmBox.setSelected(set.getEmVisibility());
 			showStormPointsBox.setSelected(set.getStormVisibility());
-			mergePSFBox.setSelected(set.getMergedPSF());
+			
 			applyBleachBox.setSelected(set.getApplyBleaching());
 			coupleSigmaIntensityBox.setSelected(set.getCoupleSigmaIntensity());
 			updateButtonColors();
@@ -1735,6 +1753,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		System.out.println("bspsnm: " + allDataSets.get(currentRow).getParameterSet().getBspsnm());
 		allDataSets.get(currentRow).getParameterSet().setPabs((float) (new Float(labelingEfficiencyField.getText())/100.));
 		allDataSets.get(currentRow).getParameterSet().setAoa((float) ((new Float(meanAngleField.getText()))/180*Math.PI));
+		allDataSets.get(currentRow).getParameterSet().setSoa((float) ((new Float(angularDistributionField.getText()))/180*Math.PI));
 		allDataSets.get(currentRow).getParameterSet().setDeff((float) (new Float(detectionEfficiencyField.getText())/100)); 
 		allDataSets.get(currentRow).getParameterSet().setIlpmm3(new Float(backgroundLabelField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setLoa(new Float(labelLengthField.getText()));
@@ -1756,7 +1775,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		}
 		allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setLineWidth(new Float(lineWidthField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setMergedPSF(mergePSFBox.isSelected());
 		allDataSets.get(currentRow).getParameterSet().setApplyBleaching(applyBleachBox.isSelected());
 		allDataSets.get(currentRow).getParameterSet().setCoupleSigmaIntensity(coupleSigmaIntensityBox.isSelected());
 		

@@ -10,6 +10,7 @@ import javax.swing.SwingWorker;
 
 import model.DataSet;
 import model.LineDataSet;
+import model.ParameterSet;
 import model.TriangleDataSet;
 
 import org.javatuples.Pair;
@@ -95,15 +96,20 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 		else if(currentDataSet.dataType == DataType.EPITOPES){
 			ep = currentDataSet.antiBodyEndPoints;
 			ap = currentDataSet.antiBodyStartPoints;
+			ParameterSet ps = currentDataSet.parameterSet;
 			for (int i = 0; i<currentDataSet.antiBodyStartPoints.length;i++){
-				float[] vec = new float[3];
+				float[] normTri = new float[3];
 				for (int j = 0; j<3; j++){
-					vec[j] = ep[i][j] - ap[i][j];
+					normTri[j] = ep[i][j] - ap[i][j];
 				}
+				float angleDeviation = (float) (random.nextGaussian()*ps.getSoa()); //same procedure as for triangls
+				float[] vec = Calc.getVectorTri(ps.getAoa()+angleDeviation,ps.getLoa(),this); //a random vector with the set angle is created
+				vec = Finder.findRotationTri(normTri,vec); //the surface normal is rotated 
 				double length = Math.sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
 				for (int j = 0; j<3; j++){
 					ep[i][j] = (float) (ap[i][j] + vec[j]/length*currentDataSet.parameterSet.getLoa());
 				}
+				
 			}
 			currentDataSet.antiBodyEndPoints = ep;
 			currentDataSet.antiBodyStartPoints = ap;

@@ -3,6 +3,7 @@ package calc;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JProgressBar;
 
@@ -26,6 +27,7 @@ public class Finder {
 		float pabs = ps.getPabs();
 		float loa = ps.getLoa();
 		float aoa = ps.getAoa();
+		float soa = ps.getSoa();
 		float doc = ps.getDoc();
 		float nocpsmm = ps.getNocpsmm();
 		float docpsnm = ps.getDocpsnm();
@@ -40,7 +42,7 @@ public class Finder {
 //		Calc.print2dMatrix(basePointPair.getValue0());
 		float[][] basepoints = basePointPair.getValue0();
 		int[] idx = basePointPair.getValue1();
-		float[][] ep = getEndpoints(basepoints, triangles, idx, loa, aoa,calc);
+		float[][] ep = getEndpoints(basepoints, triangles, idx, loa, aoa, soa,calc);
 		return new Pair<float[][],float[][]>(basepoints,ep);
 	}
 	
@@ -80,6 +82,7 @@ public class Finder {
 		float pabs = ps.getPabs();
 		float rof = ps.getRof();
 		float aoa = ps.getAoa();
+		float soa = ps.getSoa();
 		float loa = ps.getLoa();
 		//finds start- and endpoint of antibodies for filamentous structures
 		int objectNumber = lines.size();
@@ -95,7 +98,7 @@ public class Finder {
 		}
 		List<float[]> listStartPoints = new ArrayList<float[]>();
 		List<float[]> listEndPoints = new ArrayList<float[]>();
-		progressBar.setString("Finding Antibodies;");
+		progressBar.setString("Finding Labels;"); //Start and endpoint of the labels are determined
 		for(int i = 0; i < objectNumber; i++) {
 			try{
 				//if (i%(objectNumber/100)==0) {
@@ -105,12 +108,12 @@ public class Finder {
 					Pair<Float,float[]> lengthAndCummulativeLength = getLengthOfStructure(points.get(i));
 					float lengthOfStructure = lengthAndCummulativeLength.getValue0().floatValue();
 					float[] cummulativeLengths = lengthAndCummulativeLength.getValue1();
-					for(int j = 1; j <= Math.floor(bspnm*lengthOfStructure); j++) {
+					for(int j = 1; j <= Math.floor(bspnm*lengthOfStructure); j++) { //bindingsites per nanometer times the length of the structure determines the number of epitopes
 						float randomNumber = calc.random.nextFloat();
 						
-						if(randomNumber < pabs) {
+						if(randomNumber < pabs) {//based on the labeling efficiency certain epitopes are rejected
 							int idx = 0;
-							for(int c = 0; c < cummulativeLengths.length; c++) {
+							for(int c = 0; c < cummulativeLengths.length; c++) {//determines current filament
 								if(cummulativeLengths[c] >= (((float) j)/bspnm)) {
 									idx = c;
 									break;
@@ -121,10 +124,11 @@ public class Finder {
 							float z = points.get(i).get(idx+1)[2] - points.get(i).get(idx)[2];
 							float[] lineVec = new float[]{x,y,z};
 	
-							float alpha = (float) (calc.random.nextDouble()*2*Math.PI);
+							float alpha = (float) (calc.random.nextDouble()*2*Math.PI);//angle which is always orthortogonal to the line
 	
-							float[] vecOrth = Calc.getVectorLine((float) (90./180.*Math.PI), rof,alpha);
-							float[] vec = Calc.getVectorLine(aoa, loa,alpha);
+							float[] vecOrth = Calc.getVectorLine((float) (90./180.*Math.PI), rof,alpha); //vector from center to the surface of the filament
+							float angleDeviation = (float) (calc.random.nextGaussian() * soa);
+							float[] vec = Calc.getVectorLine(aoa+angleDeviation, loa,alpha);
 	
 							float[][] point = new float[2][3];
 							point[0] = points.get(i).get(idx);
@@ -172,17 +176,18 @@ public class Finder {
 	}
 	
 	public static float[][] getEndpoints(float[][] basepoints,float[][][] tr,
-			int[] idx,float loa,float aoa, STORMCalculator calc) {
+			int[] idx,float loa,float aoa, float soa, STORMCalculator calc) {
 		Pair<float[][],float[][]> vecPair = Calc.getVertices(tr);
 		float[][] vec1 = vecPair.getValue0();
 		float[][] vec2 = vecPair.getValue1();
 		float[][] ep = new float[basepoints.length][3]; //x,y,z,frame,intensity
 		for(int i = 0; i < basepoints.length; i++) {
-			float[] vec = Calc.getVectorTri(aoa,loa,calc);
+			float angleDeviation = (float) (calc.random.nextGaussian()*soa);
+			float[] vec = Calc.getVectorTri(aoa+angleDeviation,loa,calc);
 			float[] normTri = Calc.getCross(vec1[idx[i]],vec2[idx[i]]);
 			float[] vec3 = {0,1,0};
 			float[] normTri3 = {0,1,1};
-			float[] finvectest = findRotationTri(normTri3,vec3);
+			//float[] finvectest = findRotationTri(normTri3,vec3);
 			//System.out.println("["+finvectest[0]+","+finvectest[1]+","+finvectest[2]);
 			float[] finVec = findRotationTri(normTri,vec);
 			ep[i] = Calc.vectorAddition(basepoints[i], finVec);
