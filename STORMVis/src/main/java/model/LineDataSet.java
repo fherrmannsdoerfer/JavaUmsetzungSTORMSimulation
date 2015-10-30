@@ -12,6 +12,10 @@ import org.jzy3d.maths.Coord3d;
 
 public class LineDataSet extends DataSet implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6799326794212056400L;
 	public List<ArrayList<Coord3d>> data = new ArrayList<ArrayList<Coord3d>>();
 	public Integer pointNumber;
 	public Integer objectNumber;

@@ -5,7 +5,9 @@ import gui.DataTypeDetector.DataType;
 import java.io.IOException;
 
 import model.DataSet;
+import parsing.EpitopeObjectParser;
 import parsing.LineObjectParser;
+import parsing.PointObjectParser;
 import parsing.TriangleObjectParser;
 
 public class ParserWrapper {
@@ -49,7 +51,24 @@ public class ParserWrapper {
 			}
 			return lineParser.wrapParsedObjectsToLineDataSet();
 		}
-		
+		else if (type.equals(DataType.POINTS)){
+			PointObjectParser pointParser = new PointObjectParser(path);
+			try{
+				pointParser.parse();
+			} catch (IOException e){
+				e.printStackTrace();
+			}
+			return pointParser.wrapParsedObjectsToPointDataSet();
+		}
+		else if (type.equals(DataType.EPITOPES)){
+			EpitopeObjectParser epitopeObjectParser = new EpitopeObjectParser(path);
+			try{
+				epitopeObjectParser.parse();
+			} catch (IOException e){
+				e.printStackTrace();
+			}
+			return epitopeObjectParser.wrapParsedObjectsToPointDataSet();
+		}
 		else {
 			return null;
 		}

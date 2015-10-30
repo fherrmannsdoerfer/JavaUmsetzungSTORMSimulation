@@ -74,11 +74,7 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 			}
 			currentDataSet.antiBodyEndPoints = epCopy;
 			currentDataSet.antiBodyStartPoints = apCopy;
-			float[][] result = StormPointFinder.findStormPoints(ep, currentDataSet, this);
-			/**
-			 * writing results to the current dataset
-			 */
-			currentDataSet.stormData = result;
+			
 		}
 		else if(currentDataSet.dataType == DataType.LINES) {
 			LineDataSet currentLines = (LineDataSet) currentDataSet;
@@ -93,13 +89,31 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 			}
 			currentDataSet.antiBodyEndPoints = epCopy;
 			currentDataSet.antiBodyStartPoints = apCopy;
-			float[][] result = StormPointFinder.findStormPoints(ep, currentDataSet, this);
-			/**
-			 * writing results to the current dataset
-			 */
-			currentDataSet.stormData = result;
-			currentDataSet.getProgressBar().setString("Calculation Done!");
+			
+			
 		}
+		else if(currentDataSet.dataType == DataType.EPITOPES){
+			ep = currentDataSet.antiBodyEndPoints;
+			ap = currentDataSet.antiBodyStartPoints;
+			for (int i = 0; i<currentDataSet.antiBodyStartPoints.length;i++){
+				float[] vec = new float[3];
+				for (int j = 0; j<3; j++){
+					vec[j] = ep[i][j] - ap[i][j];
+				}
+				double length = Math.sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
+				for (int j = 0; j<3; j++){
+					ep[i][j] = (float) (ap[i][j] + vec[j]/length*currentDataSet.parameterSet.getLoa());
+				}
+			}
+			currentDataSet.antiBodyEndPoints = ep;
+			currentDataSet.antiBodyStartPoints = ap;
+		}
+		float[][] result = StormPointFinder.findStormPoints(ep, currentDataSet, this);
+		/**
+		 * writing results to the current dataset
+		 */
+		currentDataSet.stormData = result;
+		currentDataSet.getProgressBar().setString("Calculation Done!");
 	}
 	
 	public void publicSetProgress(int prog){

@@ -17,6 +17,7 @@ public class TriangleLineFilter extends FileFilter {
 	    if (extension != null) {
 	        if (extension.equals(Utils.nff) ||
 	            extension.equals(Utils.wimp) ||
+	            extension.equals(Utils.txt) ||
 	        	extension.equals(Utils.ply)){
 	                return true;
 	        } else {
@@ -30,7 +31,7 @@ public class TriangleLineFilter extends FileFilter {
 	@Override
 	public String getDescription() {
 		// TODO Auto-generated method stub
-		return ".nff/.wimp";
+		return ".nff/.wimp/.ply/.txt";
 	}
 	
 	public static class Utils {

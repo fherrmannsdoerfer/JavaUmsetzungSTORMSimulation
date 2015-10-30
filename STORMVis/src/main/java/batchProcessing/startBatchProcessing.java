@@ -17,6 +17,7 @@ import java.util.Random;
 import javax.swing.JProgressBar;
 
 import calc.Calc;
+import calc.CreateStack;
 import calc.STORMCalculator;
 import model.DataSet;
 import model.LineDataSet;
@@ -29,13 +30,13 @@ public class startBatchProcessing {
 	private static String outputFolder = "Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\Localisation Precision Experiment\\V14-2-Simulation-1000frames\\";
 	
 	public static void main(String[] args) {
-		File file = new File("Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\Localisation Precision Experiment\\V14-2-Simulation-1000frames\\NachgezeichnetV14-2rescaled1d.wimp");
-		proceedFileImport(file);
-//		DataSet data = ExamplesProvidingClass.getDataset(1);
-//		furtherProceedFileImport(data, data.dataType);
+//		File file = new File("Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\Simulation Data\\141107-Microtubules-Nachgezeichnet\\141107-MT-Modelrescaled1d.wimp");
+//		proceedFileImport(file);
+		DataSet data = ExamplesProvidingClass.getDataset(1);
+		furtherProceedFileImport(data, data.dataType);
 		
-		SimulationParameter params = standardParameterVesicles();
-		
+		SimulationParameter params = standardParameterMicrotubules();
+		params.recordedFrames = 5000;
 		
 		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(4.f,8.f,12.f,25.f));
 		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(8.f,30.f,40.f,50.f));
@@ -43,29 +44,41 @@ public class startBatchProcessing {
 		//ArrayList<Float> de = new ArrayList<Float>(Arrays.asList(10.f,20.f,50.f,100.f));
 		ArrayList<Integer> koff = new ArrayList<Integer>(Arrays.asList(2000));
 		//ArrayList<Integer> frames = new ArrayList<Integer>(Arrays.asList(10000));
-	
+		
+		float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
+				{202.222f,134.992f,229.455f},{303.333f,140.171f,197.503f},{404.444f,149.645f,175.083f},
+				{505.556f,169.047f,164.861f},{606.667f,196.601f,161.998f},{707.778f,235.912f,169.338f},
+				{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
 		allDataSets.get(0).setProgressBar(new JProgressBar());
-		int counter = 0;
-		for (int i =0; i<sigmaXY.size(); i++){
-			for (int j = 0;j< le.size(); j++){
-				for (int k = 0;k<koff.size(); k++){
-					counter += 1;
-					params.labelingEfficiency = le.get(j);
-					params.sigmaXY = sigmaXY.get(i);
-					params.sigmaZ = sigmaZ.get(i);
-					params.kOff = koff.get(k);
-					calculate(params);
-					//params.detectionEfficiency = de.get(i);
-					//params.recordedFrames = frames.get(i);
-					params.borders = getBorders();
-					
-					String fname = String.format("sigmas%1.0f_%1.0flabelingEff%1.0fPercentKOFF%1.0f", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.kOff);
-					new File(outputFolder+fname+"\\").mkdir();
-					exportData(outputFolder+fname+"\\",fname, params);
-					System.out.println(String.format("run %d of %d",counter,sigmaXY.size()*koff.size()*le.size()));
-				}
-			}
-		}
+		calculate(params);
+		CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/100.f/**resolution*/ , 10/**emptyspace*/, 
+				2/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
+				0.01f/**decayTime*/, 10/**sizePSF*/, 1/**modelNR*/, 
+				(float) 1.4/**NA*/, 680/**waveLength*/, 400/**zFocus*/, 
+				800/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/);
+
+//		allDataSets.get(0).setProgressBar(new JProgressBar());
+//		int counter = 0;
+//		for (int i =0; i<sigmaXY.size(); i++){
+//			for (int j = 0;j< le.size(); j++){
+//				for (int k = 0;k<koff.size(); k++){
+//					counter += 1;
+//					params.labelingEfficiency = le.get(j);
+//					params.sigmaXY = sigmaXY.get(i);
+//					params.sigmaZ = sigmaZ.get(i);
+//					params.kOff = koff.get(k);
+//					calculate(params);
+//					//params.detectionEfficiency = de.get(i);
+//					//params.recordedFrames = frames.get(i);
+//					params.borders = getBorders();
+//					
+//					String fname = String.format("sigmas%1.0f_%1.0flabelingEff%1.0fPercentKOFF%1.0f", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.kOff);
+//					new File(outputFolder+fname+"\\").mkdir();
+//					exportData(outputFolder+fname+"\\",fname, params);
+//					System.out.println(String.format("run %d of %d",counter,sigmaXY.size()*koff.size()*le.size()));
+//				}
+//			}
+//		}
 		
 		
 		

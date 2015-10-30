@@ -22,12 +22,16 @@ import java.util.List;
 
 import calc.Calc;
 import model.DataSet;
+import model.EpitopeDataSetSerializable;
+import model.EpitopeDataSet;
 import model.LineDataSet;
 import model.LineDataSetSerializable;
 import model.ParameterSet;
+import model.PointsOnlyDataSet;
 import model.Project;
 import model.TriangleDataSet;
 import model.TriangleDataSetSerializable;
+import model.PointsOnlyDataSetSerializable;
 /**
  * 
  * @author maxscheurer
@@ -47,6 +51,15 @@ public class FileManager {
 				serial.setDataType(DataType.TRIANGLES);
 				p.dataSets.set(p.dataSets.indexOf(set), serial);
 //				((TriangleDataSet) set).logPoints();
+			}
+			else if(set.dataType == DataType.POINTS){
+				PointsOnlyDataSetSerializable serial = new PointsOnlyDataSetSerializable(set.parameterSet, (PointsOnlyDataSet) set);
+				serial.setDataType(DataType.POINTS);
+				p.dataSets.set(p.dataSets.indexOf(set), serial);
+			}
+			else if(set.dataType == DataType.EPITOPES){
+				EpitopeDataSetSerializable serial = new EpitopeDataSetSerializable(set.parameterSet, (EpitopeDataSet) set);
+				p.dataSets.set(p.dataSets.indexOf(set),serial);
 			}
 		}
 		
@@ -87,6 +100,9 @@ public class FileManager {
 			else if(set.dataType == DataType.TRIANGLES) {
 				TriangleDataSet serial = new TriangleDataSet(set.parameterSet, (TriangleDataSetSerializable) set);
 				p.dataSets.set(p.dataSets.indexOf(set), serial);
+			}
+			else if(set.dataType == DataType.POINTS){
+				PointsOnlyDataSet serial = new PointsOnlyDataSet(set.parameterSet, (PointsOnlyDataSetSerializable) set);
 			}
 		}
 		

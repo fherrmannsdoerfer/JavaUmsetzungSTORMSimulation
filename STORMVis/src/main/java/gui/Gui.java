@@ -1569,6 +1569,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		}
 		DataSet data = ParserWrapper.parseFileOfType(file.getAbsolutePath(), type);
 		data.setName(file.getName());
+		data.setProgressBar(this.progressBar);
 		furtherProceedFileImport(data,type);
 	}
 	
@@ -1593,20 +1594,27 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			if (allDataSets.get(0).dataType == DataType.LINES){
 				LineDataSet lines = (LineDataSet) allDataSets.get(0);
 				shifts = Calc.findShiftLines(lines.data);
+				shiftX = -shifts.get(0);
+				shiftY = -shifts.get(1);
+				shiftZ = -shifts.get(2);
 			}
-			else{
+			else if (allDataSets.get(0).dataType == DataType.TRIANGLES){
 				TriangleDataSet triangles = (TriangleDataSet) allDataSets.get(0);
 				shifts = Calc.findShiftTriangles(triangles.primitives);
+				shiftX = -shifts.get(0);
+				shiftY = -shifts.get(1);
+				shiftZ = -shifts.get(2);
 			}
-			shiftX = -shifts.get(0);
-			shiftY = -shifts.get(1);
-			shiftZ = -shifts.get(2);
+			else if (allDataSets.get(0).dataType == DataType.POINTS){
+				
+			}
+			
 		}
 		if (allDataSets.get(allDataSets.size()-1).dataType == DataType.LINES){
 			LineDataSet lines = (LineDataSet) allDataSets.get(allDataSets.size()-1);
 			lines.shiftData(shiftX,shiftY,shiftZ);
 		}
-		else{
+		else if (allDataSets.get(0).dataType == DataType.TRIANGLES){
 			TriangleDataSet triangles = (TriangleDataSet) allDataSets.get(allDataSets.size()-1);
 			triangles.shiftData(shiftX,shiftY,shiftZ);
 		}
@@ -2081,6 +2089,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		for(DataSet s : allDataSets) {
 			s.getParameterSet().setGeneralVisibility(true);
 			model.visibleSets.add(s.getParameterSet().getGeneralVisibility());
+			s.setProgressBar(this.progressBar);
 		}
 		model.data.addAll(p.dataSets);
 		if (allDataSets.size()>0){
