@@ -298,15 +298,21 @@ public class Calc {
 	
 	public static float[] getVector(float aoa, float length, float alpha) {
 		double x = Math.cos(aoa)*Math.cos(alpha);
-		double z = Math.sin(aoa);
 		double y = Math.cos(aoa)*Math.sin(alpha);
+		double z = Math.sin(aoa);
 		float[] vec = {(float) (x*length),(float) (y*length),(float) (z*length)};
 		return vec;
 	}
 	public static float[] getVectorLine(float aoa, float length, float alpha) {
 		double z = Math.sin(aoa)*Math.sin(alpha);
 		double y = Math.sin(aoa)*Math.cos(alpha);
-		double x = Math.sqrt(1-y*y-z*z);
+		double x = 0;
+		if (aoa > Math.PI/2){
+			 x= -Math.sqrt(1-y*y-z*z);
+		}
+		else {
+			x = Math.sqrt(1-y*y-z*z);
+		}
 		float[] vec = {(float) (x*length),(float) (y*length),(float) (z*length)};
 		return vec;
 	}

@@ -133,8 +133,8 @@ public class Finder {
 							float[][] point = new float[2][3];
 							point[0] = points.get(i).get(idx);
 							point[1] = points.get(i).get(idx+1);
-							float[] rotVec = findRotation(vec, point);
-							float[] rotVecOrth = findRotation(vecOrth, point);
+							float[] rotVec = findRotation(vec, lineVec);
+							float[] rotVecOrth = findRotation(vecOrth, lineVec);
 							float[] lineVecNorm = Calc.scaleToOne(lineVec);
 							float multi = ((float)j-1.f)/bspnm - cummulativeLengths[idx];
 							float[] lineVecNormMulti = Calc.multiplyVector(lineVecNorm, multi);
@@ -290,12 +290,10 @@ public class Finder {
 		return rotVec;
 	}
 	
-	public static float[] findRotation(float[] vec, float[][] point) {
+	public static float[] findRotation(float[] vec, float[] targetVec) {
 		float[] unityVec = {1,0,0};
 		float[] rotVec = null;
-		float[] targetVec = null;
 		
-		targetVec = new float[]{point[1][0] - point[0][0],point[1][1]-point[0][1],point[1][2]-point[0][2]};
 		targetVec = Calc.scaleToOne(targetVec);
 		
 		float[] v = Calc.getCross(unityVec,targetVec);
@@ -312,7 +310,7 @@ public class Finder {
         if (Float.isNaN((float) ((float) (1-c)/(Math.pow(s, 2))))) {
         	System.out.println("div is NAN");
         }
-        vxSquared = Calc.matrixDivide(vxSquared,(float) ((float) (Math.pow(s, 2)/(1-c))));
+        vxSquared = Calc.matrixDivide(vxSquared,(float) (Math.pow(s, 2)/(1-c)));
         R = Calc.matrixAddition(R, vxSquared);
         rotVec = Calc.applyMatrix(R, vec);
 		return rotVec;
