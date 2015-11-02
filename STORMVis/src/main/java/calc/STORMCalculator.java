@@ -112,10 +112,11 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 					for (int j = 0; j<3; j++){
 						normTri[j] = ep2[i][j] - ap[i][j];
 					}
-					float angleDeviation = (float) (random.nextGaussian()*ps.getSoa()); //same procedure as for triangls
+					float angleDeviation = (float) (random.nextGaussian()*ps.getSoa()); //same procedure as for triangles
 					float alpha =  (float) (random.nextDouble()*2*Math.PI);
 					float[] vec = Calc.getVectorLine(ps.getAoa()+angleDeviation,ps.getLoa(),alpha); //a random vector with the set angle is created
-					vec = Finder.findRotation(normTri,vec); //the surface normal is rotated 
+
+					vec = Finder.findRotation(vec,normTri); //the surface normal is rotated 
 					double length = Math.sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
 					for (int j = 0; j<3; j++){
 						ep2[i][j] = (float) (ap[i][j] + vec[j]/length*currentDataSet.parameterSet.getLoa());
