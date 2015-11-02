@@ -287,7 +287,7 @@ public class Calc {
 	 * @return vector with antibody angle and length for triangles and lines
 	 */
 	
-	public static float[] getVectorTri(float aoa, float length, double alpha) {
+	public static float[] getVectorTri(float aoa, float length, float alpha) {
 		double x = Math.cos(aoa)*Math.cos(alpha);
 		double y = Math.cos(aoa)*Math.sin(alpha);
 		double z = Math.sin(aoa);

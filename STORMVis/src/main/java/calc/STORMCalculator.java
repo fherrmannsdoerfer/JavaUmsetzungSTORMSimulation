@@ -96,39 +96,43 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 			
 		}
 		else if(currentDataSet.dataType == DataType.EPITOPES){
-			ep = ((EpitopeDataSet)currentDataSet).epitopeEnd;
+			float[][] ep2 = new float[((EpitopeDataSet)currentDataSet).epitopeEnd.length][3];
+			for (int i = 0; i<((EpitopeDataSet)currentDataSet).epitopeEnd.length;i++){
+				ep2[i] = ((EpitopeDataSet)currentDataSet).epitopeEnd[i].clone();
+			}
+			//ep = ((EpitopeDataSet)currentDataSet).epitopeEnd.clone();
 			ap = ((EpitopeDataSet)currentDataSet).epitopeBase;
 			ParameterSet ps = currentDataSet.parameterSet;
 			List<float[]> endPoints = new ArrayList<float[]>();
 			List<float[]> startPoints = new ArrayList<float[]>();
-			for (int i = 0; i<ep.length;i++){
+			for (int i = 0; i<ep2.length;i++){
 				double rn = random.nextDouble();
 				if(rn<=ps.getPabs()){
 					float[] normTri = new float[3];
 					for (int j = 0; j<3; j++){
-						normTri[j] = ep[i][j] - ap[i][j];
+						normTri[j] = ep2[i][j] - ap[i][j];
 					}
 					float angleDeviation = (float) (random.nextGaussian()*ps.getSoa()); //same procedure as for triangls
-					double alpha =  0;
-					float[] vec = Calc.getVectorTri(ps.getAoa()+angleDeviation,ps.getLoa(),alpha); //a random vector with the set angle is created
-					vec = Finder.findRotationTri(normTri,vec); //the surface normal is rotated 
+					float alpha =  (float) (random.nextDouble()*2*Math.PI);
+					float[] vec = Calc.getVectorLine(ps.getAoa()+angleDeviation,ps.getLoa(),alpha); //a random vector with the set angle is created
+					vec = Finder.findRotation(normTri,vec); //the surface normal is rotated 
 					double length = Math.sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
 					for (int j = 0; j<3; j++){
-						ep[i][j] = (float) (ap[i][j] + vec[j]/length*currentDataSet.parameterSet.getLoa());
+						ep2[i][j] = (float) (ap[i][j] + vec[j]/length*currentDataSet.parameterSet.getLoa());
 					}
-					endPoints.add(ep[i]);
+					endPoints.add(ep2[i]);
 					startPoints.add(ap[i]);
 				}		
 				else{
 					
 				}
 			}
-			ep = Calc.toFloatArray(endPoints);
+			ep2 = Calc.toFloatArray(endPoints);
 			ap = Calc.toFloatArray(startPoints);
-			currentDataSet.antiBodyEndPoints = ep;
+			currentDataSet.antiBodyEndPoints = ep2;
 			currentDataSet.antiBodyStartPoints = ap;
 		}
-		float[][] result = StormPointFinder.findStormPoints(ep, currentDataSet, this);
+		float[][] result = StormPointFinder.findStormPoints(currentDataSet.antiBodyEndPoints, currentDataSet, this);
 		/**
 		 * writing results to the current dataset
 		 */

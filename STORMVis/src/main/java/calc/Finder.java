@@ -183,7 +183,7 @@ public class Finder {
 		float[][] ep = new float[basepoints.length][3]; //x,y,z,frame,intensity
 		for(int i = 0; i < basepoints.length; i++) {
 			float angleDeviation = (float) (calc.random.nextGaussian()*soa);
-			double alpha =  calc.random.nextDouble() *2*Math.PI;
+			float alpha =  (float) (calc.random.nextFloat() *2*Math.PI);
 			float[] vec = Calc.getVectorTri(aoa+angleDeviation,loa,alpha);
 			float[] normTri = Calc.getCross(vec1[idx[i]],vec2[idx[i]]);
 			float[] vec3 = {0,1,0};
