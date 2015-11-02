@@ -11,6 +11,9 @@ public class EpitopeDataSetSerializable extends EpitopeDataSet implements Serial
 	 */
 	private static final long serialVersionUID = 1L;
 
+	public float[][] epitopeBase;
+	public float[][] epitopeEnd;
+	
 	public EpitopeDataSetSerializable(ParameterSet parameterSet) {
 		super(parameterSet);
 		// TODO Auto-generated constructor stub
@@ -23,8 +26,8 @@ public class EpitopeDataSetSerializable extends EpitopeDataSet implements Serial
 		this.color = set.getColor();
 		
 		this.stormData = set.stormData;
-		this.antiBodyEndPoints = set.antiBodyEndPoints;
-		this.antiBodyStartPoints = set.antiBodyStartPoints;
+		this.epitopeEnd = set.epitopeEnd;
+		this.epitopeBase = set.epitopeBase;
 	}
 	
 

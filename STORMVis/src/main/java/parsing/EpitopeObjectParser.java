@@ -106,8 +106,8 @@ public class EpitopeObjectParser {
 					ep[i][j] = allPoints.get(i)[j] + allPoints.get(i)[j+3];
 				}
 			}
-			set.antiBodyEndPoints = ep;
-			set.antiBodyStartPoints = ap;
+			set.epitopeEnd = ep;
+			set.epitopeBase = ap;
 			return set;
 		}
 		

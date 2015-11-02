@@ -103,6 +103,11 @@ public class FileManager {
 			}
 			else if(set.dataType == DataType.POINTS){
 				PointsOnlyDataSet serial = new PointsOnlyDataSet(set.parameterSet, (PointsOnlyDataSetSerializable) set);
+				p.dataSets.set(p.dataSets.indexOf(set),serial);
+			}
+			else if(set.dataType == DataType.EPITOPES){
+				EpitopeDataSet serial = new EpitopeDataSet(set.parameterSet, (EpitopeDataSetSerializable) set);
+				p.dataSets.set(p.dataSets.indexOf(set), serial);
 			}
 		}
 		

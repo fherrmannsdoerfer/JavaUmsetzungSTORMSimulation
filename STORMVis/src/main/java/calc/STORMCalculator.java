@@ -3,12 +3,14 @@ package calc;
 
 import gui.DataTypeDetector.DataType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import javax.swing.SwingWorker;
 
 import model.DataSet;
+import model.EpitopeDataSet;
 import model.LineDataSet;
 import model.ParameterSet;
 import model.TriangleDataSet;
@@ -94,23 +96,35 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 			
 		}
 		else if(currentDataSet.dataType == DataType.EPITOPES){
-			ep = currentDataSet.antiBodyEndPoints;
-			ap = currentDataSet.antiBodyStartPoints;
+			ep = ((EpitopeDataSet)currentDataSet).epitopeEnd;
+			ap = ((EpitopeDataSet)currentDataSet).epitopeBase;
 			ParameterSet ps = currentDataSet.parameterSet;
-			for (int i = 0; i<currentDataSet.antiBodyStartPoints.length;i++){
-				float[] normTri = new float[3];
-				for (int j = 0; j<3; j++){
-					normTri[j] = ep[i][j] - ap[i][j];
+			List<float[]> endPoints = new ArrayList<float[]>();
+			List<float[]> startPoints = new ArrayList<float[]>();
+			for (int i = 0; i<ep.length;i++){
+				double rn = random.nextDouble();
+				if(rn<=ps.getPabs()){
+					float[] normTri = new float[3];
+					for (int j = 0; j<3; j++){
+						normTri[j] = ep[i][j] - ap[i][j];
+					}
+					float angleDeviation = (float) (random.nextGaussian()*ps.getSoa()); //same procedure as for triangls
+					double alpha =  0;
+					float[] vec = Calc.getVectorTri(ps.getAoa()+angleDeviation,ps.getLoa(),alpha); //a random vector with the set angle is created
+					vec = Finder.findRotationTri(normTri,vec); //the surface normal is rotated 
+					double length = Math.sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
+					for (int j = 0; j<3; j++){
+						ep[i][j] = (float) (ap[i][j] + vec[j]/length*currentDataSet.parameterSet.getLoa());
+					}
+					endPoints.add(ep[i]);
+					startPoints.add(ap[i]);
+				}		
+				else{
+					
 				}
-				float angleDeviation = (float) (random.nextGaussian()*ps.getSoa()); //same procedure as for triangls
-				float[] vec = Calc.getVectorTri(ps.getAoa()+angleDeviation,ps.getLoa(),this); //a random vector with the set angle is created
-				vec = Finder.findRotationTri(normTri,vec); //the surface normal is rotated 
-				double length = Math.sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
-				for (int j = 0; j<3; j++){
-					ep[i][j] = (float) (ap[i][j] + vec[j]/length*currentDataSet.parameterSet.getLoa());
-				}
-				
 			}
+			ep = Calc.toFloatArray(endPoints);
+			ap = Calc.toFloatArray(startPoints);
 			currentDataSet.antiBodyEndPoints = ep;
 			currentDataSet.antiBodyStartPoints = ap;
 		}

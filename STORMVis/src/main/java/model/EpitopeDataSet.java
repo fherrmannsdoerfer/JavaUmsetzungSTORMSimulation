@@ -16,6 +16,8 @@ public class EpitopeDataSet extends DataSet implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	public float[][] epitopeBase;
+	public float[][] epitopeEnd;
 
 	public EpitopeDataSet(ParameterSet parameterSet) {
 		super(parameterSet);
