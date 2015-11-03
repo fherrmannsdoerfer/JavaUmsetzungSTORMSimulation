@@ -226,7 +226,7 @@ public class FileManager {
 		imPlusStack[1] = colImg.get(1);
 		imPlusStack[2] = colImg.get(2);
 		ImagePlus imgRGB = RGBStackMerge.mergeChannels(imPlusStack, true);
-		ij.IJ.saveAs(imgRGB, "png", basename+tag+"Reconstruction");
+		ij.IJ.saveAs(imgRGB, "png", basename+tag);
 	}
 
 	private static void writeLogFile(DataSet dataset, String basename,ArrayList<Float> borders) {

@@ -20,6 +20,7 @@ import calc.Calc;
 import calc.CreateStack;
 import calc.STORMCalculator;
 import model.DataSet;
+import model.EpitopeDataSet;
 import model.LineDataSet;
 import model.TriangleDataSet;
 
@@ -27,62 +28,69 @@ public class startBatchProcessing {
 	static List<DataSet> allDataSets = new ArrayList<DataSet>();
 	private static Random random;
 	private static String EXTENSIONIMAGEOUTPUT = ".tif";
-	private static String outputFolder = "Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\Localisation Precision Experiment\\V14-2-Simulation-1000frames\\";
+	private static String outputFolder = "Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Simulierte Epitope aus Ingmars Paper\\outputBatchprocessing\\";
 	
 	public static void main(String[] args) {
-//		File file = new File("Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\Simulation Data\\141107-Microtubules-Nachgezeichnet\\141107-MT-Modelrescaled1d.wimp");
-//		proceedFileImport(file);
-		DataSet data = ExamplesProvidingClass.getDataset(1);
-		furtherProceedFileImport(data, data.dataType);
-		
-		SimulationParameter params = standardParameterMicrotubules();
+		File file = new File("Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Simulierte Epitope aus Ingmars Paper\\Files to import in SuReSim\\100nmPeriodicStructure.txt");
+		proceedFileImport(file);
+//		DataSet data = ExamplesProvidingClass.getDataset(1);
+//		furtherProceedFileImport(data, data.dataType);
+		boolean tiffStackOutput = false;
+		boolean suReSimOutput = true;
+		SimulationParameter params = standardParameterSingleEpitopes();
 		params.recordedFrames = 10000;
 		params.MeanPhotonNumber = 2000;
 		
 		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(4.f,8.f,12.f,25.f));
 		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(8.f,30.f,40.f,50.f));
-		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(10.f,50.f,100.f));
+		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(10.f,50.f,100.f,90.f));
 		//ArrayList<Float> de = new ArrayList<Float>(Arrays.asList(10.f,20.f,50.f,100.f));
 		ArrayList<Integer> koff = new ArrayList<Integer>(Arrays.asList(2000));
 		//ArrayList<Integer> frames = new ArrayList<Integer>(Arrays.asList(10000));
 		
-		float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
-				{202.222f,134.992f,229.455f},{303.333f,140.171f,197.503f},{404.444f,149.645f,175.083f},
-				{505.556f,169.047f,164.861f},{606.667f,196.601f,161.998f},{707.778f,235.912f,169.338f},
-				{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
+		
 		allDataSets.get(0).setProgressBar(new JProgressBar());
-		params.sigmaXY = 0.f;
-		params.sigmaZ = 0.f;
-		calculate(params);
-		CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/100.f/**resolution*/ , 10/**emptyspace*/, 
-				2/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
-				0.01f/**decayTime*/, 14/**sizePSF*/, 2/**modelNR*/, 
-				(float) 1.4/**NA*/, 680/**waveLength*/, 400/**zFocus*/, 
-				800/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/,
-				"C:\\Users\\herrmannsdoerfer\\Desktop\\TestAstigmatismusTiffStack\\test.tif");
+		int counter = 0;
+		for (int i =0; i<sigmaXY.size(); i++){
+			for (int j = 0;j< le.size(); j++){
+				for (int k = 0;k<koff.size(); k++){
+					counter += 1;
+					if(suReSimOutput){
+						params.labelingEfficiency = le.get(j);
+						params.sigmaXY = sigmaXY.get(i);
+						params.sigmaZ = sigmaZ.get(i);
+						params.kOff = koff.get(k);
+						calculate(params);
+						//params.detectionEfficiency = de.get(i);
+						//params.recordedFrames = frames.get(i);
+						params.borders = getBorders();
+						
+						String fname = String.format("sigmas%1.0f_%1.0flabelingEff%1.0fPercentKOFF%1.0f", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.kOff);
+						new File(outputFolder+fname+"\\").mkdir();
+						exportData(outputFolder+fname+"\\",fname, params);
+						System.out.println(String.format("run %d of %d",counter,sigmaXY.size()*koff.size()*le.size()));
+					}
+					if (tiffStackOutput){
+						float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
+								{202.222f,134.992f,229.455f},{303.333f,140.171f,197.503f},{404.444f,149.645f,175.083f},
+								{505.556f,169.047f,164.861f},{606.667f,196.601f,161.998f},{707.778f,235.912f,169.338f},
+								{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
+						allDataSets.get(0).setProgressBar(new JProgressBar());
+						params.sigmaXY = 0.f;
+						params.sigmaZ = 0.f;
+						calculate(params);
+						CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/100.f/**resolution*/ , 10/**emptyspace*/, 
+								2/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
+								0.01f/**decayTime*/, 14/**sizePSF*/, 2/**modelNR*/, 
+								(float) 1.4/**NA*/, 680/**waveLength*/, 400/**zFocus*/, 
+								800/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/,
+								"C:\\Users\\herrmannsdoerfer\\Desktop\\TestAstigmatismusTiffStack\\test.tif");
 
-//		allDataSets.get(0).setProgressBar(new JProgressBar());
-//		int counter = 0;
-//		for (int i =0; i<sigmaXY.size(); i++){
-//			for (int j = 0;j< le.size(); j++){
-//				for (int k = 0;k<koff.size(); k++){
-//					counter += 1;
-//					params.labelingEfficiency = le.get(j);
-//					params.sigmaXY = sigmaXY.get(i);
-//					params.sigmaZ = sigmaZ.get(i);
-//					params.kOff = koff.get(k);
-//					calculate(params);
-//					//params.detectionEfficiency = de.get(i);
-//					//params.recordedFrames = frames.get(i);
-//					params.borders = getBorders();
-//					
-//					String fname = String.format("sigmas%1.0f_%1.0flabelingEff%1.0fPercentKOFF%1.0f", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.kOff);
-//					new File(outputFolder+fname+"\\").mkdir();
-//					exportData(outputFolder+fname+"\\",fname, params);
-//					System.out.println(String.format("run %d of %d",counter,sigmaXY.size()*koff.size()*le.size()));
-//				}
-//			}
-//		}
+					}
+				}
+			}
+		}
+		
 		
 		
 		
@@ -130,6 +138,29 @@ public class startBatchProcessing {
 		params.viewStatus = 1;
 		return params;
 	}
+	
+	private static SimulationParameter standardParameterSingleEpitopes() {
+		SimulationParameter params = new SimulationParameter();
+		params.angleOfLabel = (float) 0;
+		params.backgroundPerMicroMeterCubed = 50;
+		params.coupleSigmaIntensity = true;
+		params.detectionEfficiency = 100;
+		params.epitopeDensity = (float) 1.625;
+		params.fluorophoresPerLabel = 8;
+		params.kOff = 2000;
+		params.kOn = 1;
+		params.labelEpitopeDistance = 16;
+		params.labelingEfficiency = 90;
+		params.makeItReproducible = true;
+		params.MeanPhotonNumber = 4000;
+		params.radiusOfFilament = (float) 12.5;
+		params.recordedFrames = 10000;
+		params.sigmaXY = 10;
+		params.sigmaZ = 30;
+		params.viewStatus = 1;
+		return params;
+	}
+	
 	private static SimulationParameter standardParameterMicrotubules1nm() {
 		SimulationParameter params = new SimulationParameter();
 		params.angleOfLabel = (float) (Math.PI/2);
@@ -216,15 +247,7 @@ public class startBatchProcessing {
 		}
 		
 		allDataSets.add(data);
-		
-		if (allDataSets.get(allDataSets.size()-1).dataType == DataType.LINES){
-			LineDataSet lines = (LineDataSet) allDataSets.get(allDataSets.size()-1);
-		}
-		else{
-			TriangleDataSet triangles = (TriangleDataSet) allDataSets.get(allDataSets.size()-1);
-		}
 	
-		
 	}
 	private static void calculate(SimulationParameter params) {
 		setUpRandomNumberGenerator(params.makeItReproducible) ;
