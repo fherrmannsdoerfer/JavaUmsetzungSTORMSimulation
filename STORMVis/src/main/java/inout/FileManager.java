@@ -2,6 +2,7 @@ package inout;
 
 import gui.DataTypeDetector.DataType;
 import ij.ImagePlus;
+import ij.plugin.RGBStackMerge;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 
@@ -182,7 +183,7 @@ public class FileManager {
 		}
 		colorBar = Calc.fillColorBar(colorBar, dims.get(4), dims.get(5));
 		String tag = "ColorBar_zmin" + dims.get(4)+"_zmax"+dims.get(5); 
-		write3dImage(512,30,colorBar,path,tag);
+		write3dImage(512,30,colorBar,path,tag,false);
 
 	}
 	
@@ -196,9 +197,9 @@ public class FileManager {
 		ij.IJ.save(imgP, path);
 	}
 	private static void write3dImage(int pixelX, int pixelY, ArrayList<float[][]> coloredImage,String path){
-		write3dImage(pixelX, pixelY, coloredImage, path,"");
+		write3dImage(pixelX, pixelY, coloredImage, path,"", true);
 	}
-	private static void write3dImage(int pixelX, int pixelY, ArrayList<float[][]> coloredImage,String path,String tag){
+	private static void write3dImage(int pixelX, int pixelY, ArrayList<float[][]> coloredImage,String path,String tag,boolean writeTiffs){
 		ImageProcessor ipRed = new FloatProcessor(pixelX,pixelY);
 		ImageProcessor ipGreen = new FloatProcessor(pixelX,pixelY);
 		ImageProcessor ipBlue = new FloatProcessor(pixelX,pixelY);
@@ -215,9 +216,17 @@ public class FileManager {
 		colImg.add(imgPBlue);
 		
 		String basename = path.substring(0, path.length()-4);
-		ij.IJ.save(colImg.get(0),basename+tag+"redCh.tif");
-		ij.IJ.save(colImg.get(1),basename+tag+"greenCh.tif");
-		ij.IJ.save(colImg.get(2),basename+tag+"blueCh.tif");
+		if (writeTiffs){
+			ij.IJ.save(colImg.get(0),basename+tag+"redCh.tif");
+			ij.IJ.save(colImg.get(1),basename+tag+"greenCh.tif");
+			ij.IJ.save(colImg.get(2),basename+tag+"blueCh.tif");
+		}
+		ImagePlus[] imPlusStack = new ImagePlus[3];
+		imPlusStack[0] = colImg.get(0);
+		imPlusStack[1] = colImg.get(1);
+		imPlusStack[2] = colImg.get(2);
+		ImagePlus imgRGB = RGBStackMerge.mergeChannels(imPlusStack, true);
+		ij.IJ.saveAs(imgRGB, "png", basename+tag+"Reconstruction");
 	}
 
 	private static void writeLogFile(DataSet dataset, String basename,ArrayList<Float> borders) {
