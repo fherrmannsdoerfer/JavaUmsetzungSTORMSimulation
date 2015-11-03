@@ -316,15 +316,24 @@ public class FileManager {
 		try{
 			double minx = Calc.min(stormData, 0);
 			double miny = Calc.min(stormData, 1);
-			FileWriter writer = new FileWriter(basename+"LocalizationsForFRCAnalysis.txt");
+			double minz = Calc.min(stormData, 2);
+			FileWriter writerXY = new FileWriter(basename+"LocalizationsForFRCAnalysisXY.txt");
+			FileWriter writerXZ = new FileWriter(basename+"LocalizationsForFRCAnalysisXZ.txt");
+			FileWriter writerYZ = new FileWriter(basename+"LocalizationsForFRCAnalysisYZ.txt");
 			for (int i = 0; i<stormData.length; i++){
 				float[] tmp = stormData[i];
 				if (Calc.isInRange(tmp,borders)){
-					writer.append((tmp[0]-minx)/106.6666+" "+(tmp[1]-miny)/106.6666+" "+tmp[3]+"\n");
+					writerXY.append((tmp[0]-minx)/106.6666+" "+(tmp[1]-miny)/106.6666+" "+tmp[3]+"\n");
+					writerXZ.append((tmp[0]-minx)/106.6666+" "+(tmp[2]-minz)/106.6666+" "+tmp[3]+"\n");
+					writerYZ.append((tmp[1]-miny)/106.6666+" "+(tmp[2]-minz)/106.6666+" "+tmp[3]+"\n");
         		}
 			}
-			writer.flush();
-			writer.close();
+			writerXY.flush();
+			writerXZ.flush();
+			writerYZ.flush();
+			writerXY.close();
+			writerXZ.close();
+			writerYZ.close();
 		} catch (IOException e) {e.printStackTrace();}
 	}
 } 

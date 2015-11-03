@@ -33,15 +33,22 @@ public class CreateStack {
 	 * main method to test
 	 */
 	public static void main(String[] args){ 
-		int nbrPoints = 30000;
+		int nbrPoints = 100;
 		float[][] c = new float[nbrPoints][5];
 		//random creation of a list of tables as input
-		for (int j = 0; j < nbrPoints; j++) {
-			c[j][0] = (float) (Math.random()*30000);
-			c[j][1] = (float) (Math.random()*30000);
-			c[j][2] = (float) (Math.random()*3000);
-			c[j][3] = (float) Math.round(Math.random()*100);
-			c[j][4] = (float) (Math.random()*6000+1000);
+//		for (int j = 0; j < nbrPoints; j++) {
+//			c[j][0] = (float) (Math.random()*30000);
+//			c[j][1] = (float) (Math.random()*30000);
+//			c[j][2] = (float) (Math.random()*3000);
+//			c[j][3] = (float) Math.round(Math.random()*100);
+//			c[j][4] = (float) (Math.random()*6000+1000);
+//		}
+		for (int j = 0; j < nbrPoints; j++){
+			c[j][0] = 500.f;
+			c[j][1] = 500.f;
+			c[j][2] = 200.f;
+			c[j][3] = (float) j;
+			c[j][4] = 2000;
 		}
 		System.out.println("finished simulation");
 		float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
@@ -52,9 +59,10 @@ public class CreateStack {
 		
 		createTiffStack(c, 1/100.f/**resolution*/ , 10/**emptyspace*/, 
 				2/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
-				0.06f/**decayTime*/, 10/**sizePSF*/, 1/**modelNR*/, 
+				0.06f/**decayTime*/, 10/**sizePSF*/, 2/**modelNR*/, 
 				(float) 1.4/**NA*/, 680/**waveLength*/, 400/**zFocus*/, 
-				800/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/);
+				800/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
+				,"C:\\Users\\herrmannsdoerfer\\Desktop\\teststack.tif");
 
     } 
 	
@@ -81,7 +89,7 @@ public class CreateStack {
 	public static void createTiffStack(float[][] input, float resolution, int emptySpace, 
 			float intensityPerPhoton, float frameRate, float decayTime, int sizePSF, int modelNumber, 
 			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, 
-			float offset, float[][] calib) { 
+			float offset, float[][] calib, String fname) { 
 		
 		//convert List<float[][]> to List<float[]>
 		List<float[]> lInput = convertList(input);
@@ -155,6 +163,9 @@ public class CreateStack {
 			case 2: //asymmetric Gaussian
 				SplineCalculator spl = new SplineCalculator(calib);
 				spl.splines();
+				if (spl.getSig(lInput.get(i )[2])==null){
+					break;
+				}
 				for (int k = -sizePSF; k <= sizePSF; k++) {
 					for (int m = -sizePSF; m <= sizePSF; m++) {
 						float intensityPhotons = (float) (aSymmInt(pixelX + k, pixelY + m, lInput.get(i)[0],
@@ -197,6 +208,9 @@ public class CreateStack {
 						SplineCalculator spl = new SplineCalculator(calib);
 						spl.splines();
 						double sum = 0;
+						if (spl.getSig(lInput.get(i + j + 1)[2])==null){
+							break;
+						}
 						for (int k = -sizePSF; k <= sizePSF; k++) {
 							for (int m = -sizePSF; m <= sizePSF; m++) {
 								float intensityPhotons = (float) (aSymmInt(pixelX + k, pixelY + m, lInput.get(i + j + 1)[0],
@@ -208,7 +222,7 @@ public class CreateStack {
 								pro.setf(pixelX + k, pixelY + m, val4);
 							}
 						}
-						System.out.println("current Intensity: "+ lInput.get(i+j+1)[4]+" intensity gaussian: "+sum);
+						//System.out.println("current Intensity: "+ lInput.get(i+j+1)[4]+" intensity gaussian: "+sum);
 						break;	
 					}
 					
@@ -226,7 +240,7 @@ public class CreateStack {
 		//save imagestack
 		ImagePlus leftStack = new ImagePlus("", stackLeft);
 		FileSaver fs = new FileSaver(leftStack);
-		fs.saveAsTiffStack("C:\\Users\\Herrmannsdoerfer\\Desktop\\tiffstack1.tif");
+		fs.saveAsTiffStack(fname);
 		System.out.println("file succesfully saved");
 		
 	}	

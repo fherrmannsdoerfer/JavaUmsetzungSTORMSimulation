@@ -352,7 +352,7 @@ public class StormPointFinder {
 		for (int i = 0; i<listEndPoints.length;i++) { //get random number of fluorophore for each antibody
 			idx[i] = (int) Math.abs(Math.floor(calc.random.nextGaussian() * Math.sqrt(fpab)+fpab));
 		}
-		for (int i = 0; i < idx.length; i++) {//make sure that each antibodie has at least 1 fluorophore
+		for (int i = 0; i < idx.length; i++) {//make sure that each antibodies has at least 1 fluorophore
 			if(idx[i] == 0) {
 				idx[i] = 1;
 			}

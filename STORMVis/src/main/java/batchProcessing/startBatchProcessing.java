@@ -36,7 +36,8 @@ public class startBatchProcessing {
 		furtherProceedFileImport(data, data.dataType);
 		
 		SimulationParameter params = standardParameterMicrotubules();
-		params.recordedFrames = 5000;
+		params.recordedFrames = 10000;
+		params.MeanPhotonNumber = 2000;
 		
 		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(4.f,8.f,12.f,25.f));
 		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(8.f,30.f,40.f,50.f));
@@ -50,12 +51,15 @@ public class startBatchProcessing {
 				{505.556f,169.047f,164.861f},{606.667f,196.601f,161.998f},{707.778f,235.912f,169.338f},
 				{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
 		allDataSets.get(0).setProgressBar(new JProgressBar());
+		params.sigmaXY = 0.f;
+		params.sigmaZ = 0.f;
 		calculate(params);
 		CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/100.f/**resolution*/ , 10/**emptyspace*/, 
 				2/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
-				0.01f/**decayTime*/, 10/**sizePSF*/, 1/**modelNR*/, 
+				0.01f/**decayTime*/, 14/**sizePSF*/, 2/**modelNR*/, 
 				(float) 1.4/**NA*/, 680/**waveLength*/, 400/**zFocus*/, 
-				800/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/);
+				800/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/,
+				"C:\\Users\\herrmannsdoerfer\\Desktop\\TestAstigmatismusTiffStack\\test.tif");
 
 //		allDataSets.get(0).setProgressBar(new JProgressBar());
 //		int counter = 0;
@@ -115,7 +119,7 @@ public class startBatchProcessing {
 		params.fluorophoresPerLabel = 1;
 		params.kOff = 2000;
 		params.kOn = 1;
-		params.labelEpitopeDistance = 1;
+		params.labelEpitopeDistance = 16;
 		params.labelingEfficiency = 10;
 		params.makeItReproducible = true;
 		params.MeanPhotonNumber = 4000;
@@ -226,7 +230,7 @@ public class startBatchProcessing {
 		setUpRandomNumberGenerator(params.makeItReproducible) ;
 		int currentRow= 0;
 		allDataSets.get(currentRow).getParameterSet().setPabs((float) (params.labelingEfficiency/100.));//Labeling efficiency
-		allDataSets.get(currentRow).getParameterSet().setAoa((float) ((90)/180*Math.PI));
+		allDataSets.get(currentRow).getParameterSet().setAoa((float) (params.angleOfLabel));
 		allDataSets.get(currentRow).getParameterSet().setDeff((float) (params.detectionEfficiency/100)); //detection efficiency 
 		allDataSets.get(currentRow).getParameterSet().setIlpmm3(params.backgroundPerMicroMeterCubed); //background per cubic micro meter
 		allDataSets.get(currentRow).getParameterSet().setLoa(params.labelEpitopeDistance); //label epitope distance
