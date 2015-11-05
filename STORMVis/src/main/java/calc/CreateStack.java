@@ -46,9 +46,9 @@ public class CreateStack {
 		for (int j = 0; j < nbrPoints; j++){
 			c[j][0] = 500.f;
 			c[j][1] = 500.f;
-			c[j][2] = 200.f;
-			c[j][3] = (float) j;
-			c[j][4] = 2000;
+			c[j][2] = 400.f;
+			c[j][3] = j*10;
+			c[j][4] = 3000;
 		}
 		System.out.println("finished simulation");
 		float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
@@ -57,10 +57,10 @@ public class CreateStack {
 				{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
 
 		
-		createTiffStack(c, 1/100.f/**resolution*/ , 10/**emptyspace*/, 
-				2/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
-				0.06f/**decayTime*/, 10/**sizePSF*/, 2/**modelNR*/, 
-				(float) 1.4/**NA*/, 680/**waveLength*/, 400/**zFocus*/, 
+		createTiffStack(c, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
+				1/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
+				0.02f/**decayTime*/, 10/**sizePSF*/, 1/**modelNR*/, 
+				(float) 1.45/**NA*/, 647/**waveLength*/, 400/**zFocus*/, 
 				800/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
 				,"C:\\Users\\herrmannsdoerfer\\Desktop\\teststack.tif");
 
@@ -134,105 +134,68 @@ public class CreateStack {
 		        return 0;
 		    }
 		});
+		
+		
+		for (int frame = 0; frame<lInput.get(lInput.size()-1)[3];frame++){
 		// fill image stack with images
-		for (int i = 0; i < lInput.size(); i++) {
-			
-			//modelling the form of the PSF
-			FloatProcessor pro = new FloatProcessor(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF);
-			
-			//at least once
-			int pixelX = Math.round(lInput.get(i)[0]* resolution);
-			int pixelY = Math.round(lInput.get(i)[1]* resolution);
-
-			
-			switch(modelNumber) { // symmetric Gaussian
-			case 1:
-				for (int k = -sizePSF; k <= sizePSF; k++) {
-					for (int m = -sizePSF; m <= sizePSF; m++) {
-						float sig = calcSig(lInput.get(i)[2], numericalAperture, waveLength, zFocus, zDefocus);
-						float intensityPhotons = (float) (symmInt(pixelX + k, pixelY + m, lInput.get(i)[0],
-								lInput.get(i)[1], lInput.get(i)[4],
-								sig, resolution)/ intensityPerPhoton);
-						float val4 = pro.getf(pixelX + k, pixelY + m);
-						val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
-						pro.setf(pixelX + k, pixelY + m, val4);
-					}
-				}
-				break;
+			FloatProcessor pro =  new FloatProcessor(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF);
+			while (lInput.size() > 0 && lInput.get(0)[3] == frame) {
+				float [] currPSF = lInput.get(0);
+				lInput.remove(0);
+				//modelling the form of the PSF
+								
+				//at least once
+				int pixelX = Math.round(currPSF[0]* resolution);
+				int pixelY = Math.round(currPSF[1]* resolution);
+	
+				double sum = 0;
 				
-			case 2: //asymmetric Gaussian
-				SplineCalculator spl = new SplineCalculator(calib);
-				spl.splines();
-				if (spl.getSig(lInput.get(i )[2])==null){
+				
+				float sig = calcSig(currPSF[2], numericalAperture, waveLength, zFocus, zDefocus);
+				
+				switch(modelNumber) { // symmetric Gaussian
+				case 1:
+					for (int k = -sizePSF; k <= sizePSF; k++) {
+						for (int m = -sizePSF; m <= sizePSF; m++) {
+							float intensityPhotons = (float) (symmInt(pixelX + k, pixelY + m, currPSF[0],
+									currPSF[1], currPSF[4],
+									sig, resolution)/ intensityPerPhoton);
+							sum = sum + intensityPhotons;
+							float val4 = pro.getf(pixelX + k, pixelY + m);
+							val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
+							pro.setf(pixelX + k, pixelY + m, val4);
+							
+						}
+					}
+					System.out.println("current Intensity: "+ currPSF[4]+" intensity gaussian: "+sum+" z: "+currPSF[2]+" frame: "+currPSF[3]+" sigma: "+sig);
 					break;
-				}
-				for (int k = -sizePSF; k <= sizePSF; k++) {
-					for (int m = -sizePSF; m <= sizePSF; m++) {
-						float intensityPhotons = (float) (aSymmInt(pixelX + k, pixelY + m, lInput.get(i)[0],
-								lInput.get(i)[1], lInput.get(i)[4],
-								spl.getSig(lInput.get(i)[2]), resolution)/ intensityPerPhoton);
-						float val4 = pro.getf(pixelX + k, pixelY + m);
-						val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
-						pro.setf(pixelX + k, pixelY + m, val4);
-					}
-				}
-				break;	
-			}
-			
-			
-			//going through all other PSFs in the current frame
-			int j = 0;
-			if (i < lInput.size() - 1) {
-				while (i + j < lInput.size() - 2 && lInput.get(i + j)[3] == lInput.get(i + j + 1)[3]) {
-
-					pixelX = Math.round(lInput.get(i + j + 1)[0]* resolution);
-					pixelY = Math.round(lInput.get(i + j + 1)[1]* resolution);
-
-					float sig = calcSig(lInput.get(i + j + 1)[2], numericalAperture, waveLength, zFocus, zDefocus);
 					
-					switch(modelNumber) { // symmetric Gaussian
-					case 1:
-						for (int k = -sizePSF; k <= sizePSF; k++) {
-							for (int m = -sizePSF; m <= sizePSF; m++) {
-								float intensityPhotons = (float) (symmInt(pixelX + k, pixelY + m, lInput.get(i + j + 1)[0],
-										lInput.get(i + j + 1)[1], lInput.get(i + j + 1)[4],
-										sig, resolution)/ intensityPerPhoton);
-								float val4 = pro.getf(pixelX + k, pixelY + m);
-								val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
-								pro.setf(pixelX + k, pixelY + m, val4);
-							}
-						}
+				case 2: //asymmetric Gaussian
+					SplineCalculator spl = new SplineCalculator(calib);
+					spl.splines();
+					sum = 0;
+					if (spl.getSig(currPSF[2])==null){
 						break;
-						
-					case 2: //asymmetric Gaussian
-						SplineCalculator spl = new SplineCalculator(calib);
-						spl.splines();
-						double sum = 0;
-						if (spl.getSig(lInput.get(i + j + 1)[2])==null){
-							break;
-						}
-						for (int k = -sizePSF; k <= sizePSF; k++) {
-							for (int m = -sizePSF; m <= sizePSF; m++) {
-								float intensityPhotons = (float) (aSymmInt(pixelX + k, pixelY + m, lInput.get(i + j + 1)[0],
-										lInput.get(i + j + 1)[1], lInput.get(i + j + 1)[4],
-										spl.getSig(lInput.get(i + j + 1)[2]), resolution)/ intensityPerPhoton);
-								sum = sum + intensityPhotons;
-								float val4 = pro.getf(pixelX + k, pixelY + m);
-								val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
-								pro.setf(pixelX + k, pixelY + m, val4);
-							}
-						}
-						//System.out.println("current Intensity: "+ lInput.get(i+j+1)[4]+" intensity gaussian: "+sum);
-						break;	
 					}
-					
-					j++;
+					for (int k = -sizePSF; k <= sizePSF; k++) {
+						for (int m = -sizePSF; m <= sizePSF; m++) {
+							float intensityPhotons = (float) (aSymmInt(pixelX + k, pixelY + m, currPSF[0],
+									currPSF[1], currPSF[4],
+									spl.getSig(currPSF[2]), resolution)/ intensityPerPhoton);
+							sum = sum + intensityPhotons;
+							float val4 = pro.getf(pixelX + k, pixelY + m);
+							val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
+							pro.setf(pixelX + k, pixelY + m, val4);
+						}
+					}
+					System.out.println("current Intensity: "+ currPSF[4]+" intensity gaussian: "+sum);
+					break;	
 				}
-				i += j;
+				
 			}
-
-			pro.noise(sigmaNoise); //add Gaussian underground noise
 			pro.add(offset); //add constant offset
+			pro.noise(sigmaNoise); //add Gaussian underground noise
+			
 			stackLeft.addSlice(pro); //adds a processor for each frame to the stack
 		}
 		System.out.println("finished procession");
@@ -320,9 +283,11 @@ public class CreateStack {
 		float dx = (float) ((x + 0.5)/res) - maxX; //difference between maximum of PSF-Gauss and current pixel in nm
 		float dy = (float) ((y + 0.5)/res) - maxY;
 		
+		
 		double exponent = (double) (Math.pow(dx, 2) + Math.pow(dy, 2))/2 /Math.pow(sig, 2);
 		ret = (float) Math.exp(-exponent)*maxInt;
-		ret /= (2* Math.PI);
+		ret /= (2.f* Math.PI);
+		sig = sig*res;
 		ret /= Math.pow(sig, 2);
 		return ret;
 	}
@@ -369,9 +334,9 @@ public class CreateStack {
 	 * @param zDefoc : z-value, for which the microscope defocusses
 	 * @return sigma for symmetric Gaussian
 	 */
-	private static float calcSig(float maxZ, float numAperture, float waveLgth, float zFoc, float zDefoc) {
-		float s = (float) Math.pow(2, Math.abs((maxZ - zFoc)/(zFoc - zDefoc)));
-		s = s*waveLgth/2 /numAperture;
+	private static float calcSig(float z, float numAperture, float waveLgth, float zFoc, float zDefoc) {
+		float s = (float) Math.pow(2, Math.abs((z - zFoc)/(zFoc - zDefoc)));
+		s = s*waveLgth/2.f /numAperture;
 		return s;
 	}
 	

@@ -1516,7 +1516,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					borders.add(Float.valueOf(ymaxField.getText()));
 					borders.add(Float.valueOf(zminField.getText()));
 					borders.add(Float.valueOf(zmaxField.getText()));
-					FileManager.ExportToFile(allDataSets.get(currentRow), path, viewStatus,borders);
+					FileManager.ExportToFile(allDataSets.get(currentRow), path, viewStatus,borders, 
+							allDataSets.get(currentRow).getParameterSet().getPixelsize(),allDataSets.get(currentRow).getParameterSet().getSigmaRendering());
 				}
 			}
 		});

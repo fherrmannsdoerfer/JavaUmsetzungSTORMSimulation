@@ -48,6 +48,9 @@ public class ParameterSet implements Serializable {
 	private Color emColor;
 	private Color stormColor;
 	private Color antibodyColor;
+	
+	private double pixelsize;
+	private double sigmaRendering;
     
     
 	public ParameterSet(Float loa, Float aoa, Float soa, Float bspnm, Float pabs,
@@ -144,6 +147,9 @@ public class ParameterSet implements Serializable {
 		this.emColor = new Color(204,0,51);
 		this.stormColor = new Color(204,204,255);
 		this.antibodyColor = new Color(255,204,102);
+		
+		this.pixelsize = 10;
+		this.sigmaRendering = 20;
 		
     }
 
@@ -440,6 +446,22 @@ public class ParameterSet implements Serializable {
 	public Float getLineWidth() {
 		// TODO Auto-generated method stub
 		return this.lineWidth;
+	}
+
+	public double getPixelsize() {
+		return pixelsize;
+	}
+
+	public void setPixelsize(double pixelsize) {
+		this.pixelsize = pixelsize;
+	}
+
+	public double getSigmaRendering() {
+		return sigmaRendering;
+	}
+
+	public void setSigmaRendering(double sigmaRendering) {
+		this.sigmaRendering = sigmaRendering;
 	}
     
     

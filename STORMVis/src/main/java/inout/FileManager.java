@@ -8,6 +8,7 @@ import ij.process.ImageProcessor;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -115,19 +116,19 @@ public class FileManager {
 		return p;
 	}
 
-	public static void ExportToFile(DataSet dataset, String path, int mode,ArrayList<Float> borders) {
-	
+	public static void ExportToFile(DataSet dataset, String path, int mode,ArrayList<Float> borders,double pixelsize, double sigma) {
+		
 		String basename = path.substring(0, path.length()-4);
-		writeProjectionToFile(dataset,path,mode,borders);
+		writeProjectionToFile(dataset,path,mode,borders,pixelsize, sigma);
 		writeLocalizationsToFile(dataset.stormData,basename,borders);
 		writeLocalizationsToFileForFRC(dataset.stormData, basename,borders);
 		writeLogFile(dataset, basename,borders);
 	}
 	
-	private static void writeProjectionToFile(DataSet dataset, String path, int mode, ArrayList<Float> borders){
+	private static void writeProjectionToFile(DataSet dataset, String path, int mode, ArrayList<Float> borders, double pixelsize, double sigma){
 		float[][] stormData = dataset.stormData;
-		double pixelsize = 10;
-		double sigma = 20/pixelsize; //in nm sigma to blur localizations
+//		double pixelsize = 10;
+//		double sigma = 20/pixelsize; //in nm sigma to blur localizations
 		int filterwidth = 3; // must be odd
 		float xmin = Calc.min(stormData, 0);
 		float xmax = Calc.max(stormData, 0);
@@ -235,6 +236,7 @@ public class FileManager {
 			FileWriter writer = new FileWriter(basename+"Parameters.txt");
 			writer.append("Automatically generated Logfile containing all settings.\n");
 			writer.append("Angle of antibodies [degree]: "+ ps.getAoa()+"\n");
+			writer.append("Sigma of antibodies deviation [degree]: "+ ps.getSoa()+"\n");
 			writer.append("Bindingsites per nm [nm^-1]: " + ps.getBspnm()+"\n");
 			writer.append("Labeling efficiency [%]: "+ ps.getPabs()*100+"\n");
 			writer.append("Radius of filament [nm]: " + ps.getRof()+"\n");
