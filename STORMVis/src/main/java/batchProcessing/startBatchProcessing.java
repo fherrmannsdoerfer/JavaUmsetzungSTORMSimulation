@@ -28,16 +28,16 @@ public class startBatchProcessing {
 	static List<DataSet> allDataSets = new ArrayList<DataSet>();
 	private static Random random;
 	private static String EXTENSIONIMAGEOUTPUT = ".tif";
-	private static String outputFolder = "C:\\Users\\herrmannsdoerfer\\Desktop\\ordner\\Synaptophysin\\";
+	private static String outputFolder = "C:\\Users\\herrmannsdoerfer\\Desktop\\Tiff-StackTestModelle\\Mikrotubuli\\";
 	
 	public static void main(String[] args) {
-//		File file = new File("Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\Simulation 12er Figure Table FRC\\Modelle\\290nm-z-VesicleClusterSingleCluster.nff");
-//		proceedFileImport(file);
+	File file = new File("Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\Simulation 12er Figure Table FRC\\Modelle\\141107-MT-Modelrescaled1d.wimp");
+		proceedFileImport(file);
 		DataSet data = ExamplesProvidingClass.getDataset(1);
 		furtherProceedFileImport(data, data.dataType);
 		(new File(outputFolder)).mkdir();
 		boolean tiffStackOutput = true;
-		boolean suReSimOutput = true;
+		boolean suReSimOutput = false;
 		int numberOfSimulationsWithSameParameterSet = 1; //number of outputs for the same parameter set
 		SimulationParameter params = standardParameterMicrotubules();
 		
@@ -48,7 +48,7 @@ public class startBatchProcessing {
 		ArrayList<Integer> koff = new ArrayList<Integer>(Arrays.asList(2000));
 		//ArrayList<Integer> frames = new ArrayList<Integer>(Arrays.asList(10000));
 		params.fluorophoresPerLabel = 1;
-		params.recordedFrames = 10000;
+		params.recordedFrames = 10;
 		allDataSets.get(0).setProgressBar(new JProgressBar());
 		int counter = 0;
 		for (int i =0; i<sigmaXY.size(); i++){
@@ -79,14 +79,14 @@ public class startBatchProcessing {
 							allDataSets.get(0).setProgressBar(new JProgressBar());
 							params.sigmaXY = 0.f;
 							params.sigmaZ = 0.f;
-							params.MeanPhotonNumber = 2000;
+							params.MeanPhotonNumber = 3000;
 							calculate(params);
 							CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
 									1/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
-									0.01f/**decayTime*/, 40/**sizePSF*/, 1/**modelNR*/, 
-									(float) 1.4/**NA*/, 647/**waveLength*/, 600/**zFocus*/, 
-									800/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/,
-									outputFolder+fname+"\\"+fname+"2000Photonen.tif");
+									0.01f/**blinking duration*/, 15/**sizePSF*/, 1/**modelNR*/, 
+									(float) 1.4/**NA*/, 647/**waveLength*/, 000/**zFocus*/, 
+									400/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/,
+									outputFolder+fname+"\\"+fname+"TiffStack.tif");
 	
 						}
 						System.out.println(String.format("run %d of %d",counter,sigmaXY.size()*koff.size()*le.size()*numberOfSimulationsWithSameParameterSet));
@@ -136,7 +136,7 @@ public class startBatchProcessing {
 		params.makeItReproducible = false;
 		params.MeanPhotonNumber = 4000;
 		params.radiusOfFilament = (float) 12.5;
-		params.recordedFrames = 10000;
+		params.recordedFrames = 1;
 		params.sigmaXY = 4;
 		params.sigmaZ = 8;
 		params.viewStatus = 1;

@@ -33,7 +33,7 @@ public class CreateStack {
 	 * main method to test
 	 */
 	public static void main(String[] args){ 
-		int nbrPoints = 100;
+		int nbrPoints = 1000;
 		float[][] c = new float[nbrPoints][5];
 		//random creation of a list of tables as input
 //		for (int j = 0; j < nbrPoints; j++) {
@@ -47,7 +47,7 @@ public class CreateStack {
 			c[j][0] = 500.f;
 			c[j][1] = 500.f;
 			c[j][2] = 400.f;
-			c[j][3] = j*10;
+			c[j][3] = j*3;
 			c[j][4] = 3000;
 		}
 		System.out.println("finished simulation");
@@ -59,7 +59,7 @@ public class CreateStack {
 		
 		createTiffStack(c, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
 				1/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
-				0.02f/**decayTime*/, 10/**sizePSF*/, 1/**modelNR*/, 
+				0.03f/**decayTime*/, 10/**sizePSF*/, 1/**modelNR*/, 
 				(float) 1.45/**NA*/, 647/**waveLength*/, 400/**zFocus*/, 
 				800/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
 				,"C:\\Users\\herrmannsdoerfer\\Desktop\\teststack.tif");

@@ -303,6 +303,8 @@ public class FileManager {
 			writer.append("Selected borders in x: "+borders.get(0)+" to "+borders.get(1)+"\n");
 			writer.append("Selected borders in y: "+borders.get(2)+" to "+borders.get(3)+"\n");
 			writer.append("Selected borders in z: "+borders.get(4)+" to "+borders.get(5)+"\n");
+			writer.append("Pixelsize for output images in nm: "+ps.getPixelsize()+"\n");
+			writer.append("Width of Gaussian for rendering of output images in nm: "+ps.getSigmaRendering()+"\n");
 			writer.flush();
 			writer.close();
 		} catch (IOException e) {e.printStackTrace();}
