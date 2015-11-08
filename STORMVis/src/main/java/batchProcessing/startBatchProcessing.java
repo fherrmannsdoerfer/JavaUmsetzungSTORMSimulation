@@ -8,13 +8,20 @@ import ij.gui.GUI;
 import inout.FileManager;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import org.apache.commons.io.FileUtils;
 
 import calc.Calc;
 import calc.CreateStack;
@@ -28,68 +35,92 @@ public class startBatchProcessing {
 	static List<DataSet> allDataSets = new ArrayList<DataSet>();
 	private static Random random;
 	private static String EXTENSIONIMAGEOUTPUT = ".tif";
-	private static String outputFolder = "C:\\Users\\herrmannsdoerfer\\Desktop\\Tiff-StackTestModelle\\Mikrotubuli\\";
+	private static String outputFolder = "";// "C:\\Users\\herrmannsdoerfer\\Desktop\\Tiff-StackTestModelle\\Mikrotubuli\\";
+	private static String inputFolder = "";
 	
 	public static void main(String[] args) {
-	File file = new File("Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\Simulation 12er Figure Table FRC\\Modelle\\141107-MT-Modelrescaled1d.wimp");
-		proceedFileImport(file);
-		DataSet data = ExamplesProvidingClass.getDataset(1);
-		furtherProceedFileImport(data, data.dataType);
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//File file = new File("Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Fire\\Simulation 12er Figure Table FRC\\Modelle\\141107-MT-Modelrescaled1d.wimp");
+		JOptionPane.showMessageDialog(null, "Sind die richtigen Parameter ausgewählt?");
+		proceedFileImport(new File(UserDefinedInputOutput.getInputFile()));
+		outputFolder = UserDefinedInputOutput.getOutputFolder();
+//		DataSet data = ExamplesProvidingClass.getDataset(1);
+//		furtherProceedFileImport(data, data.dataType);
 		(new File(outputFolder)).mkdir();
-		boolean tiffStackOutput = true;
-		boolean suReSimOutput = false;
-		int numberOfSimulationsWithSameParameterSet = 1; //number of outputs for the same parameter set
-		SimulationParameter params = standardParameterMicrotubules();
+		boolean tiffStackOutput = false;
+		boolean suReSimOutput = true;
+		int numberOfSimulationsWithSameParameterSet = 100; //number of outputs for the same parameter set
+		SimulationParameter params = standardParameterRandomlyDistributedEpitopes();
 		
-		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(12.f));
-		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(40.f));
-		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(10.f));
+		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(3.f,6.f,12.f));
+		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(10.f,15.f,40.f));
+		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(90.f/100.f/1.625f,100.f/100.f/1.625f));
+		ArrayList<Float> varAng = new ArrayList<Float>(Arrays.asList(1000.f));
 		//ArrayList<Float> de = new ArrayList<Float>(Arrays.asList(10.f,20.f,50.f,100.f));
 		ArrayList<Integer> koff = new ArrayList<Integer>(Arrays.asList(2000));
 		//ArrayList<Integer> frames = new ArrayList<Integer>(Arrays.asList(10000));
-		params.fluorophoresPerLabel = 1;
-		params.recordedFrames = 10;
+		ArrayList<Float> labelLength = new ArrayList<Float>(Arrays.asList(8.f,0.1f,16.f));
 		allDataSets.get(0).setProgressBar(new JProgressBar());
+		
 		int counter = 0;
-		for (int i =0; i<sigmaXY.size(); i++){
-			for (int j = 0;j< le.size(); j++){
-				for (int k = 0;k<koff.size(); k++){
-					for (int p = 0;p<numberOfSimulationsWithSameParameterSet; p++){
-						counter += 1;
-						params.labelingEfficiency = le.get(j);
-						params.sigmaXY = sigmaXY.get(i);
-						params.sigmaZ = sigmaZ.get(i);
-						params.kOff = koff.get(k);
-						params.sigmaRendering = 0.4 * params.sigmaXY;
-						calculate(params);
-						//params.detectionEfficiency = de.get(i);
-						//params.recordedFrames = frames.get(i);
-						params.borders = getBorders();
-						
-						String fname = String.format("sigmas%1.0f_%1.0flabelingEff%1.0fPercentKOFF%1.0fver%d", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.kOff,p);
-						if(suReSimOutput){
-							new File(outputFolder+fname+"\\").mkdir();
-							exportData(outputFolder+fname+"\\",fname, params);
+		for (int s = 0; s<labelLength.size(); s++){
+			for (int a = 0; a<varAng.size(); a++){
+				for (int i =0; i<sigmaXY.size(); i++){
+					for (int j = 0;j< le.size(); j++){
+						for (int k = 0;k<koff.size(); k++){
+							for (int p = 0;p<numberOfSimulationsWithSameParameterSet; p++){
+								counter += 1;
+								params.labelEpitopeDistance = labelLength.get(s);
+								params.angularDeviation = (float) (varAng.get(a)/180.*Math.PI);
+								params.labelingEfficiency = le.get(j);
+								params.sigmaXY = sigmaXY.get(i);
+								params.sigmaZ = sigmaZ.get(i);
+								params.kOff = koff.get(k);
+								params.sigmaRendering = 0.4 * params.sigmaXY;
+								calculate(params);
+								//params.detectionEfficiency = de.get(i);
+								//params.recordedFrames = frames.get(i);
+								params.borders = getBorders();
+								
+								String fname = String.format("sig%1.0f_%1.0flabEff%1.0fKOFF%1.0fAngDev%1.0fLabLen%1.0fver%d", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.kOff,params.angularDeviation*180/Math.PI,params.labelEpitopeDistance,p);
+								if(suReSimOutput){
+									new File(outputFolder+fname+"\\").mkdir();
+									exportData(outputFolder+fname+"\\",fname, params);
+								}
+								if (tiffStackOutput){
+									float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
+											{202.222f,134.992f,229.455f},{303.333f,140.171f,197.503f},{404.444f,149.645f,175.083f},
+											{505.556f,169.047f,164.861f},{606.667f,196.601f,161.998f},{707.778f,235.912f,169.338f},
+											{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
+									allDataSets.get(0).setProgressBar(new JProgressBar());
+									params.sigmaXY = 0.f;
+									params.sigmaZ = 0.f;
+									calculate(params);
+									CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
+											1/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
+											0.01f/**blinking duration*/, 15/**sizePSF*/, 1/**modelNR*/, 
+											(float) 1.4/**NA*/, 647/**waveLength*/, 000/**zFocus*/, 
+											400/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/,
+											outputFolder+fname+"\\"+fname+"TiffStack.tif");
+			
+								}
+								System.out.println(String.format("run %d of %d",counter,sigmaXY.size()*koff.size()*le.size()*varAng.size()*labelLength.size()*numberOfSimulationsWithSameParameterSet));
+							}
 						}
-						if (tiffStackOutput){
-							float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
-									{202.222f,134.992f,229.455f},{303.333f,140.171f,197.503f},{404.444f,149.645f,175.083f},
-									{505.556f,169.047f,164.861f},{606.667f,196.601f,161.998f},{707.778f,235.912f,169.338f},
-									{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
-							allDataSets.get(0).setProgressBar(new JProgressBar());
-							params.sigmaXY = 0.f;
-							params.sigmaZ = 0.f;
-							params.MeanPhotonNumber = 3000;
-							calculate(params);
-							CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
-									1/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
-									0.01f/**blinking duration*/, 15/**sizePSF*/, 1/**modelNR*/, 
-									(float) 1.4/**NA*/, 647/**waveLength*/, 000/**zFocus*/, 
-									400/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/,
-									outputFolder+fname+"\\"+fname+"TiffStack.tif");
-	
-						}
-						System.out.println(String.format("run %d of %d",counter,sigmaXY.size()*koff.size()*le.size()*numberOfSimulationsWithSameParameterSet));
 					}
 				}
 			}
@@ -100,8 +131,25 @@ public class startBatchProcessing {
 		
 	}
 	
+	private static void createRandomEpitopesOnLine(double length, int nbrEpitopes) {
+		float[][] bp = new float[nbrEpitopes][3];
+		float[][] ep = new float[nbrEpitopes][3];
+		for (int i = 0; i<nbrEpitopes; i++){
+			bp[i][0] = (float) (Math.random()*length);
+			bp[i][1] = 0.f;
+			bp[i][2] = 0.f;
+			ep[i][0] = 0.f;
+			ep[i][1] = 0.f;
+			ep[i][2] = 1.f;
+		}
+		((EpitopeDataSet)allDataSets.get(0)).epitopeBase = bp;
+		((EpitopeDataSet)allDataSets.get(0)).epitopeEnd = ep;
+		
+	}
+
 	private static SimulationParameter standardParameterActin() {
 		SimulationParameter params = new SimulationParameter();
+		params.angularDeviation = 0;
 		params.angleOfLabel = (float) (Math.PI/2);
 		params.backgroundPerMicroMeterCubed = 0;
 		params.coupleSigmaIntensity = true;
@@ -123,6 +171,7 @@ public class startBatchProcessing {
 	}
 	private static SimulationParameter standardParameterMicrotubules() {
 		SimulationParameter params = new SimulationParameter();
+		params.angularDeviation = 0;
 		params.angleOfLabel = (float) (Math.PI/2);
 		params.backgroundPerMicroMeterCubed = 50;
 		params.coupleSigmaIntensity = true;
@@ -145,7 +194,8 @@ public class startBatchProcessing {
 	
 	private static SimulationParameter standardParameterSingleEpitopes() {
 		SimulationParameter params = new SimulationParameter();
-		params.angleOfLabel = (float) 0;
+		params.angularDeviation = 0;
+		params.angleOfLabel = (float) (90.f/180*Math.PI);
 		params.backgroundPerMicroMeterCubed = 0;
 		params.coupleSigmaIntensity = true;
 		params.detectionEfficiency = 100;
@@ -167,8 +217,34 @@ public class startBatchProcessing {
 		return params;
 	}
 	
+	private static SimulationParameter standardParameterRandomlyDistributedEpitopes() {
+		SimulationParameter params = new SimulationParameter();
+		params.angularDeviation = 100;
+		params.angleOfLabel = (float) (90.f/180*Math.PI);
+		params.backgroundPerMicroMeterCubed = 0;
+		params.coupleSigmaIntensity = true;
+		params.detectionEfficiency = 100;
+		params.epitopeDensity = (float) 1.625;
+		params.fluorophoresPerLabel = 8;
+		params.kOff = 2000;
+		params.kOn = 1;
+		params.labelEpitopeDistance = 16;
+		params.labelingEfficiency = 90;
+		params.makeItReproducible = false;
+		params.MeanPhotonNumber = 4000;
+		params.radiusOfFilament = (float) 0;
+		params.recordedFrames = 20000;
+		params.sigmaXY = 6;
+		params.sigmaZ = 30;
+		params.viewStatus = 1;
+		params.sigmaRendering = 5;
+		params.pixelsize = 2.5;
+		return params;
+	}
+	
 	private static SimulationParameter standardParameterMicrotubules1nm() {
 		SimulationParameter params = new SimulationParameter();
+		params.angularDeviation = 0;
 		params.angleOfLabel = (float) (Math.PI/2);
 		params.backgroundPerMicroMeterCubed = 50;
 		params.coupleSigmaIntensity = true;
@@ -191,6 +267,7 @@ public class startBatchProcessing {
 	
 	private static SimulationParameter standardParameterVesicles() {
 		SimulationParameter params = new SimulationParameter();
+		params.angularDeviation = 0;
 		params.angleOfLabel = (float) (Math.PI/2);
 		params.backgroundPerMicroMeterCubed = 50;
 		params.coupleSigmaIntensity = true;
@@ -258,6 +335,7 @@ public class startBatchProcessing {
 	private static void calculate(SimulationParameter params) {
 		setUpRandomNumberGenerator(params.makeItReproducible) ;
 		int currentRow= 0;
+		allDataSets.get(currentRow).getParameterSet().setSoa((float) (params.angularDeviation));//sigma of angle
 		allDataSets.get(currentRow).getParameterSet().setPabs((float) (params.labelingEfficiency/100.));//Labeling efficiency
 		allDataSets.get(currentRow).getParameterSet().setAoa((float) (params.angleOfLabel));
 		allDataSets.get(currentRow).getParameterSet().setDeff((float) (params.detectionEfficiency/100)); //detection efficiency 
@@ -341,6 +419,7 @@ public class startBatchProcessing {
 
 class SimulationParameter{
 	float angleOfLabel;
+	float angularDeviation;
 	float labelingEfficiency;
 	float detectionEfficiency;
 	float backgroundPerMicroMeterCubed;
@@ -364,4 +443,113 @@ class SimulationParameter{
 	
 	}
 
+}
+class UserDefinedInputOutput{
+	private static String inputFile;
+	private static String outputFile;
+	private static String outputFolder;
+	private static String inputFolder;
+	UserDefinedInputOutput(){
+		
+	}
+	private static String getPath(int mode){
+		String tag = "";
+		String lastInputPath = loadLastInputPath();
+		JFileChooser fileChooserInput = new JFileChooser(lastInputPath);
+		String lastOutputPath= loadLastOutputPath();
+		JFileChooser fileChooserOutput = new JFileChooser(lastOutputPath);
+		switch (mode){
+			case 0:
+				tag = "Please select input data path:";
+				fileChooserInput.setDialogTitle(tag);
+				fileChooserInput.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fileChooserInput.showOpenDialog(null);
+				inputFolder = fileChooserInput.getSelectedFile().toString();
+				saveLastInputPath(inputFolder);
+				return inputFolder+"\\";
+			case 1:
+				tag = "Please select output data path:";
+				fileChooserOutput.setDialogTitle(tag);
+				fileChooserOutput.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fileChooserOutput.showOpenDialog(null);
+				outputFolder = fileChooserOutput.getSelectedFile().toString();
+				saveLastOutputPath(outputFolder);
+				return outputFolder+"\\";
+			case 2:
+				tag = "Please select input data Filename:";
+				fileChooserInput.setDialogTitle(tag);
+				fileChooserInput.setCurrentDirectory(new File(lastInputPath));
+				fileChooserInput.showOpenDialog(null);
+				fileChooserInput.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				inputFile = fileChooserInput.getSelectedFile().toString();
+				saveLastInputPath(inputFile);
+				return inputFile;
+			case 3:
+				tag = "Please select output data Filename:";
+				fileChooserOutput.setDialogTitle(tag);
+				fileChooserOutput.showOpenDialog(null);
+				fileChooserOutput.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				outputFile = fileChooserOutput.getSelectedFile().toString();
+				saveLastOutputPath(outputFile);
+				return outputFile;
+			default:
+				return "something went wrong";	
+		}
+	}
+	private static String loadLastInputPath(){
+		String lastPath = System.getProperty("user.home");
+		try {
+			lastPath = FileUtils.readFileToString(new File(System.getProperty("user.home")+"\\lastPathChosenForLoading.txt"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			if (e1 instanceof FileNotFoundException){
+				System.out.println("File not found.");
+			}
+		}
+		return lastPath;
+	}
+	private static void saveLastInputPath(String lastPath){
+		try {
+			FileUtils.writeStringToFile(new File(System.getProperty("user.home")+"\\lastPathChosenForLoading.txt"), lastPath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	private static String loadLastOutputPath(){
+		String lastPath = System.getProperty("user.home");
+		try {
+			lastPath = FileUtils.readFileToString(new File(System.getProperty("user.home")+"\\lastPathChosenForSaving.txt"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			if (e1 instanceof FileNotFoundException){
+				System.out.println("File not found.");
+			}
+		}
+		return lastPath;
+	}
+	private static void saveLastOutputPath(String lastPath){
+		try {
+			FileUtils.writeStringToFile(new File(System.getProperty("user.home")+"\\lastPathChosenForSaving.txt"), lastPath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static String getInputFolder() {
+		return getPath(0);
+	}
+	
+	public static String getOutputFolder() {
+		return getPath(1);
+	}
+	public static String getInputFile() {
+		return getPath(2);
+	}
+	
+	public static String getOutputFile() {
+		return getPath(3);
+	}
+	
 }

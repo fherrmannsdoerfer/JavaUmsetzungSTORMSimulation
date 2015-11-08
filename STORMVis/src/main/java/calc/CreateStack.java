@@ -46,9 +46,9 @@ public class CreateStack {
 		for (int j = 0; j < nbrPoints; j++){
 			c[j][0] = 500.f;
 			c[j][1] = 500.f;
-			c[j][2] = 400.f;
-			c[j][3] = j*3;
-			c[j][4] = 3000;
+			c[j][2] = 0.f;
+			c[j][3] = j*10;
+			c[j][4] = 6000;
 		}
 		System.out.println("finished simulation");
 		float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
@@ -59,9 +59,9 @@ public class CreateStack {
 		
 		createTiffStack(c, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
 				1/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
-				0.03f/**decayTime*/, 10/**sizePSF*/, 1/**modelNR*/, 
-				(float) 1.45/**NA*/, 647/**waveLength*/, 400/**zFocus*/, 
-				800/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
+				0.001f/**decayTime*/, 10/**sizePSF*/, 1/**modelNR*/, 
+				(float) 1.45/**NA*/, 647/**waveLength*/, 00/**zFocus*/, 
+				400/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
 				,"C:\\Users\\herrmannsdoerfer\\Desktop\\teststack.tif");
 
     } 
@@ -340,6 +340,15 @@ public class CreateStack {
 		return s;
 	}
 	
+	private static List<float[]> distributePSFFrank(List<float[]> lInp, float frRate, float duration){
+		for (int i = 0; i<lInp.size(); i++){
+			float offset = (float) (Math.random()/frRate);
+			
+		}
+		
+		
+		return lInp;
+	}
 	
 	/**
 	 * auxiliary method distributePSF distributes the PSF in an amount different frames
@@ -380,6 +389,9 @@ public class CreateStack {
 				float[] val3 = {lInp.get(i)[0], lInp.get(i)[1], lInp.get(i)[2], lInp.get(i)[3] + n + 1,
 						lInp.get(i)[4]*overlap3};
 				ret.add(val3);
+			}
+			else{
+				ret.add(lInp.get(i));
 			}
 		}
 		return ret;

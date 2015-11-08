@@ -47,9 +47,7 @@ public class StormPointFinder {
 			stormPoints = createStormPoints(listEndPoints, ps, sxy, sz, psfWidth, progressBar,
 					calc, ps.getFrames(), ps.getMeanPhotonNumber());
 		}
-		if (mergedPSFs){
-			stormPoints = mergeOverlappingPSFs(stormPoints, psfWidth, progressBar, calc);
-		}
+		
 		return stormPoints;
 		
 		

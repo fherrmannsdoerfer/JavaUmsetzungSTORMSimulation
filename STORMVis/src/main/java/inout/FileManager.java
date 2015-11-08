@@ -129,7 +129,7 @@ public class FileManager {
 		float[][] stormData = dataset.stormData;
 //		double pixelsize = 10;
 //		double sigma = 20/pixelsize; //in nm sigma to blur localizations
-		int filterwidth = 3; // must be odd
+		int filterwidth = 9; // must be odd
 		float xmin = Calc.min(stormData, 0);
 		float xmax = Calc.max(stormData, 0);
 		float ymin = Calc.min(stormData, 1);
@@ -151,16 +151,16 @@ public class FileManager {
 		
 		switch (mode){//which projection is exported
 			case 1://xy
-				pixelX =(int) Math.pow(2, Math.ceil(Math.log((xmax-xmin) / pixelsize)/Math.log(2)));
-				pixelY = (int) Math.pow(2, Math.ceil(Math.log((ymax-ymin) / pixelsize)/Math.log(2)));
+				pixelX =(int) Math.pow(2, Math.ceil(Math.log((xmax-xmin) / pixelsize+2*filterwidth)/Math.log(2)));
+				pixelY = (int) Math.pow(2, Math.ceil(Math.log((ymax-ymin) / pixelsize+2*filterwidth)/Math.log(2)));
 				break;
 			case 2://xz
-				pixelX =(int) Math.pow(2, Math.ceil(Math.log((xmax-xmin) / pixelsize)/Math.log(2)));
-				pixelY = (int) Math.pow(2, Math.ceil(Math.log((zmax-zmin) / pixelsize)/Math.log(2)));
+				pixelX =(int) Math.pow(2, Math.ceil(Math.log((xmax-xmin) / pixelsize+2*filterwidth)/Math.log(2)));
+				pixelY = (int) Math.pow(2, Math.ceil(Math.log((zmax-zmin) / pixelsize+2*filterwidth)/Math.log(2)));
 				break;
 			case 3://yz
-				pixelX =(int) Math.pow(2, Math.ceil(Math.log((ymax-ymin) / pixelsize)/Math.log(2)));
-				pixelY = (int) Math.pow(2, Math.ceil(Math.log((zmax-zmin) / pixelsize)/Math.log(2)));
+				pixelX =(int) Math.pow(2, Math.ceil(Math.log((ymax-ymin) / pixelsize+2*filterwidth)/Math.log(2)));
+				pixelY = (int) Math.pow(2, Math.ceil(Math.log((zmax-zmin) / pixelsize+2*filterwidth)/Math.log(2)));
 				break;
 		}
 		
