@@ -48,7 +48,7 @@ public class CreateStack {
 			c[j][1] = 500.f;
 			c[j][2] = 0.f;
 			c[j][3] = j*10;
-			c[j][4] = 6000;
+			c[j][4] = 2500;
 		}
 		System.out.println("finished simulation");
 		float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},

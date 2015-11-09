@@ -69,7 +69,6 @@ public class Editor implements KeyListener, TableModelListener {
 	private JButton addButton;
 	private JTextField pixelNmField;
 	private JTable dataSetTable;
-	private JToggleButton toggleClose;
 	private JTextField nameField = new JTextField(50);
 	private JButton newSetButton;
 	private JButton deleteLastButton;
@@ -81,7 +80,7 @@ public class Editor implements KeyListener, TableModelListener {
 	
 	private Float lastValuePxNmRatio=1.f;
 	
-	private static String EXTENSION = ".storm";
+	private static String EXTENSION = ".wimp";
 	private JLabel lblNewLabel;
 	
 	public static void main(String[] args) {
@@ -155,77 +154,81 @@ public class Editor implements KeyListener, TableModelListener {
 				/**
 				 * closed lines or open lines
 				 */
-				if(toggleClose.isSelected()) {
-					model.selectableDataType = DataType.TRIANGLES;
-				}
-				else {
-					model.selectableDataType = DataType.LINES;
-				}
 				
-				selectionTable.addMouseListener(new MouseAdapter() {
-		        	  public void mouseClicked(MouseEvent e) {
-		        	    if (e.getClickCount() == 2) {
-		        	      JTable target = (JTable)e.getSource();
-		        	      int row = target.getSelectedRow();
-		        	      int column = target.getSelectedColumn();
-		        	      boolean selectable = model.isCellSelectable(row, column);
-		        	      if(selectable) {
-		        	    	  if(model.selectableDataType == DataType.LINES) {
-		        	    		  LineDataSet set = (LineDataSet) model.data.get(row);
-		        	    		  set = drawPanel.addCurrentPointsToLineDataSet(set);
-		        	    		  allDataSets.set(row, set);
-		        	    		  model.data.set(row, set);
-		        	    		  drawPanel.drawManager.currentPoints.clear();
-		        	    		  drawPanel.repaint();
-		        	    		  model.fireTableDataChanged();
-		        	    	  }
-		        	    	  else if (model.selectableDataType == DataType.TRIANGLES) {
-		        	    		  TriangleDataSet set = (TriangleDataSet) model.data.get(row);
-		        	    		  set = drawPanel.addCurrentPointsToTriangleDataSet(set);
-		        	    		  allDataSets.set(row, set);
-		        	    		  model.data.set(row, set);
-		        	    		  drawPanel.drawManager.currentPoints.clear();
-		        	    		  drawPanel.repaint();
-		        	    		  model.fireTableDataChanged();
-		        	    	  }
-		        	    	  Window win = SwingUtilities.getWindowAncestor(selectionTable);
-		        	    	  win.setVisible(false);
-		        	    	  nameField.setText("");
-		        	    	  toggleClose.setSelected(false);
-		        	    	  drawPanel.closeCurrentLine = false;
-		        	    	  imgPanel.requestFocus();
-		        	      }
-		        	    }
-		        	  }
-		        	});
+				model.selectableDataType = DataType.LINES;
 				
-				final JComponent[] inputs = new JComponent[] {
-						new JLabel("You can either create a new data set or add your lines to an existing data set of the same type."),
-						newSetButton,
-						new JLabel("Dataset name:"),
-						nameField,
-						new JLabel("Existing datasets:"),
-						selectionTable,
-				};
-				Object[] options = {"Cancel"};
-				JOptionPane.showOptionDialog(null, inputs, "Save Options",  JOptionPane.PLAIN_MESSAGE,  JOptionPane.PLAIN_MESSAGE, null,options,options[0]);
-				//JOptionPane.showMessageDialog(null, inputs, "Save Options", JOptionPane.PLAIN_MESSAGE);
+				LineDataSet set = (LineDataSet) model.data.get(0);
+	    		  set = drawPanel.addCurrentPointsToLineDataSet(set);
+	    		  allDataSets.set(0, set);
+	    		  model.data.set(0, set);
+	    		  drawPanel.drawManager.currentPoints.clear();
+	    		  drawPanel.repaint();
+	    		  model.fireTableDataChanged();
+				
+//				selectionTable.addMouseListener(new MouseAdapter() {
+//		        	  public void mouseClicked(MouseEvent e) {
+//		        	    if (e.getClickCount() == 2) {
+//		        	      JTable target = (JTable)e.getSource();
+//		        	      int row = target.getSelectedRow();
+//		        	      int column = target.getSelectedColumn();
+//		        	      boolean selectable = model.isCellSelectable(row, column);
+//		        	      if(selectable) {
+//		        	    	  if(model.selectableDataType == DataType.LINES) {
+//		        	    		  LineDataSet set = (LineDataSet) model.data.get(row);
+//		        	    		  set = drawPanel.addCurrentPointsToLineDataSet(set);
+//		        	    		  allDataSets.set(row, set);
+//		        	    		  model.data.set(row, set);
+//		        	    		  drawPanel.drawManager.currentPoints.clear();
+//		        	    		  drawPanel.repaint();
+//		        	    		  model.fireTableDataChanged();
+//		        	    	  }
+//		        	    	  else if (model.selectableDataType == DataType.TRIANGLES) {
+//		        	    		  TriangleDataSet set = (TriangleDataSet) model.data.get(row);
+//		        	    		  set = drawPanel.addCurrentPointsToTriangleDataSet(set);
+//		        	    		  allDataSets.set(row, set);
+//		        	    		  model.data.set(row, set);
+//		        	    		  drawPanel.drawManager.currentPoints.clear();
+//		        	    		  drawPanel.repaint();
+//		        	    		  model.fireTableDataChanged();
+//		        	    	  }
+//		        	    	  Window win = SwingUtilities.getWindowAncestor(selectionTable);
+//		        	    	  win.setVisible(false);
+//		        	    	  nameField.setText("");
+//		        	    	  
+//		        	    	  drawPanel.closeCurrentLine = false;
+//		        	    	  imgPanel.requestFocus();
+//		        	      }
+//		        	    }
+//		        	  }
+//		        	});
+//				
+//				final JComponent[] inputs = new JComponent[] {
+//						new JLabel("You can either create a new data set or add your lines to an existing data set of the same type."),
+//						newSetButton,
+//						new JLabel("Dataset name:"),
+//						nameField,
+//						new JLabel("Existing datasets:"),
+//						selectionTable,
+//				};
+//				Object[] options = {"Cancel"};
+//				JOptionPane.showOptionDialog(null, inputs, "Save Options",  JOptionPane.PLAIN_MESSAGE,  JOptionPane.PLAIN_MESSAGE, null,options,options[0]);
+//				//JOptionPane.showMessageDialog(null, inputs, "Save Options", JOptionPane.PLAIN_MESSAGE);
 				imgPanel.requestFocus();
 			}
 		});
         
         JLabel lblNmpx = new JLabel("nm/px");
         pixelNmField = new JTextField();
-        pixelNmField.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Float newValuePxNmRatio = Float.parseFloat(pixelNmField.getText());
-				rescaleData(lastValuePxNmRatio, newValuePxNmRatio);
-				drawPanel.drawManager.ratio = newValuePxNmRatio;
-				lastValuePxNmRatio = newValuePxNmRatio;
-				drawPanel.repaint();
-			}
-		});
+//        pixelNmField.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				Float newValuePxNmRatio = Float.parseFloat(pixelNmField.getText());
+//				rescaleData(lastValuePxNmRatio, newValuePxNmRatio);
+//				drawPanel.drawManager.ratio = newValuePxNmRatio;
+//				lastValuePxNmRatio = newValuePxNmRatio;
+//				drawPanel.repaint();
+//			}
+//		});
         pixelNmField.setHorizontalAlignment(SwingConstants.LEFT);
         pixelNmField.setText("1.0");
         pixelNmField.setColumns(10);
@@ -244,42 +247,16 @@ public class Editor implements KeyListener, TableModelListener {
 			}
 		});
         
-        toggleClose = new JToggleButton("close lines");
-        toggleClose.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(toggleClose.isSelected()) {
-					drawPanel.closeCurrentLine = true;
-					drawPanel.repaint();
-					imgPanel.requestFocus();
-				}
-				else {
-					drawPanel.closeCurrentLine = false;
-					drawPanel.repaint();
-					imgPanel.requestFocus();
-				}
-			}
-		});
-        
         model = new DataSetTableModel();
         dataSetTable = new JTable(model);
         dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
         model.addTableModelListener(this);
-        JButton btnChooseColor = new JButton("choose color");
-        btnChooseColor.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		currentDrawingColor = JColorChooser.showDialog(f, "Choose drawing color", currentDrawingColor);
-        		drawPanel.drawingColor = currentDrawingColor;
-        		drawPanel.repaint();
-        		imgPanel.requestFocus();
-        	}
-        });
         
         /*
          * Save and load
          */
         
-        JButton saveProjectButton = new JButton("save project");
+        JButton saveProjectButton = new JButton("save as WIMP");
         saveProjectButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -292,45 +269,15 @@ public class Editor implements KeyListener, TableModelListener {
 					    path += EXTENSION;
 					}
 					if(name.endsWith(EXTENSION)){
-						name = name.substring(0, name.length()-6);
+						name = name.substring(0, name.length()-5);
 					}
 					System.out.println("Path to write project: " + path);
 					System.out.println("project name: " + name);
-					Project p = new Project(name, allDataSets,  Float.parseFloat(pixelNmField.getText()));
-					p.setOriginalImage(new SerializableImage(imgPanel.getOriginalImage()));
-					FileManager.writeProjectToFile(p, path);
-				}
-			}
-		});
-        
-        JButton loadProjectButton = new JButton("load project");
-        loadProjectButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				fc.setAcceptAllFileFilterUsed(false);
-				fc.setFileFilter(new ProjectFileFilter());
-				fc.setFileSelectionMode(0);
-				int returnValue = fc.showOpenDialog(f);
-				if(returnValue == JFileChooser.APPROVE_OPTION) {
-					String path = fc.getSelectedFile().getAbsolutePath();
-					Project p = FileManager.openProjectFromFile(path);
-					allDataSets.clear();
-					model.data.clear();
-					model.visibleSets.clear();
-					allDataSets = p.dataSets;
-					for(DataSet s : allDataSets) {
-						model.visibleSets.add(Boolean.FALSE);
-					}
-					
-					model.data.addAll(p.dataSets);
-					drawPanel.repaint();
-					imgPanel.setImageFromRecoveredProject(p.getOriginalImage().getImage());
-					zoomFactor = 1.f;
-					imgPanel.scaleFactor = zoomFactor;
-					imgPanel.zoom(zoomFactor);
-					pixelNmField.setText(p.getPxPerNm().toString());
-					updateBoundsOfComponents();
+					((LineDataSet)allDataSets.get(0)).rescaleData(Float.valueOf(pixelNmField.getText()));
+					FileManager.writeWIMPFile((LineDataSet) allDataSets.get(0), path);
+//					Project p = new Project(name, allDataSets,  Float.parseFloat(pixelNmField.getText()));
+//					p.setOriginalImage(new SerializableImage(imgPanel.getOriginalImage()));
+//					FileManager.writeProjectToFile(p, path);
 				}
 			}
 		});
@@ -340,11 +287,11 @@ public class Editor implements KeyListener, TableModelListener {
         	gl_controlPanel.createParallelGroup(Alignment.LEADING)
         		.addGroup(gl_controlPanel.createSequentialGroup()
         			.addContainerGap()
-        			.addGroup(gl_controlPanel.createParallelGroup(Alignment.LEADING)
-        				.addGroup(Alignment.TRAILING, gl_controlPanel.createSequentialGroup()
+        			.addGroup(gl_controlPanel.createParallelGroup(Alignment.TRAILING)
+        				.addGroup(gl_controlPanel.createSequentialGroup()
         					.addGap(6)
         					.addComponent(dataSetTable, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE))
-        				.addComponent(deleteLastButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        				.addComponent(deleteLastButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
         				.addComponent(addButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
         				.addGroup(gl_controlPanel.createSequentialGroup()
         					.addGap(6)
@@ -352,10 +299,7 @@ public class Editor implements KeyListener, TableModelListener {
         					.addPreferredGap(ComponentPlacement.RELATED)
         					.addComponent(pixelNmField, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE))
         				.addComponent(importImageButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        				.addComponent(toggleClose, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        				.addComponent(saveProjectButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        				.addComponent(btnChooseColor, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        				.addComponent(loadProjectButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE))
+        				.addComponent(saveProjectButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE))
         			.addContainerGap())
         );
         gl_controlPanel.setVerticalGroup(
@@ -371,17 +315,11 @@ public class Editor implements KeyListener, TableModelListener {
         			.addComponent(addButton)
         			.addPreferredGap(ComponentPlacement.RELATED)
         			.addComponent(deleteLastButton)
-        			.addPreferredGap(ComponentPlacement.RELATED)
-        			.addComponent(toggleClose)
-        			.addPreferredGap(ComponentPlacement.RELATED)
-        			.addComponent(btnChooseColor)
-        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGap(71)
         			.addComponent(dataSetTable, GroupLayout.PREFERRED_SIZE, 166, GroupLayout.PREFERRED_SIZE)
         			.addPreferredGap(ComponentPlacement.UNRELATED)
         			.addComponent(saveProjectButton)
-        			.addPreferredGap(ComponentPlacement.RELATED)
-        			.addComponent(loadProjectButton)
-        			.addContainerGap(241, Short.MAX_VALUE))
+        			.addContainerGap(261, Short.MAX_VALUE))
         );
         controlPanel.setLayout(gl_controlPanel);
         
@@ -410,46 +348,33 @@ public class Editor implements KeyListener, TableModelListener {
         /*
          * Button for new dataSet
          */
+    	drawPanel.drawManager.ratio = Float.parseFloat(pixelNmField.getText());
+		System.out.println("ratio on save: " + drawPanel.drawManager.ratio);
+		
+		 // lines open: line object generated
+		LineDataSet newSet = new LineDataSet(new ParameterSet());
+		newSet = drawPanel.addCurrentPointsToLineDataSet(newSet);
+		newSet.setName("Filaments");
+		newSet.setColor(currentDrawingColor);
+		newSet.setDataType(DataType.LINES);
+		System.out.println("all:" + allDataSets.size());
+		allDataSets.add(newSet);
+		model.visibleSets.add(Boolean.FALSE);
+		model.data.add(newSet);
+		drawPanel.drawManager.currentPoints.clear();
+		drawPanel.repaint();
+		System.out.println("all2:" + allDataSets.size());
+		model.fireTableDataChanged();
+		
+		
+        nameField.setText("");
         
+        drawPanel.closeCurrentLine = false;
+        imgPanel.requestFocus();
         newSetButton = new JButton("Create new dataset");
 		newSetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				drawPanel.drawManager.ratio = Float.parseFloat(pixelNmField.getText());
-				System.out.println("ratio on save: " + drawPanel.drawManager.ratio);
-				if(toggleClose.isSelected()) { // lines closed: triangles generated
-                    TriangleDataSet newSet = new TriangleDataSet(new ParameterSet());
-                    newSet = drawPanel.addCurrentPointsToTriangleDataSet(newSet);
-                    newSet.setName(nameField.getText());
-                    newSet.setColor(currentDrawingColor);
-                    newSet.setDataType(DataType.TRIANGLES);
-                    allDataSets.add(newSet);
-                    model.visibleSets.add(Boolean.FALSE);
-                    model.data.add(newSet);
-                    drawPanel.drawManager.currentPoints.clear();
-                    drawPanel.repaint();
-                    model.fireTableDataChanged();
-				}
-				else { // lines open: line object generated
-					LineDataSet newSet = new LineDataSet(new ParameterSet());
-					newSet = drawPanel.addCurrentPointsToLineDataSet(newSet);
-					newSet.setName(nameField.getText());
-					newSet.setColor(currentDrawingColor);
-					newSet.setDataType(DataType.LINES);
-					System.out.println("all:" + allDataSets.size());
-					allDataSets.add(newSet);
-					model.visibleSets.add(Boolean.FALSE);
-					model.data.add(newSet);
-					drawPanel.drawManager.currentPoints.clear();
-					drawPanel.repaint();
-					System.out.println("all2:" + allDataSets.size());
-					model.fireTableDataChanged();
-				}
-				Window win = SwingUtilities.getWindowAncestor(newSetButton);
-	            win.setVisible(false);
-	            nameField.setText("");
-	            toggleClose.setSelected(false);
-	            drawPanel.closeCurrentLine = false;
-	            imgPanel.requestFocus();
+				
 			}
 		});
         

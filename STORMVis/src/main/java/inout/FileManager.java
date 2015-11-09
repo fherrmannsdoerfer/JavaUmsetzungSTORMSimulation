@@ -20,7 +20,11 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
+
+import org.jzy3d.maths.Coord3d;
 
 import calc.Calc;
 import model.DataSet;
@@ -348,5 +352,33 @@ public class FileManager {
 			writerXZ.close();
 			writerYZ.close();
 		} catch (IOException e) {e.printStackTrace();}
+	}
+	
+	public static void writeWIMPFile(LineDataSet set, String fname){
+		try{
+			Locale.setDefault(Locale.ENGLISH);
+			FileWriter writer = new FileWriter(fname);
+			writer.append("Model file name........................"+fname+"\n");
+			writer.append("max # of object....................... "+set.data.size()+"\n");
+			writer.append("# of node............................. 6070\n");
+			writer.append("# of object........................... "+set.data.size()+"\n");
+			writer.append("Object sequence :\n");
+			int counter = 0;
+			for (int i = 0; i<set.data.size(); i++){
+				ArrayList<Coord3d> tmp = set.data.get(i);
+				writer.append(String.format(" Object #: %d\n",counter));
+				writer.append(String.format("# of points: %d\n",tmp.size()));
+				writer.append(String.format("Display switch:1 247\n"));
+				writer.append(String.format("  #    X       Y       Z      Mark    Label\n"));
+				
+			    for (int j = 0; j<set.data.get(i).size(); j++){
+					 counter +=1;
+					 writer.append(String.format(" %d %4.2f %4.2f %4.2f \n",counter,tmp.get(j).x,tmp.get(j).y,tmp.get(j).z));
+			    } 
+			}
+			writer.append("END");
+			writer.close();
+		}
+		catch (IOException e) {e.printStackTrace();}
 	}
 } 

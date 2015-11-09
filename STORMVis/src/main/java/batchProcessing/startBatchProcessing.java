@@ -61,8 +61,8 @@ public class startBatchProcessing {
 //		DataSet data = ExamplesProvidingClass.getDataset(1);
 //		furtherProceedFileImport(data, data.dataType);
 		(new File(outputFolder)).mkdir();
-		boolean tiffStackOutput = false;
-		boolean suReSimOutput = true;
+		boolean tiffStackOutput = true;
+		boolean suReSimOutput = false;
 		int numberOfSimulationsWithSameParameterSet = 100; //number of outputs for the same parameter set
 		SimulationParameter params = standardParameterRandomlyDistributedEpitopes();
 		

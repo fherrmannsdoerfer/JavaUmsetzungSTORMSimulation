@@ -1632,7 +1632,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			LineDataSet lines = (LineDataSet) allDataSets.get(allDataSets.size()-1);
 			lines.shiftData(shiftX,shiftY,shiftZ);
 		}
-		else if (allDataSets.get(0).dataType == DataType.TRIANGLES){
+		else if (allDataSets.get(allDataSets.size()-1).dataType == DataType.TRIANGLES){
 			TriangleDataSet triangles = (TriangleDataSet) allDataSets.get(allDataSets.size()-1);
 			triangles.shiftData(shiftX,shiftY,shiftZ);
 		}
@@ -1900,7 +1900,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				}
 			};
 			try {
-				Thread.sleep(50);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
