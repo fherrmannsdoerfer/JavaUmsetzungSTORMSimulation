@@ -206,6 +206,20 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField bleachConstantField;
 	private JTextField detectionEfficiencyField;
 	private JTextField angularDistributionField;
+	private JTextField pxToNmField;
+	private JTextField framerateField;
+	private JTextField meanBlinkingDurationField;
+	private JTextField naField;
+	private JTextField wavelengthField;
+	private JTextField fokusField;
+	private JTextField defokusField;
+	private JTextField sigmaBgField;
+	private JTextField constOffsetField;
+	private JTextField emptyPixelsOnRimField;
+	private JTextField quantumEfficiencyField;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private JTextField emGainField;
+	private JTextField windowsizePSFRenderingField;
 	/**
 	 * Launch the application.
 	 */
@@ -245,10 +259,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	 */
 	public Gui() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(10, 10, 1200, 1000);
+		setBounds(0, 0, 1200, 1070);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setPreferredSize(new Dimension(250, 900));
+		contentPane.setPreferredSize(new Dimension(250, 995));
 		
 		model = new DataSetTableModel();
         model.addTableModelListener(this);
@@ -714,6 +728,223 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		reproducibleOutputchkBox = new JCheckBox("Reproducible Output");
 		verticalBox_11.add(reproducibleOutputchkBox);
+		
+		Box verticalBox_18 = Box.createVerticalBox();
+		tabbedPane.addTab("Tiff Stack Creation", null, verticalBox_18, null);
+		
+		Box verticalBox_19 = Box.createVerticalBox();
+		verticalBox_18.add(verticalBox_19);
+		
+		Box verticalBox_20 = Box.createVerticalBox();
+		verticalBox_20.setBorder(new TitledBorder(null, "Camera Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		verticalBox_19.add(verticalBox_20);
+		
+		Box horizontalBox_41 = Box.createHorizontalBox();
+		verticalBox_20.add(horizontalBox_41);
+		
+		JLabel lblNewLabel_9 = new JLabel("Pixel To Nm Ratio");
+		horizontalBox_41.add(lblNewLabel_9);
+		
+		Component horizontalGlue_42 = Box.createHorizontalGlue();
+		horizontalBox_41.add(horizontalGlue_42);
+		
+		pxToNmField = new JTextField();
+		pxToNmField.setMaximumSize(new Dimension(100, 2147483647));
+		horizontalBox_41.add(pxToNmField);
+		pxToNmField.setColumns(5);
+		
+		Box horizontalBox_42 = Box.createHorizontalBox();
+		verticalBox_20.add(horizontalBox_42);
+		
+		JLabel lblNewLabel_10 = new JLabel("Framerate");
+		horizontalBox_42.add(lblNewLabel_10);
+		
+		Component horizontalGlue_43 = Box.createHorizontalGlue();
+		horizontalBox_42.add(horizontalGlue_43);
+		
+		framerateField = new JTextField();
+		framerateField.setMaximumSize(new Dimension(100, 2147483647));
+		horizontalBox_42.add(framerateField);
+		framerateField.setColumns(5);
+		
+		Box horizontalBox_48 = Box.createHorizontalBox();
+		verticalBox_20.add(horizontalBox_48);
+		
+		JLabel lblSigmaBackground = new JLabel("Sigma Background");
+		horizontalBox_48.add(lblSigmaBackground);
+		
+		Component horizontalGlue_49 = Box.createHorizontalGlue();
+		horizontalBox_48.add(horizontalGlue_49);
+		
+		sigmaBgField = new JTextField();
+		sigmaBgField.setMaximumSize(new Dimension(100, 2147483647));
+		sigmaBgField.setColumns(5);
+		horizontalBox_48.add(sigmaBgField);
+		
+		Box horizontalBox_49 = Box.createHorizontalBox();
+		verticalBox_20.add(horizontalBox_49);
+		
+		JLabel lblConstantOffset = new JLabel("Constant Offset");
+		horizontalBox_49.add(lblConstantOffset);
+		
+		Component horizontalGlue_50 = Box.createHorizontalGlue();
+		horizontalBox_49.add(horizontalGlue_50);
+		
+		constOffsetField = new JTextField();
+		constOffsetField.setMaximumSize(new Dimension(100, 2147483647));
+		constOffsetField.setColumns(5);
+		horizontalBox_49.add(constOffsetField);
+		
+		Box horizontalBox_53 = Box.createHorizontalBox();
+		verticalBox_20.add(horizontalBox_53);
+		
+		JLabel lblEmGain = new JLabel("EM Gain");
+		horizontalBox_53.add(lblEmGain);
+		
+		Component horizontalGlue_54 = Box.createHorizontalGlue();
+		horizontalBox_53.add(horizontalGlue_54);
+		
+		emGainField = new JTextField();
+		emGainField.setMaximumSize(new Dimension(100, 2147483647));
+		emGainField.setColumns(5);
+		horizontalBox_53.add(emGainField);
+		
+		Box horizontalBox_51 = Box.createHorizontalBox();
+		verticalBox_20.add(horizontalBox_51);
+		
+		JLabel lblWindowsizePsfRendering = new JLabel("Quantum Efficiency");
+		horizontalBox_51.add(lblWindowsizePsfRendering);
+		
+		Component horizontalGlue_52 = Box.createHorizontalGlue();
+		horizontalBox_51.add(horizontalGlue_52);
+		
+		quantumEfficiencyField = new JTextField();
+		quantumEfficiencyField.setMaximumSize(new Dimension(100, 2147483647));
+		quantumEfficiencyField.setColumns(5);
+		horizontalBox_51.add(quantumEfficiencyField);
+		
+		Box verticalBox_21 = Box.createVerticalBox();
+		verticalBox_21.setBorder(new TitledBorder(null, "General Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		verticalBox_19.add(verticalBox_21);
+		
+		Box horizontalBox_54 = Box.createHorizontalBox();
+		verticalBox_21.add(horizontalBox_54);
+		
+		JLabel lblWindowsizePsfRendering_1 = new JLabel("Windowsize PSF Rendering");
+		horizontalBox_54.add(lblWindowsizePsfRendering_1);
+		
+		Component horizontalGlue_55 = Box.createHorizontalGlue();
+		horizontalBox_54.add(horizontalGlue_55);
+		
+		windowsizePSFRenderingField = new JTextField();
+		windowsizePSFRenderingField.setMaximumSize(new Dimension(100, 2147483647));
+		windowsizePSFRenderingField.setColumns(5);
+		horizontalBox_54.add(windowsizePSFRenderingField);
+		
+		Box horizontalBox_50 = Box.createHorizontalBox();
+		verticalBox_21.add(horizontalBox_50);
+		
+		JLabel lblEmptyPixelsOn = new JLabel("Empty Pixels On Rim");
+		horizontalBox_50.add(lblEmptyPixelsOn);
+		
+		Component horizontalGlue_51 = Box.createHorizontalGlue();
+		horizontalBox_50.add(horizontalGlue_51);
+		
+		emptyPixelsOnRimField = new JTextField();
+		emptyPixelsOnRimField.setMaximumSize(new Dimension(100, 2147483647));
+		emptyPixelsOnRimField.setColumns(5);
+		horizontalBox_50.add(emptyPixelsOnRimField);
+		
+		Box verticalBox_22 = Box.createVerticalBox();
+		verticalBox_22.setBorder(new TitledBorder(null, "PSF Settings", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		verticalBox_19.add(verticalBox_22);
+		
+		Box horizontalBox_44 = Box.createHorizontalBox();
+		verticalBox_22.add(horizontalBox_44);
+		
+		JLabel lblNumericalAperture = new JLabel("Numerical Aperture");
+		horizontalBox_44.add(lblNumericalAperture);
+		
+		Component horizontalGlue_45 = Box.createHorizontalGlue();
+		horizontalBox_44.add(horizontalGlue_45);
+		
+		naField = new JTextField();
+		horizontalBox_44.add(naField);
+		naField.setMaximumSize(new Dimension(100, 2147483647));
+		naField.setColumns(5);
+		
+		Box horizontalBox_43 = Box.createHorizontalBox();
+		verticalBox_22.add(horizontalBox_43);
+		
+		JLabel lblMeanBlinkingDuration = new JLabel("Mean Blinking Duration");
+		horizontalBox_43.add(lblMeanBlinkingDuration);
+		
+		Component horizontalGlue_44 = Box.createHorizontalGlue();
+		horizontalBox_43.add(horizontalGlue_44);
+		
+		meanBlinkingDurationField = new JTextField();
+		meanBlinkingDurationField.setMaximumSize(new Dimension(100, 2147483647));
+		meanBlinkingDurationField.setColumns(5);
+		horizontalBox_43.add(meanBlinkingDurationField);
+		
+		Box horizontalBox_45 = Box.createHorizontalBox();
+		verticalBox_22.add(horizontalBox_45);
+		
+		JLabel lblWavelength = new JLabel("Wavelength");
+		horizontalBox_45.add(lblWavelength);
+		
+		Component horizontalGlue_46 = Box.createHorizontalGlue();
+		horizontalBox_45.add(horizontalGlue_46);
+		
+		wavelengthField = new JTextField();
+		wavelengthField.setMaximumSize(new Dimension(100, 2147483647));
+		wavelengthField.setColumns(5);
+		horizontalBox_45.add(wavelengthField);
+		
+		Box horizontalBox_46 = Box.createHorizontalBox();
+		verticalBox_22.add(horizontalBox_46);
+		
+		JLabel lblFokus = new JLabel("Fokus");
+		horizontalBox_46.add(lblFokus);
+		
+		Component horizontalGlue_47 = Box.createHorizontalGlue();
+		horizontalBox_46.add(horizontalGlue_47);
+		
+		fokusField = new JTextField();
+		fokusField.setMaximumSize(new Dimension(100, 2147483647));
+		fokusField.setColumns(5);
+		horizontalBox_46.add(fokusField);
+		
+		Box horizontalBox_47 = Box.createHorizontalBox();
+		verticalBox_22.add(horizontalBox_47);
+		
+		JLabel lblDefokus = new JLabel("Defokus");
+		horizontalBox_47.add(lblDefokus);
+		
+		Component horizontalGlue_48 = Box.createHorizontalGlue();
+		horizontalBox_47.add(horizontalGlue_48);
+		
+		defokusField = new JTextField();
+		defokusField.setMaximumSize(new Dimension(100, 2147483647));
+		defokusField.setColumns(5);
+		horizontalBox_47.add(defokusField);
+		
+		Box horizontalBox_52 = Box.createHorizontalBox();
+		verticalBox_19.add(horizontalBox_52);
+		
+		JRadioButton radio2D = new JRadioButton("2D");
+		buttonGroup.add(radio2D);
+		horizontalBox_52.add(radio2D);
+		
+		JRadioButton radio3D = new JRadioButton("3D");
+		buttonGroup.add(radio3D);
+		horizontalBox_52.add(radio3D);
+		
+		Component horizontalGlue_53 = Box.createHorizontalGlue();
+		horizontalBox_52.add(horizontalGlue_53);
+		
+		JButton exportTiffStackButton = new JButton("Export Tiffstack");
+		horizontalBox_52.add(exportTiffStackButton);
 		
 		progressBar = new JProgressBar();
 		verticalBox.add(progressBar);
