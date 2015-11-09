@@ -126,7 +126,7 @@ public class FileManager {
 		writeProjectionToFile(dataset,path,mode,borders,pixelsize, sigma);
 		writeLocalizationsToFile(dataset.stormData,basename,borders);
 		writeLocalizationsToFileForFRC(dataset.stormData, basename,borders);
-		writeLogFile(dataset, basename,borders);
+		writeLogFile(dataset.getParameterSet(), basename,borders);
 	}
 	
 	private static void writeProjectionToFile(DataSet dataset, String path, int mode, ArrayList<Float> borders, double pixelsize, double sigma){
@@ -234,8 +234,11 @@ public class FileManager {
 		ij.IJ.saveAs(imgRGB, "png", basename+tag);
 	}
 
-	private static void writeLogFile(DataSet dataset, String basename,ArrayList<Float> borders) {
-		ParameterSet ps = dataset.getParameterSet();
+	public static void writeLogFile(ParameterSet ps, String basename,ArrayList<Float> borders) {
+		writeLogFile(ps, basename,borders,false);
+	}
+	
+	public static void writeLogFile(ParameterSet ps, String basename,ArrayList<Float> borders,boolean tiffStackOutput) {
 		try{
 			FileWriter writer = new FileWriter(basename+"Parameters.txt");
 			writer.append("Automatically generated Logfile containing all settings.\n");
@@ -249,8 +252,10 @@ public class FileManager {
 			writer.append(String.format("Color model [r,g,b]: %d, %d, %d\n", ps.getEmColor().getRed(),ps.getEmColor().getGreen(),ps.getEmColor().getBlue()));
 			writer.append(String.format("Color simulation [r,g,b]: %d, %d, %d\n", ps.getStormColor().getRed(),ps.getStormColor().getGreen(),ps.getStormColor().getBlue()));
 			writer.append(String.format("Color label [r,g,b]: %d, %d, %d\n", ps.getAntibodyColor().getRed(),ps.getAntibodyColor().getGreen(),ps.getAntibodyColor().getBlue()));
-			writer.append("Localization precision (sigma x,y) [nm]: "+ps.getSxy()+"\n");
-			writer.append("Localization precision (sigma z) [nm]: "+ps.getSz()+"\n");
+			if (!tiffStackOutput){
+				writer.append("Localization precision (sigma x,y) [nm]: "+ps.getSxy()+"\n");
+				writer.append("Localization precision (sigma z) [nm]: "+ps.getSz()+"\n");
+			}
 			writer.append("Bindingsites per square nanometer [nm^-2]: "+ps.getBspsnm()+"\n");
 			writer.append("Frames: "+ps.getFrames()+"\n");
 			writer.append("K_On time [AU]: "+ ps.getKOn()+"\n");
@@ -309,6 +314,28 @@ public class FileManager {
 			writer.append("Selected borders in z: "+borders.get(4)+" to "+borders.get(5)+"\n");
 			writer.append("Pixelsize for output images in nm: "+ps.getPixelsize()+"\n");
 			writer.append("Width of Gaussian for rendering of output images in nm: "+ps.getSigmaRendering()+"\n");
+			
+			if (tiffStackOutput){
+				writer.append("\n");
+				writer.append("Parameters for Tiffstack creation\n");
+				writer.append("Pixel to nanometer ratio: "+ps.getPixelToNmRatio()+"\n");
+				writer.append("Frame rate: "+ps.getFrameRate()+"\n");
+				writer.append("Sigma of Background: "+ps.getSigmaBg()+"\n");
+				writer.append("Value of constant background offset: "+ps.getConstOffset()+"\n");
+				writer.append("Em Gain: "+ps.getEmGain()+"\n");
+				writer.append("Quantum efficiency: "+ps.getQuantumEfficiency()+"\n");
+				writer.append("Window size for PSF rendering: "+ps.getWindowsizePSF()+"\n");
+				writer.append("Size of outer rim without PSFs in Tiffstack: "+ps.getEmptyPixelsOnRim()+"\n");
+				writer.append("Numeric aperture: "+ps.getNa()+"\n");
+				writer.append("Z value of focal plane (2D): "+ps.getFokus()+"\n");
+				writer.append("Z value of plane with doubled PSF width: "+ps.getDefokus()+"\n");
+				if (ps.isTwoDPSF()){
+					writer.append("2D simulation: TRUE\n");
+				}
+				else{
+					writer.append("2D simulation: FALSE\n");
+				}
+			}
 			writer.flush();
 			writer.close();
 		} catch (IOException e) {e.printStackTrace();}

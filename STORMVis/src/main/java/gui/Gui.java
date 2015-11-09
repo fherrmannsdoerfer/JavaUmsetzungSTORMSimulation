@@ -66,6 +66,7 @@ import model.SerializableImage;
 import model.TriangleDataSet;
 import table.DataSetTableModel;
 import calc.Calc;
+import calc.CreateStack;
 import calc.STORMCalculator;
 
 import javax.swing.JToggleButton;
@@ -103,7 +104,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField averagePhotonOutputField; // 
 	private JTextField locPrecisionXYField; //sxy
 	private JTextField locPrecisionZField; //sz
-	private JTextField psfSizeField; //psfwidth aus StormPointFinder
 	private JFormattedTextField epitopeDensityField; //bspnm oder bspsnm je nachdem ob Linien oder Dreiecke
 	private JTextField pointSizeField; //
 	
@@ -220,6 +220,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField emGainField;
 	private JTextField windowsizePSFRenderingField;
+	private JTextField preAmpField;
+	private JTextField electronsPerDnField;
+	
+	JRadioButton radio2D;
+	JRadioButton radio3D;
 	/**
 	 * Launch the application.
 	 */
@@ -550,6 +555,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		kOnField = new JTextField();
 		kOnField.getDocument().addDocumentListener(new MyDocumentListener(kOnField));
+		
 		kOnField.setHorizontalAlignment(SwingConstants.RIGHT);
 		kOnField.setMinimumSize(new Dimension(6, 10));
 		kOnField.setMaximumSize(new Dimension(60, 22));
@@ -575,6 +581,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		kOffField.setMaximumSize(new Dimension(60, 22));
 		kOffField.setColumns(5);
 		horizontalBox_17.add(kOffField);
+		
+		Component verticalGlue_32 = Box.createVerticalGlue();
+		verticalBox_12.add(verticalGlue_32);
 		
 		Component verticalGlue_10 = Box.createVerticalGlue();
 		verticalBox_12.add(verticalGlue_10);
@@ -679,20 +688,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_15 = Box.createHorizontalBox();
 		verticalBox_11.add(horizontalBox_15);
 		
-		JLabel lblPsfSize = new JLabel("FWHM Of PSF (nm)");
-		horizontalBox_15.add(lblPsfSize);
-		
-		Component horizontalGlue_16 = Box.createHorizontalGlue();
-		horizontalBox_15.add(horizontalGlue_16);
-		
-		psfSizeField = new JTextField();
-		psfSizeField.getDocument().addDocumentListener(new MyDocumentListener(psfSizeField));
-		psfSizeField.setHorizontalAlignment(SwingConstants.RIGHT);
-		psfSizeField.setMinimumSize(new Dimension(6, 10));
-		psfSizeField.setMaximumSize(new Dimension(60, 22));
-		psfSizeField.setColumns(5);
-		horizontalBox_15.add(psfSizeField);
-		
 		Component verticalGlue_18 = Box.createVerticalGlue();
 		verticalBox_11.add(verticalGlue_18);
 		
@@ -749,6 +744,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_41.add(horizontalGlue_42);
 		
 		pxToNmField = new JTextField();
+		pxToNmField.setHorizontalAlignment(SwingConstants.RIGHT);
 		pxToNmField.setMaximumSize(new Dimension(100, 2147483647));
 		horizontalBox_41.add(pxToNmField);
 		pxToNmField.setColumns(5);
@@ -756,13 +752,14 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_42 = Box.createHorizontalBox();
 		verticalBox_20.add(horizontalBox_42);
 		
-		JLabel lblNewLabel_10 = new JLabel("Framerate");
+		JLabel lblNewLabel_10 = new JLabel("<html>Framerate (s<sup>-1</sup>)</html>");
 		horizontalBox_42.add(lblNewLabel_10);
 		
 		Component horizontalGlue_43 = Box.createHorizontalGlue();
 		horizontalBox_42.add(horizontalGlue_43);
 		
 		framerateField = new JTextField();
+		framerateField.setHorizontalAlignment(SwingConstants.RIGHT);
 		framerateField.setMaximumSize(new Dimension(100, 2147483647));
 		horizontalBox_42.add(framerateField);
 		framerateField.setColumns(5);
@@ -777,6 +774,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_48.add(horizontalGlue_49);
 		
 		sigmaBgField = new JTextField();
+		sigmaBgField.setHorizontalAlignment(SwingConstants.RIGHT);
 		sigmaBgField.setMaximumSize(new Dimension(100, 2147483647));
 		sigmaBgField.setColumns(5);
 		horizontalBox_48.add(sigmaBgField);
@@ -791,23 +789,40 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_49.add(horizontalGlue_50);
 		
 		constOffsetField = new JTextField();
+		constOffsetField.setHorizontalAlignment(SwingConstants.RIGHT);
 		constOffsetField.setMaximumSize(new Dimension(100, 2147483647));
 		constOffsetField.setColumns(5);
 		horizontalBox_49.add(constOffsetField);
 		
 		Box horizontalBox_53 = Box.createHorizontalBox();
+		horizontalBox_53.setAlignmentY(Component.CENTER_ALIGNMENT);
 		verticalBox_20.add(horizontalBox_53);
 		
 		JLabel lblEmGain = new JLabel("EM Gain");
 		horizontalBox_53.add(lblEmGain);
 		
-		Component horizontalGlue_54 = Box.createHorizontalGlue();
-		horizontalBox_53.add(horizontalGlue_54);
+		Component horizontalStrut = Box.createHorizontalStrut(20);
+		horizontalStrut.setPreferredSize(new Dimension(71, 0));
+		horizontalStrut.setMaximumSize(new Dimension(500, 32767));
+		horizontalBox_53.add(horizontalStrut);
 		
 		emGainField = new JTextField();
+		emGainField.setHorizontalAlignment(SwingConstants.RIGHT);
 		emGainField.setMaximumSize(new Dimension(100, 2147483647));
 		emGainField.setColumns(5);
 		horizontalBox_53.add(emGainField);
+		
+		JLabel lblNewLabel_11 = new JLabel("Pre-amp.");
+		horizontalBox_53.add(lblNewLabel_11);
+		
+		Component horizontalGlue_57 = Box.createHorizontalGlue();
+		horizontalBox_53.add(horizontalGlue_57);
+		
+		preAmpField = new JTextField();
+		preAmpField.setHorizontalAlignment(SwingConstants.RIGHT);
+		preAmpField.setMaximumSize(new Dimension(100, 2147483647));
+		horizontalBox_53.add(preAmpField);
+		preAmpField.setColumns(5);
 		
 		Box horizontalBox_51 = Box.createHorizontalBox();
 		verticalBox_20.add(horizontalBox_51);
@@ -819,9 +834,22 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_51.add(horizontalGlue_52);
 		
 		quantumEfficiencyField = new JTextField();
+		quantumEfficiencyField.setHorizontalAlignment(SwingConstants.RIGHT);
 		quantumEfficiencyField.setMaximumSize(new Dimension(100, 2147483647));
 		quantumEfficiencyField.setColumns(5);
 		horizontalBox_51.add(quantumEfficiencyField);
+		
+		JLabel lblNewLabel_12 = new JLabel("electrons/DN");
+		horizontalBox_51.add(lblNewLabel_12);
+		
+		Component horizontalGlue_58 = Box.createHorizontalGlue();
+		horizontalBox_51.add(horizontalGlue_58);
+		
+		electronsPerDnField = new JTextField();
+		electronsPerDnField.setHorizontalAlignment(SwingConstants.RIGHT);
+		electronsPerDnField.setMaximumSize(new Dimension(100, 2147483647));
+		horizontalBox_51.add(electronsPerDnField);
+		electronsPerDnField.setColumns(5);
 		
 		Box verticalBox_21 = Box.createVerticalBox();
 		verticalBox_21.setBorder(new TitledBorder(null, "General Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -837,6 +865,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_54.add(horizontalGlue_55);
 		
 		windowsizePSFRenderingField = new JTextField();
+		windowsizePSFRenderingField.setHorizontalAlignment(SwingConstants.RIGHT);
 		windowsizePSFRenderingField.setMaximumSize(new Dimension(100, 2147483647));
 		windowsizePSFRenderingField.setColumns(5);
 		horizontalBox_54.add(windowsizePSFRenderingField);
@@ -851,6 +880,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_50.add(horizontalGlue_51);
 		
 		emptyPixelsOnRimField = new JTextField();
+		emptyPixelsOnRimField.setHorizontalAlignment(SwingConstants.RIGHT);
 		emptyPixelsOnRimField.setMaximumSize(new Dimension(100, 2147483647));
 		emptyPixelsOnRimField.setColumns(5);
 		horizontalBox_50.add(emptyPixelsOnRimField);
@@ -869,6 +899,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_44.add(horizontalGlue_45);
 		
 		naField = new JTextField();
+		naField.setHorizontalAlignment(SwingConstants.RIGHT);
 		horizontalBox_44.add(naField);
 		naField.setMaximumSize(new Dimension(100, 2147483647));
 		naField.setColumns(5);
@@ -876,14 +907,16 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_43 = Box.createHorizontalBox();
 		verticalBox_22.add(horizontalBox_43);
 		
-		JLabel lblMeanBlinkingDuration = new JLabel("Mean Blinking Duration");
+		JLabel lblMeanBlinkingDuration = new JLabel("Mean Blinking Duration in (s)");
 		horizontalBox_43.add(lblMeanBlinkingDuration);
 		
 		Component horizontalGlue_44 = Box.createHorizontalGlue();
 		horizontalBox_43.add(horizontalGlue_44);
 		
 		meanBlinkingDurationField = new JTextField();
+		meanBlinkingDurationField.setHorizontalAlignment(SwingConstants.RIGHT);
 		meanBlinkingDurationField.setMaximumSize(new Dimension(100, 2147483647));
+		
 		meanBlinkingDurationField.setColumns(5);
 		horizontalBox_43.add(meanBlinkingDurationField);
 		
@@ -897,6 +930,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_45.add(horizontalGlue_46);
 		
 		wavelengthField = new JTextField();
+		wavelengthField.setHorizontalAlignment(SwingConstants.RIGHT);
 		wavelengthField.setMaximumSize(new Dimension(100, 2147483647));
 		wavelengthField.setColumns(5);
 		horizontalBox_45.add(wavelengthField);
@@ -907,36 +941,43 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		JLabel lblFokus = new JLabel("Fokus");
 		horizontalBox_46.add(lblFokus);
 		
-		Component horizontalGlue_47 = Box.createHorizontalGlue();
-		horizontalBox_46.add(horizontalGlue_47);
+		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
+		horizontalStrut_1.setPreferredSize(new Dimension(80, 0));
+		horizontalStrut_1.setMaximumSize(new Dimension(5000, 32767));
+		horizontalBox_46.add(horizontalStrut_1);
 		
 		fokusField = new JTextField();
+		fokusField.setHorizontalAlignment(SwingConstants.RIGHT);
 		fokusField.setMaximumSize(new Dimension(100, 2147483647));
 		fokusField.setColumns(5);
 		horizontalBox_46.add(fokusField);
 		
-		Box horizontalBox_47 = Box.createHorizontalBox();
-		verticalBox_22.add(horizontalBox_47);
-		
 		JLabel lblDefokus = new JLabel("Defokus");
-		horizontalBox_47.add(lblDefokus);
+		horizontalBox_46.add(lblDefokus);
 		
 		Component horizontalGlue_48 = Box.createHorizontalGlue();
-		horizontalBox_47.add(horizontalGlue_48);
+		horizontalBox_46.add(horizontalGlue_48);
 		
 		defokusField = new JTextField();
+		defokusField.setHorizontalAlignment(SwingConstants.RIGHT);
+		horizontalBox_46.add(defokusField);
 		defokusField.setMaximumSize(new Dimension(100, 2147483647));
 		defokusField.setColumns(5);
-		horizontalBox_47.add(defokusField);
+		
+		Box horizontalBox_47 = Box.createHorizontalBox();
+		verticalBox_19.add(horizontalBox_47);
+		
+		JButton importCalibrationFileButton = new JButton("Import Calibration File");
+		horizontalBox_47.add(importCalibrationFileButton);
 		
 		Box horizontalBox_52 = Box.createHorizontalBox();
 		verticalBox_19.add(horizontalBox_52);
 		
-		JRadioButton radio2D = new JRadioButton("2D");
+		radio2D = new JRadioButton("2D");
 		buttonGroup.add(radio2D);
 		horizontalBox_52.add(radio2D);
 		
-		JRadioButton radio3D = new JRadioButton("3D");
+		radio3D = new JRadioButton("3D");
 		buttonGroup.add(radio3D);
 		horizontalBox_52.add(radio3D);
 		
@@ -944,6 +985,54 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_52.add(horizontalGlue_53);
 		
 		JButton exportTiffStackButton = new JButton("Export Tiffstack");
+		exportTiffStackButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int returnValue = fc.showSaveDialog(getContentPane());
+				if(returnValue == JFileChooser.APPROVE_OPTION) {
+					String path = fc.getSelectedFile().getAbsolutePath();
+					String name = fc.getSelectedFile().getName();
+					if (!path.endsWith(EXTENSIONIMAGEOUTPUT)) {
+					    path += EXTENSIONIMAGEOUTPUT;
+					}
+					if(name.endsWith(EXTENSIONIMAGEOUTPUT)){
+						name = name.substring(0, name.length()-4);
+					}
+					
+					calculate(true);
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+					while (allDataSets.get(currentRow).isCalculating){
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					ParameterSet set = allDataSets.get(currentRow).getParameterSet();
+					set.setKOn(Float.valueOf(meanBlinkingDurationField.getText()));
+					int modelNumber = 2;
+					if (set.isTwoDPSF()){
+						modelNumber  = 1;
+					}
+					getBorders();
+					
+					CreateStack.createTiffStack(allDataSets.get(currentRow).stormData, 1/set.getPixelToNmRatio(),
+							set.getEmptyPixelsOnRim(),set.getEmGain(), borders,
+							set.getElectronPerAdCount(), set.getFrameRate(), set.getKOn(), set.getWindowsizePSF(),
+							modelNumber, set.getNa(), set.getPsfwidth(), set.getFokus(), set.getDefokus(), set.getSigmaBg(),
+							set.getConstOffset(), set.getCalibrationFile(), path);
+					FileManager.writeLogFile(allDataSets.get(currentRow).getParameterSet(), path.substring(0, path.length()-4)+"TiffStack",borders,true);
+				}
+				
+			}
+		});
 		horizontalBox_52.add(exportTiffStackButton);
 		
 		progressBar = new JProgressBar();
@@ -1022,7 +1111,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_18 = Box.createHorizontalBox();
 		verticalBox_16.add(horizontalBox_18);
 		
-		JLabel lblShowStormPoints = new JLabel("Show STORM Points");
+		JLabel lblShowStormPoints = new JLabel("Show SMLM Points");
 		horizontalBox_18.add(lblShowStormPoints);
 		
 		Component horizontalGlue_7 = Box.createHorizontalGlue();
@@ -1047,7 +1136,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_20 = Box.createHorizontalBox();
 		verticalBox_16.add(horizontalBox_20);
 		
-		JLabel lblShowAntibodies = new JLabel("Show Antibodies");
+		JLabel lblShowAntibodies = new JLabel("Show Labels");
 		horizontalBox_20.add(lblShowAntibodies);
 		
 		Component horizontalGlue_12 = Box.createHorizontalGlue();
@@ -1928,7 +2017,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			averagePhotonOutputField.setText(Integer.toString(set.getMeanPhotonNumber()));                                                                                             
 			locPrecisionXYField.setText(set.getSxy().toString()); //sxy                                                                                            
 			locPrecisionZField.setText(set.getSz().toString()); //sz   
-			psfSizeField.setText(set.getPsfwidth().toString()); //psfwidth aus StormPointFinder         
+			wavelengthField.setText(set.getPsfwidth().toString()); //psfwidth aus StormPointFinder         
 			lineWidthField.setText(set.getLineWidth().toString());
 			if(allDataSets.get(row).dataType == DataType.LINES) {
 				System.out.println(set.getBspnm());
@@ -1946,6 +2035,25 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			
 			applyBleachBox.setSelected(set.getApplyBleaching());
 			coupleSigmaIntensityBox.setSelected(set.getCoupleSigmaIntensity());
+			pxToNmField.setText(String.format(Locale.ENGLISH,"%.2f",set.getPixelToNmRatio()));
+			framerateField.setText(Double.toString(set.getFrameRate()));
+			sigmaBgField.setText(Double.toString(set.getSigmaBg()));
+			constOffsetField.setText(Double.toString(set.getConstOffset()));
+			emGainField.setText(Double.toString(set.getEmGain()));
+			quantumEfficiencyField.setText(String.format(Locale.ENGLISH,"%.2f",set.getQuantumEfficiency()));
+			windowsizePSFRenderingField.setText(Integer.toString(set.getWindowsizePSF()));
+			emptyPixelsOnRimField.setText(Integer.toString(set.getEmptyPixelsOnRim()));
+			naField.setText(String.format(Locale.ENGLISH,"%.4f",set.getNa()));
+			fokusField.setText(Double.toString(set.getFokus()));
+			defokusField.setText(Double.toString(set.getDefokus()));
+			if (set.isTwoDPSF()){
+				radio2D.setSelected(true);
+			}
+			else{
+				radio3D.setSelected(true);
+			}
+			preAmpField.setText(Float.toString(set.getPreAmpGain()));
+			electronsPerDnField.setText(Float.toString(set.getElectronPerAdCount()));
 			updateButtonColors();
 		}
 	}
@@ -1977,39 +2085,20 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	 * runs the calculation for the current dataset
 	 * @throws Exception 
 	 */
-	private void calculate() {
+	private void calculate(){
+		calculate(false);
+	}
+	
+	private void calculate(boolean forTiffStack) {
 		setUpRandomNumberGenerator();
 		if (allDataSets.size()<1){
 			return;
 		}
-		System.out.println("bspsnm: " + allDataSets.get(currentRow).getParameterSet().getBspsnm());
-		allDataSets.get(currentRow).getParameterSet().setPabs((float) (new Float(labelingEfficiencyField.getText())/100.));
-		allDataSets.get(currentRow).getParameterSet().setAoa((float) ((new Float(meanAngleField.getText()))/180*Math.PI));
-		allDataSets.get(currentRow).getParameterSet().setSoa((float) ((new Float(angularDistributionField.getText()))/180*Math.PI));
-		allDataSets.get(currentRow).getParameterSet().setDeff((float) (new Float(detectionEfficiencyField.getText())/100)); 
-		allDataSets.get(currentRow).getParameterSet().setIlpmm3(new Float(backgroundLabelField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setLoa(new Float(labelLengthField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setFpab(new Float(fluorophoresPerLabelField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setKOn(new Float(kOnField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setKOff(new Float(kOffField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setBleachConst(new Float(bleachConstantField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setFrames((new Float(recordedFramesField.getText())).intValue());
-		allDataSets.get(currentRow).getParameterSet().setSxy(new Float(locPrecisionXYField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setSz(new Float(locPrecisionZField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setPsfwidth(new Float(psfSizeField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setMeanPhotonNumber((new Float(averagePhotonOutputField.getText())).intValue());
-		if(allDataSets.get(currentRow).dataType == DataType.LINES) {
-			allDataSets.get(currentRow).getParameterSet().setBspnm(new Float(epitopeDensityField.getText()));
-			allDataSets.get(currentRow).getParameterSet().setRof(new Float(radiusOfFilamentsField.getText()));
+		copyFields();
+		if (forTiffStack){
+			allDataSets.get(currentRow).getParameterSet().setSxy(0.0001f);
+			allDataSets.get(currentRow).getParameterSet().setSz(0.0001f); //set localization precision to 0 to get the fluorophore centers instead of STORM localizations
 		}
-		else {
-			allDataSets.get(currentRow).getParameterSet().setBspsnm(new Float(epitopeDensityField.getText()));
-		}
-		allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setLineWidth(new Float(lineWidthField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setApplyBleaching(applyBleachBox.isSelected());
-		allDataSets.get(currentRow).getParameterSet().setCoupleSigmaIntensity(coupleSigmaIntensityBox.isSelected());
-		
 		calc = new STORMCalculator(allDataSets.get(currentRow),this.random);
 		//calc = new STORMCalculator(allDataSets.get(currentRow));
 		calc.addPropertyChangeListener(this);
@@ -2379,6 +2468,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		  Runnable warn = new Runnable() {
 		        @Override
 		        public void run() {
+		        	meanBlinkingDurationField.setText(kOnField.getText());
 		        	try{ Float.parseFloat(tf.getText());}
 					catch (NumberFormatException e){
 					   JOptionPane.showMessageDialog(null,
@@ -2401,5 +2491,47 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		graphComponent.revalidate();
 	}
 
-
+	public void copyFields(){
+		allDataSets.get(currentRow).getParameterSet().setPabs((float) (new Float(labelingEfficiencyField.getText())/100.));
+		allDataSets.get(currentRow).getParameterSet().setAoa((float) ((new Float(meanAngleField.getText()))/180*Math.PI));
+		allDataSets.get(currentRow).getParameterSet().setSoa((float) ((new Float(angularDistributionField.getText()))/180*Math.PI));
+		allDataSets.get(currentRow).getParameterSet().setDeff((float) (new Float(detectionEfficiencyField.getText())/100)); 
+		allDataSets.get(currentRow).getParameterSet().setIlpmm3(new Float(backgroundLabelField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setLoa(new Float(labelLengthField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setFpab(new Float(fluorophoresPerLabelField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setKOn(new Float(kOnField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setKOff(new Float(kOffField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setBleachConst(new Float(bleachConstantField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setFrames((new Float(recordedFramesField.getText())).intValue());
+		allDataSets.get(currentRow).getParameterSet().setSxy(new Float(locPrecisionXYField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setSz(new Float(locPrecisionZField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setPsfwidth(new Float(wavelengthField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setMeanPhotonNumber((new Float(averagePhotonOutputField.getText())).intValue());
+		if(allDataSets.get(currentRow).dataType == DataType.LINES) {
+			allDataSets.get(currentRow).getParameterSet().setBspnm(new Float(epitopeDensityField.getText()));
+			allDataSets.get(currentRow).getParameterSet().setRof(new Float(radiusOfFilamentsField.getText()));
+		}
+		else {
+			allDataSets.get(currentRow).getParameterSet().setBspsnm(new Float(epitopeDensityField.getText()));
+		}
+		allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setLineWidth(new Float(lineWidthField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setApplyBleaching(applyBleachBox.isSelected());
+		allDataSets.get(currentRow).getParameterSet().setCoupleSigmaIntensity(coupleSigmaIntensityBox.isSelected());
+		
+		allDataSets.get(currentRow).getParameterSet().setPixelToNmRatio(new Float(pxToNmField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setFrameRate(new Float(framerateField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setSigmaBg(new Float(sigmaBgField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setConstOffset(new Float(constOffsetField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setEmGain(new Float(emGainField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setQuantumEfficiency(new Float(quantumEfficiencyField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setWindowsizePSF(new Integer(windowsizePSFRenderingField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setEmptyPixelsOnRim(new Integer(emptyPixelsOnRimField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setNa(new Float(naField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setFokus(new Float(fokusField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setDefokus(new Float(defokusField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setTwoDPSF(radio2D.isSelected());
+		allDataSets.get(currentRow).getParameterSet().setElectronPerAdCount(new Float(electronsPerDnField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setPreAmpGain(new Float(preAmpField.getText()));
+	}
 }

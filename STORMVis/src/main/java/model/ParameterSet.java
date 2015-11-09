@@ -37,7 +37,7 @@ public class ParameterSet implements Serializable {
     private Boolean antibodyVisibility;
     
     private Float ilpmm3;
-	private Float psfwidth;
+	
 	private Boolean applyBleaching;
 	private Boolean mergedPSF;
 	private Boolean coupleSigmaIntensity;
@@ -51,6 +51,28 @@ public class ParameterSet implements Serializable {
 	
 	private double pixelsize;
 	private double sigmaRendering;
+	
+	private Float pixelToNmRatio;
+	private Float frameRate;
+	private Float sigmaBg;
+	private Float constOffset;
+	private Float emGain;
+	private Float quantumEfficiency;
+	
+
+	private int windowsizePSF;
+	private int emptyPixelsOnRim;
+	private Float na;
+	private Float psfwidth;
+	private Float fokus;
+	private Float defokus;
+	private boolean twoDPSF;
+	private float[][] calibrationFile =  {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
+			{202.222f,134.992f,229.455f},{303.333f,140.171f,197.503f},{404.444f,149.645f,175.083f},
+			{505.556f,169.047f,164.861f},{606.667f,196.601f,161.998f},{707.778f,235.912f,169.338f},
+			{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
+	private float electronPerAdCount;
+	private float preAmpGain;
     
     
 	public ParameterSet(Float loa, Float aoa, Float soa, Float bspnm, Float pabs,
@@ -58,7 +80,10 @@ public class ParameterSet implements Serializable {
 			Float docpsnm, Float bd, Float bspsnm, int frames, Float kOn, Float kOff, Float deff, Float bleachConst, int meanPhotonNumber,
 			Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility, 
 			Float ilpmm3, Float psfwidth, Boolean applyBleaching, Boolean mergedPSF, Boolean coupleSigmaIntensity, 
-			Float pointSize, Float lineWidth, Color emColor, Color stormColor, Color antibodyColor) {
+			Float pointSize, Float lineWidth, Color emColor, Color stormColor, Color antibodyColor, Float pixelToNmRatio,
+			Float frameRate, Float sigmaBg, Float constOffset, Float emGain, Float quantumEfficiency, 
+			int windowsizePSF, int emptyPixelsOnRim, Float na, Float fokus, Float defokus, boolean twoDPSF,
+			float[][] calibrationFile, float electronPerAdCount, float preAmpGain) {
 		super();
 		this.loa = loa;
 		this.aoa = aoa;
@@ -99,7 +124,22 @@ public class ParameterSet implements Serializable {
 		
 		this.emColor = emColor;          
 		this.stormColor = stormColor;       
-		this.antibodyColor = antibodyColor;    
+		this.antibodyColor = antibodyColor;  
+		this.pixelToNmRatio = pixelToNmRatio;
+		this.frameRate = frameRate;
+		this.sigmaBg = sigmaBg;
+		this.constOffset = constOffset;
+		this.emGain = emGain;
+		this.quantumEfficiency =quantumEfficiency;
+		this.windowsizePSF = windowsizePSF;
+		this.emptyPixelsOnRim = emptyPixelsOnRim;
+		this.na = na;
+		this.fokus = fokus;
+		this.defokus = defokus;
+		this.twoDPSF = twoDPSF;
+		this.calibrationFile = calibrationFile;
+		this.electronPerAdCount=electronPerAdCount;
+		this.setPreAmpGain(preAmpGain);
 	} 
     
     public ParameterSet() {
@@ -120,8 +160,8 @@ public class ParameterSet implements Serializable {
         this.bd = new Float((float) (3*5*1e-7));
         this.bspsnm = new Float(10/600.f);
         this.frames = 10000;
-        this.kOn = 1.f;
-        this.kOff = 2000.f;
+        this.kOn = 0.03f;
+        this.kOff = kOn * 2000;
         this.deff = 1f;
         this.bleachConst = 2.231e-5f; //corresponds to 80 % after 10000 frames
         this.meanPhotonNumber = 4000;
@@ -132,7 +172,7 @@ public class ParameterSet implements Serializable {
 		this.antibodyVisibility = Boolean.TRUE;
 		
 		this.ilpmm3 = new Float(50.f);
-		this.psfwidth = new Float(400.f);
+		this.psfwidth = new Float(647.f);
 		
 		this.applyBleaching= Boolean.FALSE;
 		this.mergedPSF = Boolean.FALSE;
@@ -150,6 +190,21 @@ public class ParameterSet implements Serializable {
 		
 		this.pixelsize = 10;
 		this.sigmaRendering = 20;
+		
+		this.pixelToNmRatio = 133.f;
+		this.frameRate = 30.f;
+		this.sigmaBg = 12.f;
+		this.constOffset = 200.f;
+		this.emGain = 10.f;
+		this.quantumEfficiency = 0.9f;
+		this.windowsizePSF = 5;
+		this.emptyPixelsOnRim = 5;
+		this.na = 1.45f;
+		this.fokus = 400.f;
+		this.defokus = 800.f;
+		this.twoDPSF = true;
+		this.electronPerAdCount = 4.81f;
+		this.setPreAmpGain(3);
 		
     }
 
@@ -463,6 +518,124 @@ public class ParameterSet implements Serializable {
 	public void setSigmaRendering(double sigmaRendering) {
 		this.sigmaRendering = sigmaRendering;
 	}
-    
+
+	public Float getPixelToNmRatio() {
+		return pixelToNmRatio;
+	}
+
+	public void setPixelToNmRatio(Float pixelToNmRatio) {
+		this.pixelToNmRatio = pixelToNmRatio;
+	}
+
+	public Float getFrameRate() {
+		return frameRate;
+	}
+
+	public void setFrameRate(Float frameRate) {
+		this.frameRate = frameRate;
+	}
+
+	public Float getSigmaBg() {
+		return sigmaBg;
+	}
+
+	public void setSigmaBg(Float sigmaBg) {
+		this.sigmaBg = sigmaBg;
+	}
+
+	public Float getConstOffset() {
+		return constOffset;
+	}
+
+	public void setConstOffset(Float constOffset) {
+		this.constOffset = constOffset;
+	}
+
+	public Float getEmGain() {
+		return emGain;
+	}
+
+	public void setEmGain(Float emGain) {
+		this.emGain = emGain;
+	}
+	public Float getQuantumEfficiency() {
+		return quantumEfficiency;
+	}
+
+	public void setQuantumEfficiency(Float quantumEfficiency) {
+		this.quantumEfficiency = quantumEfficiency;
+	}
+
+	public int getWindowsizePSF() {
+		return windowsizePSF;
+	}
+
+	public void setWindowsizePSF(int windowsizePSF) {
+		this.windowsizePSF = windowsizePSF;
+	}
+
+	public int getEmptyPixelsOnRim() {
+		return emptyPixelsOnRim;
+	}
+
+	public void setEmptyPixelsOnRim(int emptyPixelsOnRim) {
+		this.emptyPixelsOnRim = emptyPixelsOnRim;
+	}
+
+	public Float getNa() {
+		return na;
+	}
+
+	public void setNa(Float na) {
+		this.na = na;
+	}
+
+	public float getFokus() {
+		return fokus;
+	}
+
+	public void setFokus(Float fokus) {
+		this.fokus = fokus;
+	}
+
+	public Float getDefokus() {
+		return defokus;
+	}
+
+	public void setDefokus(Float defokus) {
+		this.defokus = defokus;
+	}
+
+	public boolean isTwoDPSF() {
+		return twoDPSF;
+	}
+
+	public void setTwoDPSF(boolean twoDPSF) {
+		this.twoDPSF = twoDPSF;
+	}
+
+	public float[][] getCalibrationFile() {
+		return calibrationFile;
+	}
+
+	public void setCalibrationFile(float[][] calibrationFile) {
+		this.calibrationFile = calibrationFile;
+	}
+
+	public float getElectronPerAdCount() {
+		return electronPerAdCount;
+	}
+
+	public void setElectronPerAdCount(float electronPerAdCount) {
+		this.electronPerAdCount = electronPerAdCount;
+	}
+
+	public float getPreAmpGain() {
+		return preAmpGain;
+	}
+
+	public void setPreAmpGain(float preAmpGain) {
+		this.preAmpGain = preAmpGain;
+	}
     
 }

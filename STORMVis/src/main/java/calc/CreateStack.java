@@ -50,6 +50,13 @@ public class CreateStack {
 			c[j][3] = j*10;
 			c[j][4] = 2500;
 		}
+		ArrayList<Float> borders = new ArrayList<Float>();
+		borders.add((float) -99999);
+		borders.add((float) 99999);
+		borders.add((float) -99999);
+		borders.add((float) 99999);
+		borders.add((float) -99999);
+		borders.add((float) 99999);
 		System.out.println("finished simulation");
 		float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
 				{202.222f,134.992f,229.455f},{303.333f,140.171f,197.503f},{404.444f,149.645f,175.083f},
@@ -57,12 +64,12 @@ public class CreateStack {
 				{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
 
 		
-		createTiffStack(c, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
-				1/**intensityPerPhoton*/, (float) 30/**frameRate*/, 
+		createTiffStack(c, 1/133.f/**resolution*/ , 10/**emptyspace*/, 100 /**emGain*/,borders,
+				4.81f/**electron per A/Dcount */, (float) 30/**frameRate*/, 
 				0.001f/**decayTime*/, 10/**sizePSF*/, 1/**modelNR*/, 
 				(float) 1.45/**NA*/, 647/**waveLength*/, 00/**zFocus*/, 
-				400/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
-				,"C:\\Users\\herrmannsdoerfer\\Desktop\\teststack.tif");
+				400/**zDefocus*/, 76/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
+				,"C:\\Users\\herrmannsdoerfer\\Desktop\\teststackGain100.tif");
 
     } 
 	
@@ -86,8 +93,9 @@ public class CreateStack {
 	 * @param offset : constant offset
 	 * @param calib : calibration file for asymmetric gaussian
 	 */
-	public static void createTiffStack(float[][] input, float resolution, int emptySpace, 
-			float intensityPerPhoton, float frameRate, float decayTime, int sizePSF, int modelNumber, 
+	public static void createTiffStack(float[][] input, float resolution, int emptySpace, float emGain,
+			ArrayList<Float> borders,
+			float electronsPerADcount, float frameRate, float decayTime, int sizePSF, int modelNumber, 
 			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, 
 			float offset, float[][] calib, String fname) { 
 		
@@ -159,10 +167,10 @@ public class CreateStack {
 						for (int m = -sizePSF; m <= sizePSF; m++) {
 							float intensityPhotons = (float) (symmInt(pixelX + k, pixelY + m, currPSF[0],
 									currPSF[1], currPSF[4],
-									sig, resolution)/ intensityPerPhoton);
+									sig, resolution));
 							sum = sum + intensityPhotons;
 							float val4 = pro.getf(pixelX + k, pixelY + m);
-							val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
+							val4 += calc.RandomClass.poissonNumber(intensityPhotons)/ electronsPerADcount;
 							pro.setf(pixelX + k, pixelY + m, val4);
 							
 						}
@@ -181,10 +189,10 @@ public class CreateStack {
 						for (int m = -sizePSF; m <= sizePSF; m++) {
 							float intensityPhotons = (float) (aSymmInt(pixelX + k, pixelY + m, currPSF[0],
 									currPSF[1], currPSF[4],
-									spl.getSig(currPSF[2]), resolution)/ intensityPerPhoton);
+									spl.getSig(currPSF[2]), resolution));
 							sum = sum + intensityPhotons;
 							float val4 = pro.getf(pixelX + k, pixelY + m);
-							val4 += calc.RandomClass.poissonNumber(intensityPhotons)* intensityPerPhoton;
+							val4 += calc.RandomClass.poissonNumber(intensityPhotons)/ electronsPerADcount;
 							pro.setf(pixelX + k, pixelY + m, val4);
 						}
 					}
@@ -193,6 +201,7 @@ public class CreateStack {
 				}
 				
 			}
+			pro.multiply(emGain);
 			pro.add(offset); //add constant offset
 			pro.noise(sigmaNoise); //add Gaussian underground noise
 			
@@ -340,16 +349,7 @@ public class CreateStack {
 		return s;
 	}
 	
-	private static List<float[]> distributePSFFrank(List<float[]> lInp, float frRate, float duration){
-		for (int i = 0; i<lInp.size(); i++){
-			float offset = (float) (Math.random()/frRate);
-			
-		}
-		
-		
-		return lInp;
-	}
-	
+
 	/**
 	 * auxiliary method distributePSF distributes the PSF in an amount different frames
 	 * initialisation of new ArrayList necessary since adding elements to a non-specified list is not possible
@@ -358,12 +358,13 @@ public class CreateStack {
 	 * @param decTime : time interval, over which the PSF distributes its intensity
 	 * @return new list with PSF spread over different frames
 	 */
-	private static List<float[]> distributePSF(List<float[]> lInp, float frRate, float decTime) {
+	private static List<float[]> distributePSF(List<float[]> lInp, float frRate, float meanDecTime) {
 		float frameTime = 1/frRate;
 		
 		List<float[]> ret = new ArrayList<float[]>(); //new list
 		
 		for(int i = 0; i < lInp.size(); i++) {
+			float decTime = (float) (meanDecTime * -Math.log(1-Math.random()));
 			//simulation of a random beginning time
 			float beginningTime = (float) (Math.random()/frRate);
 			float t = beginningTime + decTime;

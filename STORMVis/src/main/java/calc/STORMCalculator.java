@@ -28,6 +28,7 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
     
     DataSet currentDataSet;
     public Random random;
+    public boolean isRunning = true;
 	
 	public STORMCalculator(DataSet set, Random random) {
 		this.currentDataSet = set;
@@ -48,18 +49,21 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 
 	@Override
 	public Void doInBackground() {
+		currentDataSet.isCalculating = true;
 		long start = System.nanoTime();
 		if(currentDataSet != null) {
 			doSimulation();
 		}
 		System.out.println("Whole converting and simulation time: "+ (System.nanoTime()-start)/1e9 +"s");
 		System.out.println("-------------------------------------");
+		currentDataSet.isCalculating = false;
 		return null;
 	}
 	@Override
 	public void done(){
 		System.out.println("Worker finished");
 		currentDataSet.getProgressBar().setString("Calculation Done!");
+		currentDataSet.isCalculating = false;
 	}
 	public void doSimulation() {
 		float[][] ep = null; 

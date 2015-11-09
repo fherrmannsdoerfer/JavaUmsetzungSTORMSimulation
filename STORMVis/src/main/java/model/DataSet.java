@@ -25,6 +25,8 @@ public class DataSet implements Serializable {
 	public float[][] antiBodyStartPoints;
 	public float[][] antiBodyEndPoints;
 	
+	public boolean isCalculating;
+	
 	public JProgressBar progressBar;
 	
 	public DataSet(ParameterSet parameterSet) {
