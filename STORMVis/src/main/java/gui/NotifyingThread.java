@@ -1,30 +1,45 @@
 package gui;
 
+import java.beans.PropertyChangeListener;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-public abstract class NotifyingThread implements Runnable {
-	  private final Set<ThreadCompleteListener> listeners
+import javax.swing.SwingWorker;
+
+public class NotifyingThread  extends SwingWorker<Void, Void>{
+	Plot3D plot;
+	public NotifyingThread(Plot3D plot){
+		this.plot = plot;
+	}
+	public void setPlot(Plot3D plot){
+		this.plot = plot;
+	}
+	  private  Set<ThreadCompleteListener> listeners
 	                   = new CopyOnWriteArraySet<ThreadCompleteListener>();
-	  public final void addListener(final ThreadCompleteListener listener) {
+	  public  void addListener(final ThreadCompleteListener listener) {
 	    listeners.add(listener);
 	  }
-	  public final void removeListener(final ThreadCompleteListener listener) {
+	  public  void removeListener(final ThreadCompleteListener listener) {
 	    listeners.remove(listener);
 	  }
-	  private final void notifyListeners() {
+	  private  void notifyListeners() {
 	    for (ThreadCompleteListener listener : listeners) {
 	      listener.notifyOfThreadComplete(this);
 	    }
 	  }
+	  
 	  @Override
-	  public final void run() {
+	  public Void doInBackground() {
 	    try {
-	      doRun();
+	      plot.createChart();
 	    } finally {
 	      notifyListeners();
 	      System.out.println("Notification sent");
 	    }
+		return null;
 	  }
-	  public abstract void doRun();
+	  @Override
+	  public void done(){
+		  System.out.println("Rendering finished");
+	  }
 	}

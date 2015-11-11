@@ -101,7 +101,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField backgroundLabelField; //ilpmm3 aus StormPointFinder
 	private JTextField labelLengthField; //loa
 	private JTextField fluorophoresPerLabelField; //fpab
-	private JTextField kOnField; //abpf
+	private JTextField dutyCycleField; //abpf
 	private JTextField averagePhotonOutputField; // 
 	private JTextField locPrecisionXYField; //sxy
 	private JTextField locPrecisionZField; //sz
@@ -109,6 +109,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField pointSizeField; //
 	
 	JLabel lblRadiusOfFilaments;
+	
+	NotifyingThread nt;
 	
 	private JCheckBox showEmBox;
 	private JCheckBox showStormPointsBox;
@@ -163,7 +165,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	 */
 	private static String EXTENSION = ".storm";
 	private static String EXTENSIONIMAGEOUTPUT = ".tif";
-	private JTextField kOffField;
 	private JTextField recordedFramesField;
 	private JTextField lineWidthField;
 	private JLabel numberOfVisibleLocalizationsLabel;
@@ -549,20 +550,20 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_10 = Box.createHorizontalBox();
 		verticalBox_12.add(horizontalBox_10);
 		
-		JLabel lblAverageBlinkingNumber = new JLabel("k_on Constant");
+		JLabel lblAverageBlinkingNumber = new JLabel("On-Off Duty Cycle");
 		horizontalBox_10.add(lblAverageBlinkingNumber);
 		
 		Component horizontalGlue_10 = Box.createHorizontalGlue();
 		horizontalBox_10.add(horizontalGlue_10);
 		
-		kOnField = new JTextField();
-		kOnField.getDocument().addDocumentListener(new MyDocumentListener(kOnField));
+		dutyCycleField = new JTextField();
+		dutyCycleField.getDocument().addDocumentListener(new MyDocumentListener(dutyCycleField));
 		
-		kOnField.setHorizontalAlignment(SwingConstants.RIGHT);
-		kOnField.setMinimumSize(new Dimension(6, 10));
-		kOnField.setMaximumSize(new Dimension(60, 22));
-		kOnField.setColumns(5);
-		horizontalBox_10.add(kOnField);
+		dutyCycleField.setHorizontalAlignment(SwingConstants.RIGHT);
+		dutyCycleField.setMinimumSize(new Dimension(6, 10));
+		dutyCycleField.setMaximumSize(new Dimension(60, 22));
+		dutyCycleField.setColumns(5);
+		horizontalBox_10.add(dutyCycleField);
 		
 		Component verticalGlue_9 = Box.createVerticalGlue();
 		verticalBox_12.add(verticalGlue_9);
@@ -570,25 +571,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_17 = Box.createHorizontalBox();
 		verticalBox_12.add(horizontalBox_17);
 		
-		JLabel lblKOnTime = new JLabel("k_off Constant");
-		horizontalBox_17.add(lblKOnTime);
-		
 		Component horizontalGlue_3 = Box.createHorizontalGlue();
 		horizontalBox_17.add(horizontalGlue_3);
-		
-		kOffField = new JTextField();
-		kOffField.getDocument().addDocumentListener(new MyDocumentListener(kOffField));
-		kOffField.setHorizontalAlignment(SwingConstants.RIGHT);
-		kOffField.setMinimumSize(new Dimension(6, 10));
-		kOffField.setMaximumSize(new Dimension(60, 22));
-		kOffField.setColumns(5);
-		horizontalBox_17.add(kOffField);
-		
-		Component verticalGlue_32 = Box.createVerticalGlue();
-		verticalBox_12.add(verticalGlue_32);
-		
-		Component verticalGlue_10 = Box.createVerticalGlue();
-		verticalBox_12.add(verticalGlue_10);
 		
 		Box horizontalBox_29 = Box.createHorizontalBox();
 		verticalBox_12.add(horizontalBox_29);
@@ -1025,7 +1009,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 						}
 					}
 					ParameterSet set = allDataSets.get(currentRow).getParameterSet();
-					set.setKOn(Float.valueOf(meanBlinkingDurationField.getText()));
+					set.setMeanBlinkingTime(Float.valueOf(meanBlinkingDurationField.getText()));
 					int modelNumber = 2;
 					if (set.isTwoDPSF()){
 						modelNumber  = 1;
@@ -1034,7 +1018,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					
 					CreateStack.createTiffStack(allDataSets.get(currentRow).stormData, 1/set.getPixelToNmRatio(),
 							set.getEmptyPixelsOnRim(),set.getEmGain(), borders, random,
-							set.getElectronPerAdCount(), set.getFrameRate(), set.getKOn(), set.getWindowsizePSF(),
+							set.getElectronPerAdCount(), set.getFrameRate(), set.getMeanBlinkingTime(), set.getWindowsizePSF(),
 							modelNumber,set.getQuantumEfficiency(), set.getNa(), set.getPsfwidth(), set.getFokus(), set.getDefokus(), set.getSigmaBg(),
 							set.getConstOffset(), set.getCalibrationFile(), path);
 					FileManager.writeLogFile(allDataSets.get(currentRow).getParameterSet(), path.substring(0, path.length()-4)+"TiffStack",borders,true);
@@ -1739,7 +1723,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		
 		plot = new Plot3D();
-		plot.addListener(this);
+		nt = new NotifyingThread(null);
+		nt.addListener(this);
 		plot.addPropertyChangeListener(this);
 		configureTableListener();
 		
@@ -2025,8 +2010,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			backgroundLabelField.setText(set.getIlpmm3().toString()); //ilpmm3 aus StormPointFinder                                                                   
 			labelLengthField.setText(set.getLoa().toString()); //loa                                                                                               
 			fluorophoresPerLabelField.setText(set.getFpab().toString()); //fpab                                                                                     
-			kOnField.setText(set.getKOn().toString()); //kOn
-			kOffField.setText(set.getKOff().toString()); //kOff
+			dutyCycleField.setText(set.getDutyCycle().toString()); //kOn
 			bleachConstantField.setText(set.getBleachConst().toString());
 			recordedFramesField.setText(String.valueOf(set.getFrames())); //frames
 			averagePhotonOutputField.setText(Integer.toString(set.getMeanPhotonNumber()));                                                                                             
@@ -2068,6 +2052,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				radio3D.setSelected(true);
 			}
 			electronsPerDnField.setText(Float.toString(set.getElectronPerAdCount()));
+			meanBlinkingDurationField.setText(Float.toString(set.getMeanBlinkingTime()));
 			updateButtonColors();
 		}
 	}
@@ -2227,19 +2212,30 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			plot.dataSets.clear();
 			plot.addAllDataSets(sets);
 			plotPanel.removeAll();
-			Thread t = new Thread(){
-			@Override
-				public void run(){
-					plot.run();
-				}
-			};
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			t.start();
+			nt.setPlot(plot);
+			nt.doInBackground();
+//			plot.dataSets.clear();
+//			plot.addAllDataSets(sets);
+//			plotPanel.removeAll();
+//			plot.createChart();
+//			graphComponent = (Component) plot.createChart().getCanvas();
+//			plotPanel.add(graphComponent);
+//			plotPanel.revalidate();
+//			plotPanel.repaint();
+//			graphComponent.revalidate();
+//			Thread t = new Thread(){
+//			@Override
+//				public void run(){
+//					plot.run();
+//				}
+//			};
+//			try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			t.start();
 		}
 		else if(sets.size() == 0) {
 			System.out.println("empty!!!");
@@ -2275,16 +2271,33 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		updateMinMax();
 		plot.borders = getBorders();
 		if(sets.size() > 0) {
+//			plot.dataSets.clear();
+//			plot.addAllDataSets(sets);
+//			plotPanel.removeAll();
+//			plot.createChart();
+//			graphComponent = (Component) plot.createChart().getCanvas();
+//			plotPanel.add(graphComponent);
+//			plotPanel.revalidate();
+//			plotPanel.repaint();
+//			graphComponent.revalidate();
 			plot.dataSets.clear();
 			plot.addAllDataSets(sets);
 			plotPanel.removeAll();
-			Thread t = new Thread(){
-				@Override
-				public void run(){
-					plot.run();
-				}
-			};
-			t.start();
+			nt.setPlot(plot);
+			nt.doInBackground();
+//			Thread t = new Thread(){
+//				@Override
+//				public void run(){
+//					plot.run();
+//				}
+//			};
+//			try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			t.start();
 		
 //			try{
 //				plot.run();
@@ -2482,7 +2495,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		  Runnable warn = new Runnable() {
 		        @Override
 		        public void run() {
-		        	meanBlinkingDurationField.setText(kOnField.getText());
 		        	try{ Float.parseFloat(tf.getText());}
 					catch (NumberFormatException e){
 					   JOptionPane.showMessageDialog(null,
@@ -2513,8 +2525,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setIlpmm3(new Float(backgroundLabelField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setLoa(new Float(labelLengthField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setFpab(new Float(fluorophoresPerLabelField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setKOn(new Float(kOnField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setKOff(new Float(kOffField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setDutyCycle(new Float(dutyCycleField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setBleachConst(new Float(bleachConstantField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setFrames((new Float(recordedFramesField.getText())).intValue());
 		allDataSets.get(currentRow).getParameterSet().setSxy(new Float(locPrecisionXYField.getText()));
@@ -2546,5 +2557,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setDefokus(new Float(defokusField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setTwoDPSF(radio2D.isSelected());
 		allDataSets.get(currentRow).getParameterSet().setElectronPerAdCount(new Float(electronsPerDnField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setMeanBlinkingTime(new Float(meanBlinkingDurationField.getText()));
 	}
 }

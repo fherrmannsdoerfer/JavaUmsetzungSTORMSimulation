@@ -25,7 +25,7 @@ public class ParameterSet implements Serializable {
     private Float bd;
     private Float bspsnm;
     private int frames;
-    private Float kOn;
+    private Float dutyCycle;
     private Float kOff;
     private Float deff;
     private Float bleachConst;
@@ -72,17 +72,20 @@ public class ParameterSet implements Serializable {
 			{505.556f,169.047f,164.861f},{606.667f,196.601f,161.998f},{707.778f,235.912f,169.338f},
 			{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
 	private float electronPerAdCount;
+	private float meanBlinkingTime;
 	    
     
+	
+
 	public ParameterSet(Float loa, Float aoa, Float soa, Float bspnm, Float pabs,
 			Float abpf, Float rof, Float fpab, Float sxy, Float sz, Float doc, Float nocpsmm,
-			Float docpsnm, Float bd, Float bspsnm, int frames, Float kOn, Float kOff, Float deff, Float bleachConst, int meanPhotonNumber,
+			Float docpsnm, Float bd, Float bspsnm, int frames, Float dutyCycle, Float deff, Float bleachConst, int meanPhotonNumber,
 			Boolean generalVisibility, Boolean emVisibility, Boolean stormVisibility, Boolean antibodyVisibility, 
 			Float ilpmm3, Float psfwidth, Boolean applyBleaching, Boolean mergedPSF, Boolean coupleSigmaIntensity, 
 			Float pointSize, Float lineWidth, Color emColor, Color stormColor, Color antibodyColor, Float pixelToNmRatio,
 			Float frameRate, Float sigmaBg, Float constOffset, Float emGain, Float quantumEfficiency, 
 			int windowsizePSF, int emptyPixelsOnRim, Float na, Float fokus, Float defokus, boolean twoDPSF,
-			float[][] calibrationFile, float electronPerAdCount) {
+			float[][] calibrationFile, float electronPerAdCount,float meanBlinkingTime) {
 		super();
 		this.loa = loa;
 		this.aoa = aoa;
@@ -100,8 +103,7 @@ public class ParameterSet implements Serializable {
 		this.bd = bd;
 		this.bspsnm = bspsnm;
 		this.frames = frames;
-		this.kOff = kOff;
-		this.kOn = kOn;
+		this.dutyCycle = dutyCycle;
 		this.deff = deff;
 		this.bleachConst = bleachConst;
 		this.meanPhotonNumber = meanPhotonNumber;
@@ -138,6 +140,7 @@ public class ParameterSet implements Serializable {
 		this.twoDPSF = twoDPSF;
 		this.calibrationFile = calibrationFile;
 		this.electronPerAdCount=electronPerAdCount;
+		this.meanBlinkingTime =meanBlinkingTime;
 	} 
     
     public ParameterSet() {
@@ -158,8 +161,8 @@ public class ParameterSet implements Serializable {
         this.bd = new Float((float) (3*5*1e-7));
         this.bspsnm = new Float(10/600.f);
         this.frames = 10000;
-        this.kOn = 0.02f;
-        this.kOff = kOn * 2000;
+        this.dutyCycle = 0.0005f;
+        this.kOff = dutyCycle * 2000;
         this.deff = 1f;
         this.bleachConst = 2.231e-5f; //corresponds to 80 % after 10000 frames
         this.meanPhotonNumber = 4000;
@@ -195,13 +198,14 @@ public class ParameterSet implements Serializable {
 		this.constOffset = 200.f;
 		this.emGain = 10.f;
 		this.quantumEfficiency = 0.9f;
-		this.windowsizePSF = 5;
+		this.windowsizePSF = 10;
 		this.emptyPixelsOnRim = 5;
 		this.na = 1.45f;
 		this.fokus = 400.f;
 		this.defokus = 800.f;
 		this.twoDPSF = true;
 		this.electronPerAdCount = 4.81f;
+		this.meanBlinkingTime = 0.05f;
 		
     }
 
@@ -277,20 +281,12 @@ public class ParameterSet implements Serializable {
 		this.frames = frames;
 	}
 	
-	public Float getKOn(){
-		return kOn;
+	public Float getDutyCycle(){
+		return dutyCycle;
 	}
 	
-	public void setKOn(Float kOn){
-		this.kOn = kOn;
-	}
-	
-	public Float getKOff(){
-		return kOff;
-	}
-	
-	public void setKOff(Float kOff){
-		this.kOff = kOff;
+	public void setDutyCycle(Float dutyCycle){
+		this.dutyCycle = dutyCycle;
 	}
 	
 	public Float getDeff(){
@@ -627,6 +623,12 @@ public class ParameterSet implements Serializable {
 		this.electronPerAdCount = electronPerAdCount;
 	}
 
-	
+	public float getMeanBlinkingTime() {
+		return meanBlinkingTime;
+	}
+
+	public void setMeanBlinkingTime(float meanBlinkingTime) {
+		this.meanBlinkingTime = meanBlinkingTime;
+	}
     
 }

@@ -258,8 +258,7 @@ public class FileManager {
 			}
 			writer.append("Bindingsites per square nanometer [nm^-2]: "+ps.getBspsnm()+"\n");
 			writer.append("Frames: "+ps.getFrames()+"\n");
-			writer.append("K_On time [AU]: "+ ps.getKOn()+"\n");
-			writer.append("K_Off time [AU]: "+ ps.getKOff()+"\n");
+			writer.append("Duty cycle: "+ ps.getDutyCycle()+"\n");
 			writer.append("Bleaching constant [1/10000 frames]: "+ ps.getBleachConst()+"\n");
 			writer.append("Median photon number: "+ps.getMeanPhotonNumber()+"\n");
 			writer.append("Detection efficiency [%]: "+ ps.getDeff()*100+"\n");
@@ -320,6 +319,7 @@ public class FileManager {
 				writer.append("Parameters for Tiffstack creation\n");
 				writer.append("Pixel to nanometer ratio: "+ps.getPixelToNmRatio()+"\n");
 				writer.append("Frame rate: "+ps.getFrameRate()+"\n");
+				writer.append("Mean blinking duration "+ps.getMeanBlinkingTime()+"\n");
 				writer.append("Sigma of Readout noise: "+ps.getSigmaBg()+"\n");
 				writer.append("Value of constant background offset: "+ps.getConstOffset()+"\n");
 				writer.append("Em Gain: "+ps.getEmGain()+"\n");

@@ -26,7 +26,7 @@ import org.jzy3d.plot3d.rendering.canvas.Quality;
 
 import calc.Calc;
 
-public class Plot3D extends NotifyingThread{
+public class Plot3D{
 
 	public boolean chartCreationRunning = false;
 	public List<DataSet> dataSets = new ArrayList<DataSet>();
@@ -237,10 +237,6 @@ public class Plot3D extends NotifyingThread{
 		return currentChart;
 	}
 
-	@Override
-	public void doRun() {
-		createChart();
-	}
 
 	
 }

@@ -74,7 +74,7 @@ public class StormPointFinder {
 		float[][] stormPoints = null;
 		//individual number of blinking events per fluorophore
 		float[] nbrBlinkingEvents = new float[listEndPoints.length];
-		float abpf = ps.getFrames() * ps.getKOn() / ps.getKOff()* ps.getDeff(); //average blinking per fluorophore
+		float abpf = ps.getFrames() * ps.getDutyCycle()* ps.getDeff(); //average blinking per fluorophore
 		for (int i = 0; i < listEndPoints.length; i++) {
 			nbrBlinkingEvents[i] = (float) (calc.random.nextFloat() * Math.sqrt(abpf) + abpf);
 			if(nbrBlinkingEvents[i] < 0) {
@@ -176,8 +176,6 @@ public class StormPointFinder {
 				
 		List<float[]> allStormPoints = new ArrayList<float[]>();
 		float[][] stormPoints = null;
-		float kOn = ps.getKOn();
-		float kOff = ps.getKOff();
 		float x;
 		float y;
 		float z;
@@ -188,7 +186,7 @@ public class StormPointFinder {
 				if (frame>frames){
 					break;
 				}
-				if (blinkingTest <= (kOn/kOff)){
+				if (blinkingTest <= ps.getDutyCycle()){
 					float intensity = intensities.get((int) (calc.random.nextDouble()*intensities.size()-1));
 					if (ps.getCoupleSigmaIntensity()){
 						x = (float) (listEndPoints[i][0] + calc.random.nextGaussian()*(sxy/Math.sqrt(intensity/meanPhotonNumber)));
