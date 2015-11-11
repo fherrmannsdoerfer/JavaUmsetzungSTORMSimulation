@@ -58,6 +58,7 @@ import javax.swing.event.TableModelListener;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 
+import parsing.CalibrationFileParser;
 import model.DataSet;
 import model.LineDataSet;
 import model.ParameterSet;
@@ -220,8 +221,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField emGainField;
 	private JTextField windowsizePSFRenderingField;
-	private JTextField preAmpField;
 	private JTextField electronsPerDnField;
+	
+	boolean allowShift = false;
 	
 	JRadioButton radio2D;
 	JRadioButton radio3D;
@@ -767,7 +769,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_48 = Box.createHorizontalBox();
 		verticalBox_20.add(horizontalBox_48);
 		
-		JLabel lblSigmaBackground = new JLabel("Sigma Background");
+		JLabel lblSigmaBackground = new JLabel("Sigma Readout Noise (in DN)");
 		horizontalBox_48.add(lblSigmaBackground);
 		
 		Component horizontalGlue_49 = Box.createHorizontalGlue();
@@ -801,28 +803,14 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		JLabel lblEmGain = new JLabel("EM Gain");
 		horizontalBox_53.add(lblEmGain);
 		
-		Component horizontalStrut = Box.createHorizontalStrut(20);
-		horizontalStrut.setPreferredSize(new Dimension(71, 0));
-		horizontalStrut.setMaximumSize(new Dimension(500, 32767));
-		horizontalBox_53.add(horizontalStrut);
+		Component horizontalGlue_16 = Box.createHorizontalGlue();
+		horizontalBox_53.add(horizontalGlue_16);
 		
 		emGainField = new JTextField();
 		emGainField.setHorizontalAlignment(SwingConstants.RIGHT);
 		emGainField.setMaximumSize(new Dimension(100, 2147483647));
 		emGainField.setColumns(5);
 		horizontalBox_53.add(emGainField);
-		
-		JLabel lblNewLabel_11 = new JLabel("Pre-amp.");
-		horizontalBox_53.add(lblNewLabel_11);
-		
-		Component horizontalGlue_57 = Box.createHorizontalGlue();
-		horizontalBox_53.add(horizontalGlue_57);
-		
-		preAmpField = new JTextField();
-		preAmpField.setHorizontalAlignment(SwingConstants.RIGHT);
-		preAmpField.setMaximumSize(new Dimension(100, 2147483647));
-		horizontalBox_53.add(preAmpField);
-		preAmpField.setColumns(5);
 		
 		Box horizontalBox_51 = Box.createHorizontalBox();
 		verticalBox_20.add(horizontalBox_51);
@@ -968,6 +956,27 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		verticalBox_19.add(horizontalBox_47);
 		
 		JButton importCalibrationFileButton = new JButton("Import Calibration File");
+		importCalibrationFileButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (allDataSets.size()>0){
+					JFileChooser fc = new JFileChooser();
+					int returnValue = fc.showOpenDialog(getContentPane());
+					if(returnValue == JFileChooser.APPROVE_OPTION) {
+						String path = fc.getSelectedFile().getAbsolutePath();
+						String name = fc.getSelectedFile().getName();
+						CalibrationFileParser cfp = new CalibrationFileParser(path);
+						try {
+							allDataSets.get(currentRow).getParameterSet().setCalibrationFile(cfp.parse());
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					
+				}
+			}
+		});
 		horizontalBox_47.add(importCalibrationFileButton);
 		
 		Box horizontalBox_52 = Box.createHorizontalBox();
@@ -1024,9 +1033,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					getBorders();
 					
 					CreateStack.createTiffStack(allDataSets.get(currentRow).stormData, 1/set.getPixelToNmRatio(),
-							set.getEmptyPixelsOnRim(),set.getEmGain(), borders,
+							set.getEmptyPixelsOnRim(),set.getEmGain(), borders, random,
 							set.getElectronPerAdCount(), set.getFrameRate(), set.getKOn(), set.getWindowsizePSF(),
-							modelNumber, set.getNa(), set.getPsfwidth(), set.getFokus(), set.getDefokus(), set.getSigmaBg(),
+							modelNumber,set.getQuantumEfficiency(), set.getNa(), set.getPsfwidth(), set.getFokus(), set.getDefokus(), set.getSigmaBg(),
 							set.getConstOffset(), set.getCalibrationFile(), path);
 					FileManager.writeLogFile(allDataSets.get(currentRow).getParameterSet(), path.substring(0, path.length()-4)+"TiffStack",borders,true);
 				}
@@ -1928,25 +1937,26 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		if (shiftX == -1 && shiftY == -1 && shiftZ == -1){
 			dataSetTable.setRowSelectionInterval(0, 0);
 			loadParameterSetOfRow(0);
-			ArrayList<Float> shifts = new ArrayList<Float>();
-			if (allDataSets.get(0).dataType == DataType.LINES){
-				LineDataSet lines = (LineDataSet) allDataSets.get(0);
-				shifts = Calc.findShiftLines(lines.data);
-				shiftX = -shifts.get(0);
-				shiftY = -shifts.get(1);
-				shiftZ = -shifts.get(2);
+			if (allowShift){
+				ArrayList<Float> shifts = new ArrayList<Float>();
+				if (allDataSets.get(0).dataType == DataType.LINES){
+					LineDataSet lines = (LineDataSet) allDataSets.get(0);
+					shifts = Calc.findShiftLines(lines.data);
+					shiftX = -shifts.get(0);
+					shiftY = -shifts.get(1);
+					shiftZ = -shifts.get(2);
+				}
+				else if (allDataSets.get(0).dataType == DataType.TRIANGLES){
+					TriangleDataSet triangles = (TriangleDataSet) allDataSets.get(0);
+					shifts = Calc.findShiftTriangles(triangles.primitives);
+					shiftX = -shifts.get(0);
+					shiftY = -shifts.get(1);
+					shiftZ = -shifts.get(2);
+				}
+				else if (allDataSets.get(0).dataType == DataType.POINTS){
+					
+				}
 			}
-			else if (allDataSets.get(0).dataType == DataType.TRIANGLES){
-				TriangleDataSet triangles = (TriangleDataSet) allDataSets.get(0);
-				shifts = Calc.findShiftTriangles(triangles.primitives);
-				shiftX = -shifts.get(0);
-				shiftY = -shifts.get(1);
-				shiftZ = -shifts.get(2);
-			}
-			else if (allDataSets.get(0).dataType == DataType.POINTS){
-				
-			}
-			
 		}
 		if (allDataSets.get(allDataSets.size()-1).dataType == DataType.LINES){
 			LineDataSet lines = (LineDataSet) allDataSets.get(allDataSets.size()-1);
@@ -2052,7 +2062,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			else{
 				radio3D.setSelected(true);
 			}
-			preAmpField.setText(Float.toString(set.getPreAmpGain()));
 			electronsPerDnField.setText(Float.toString(set.getElectronPerAdCount()));
 			updateButtonColors();
 		}
@@ -2380,12 +2389,12 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				xmax = maxDims.get(1);
 				ymax = maxDims.get(3);
 				zmax = maxDims.get(5);
-				xminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(0)));
-				xmaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(1)));
-				yminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(2)));
-				ymaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(3)));
-				zminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(4)));
-				zmaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(5)));
+				xminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(0)-1));
+				xmaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(1)+1));
+				yminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(2)-1));
+				ymaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(3)+1));
+				zminField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(4)-1));
+				zmaxField.setText(String.format(Locale.ENGLISH,"%.1f", maxDims.get(5)+1));
 				borders.clear();
 				borders.add(xmin);
 				borders.add(xmax);
@@ -2532,6 +2541,5 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setDefokus(new Float(defokusField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setTwoDPSF(radio2D.isSelected());
 		allDataSets.get(currentRow).getParameterSet().setElectronPerAdCount(new Float(electronsPerDnField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setPreAmpGain(new Float(preAmpField.getText()));
 	}
 }

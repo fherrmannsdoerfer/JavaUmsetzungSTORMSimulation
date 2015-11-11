@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Random;
 
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -21,7 +22,7 @@ import ij.process.*;
 
 
 public class CreateStack {
-	
+
 	/**
 	 * constuctor
 	 */
@@ -33,6 +34,7 @@ public class CreateStack {
 	 * main method to test
 	 */
 	public static void main(String[] args){ 
+		Random rand = new Random(2);
 		int nbrPoints = 1000;
 		float[][] c = new float[nbrPoints][5];
 		//random creation of a list of tables as input
@@ -44,11 +46,11 @@ public class CreateStack {
 //			c[j][4] = (float) (Math.random()*6000+1000);
 //		}
 		for (int j = 0; j < nbrPoints; j++){
-			c[j][0] = 500.f;
-			c[j][1] = 500.f;
-			c[j][2] = 0.f;
+			c[j][0] = 530.f;
+			c[j][1] = 570.f;
+			c[j][2] = (float) (Math.random()*400+100.f);//000.f;
 			c[j][3] = j*10;
-			c[j][4] = 2500;
+			c[j][4] = calc.RandomClass.poissonNumber(2800,rand);
 		}
 		ArrayList<Float> borders = new ArrayList<Float>();
 		borders.add((float) -99999);
@@ -64,12 +66,12 @@ public class CreateStack {
 				{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
 
 		
-		createTiffStack(c, 1/133.f/**resolution*/ , 10/**emptyspace*/, 100 /**emGain*/,borders,
+		createTiffStack(c, 1/133.f/**resolution*/ , 10/**emptyspace*/, 10 /**emGain*/,borders, rand,
 				4.81f/**electron per A/Dcount */, (float) 30/**frameRate*/, 
-				0.001f/**decayTime*/, 10/**sizePSF*/, 1/**modelNR*/, 
-				(float) 1.45/**NA*/, 647/**waveLength*/, 00/**zFocus*/, 
-				400/**zDefocus*/, 76/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
-				,"C:\\Users\\herrmannsdoerfer\\Desktop\\teststackGain100.tif");
+				0.0003f/**decayTime*/, 10/**sizePSF*/, 2/**modelNR*/, 1.f /**quantum efficiency*/, 
+				(float) 1.45/**NA*/, 647/**waveLength*/, 400/**zFocus*/, 
+				800/**zDefocus*/, 35.7f/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
+				,"C:\\Users\\herrmannsdoerfer\\Desktop\\teststackDGain10photons2800z300_500.tif");
 
     } 
 	
@@ -94,8 +96,8 @@ public class CreateStack {
 	 * @param calib : calibration file for asymmetric gaussian
 	 */
 	public static void createTiffStack(float[][] input, float resolution, int emptySpace, float emGain,
-			ArrayList<Float> borders,
-			float electronsPerADcount, float frameRate, float decayTime, int sizePSF, int modelNumber, 
+			ArrayList<Float> borders, Random rand,
+			float electronsPerADcount, float frameRate, float decayTime, int sizePSF, int modelNumber, float qe,
 			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, 
 			float offset, float[][] calib, String fname) { 
 		
@@ -157,8 +159,7 @@ public class CreateStack {
 				int pixelY = Math.round(currPSF[1]* resolution);
 	
 				double sum = 0;
-				
-				
+
 				float sig = calcSig(currPSF[2], numericalAperture, waveLength, zFocus, zDefocus);
 				
 				switch(modelNumber) { // symmetric Gaussian
@@ -167,10 +168,10 @@ public class CreateStack {
 						for (int m = -sizePSF; m <= sizePSF; m++) {
 							float intensityPhotons = (float) (symmInt(pixelX + k, pixelY + m, currPSF[0],
 									currPSF[1], currPSF[4],
-									sig, resolution));
+									sig, resolution)) * qe;
 							sum = sum + intensityPhotons;
 							float val4 = pro.getf(pixelX + k, pixelY + m);
-							val4 += calc.RandomClass.poissonNumber(intensityPhotons)/ electronsPerADcount;
+							val4 += calc.RandomClass.poissonNumber(calc.RandomClass.poissonNumber(intensityPhotons,rand),rand);//two poisson distributions, first for shot noise second for em gain factor of sqrt(2)
 							pro.setf(pixelX + k, pixelY + m, val4);
 							
 						}
@@ -189,10 +190,10 @@ public class CreateStack {
 						for (int m = -sizePSF; m <= sizePSF; m++) {
 							float intensityPhotons = (float) (aSymmInt(pixelX + k, pixelY + m, currPSF[0],
 									currPSF[1], currPSF[4],
-									spl.getSig(currPSF[2]), resolution));
+									spl.getSig(currPSF[2]), resolution)) *qe;
 							sum = sum + intensityPhotons;
 							float val4 = pro.getf(pixelX + k, pixelY + m);
-							val4 += calc.RandomClass.poissonNumber(intensityPhotons)/ electronsPerADcount;
+							val4 += calc.RandomClass.poissonNumber(calc.RandomClass.poissonNumber(intensityPhotons,rand),rand);//two poisson distributions, first for shot noise second for em gain factor of sqrt(2)
 							pro.setf(pixelX + k, pixelY + m, val4);
 						}
 					}
@@ -202,9 +203,9 @@ public class CreateStack {
 				
 			}
 			pro.multiply(emGain);
+			pro.multiply(1/electronsPerADcount);
 			pro.add(offset); //add constant offset
-			pro.noise(sigmaNoise); //add Gaussian underground noise
-			
+			pro.noise(sigmaNoise); //add Gaussian Readout noise (unit digital numbers NOT electrons)
 			stackLeft.addSlice(pro); //adds a processor for each frame to the stack
 		}
 		System.out.println("finished procession");
@@ -326,8 +327,10 @@ public class CreateStack {
 		float dy = (float) ((y + 0.5)/res) - maxY;
 		
 		double exponent = (double) Math.pow(dx, 2)/Math.pow(sig[0], 2)/2 + Math.pow(dy, 2)/Math.pow(sig[1], 2)/2;
-		ret = (float) Math.exp(-exponent)*maxInt*20000;
+		ret = (float) Math.exp(-exponent)*maxInt;
 		ret /= (2* Math.PI);
+		sig[0] *= res;
+		sig[1] *= res;
 		ret /= sig[0];
 		ret /= sig[1];
 		return ret;
@@ -345,7 +348,7 @@ public class CreateStack {
 	 */
 	private static float calcSig(float z, float numAperture, float waveLgth, float zFoc, float zDefoc) {
 		float s = (float) Math.pow(2, Math.abs((z - zFoc)/(zFoc - zDefoc)));
-		s = s*waveLgth/2.f /numAperture;
+		s = s*waveLgth/2.f /numAperture/2.35f;
 		return s;
 	}
 	

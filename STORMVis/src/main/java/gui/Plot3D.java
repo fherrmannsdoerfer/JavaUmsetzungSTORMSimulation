@@ -105,7 +105,7 @@ public class Plot3D extends NotifyingThread{
 			        for(ArrayList<Coord3d> obj : lines.data) {
 			        	int i = 0;
 			        	for(Coord3d coord : obj){
-			        		if (coord.x<borders.get(0)||coord.x>borders.get(1)||coord.y<borders.get(2)||coord.y>borders.get(3)||coord.z<borders.get(4)||coord.z>borders.get(5)){
+			        		if (coord.x<borders.get(0)||coord.x>=borders.get(1)||coord.y<borders.get(2)||coord.y>=borders.get(3)||coord.z<borders.get(4)||coord.z>=borders.get(5)){
 			        			
 			        		}
 			        		else{

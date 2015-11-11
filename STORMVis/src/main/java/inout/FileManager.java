@@ -320,10 +320,11 @@ public class FileManager {
 				writer.append("Parameters for Tiffstack creation\n");
 				writer.append("Pixel to nanometer ratio: "+ps.getPixelToNmRatio()+"\n");
 				writer.append("Frame rate: "+ps.getFrameRate()+"\n");
-				writer.append("Sigma of Background: "+ps.getSigmaBg()+"\n");
+				writer.append("Sigma of Readout noise: "+ps.getSigmaBg()+"\n");
 				writer.append("Value of constant background offset: "+ps.getConstOffset()+"\n");
 				writer.append("Em Gain: "+ps.getEmGain()+"\n");
 				writer.append("Quantum efficiency: "+ps.getQuantumEfficiency()+"\n");
+				writer.append("Conversion factor digitizer in electrons per A/D count : "+ps.getElectronPerAdCount()+"\n");
 				writer.append("Window size for PSF rendering: "+ps.getWindowsizePSF()+"\n");
 				writer.append("Size of outer rim without PSFs in Tiffstack: "+ps.getEmptyPixelsOnRim()+"\n");
 				writer.append("Numeric aperture: "+ps.getNa()+"\n");

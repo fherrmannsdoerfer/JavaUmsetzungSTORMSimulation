@@ -6,6 +6,8 @@
 
 package calc;
 
+import java.util.Random;
+
 public class RandomClass {
 
 	/**
@@ -21,7 +23,7 @@ public class RandomClass {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println(poissonNumber(20));
+		
 	}
 
 	/**
@@ -29,17 +31,20 @@ public class RandomClass {
 	 * @param lambda mean value of the distribution
 	 * @return
 	 */
-	public static int poissonNumber(double lambda) {
-		  double L = Math.exp(-lambda);
-		  double p = 1.0;
-		  int k = 0;
-
-		  do {
-		    k++;
-		    p *= Math.random();
-		  } while (p > L);
-
-		  return k - 1;
+	public static int poissonNumber(double lambda,Random rnd) {
+		if (lambda>50){
+			return (int) Math.round(rnd.nextGaussian()*Math.sqrt(lambda)+lambda);
+		}
+	  double L = Math.exp(-lambda);
+	  double p = 1.0;
+	  int k = 0;
+	
+	  do {
+	    k++;
+	    p *= Math.random();
+	  } while (p > L);
+	
+	  return k - 1;
 		}
 	
 	/**
