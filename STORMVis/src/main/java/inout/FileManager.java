@@ -129,10 +129,10 @@ public class FileManager {
 		writeLogFile(dataset.getParameterSet(), basename,borders);
 	}
 	
-	private static void writeProjectionToFile(DataSet dataset, String path, int mode, ArrayList<Float> borders, double pixelsize, double sigma){
+	private static void writeProjectionToFile(DataSet dataset, String path, int mode, ArrayList<Float> borders, double pixelsize, double sigmaOrig){
 		float[][] stormData = dataset.stormData;
 //		double pixelsize = 10;
-//		double sigma = 20/pixelsize; //in nm sigma to blur localizations
+		double sigma = sigmaOrig/pixelsize; //in nm sigma to blur localizations
 		int filterwidth = 9; // must be odd
 		float xmin = Calc.min(stormData, 0);
 		float xmax = Calc.max(stormData, 0);

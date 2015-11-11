@@ -223,7 +223,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField windowsizePSFRenderingField;
 	private JTextField electronsPerDnField;
 	
-	boolean allowShift = false;
+	boolean allowShift = true;
 	
 	JRadioButton radio2D;
 	JRadioButton radio3D;
@@ -1956,6 +1956,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				else if (allDataSets.get(0).dataType == DataType.POINTS){
 					
 				}
+			}
+			else{
+				shiftX = 0;
+				shiftY =0;
+				shiftZ=0;
 			}
 		}
 		if (allDataSets.get(allDataSets.size()-1).dataType == DataType.LINES){
