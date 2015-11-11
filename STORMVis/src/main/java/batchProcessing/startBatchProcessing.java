@@ -111,10 +111,10 @@ public class startBatchProcessing {
 									params.sigmaZ = 0.f;
 									calculate(params);
 									CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
-											10.f/**emGain*/,params.borders,1.f/**electrons per AD*/, (float) 30.f/**frameRate*/, 
-											0.01f/**blinking duration*/, 15/**sizePSF*/, 1/**modelNR*/, 
+											10.f/**emGain*/,params.borders,random,1.f/**electrons per AD*/, (float) 30.f/**frameRate*/, 
+											0.01f/**blinking duration*/, 15/**sizePSF*/, 1/**modelNR*/,1.f,
 											(float) 1.45f/**NA*/, 647.f/**waveLength*/, 000.f/**zFocus*/, 
-											400/**zDefocus*/, 12/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/,
+											400.f/**zDefocus*/, 12.f/**sigmaNoise*/, 200.f/**constant offset*/, calibr/**calibration file*/,
 											outputFolder+fname+"\\"+fname+"TiffStack.tif");
 								
 								}
