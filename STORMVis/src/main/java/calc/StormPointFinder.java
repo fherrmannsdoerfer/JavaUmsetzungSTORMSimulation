@@ -76,7 +76,7 @@ public class StormPointFinder {
 		float[] nbrBlinkingEvents = new float[listEndPoints.length];
 		float abpf = ps.getFrames() * ps.getDutyCycle()* ps.getDeff(); //average blinking per fluorophore
 		for (int i = 0; i < listEndPoints.length; i++) {
-			nbrBlinkingEvents[i] = (float) (calc.random.nextFloat() * Math.sqrt(abpf) + abpf);
+			nbrBlinkingEvents[i] = RandomClass.poissonNumber(abpf, calc.random);//(float) (calc.random.nextFloat() * Math.sqrt(abpf) + abpf);
 			if(nbrBlinkingEvents[i] < 0) {
 				nbrBlinkingEvents[i] = 0;
 			}

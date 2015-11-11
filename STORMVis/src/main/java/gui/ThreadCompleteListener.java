@@ -1,5 +1,5 @@
 package gui;
 
 public interface ThreadCompleteListener {
-	void notifyOfThreadComplete(final NotifyingThread notifyingThread);
+	void notifyOfThreadComplete(final CreatePlot createPlot);
 }

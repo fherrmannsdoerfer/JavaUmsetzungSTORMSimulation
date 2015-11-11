@@ -110,7 +110,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	
 	JLabel lblRadiusOfFilaments;
 	
-	NotifyingThread nt;
+	CreatePlot nt;
 	
 	private JCheckBox showEmBox;
 	private JCheckBox showStormPointsBox;
@@ -1723,9 +1723,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		
 		plot = new Plot3D();
-		nt = new NotifyingThread(null);
+		nt = new CreatePlot(plot);
 		nt.addListener(this);
-		plot.addPropertyChangeListener(this);
+		nt.addPropertyChangeListener(this);
 		configureTableListener();
 		
 		JButton openEditorButton = new JButton("Open Editor");
@@ -2213,7 +2213,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			plot.addAllDataSets(sets);
 			plotPanel.removeAll();
 			nt.setPlot(plot);
-			nt.doInBackground();
+			nt.execute();
+			
 //			plot.dataSets.clear();
 //			plot.addAllDataSets(sets);
 //			plotPanel.removeAll();
@@ -2472,6 +2473,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	}
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
+		System.out.println(evt.getPropertyName());
 		if ("progress" == evt.getPropertyName()) {
             int progress = (Integer) evt.getNewValue();
             progressBar.setValue(progress);
@@ -2509,8 +2511,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	}
 
 	@Override
-	public void notifyOfThreadComplete(NotifyingThread notifyingThread) {
-		graphComponent = (Component) plot.createChart().getCanvas();
+	public void notifyOfThreadComplete(CreatePlot notifyingThread) {
+		graphComponent = (Component) plot.getChart().getCanvas();
 		plotPanel.add(graphComponent);
 		plotPanel.revalidate();
 		plotPanel.repaint();

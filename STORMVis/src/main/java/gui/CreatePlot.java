@@ -1,14 +1,13 @@
 package gui;
 
-import java.beans.PropertyChangeListener;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.swing.SwingWorker;
 
-public class NotifyingThread  extends SwingWorker<Void, Void>{
+public class CreatePlot  extends SwingWorker<Void, Void>{
 	Plot3D plot;
-	public NotifyingThread(Plot3D plot){
+	public CreatePlot(Plot3D plot){
 		this.plot = plot;
 	}
 	public void setPlot(Plot3D plot){
@@ -30,16 +29,21 @@ public class NotifyingThread  extends SwingWorker<Void, Void>{
 	  
 	  @Override
 	  public Void doInBackground() {
-	    try {
-	      plot.createChart();
-	    } finally {
+		  setProgress(0);
+	      plot.createChart(this);
 	      notifyListeners();
 	      System.out.println("Notification sent");
-	    }
+
 		return null;
 	  }
 	  @Override
 	  public void done(){
 		  System.out.println("Rendering finished");
+		  setProgress(100);
 	  }
-	}
+	  
+	  public void publicSetProgress(int prog){
+		  System.out.println("prog "+prog);
+		  setProgress(prog);
+	  }
+}

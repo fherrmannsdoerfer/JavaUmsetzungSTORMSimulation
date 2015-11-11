@@ -36,7 +36,7 @@ public class CreateStack {
 	public static void main(String[] args){ 
 		Random rand = new Random(2);
 		int nbrPoints = 1000;
-		float[][] c = new float[nbrPoints][5];
+		float[][] c = new float[nbrPoints*2][5];
 		//random creation of a list of tables as input
 //		for (int j = 0; j < nbrPoints; j++) {
 //			c[j][0] = (float) (Math.random()*30000);
@@ -46,11 +46,17 @@ public class CreateStack {
 //			c[j][4] = (float) (Math.random()*6000+1000);
 //		}
 		for (int j = 0; j < nbrPoints; j++){
-			c[j][0] = 530.f;
-			c[j][1] = 570.f;
-			c[j][2] = (float) (Math.random()*400+100.f);//000.f;
-			c[j][3] = j*10;
-			c[j][4] = calc.RandomClass.poissonNumber(2800,rand);
+			c[2*j][0] = 530.f;
+			c[2*j][1] = 570.f;
+			c[2*j][2] = (float) (Math.random()*400+100.f);//000.f;
+			c[2*j][3] = j;
+			c[2*j][4] = calc.RandomClass.poissonNumber(2800,rand);
+			
+			c[2*j+1][0] = 730.f;
+			c[2*j+1][1] = 770.f;
+			c[2*j+1][2] = (float) (Math.random()*400+100.f);//000.f;
+			c[2*j+1][3] = j;
+			c[2*j+1][4] = calc.RandomClass.poissonNumber(2800,rand);
 		}
 		ArrayList<Float> borders = new ArrayList<Float>();
 		borders.add((float) -99999);
@@ -145,11 +151,45 @@ public class CreateStack {
 		    }
 		});
 		
-		
+		boolean ensureSinglePSF = true;
+		if (ensureSinglePSF){
+			List<float[]> finalList = new ArrayList<float[]>();
+			double toleranceInPx = 10;//minimal distance of centers
+			List<float[]> alreadyPresentInCurrentFrame = new ArrayList<float[]>();
+			int frame = 0;
+			int maxFrame = (int) lInput.get(lInput.size()-1)[3];
+			while (lInput.size()>0){
+				while (lInput.size() > 0 && lInput.get(0)[3] == frame) {
+					float [] currPSF = lInput.get(0);
+					lInput.remove(0);
+					boolean isTooClose = false;
+					for (int i = 0; i<alreadyPresentInCurrentFrame.size(); i++){
+						float[] test = alreadyPresentInCurrentFrame.get(i);
+						if ((Math.pow((currPSF[0]-test[0]),2) + Math.pow((currPSF[1]-test[1]),2))<Math.pow((toleranceInPx/resolution),2)){
+							currPSF[3]+=maxFrame+1; //add maximal frame number plus one
+							lInput.add(lInput.size(), currPSF);
+							isTooClose = true;
+							break;
+						}
+					}
+					if (isTooClose){
+						
+					}
+					else{
+						finalList.add(currPSF);
+						alreadyPresentInCurrentFrame.add(currPSF);
+					}
+				}
+				frame += 1;
+				alreadyPresentInCurrentFrame.clear();
+			}
+			lInput = finalList;
+		}
 		for (int frame = 0; frame<lInput.get(lInput.size()-1)[3];frame++){
 		// fill image stack with images
 			FloatProcessor pro =  new FloatProcessor(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF);
 			while (lInput.size() > 0 && lInput.get(0)[3] == frame) {
+				
 				float [] currPSF = lInput.get(0);
 				lInput.remove(0);
 				//modelling the form of the PSF

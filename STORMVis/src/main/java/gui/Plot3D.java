@@ -37,10 +37,10 @@ public class Plot3D{
 	public Chart currentChart = null;
 	public Color backgroundColor = Color.BLACK;
 	public Color mainColor = Color.WHITE;
-	
+	private static CreatePlot nt;
 	public Coord3d viewPoint;
 	public BoundingBox3d viewBounds;
-	
+	int lastVal = 0;
 	public ArrayList<Float> borders;
 	
 	/**
@@ -48,16 +48,12 @@ public class Plot3D{
 	 */
 	public boolean showLines = true;
 	
-	private static PropertyChangeSupport propertyChangeSupport =
-		       new PropertyChangeSupport(Plot3D.class);
-	
-	public static void addPropertyChangeListener(PropertyChangeListener listener) {
-	       propertyChangeSupport.addPropertyChangeListener(listener);
-	   }
-
-	   public static synchronized void setProgress(String messageName, int val) {
-		  String message = Integer.toString(val);
-		  propertyChangeSupport.firePropertyChange(messageName, 0, val);
+	   public synchronized void setProgress(int val) {
+		   if (val != lastVal){
+			  
+			   nt.publicSetProgress(val);
+			   lastVal = val;
+		   }
 	   }
 	
 	public Plot3D() {
@@ -77,7 +73,8 @@ public class Plot3D{
 	}
 	
 	
-	public Chart createChart() {
+	public Chart createChart(CreatePlot nt) {
+		this.nt = nt;
 		Chart chart =AWTChartComponentFactory.chart(chartQuality, Toolkit.awt.name());
 		for(DataSet set : dataSets) {
 			set.progressBar.setString("Visualizing");
@@ -178,7 +175,8 @@ public class Plot3D{
 			    		strip.add(new Point(new Coord3d(currentRowStart[0],currentRowStart[1],currentRowStart[2])));
 			    		strip.add(new Point(new Coord3d(currentRowEnd[0],currentRowEnd[1],currentRowEnd[2])));
 			    		comp.add(strip);
-			    		setProgress("progress",(int) (50*(i/(float)set.antiBodyEndPoints.length)));
+			    		//setProgress("progress",(int) (50*(i/(float)set.antiBodyEndPoints.length)));
+			    		setProgress((int) (50*(i/(float)set.antiBodyEndPoints.length)));
 		    		}
 		        }
 		        if (comp.size()!=0){
@@ -197,8 +195,9 @@ public class Plot3D{
 					Coord3d coord = new Coord3d(set.stormData[currIdx][0], set.stormData[currIdx][1], set.stormData[currIdx][2]);
 					points[i] = coord;
 					colors[i] = new Color(set.getParameterSet().getStormColor().getRed()/255.f, set.getParameterSet().getStormColor().getGreen()/255.f, set.getParameterSet().getStormColor().getBlue()/255.f, set.stormData[currIdx][3]);
-					 
-					setProgress("progress",(int) (50+50*(i/(float)idxInRange.size())));
+					
+					//setProgress("progress",(int) (50+50*(i/(float)idxInRange.size())));
+					setProgress((int) (50+50*(i/(float)idxInRange.size())));
 				}
 				if (idxInRange.size() != 0){
 					CompileableComposite comp = new CompileableComposite();

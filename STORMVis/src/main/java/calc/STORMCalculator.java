@@ -35,17 +35,13 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 		this.random = random;
 	}
 	
-	
-	public DataSet getCurrentDataSet() {
+		public DataSet getCurrentDataSet() {
 		return currentDataSet;
 	}
-
-
 
 	public void setCurrentDataSet(DataSet currentDataSet) {
 		this.currentDataSet = currentDataSet;
 	}
-
 
 	@Override
 	public Void doInBackground() {
