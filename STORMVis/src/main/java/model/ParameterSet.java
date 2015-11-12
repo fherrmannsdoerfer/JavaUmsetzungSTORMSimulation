@@ -67,10 +67,11 @@ public class ParameterSet implements Serializable {
 	private Float fokus;
 	private Float defokus;
 	private boolean twoDPSF;
-	private float[][] calibrationFile =  {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
-			{202.222f,134.992f,229.455f},{303.333f,140.171f,197.503f},{404.444f,149.645f,175.083f},
-			{505.556f,169.047f,164.861f},{606.667f,196.601f,161.998f},{707.778f,235.912f,169.338f},
-			{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
+	private float[][] calibrationFile =  {{0,131.6016f,299.7855f},{101.111f,124.3521f,247.8447f},
+			{202.222f,121.4928f,206.5095f},{303.333f,126.1539f,177.7527f},{404.444f,134.6805f, 157.5747f},
+			{505.556f,152.1423f, 148.3749f},{606.667f,176.9409f, 145.7982f},{707.778f,212.3208f, 152.4042f},
+			{808.889f,252.4194f,164.9916f},{910f,308.4156f,188.8461f}};//rescaled
+
 	private float electronPerAdCount;
 	private float meanBlinkingTime;
 	    

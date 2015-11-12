@@ -61,17 +61,16 @@ public class startBatchProcessing {
 //		DataSet data = ExamplesProvidingClass.getDataset(1);
 //		furtherProceedFileImport(data, data.dataType);
 		(new File(outputFolder)).mkdir();
-		boolean tiffStackOutput = true;
-		boolean suReSimOutput = false;
+		boolean tiffStackOutput = false;
+		boolean suReSimOutput = true;
 		int numberOfSimulationsWithSameParameterSet = 100; //number of outputs for the same parameter set
-		SimulationParameter params = standardParameterRandomlyDistributedEpitopes();
-		
+		SimulationParameter params = standardParameterSingleEpitopes();		
 		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(3.f,6.f,12.f));
 		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(10.f,15.f,40.f));
-		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(90.f/100.f/1.625f,100.f/100.f/1.625f));
-		ArrayList<Float> varAng = new ArrayList<Float>(Arrays.asList(1000.f));
+		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(70.f,80.f,90.f));
+		ArrayList<Float> varAng = new ArrayList<Float>(Arrays.asList(0.f,1000.f));
 		//ArrayList<Float> de = new ArrayList<Float>(Arrays.asList(10.f,20.f,50.f,100.f));
-		ArrayList<Integer> koff = new ArrayList<Integer>(Arrays.asList(2000));
+		ArrayList<Float> koff = new ArrayList<Float>(Arrays.asList(0.005f));
 		//ArrayList<Integer> frames = new ArrayList<Integer>(Arrays.asList(10000));
 		ArrayList<Float> labelLength = new ArrayList<Float>(Arrays.asList(8.f,0.1f,16.f));
 		allDataSets.get(0).setProgressBar(new JProgressBar());
@@ -89,14 +88,14 @@ public class startBatchProcessing {
 								params.labelingEfficiency = le.get(j);
 								params.sigmaXY = sigmaXY.get(i);
 								params.sigmaZ = sigmaZ.get(i);
-								params.kOff = koff.get(k);
+								params.dutyCycle = koff.get(k);
 								params.sigmaRendering = 0.4 * params.sigmaXY;
 								calculate(params);
 								//params.detectionEfficiency = de.get(i);
 								//params.recordedFrames = frames.get(i);
 								params.borders = getBorders();
 								
-								String fname = String.format("sig%1.0f_%1.0flabEff%1.0fKOFF%1.0fAngDev%1.0fLabLen%1.0fver%d", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.kOff,params.angularDeviation*180/Math.PI,params.labelEpitopeDistance,p);
+								String fname = String.format("sig%1.0f_%1.0flabEff%1.0fduty%1.0fAngDev%1.0fLabLen%1.0fver%d", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.dutyCycle,params.angularDeviation*180/Math.PI,params.labelEpitopeDistance,p);
 								if(suReSimOutput){
 									new File(outputFolder+fname+"\\").mkdir();
 									exportData(outputFolder+fname+"\\",fname, params);
@@ -156,8 +155,7 @@ public class startBatchProcessing {
 		params.detectionEfficiency = 100;
 		params.epitopeDensity = (float) 0.0115;
 		params.fluorophoresPerLabel = 1;
-		params.kOff = 2000;
-		params.kOn = 1;
+		params.dutyCycle = (float) (1.0/2000.f);
 		params.labelEpitopeDistance = 16;
 		params.labelingEfficiency = 10;
 		params.makeItReproducible = false;
@@ -178,8 +176,7 @@ public class startBatchProcessing {
 		params.detectionEfficiency = 100;
 		params.epitopeDensity = (float) 1.625;
 		params.fluorophoresPerLabel = 1;
-		params.kOff = 2000;
-		params.kOn = 1;
+		params.dutyCycle = (float) (1.0/2000.f);
 		params.labelEpitopeDistance = 16;
 		params.labelingEfficiency = 10;
 		params.makeItReproducible = false;
@@ -201,8 +198,7 @@ public class startBatchProcessing {
 		params.detectionEfficiency = 100;
 		params.epitopeDensity = (float) 1.625;
 		params.fluorophoresPerLabel = 8;
-		params.kOff = 2000;
-		params.kOn = 1;
+		params.dutyCycle = (float) (1.0/2000.f);
 		params.labelEpitopeDistance = 16;
 		params.labelingEfficiency = 90;
 		params.makeItReproducible = false;
@@ -226,8 +222,7 @@ public class startBatchProcessing {
 		params.detectionEfficiency = 100;
 		params.epitopeDensity = (float) 1.625;
 		params.fluorophoresPerLabel = 8;
-		params.kOff = 2000;
-		params.kOn = 1;
+		params.dutyCycle = (float) (1.0/2000.f);
 		params.labelEpitopeDistance = 16;
 		params.labelingEfficiency = 90;
 		params.makeItReproducible = false;
@@ -251,8 +246,7 @@ public class startBatchProcessing {
 		params.detectionEfficiency = 100;
 		params.epitopeDensity = (float) 1.625;
 		params.fluorophoresPerLabel = 1;
-		params.kOff = 2000;
-		params.kOn = 1;
+		params.dutyCycle = (float) (1.0/2000.f);
 		params.labelEpitopeDistance = 1;
 		params.labelingEfficiency = 10;
 		params.makeItReproducible = false;
@@ -274,8 +268,7 @@ public class startBatchProcessing {
 		params.detectionEfficiency = 100;
 		params.epitopeDensity = (float) 0.00626;
 		params.fluorophoresPerLabel = 1;
-		params.kOff = 2000;
-		params.kOn = 1;
+		params.dutyCycle = (float) (1.0/2000.f);
 		params.labelEpitopeDistance = 16;
 		params.labelingEfficiency = 10;
 		params.makeItReproducible = false;
@@ -294,15 +287,6 @@ public class startBatchProcessing {
 		return filename;
 	}
 	
-	private static String getFilename(SimulationParameter params){
-		String filename;
-		filename = "sigXY"+(params.sigmaXY)+"sigZ"+params.sigmaZ+"frames"+params.recordedFrames+"radOfFil"+params.radiusOfFilament+
-				"meanPhotons"+params.MeanPhotonNumber+"reproducible"+params.makeItReproducible+"labEff"+params.labelingEfficiency+"labEpiDist"+params.labelEpitopeDistance+
-				"kon"+params.kOn+"koff"+params.kOff+"fluorPerLabel"+params.fluorophoresPerLabel+"epiDens"+params.epitopeDensity+
-				"detEff"+params.detectionEfficiency+"coupleSigmaInt"+params.coupleSigmaIntensity+"bgpermm3"+params.backgroundPerMicroMeterCubed;
-		
-		return filename;
-	}
 	
 	private static ArrayList<Float> getBorders(){
 		DataSet thisDataSet = allDataSets.get(0);
@@ -342,8 +326,7 @@ public class startBatchProcessing {
 		allDataSets.get(currentRow).getParameterSet().setIlpmm3(params.backgroundPerMicroMeterCubed); //background per cubic micro meter
 		allDataSets.get(currentRow).getParameterSet().setLoa(params.labelEpitopeDistance); //label epitope distance
 		allDataSets.get(currentRow).getParameterSet().setFpab(params.fluorophoresPerLabel);//fluorophores per label
-		allDataSets.get(currentRow).getParameterSet().setKOn(params.kOn); 
-		allDataSets.get(currentRow).getParameterSet().setKOff(params.kOff);
+		allDataSets.get(currentRow).getParameterSet().setDutyCycle(params.dutyCycle); 
 		allDataSets.get(currentRow).getParameterSet().setBleachConst((float) 0);
 		allDataSets.get(currentRow).getParameterSet().setFrames(params.recordedFrames); // recorded frames
 		allDataSets.get(currentRow).getParameterSet().setSxy(params.sigmaXY);
@@ -426,8 +409,7 @@ class SimulationParameter{
 	float labelEpitopeDistance;
 	float fluorophoresPerLabel;
 	int recordedFrames;
-	float kOn;
-	float kOff;
+	float dutyCycle;
 	float sigmaXY;
 	float sigmaZ;
 	int MeanPhotonNumber;

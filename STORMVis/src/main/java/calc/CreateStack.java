@@ -7,6 +7,8 @@
 
 package calc;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -35,8 +37,8 @@ public class CreateStack {
 	 */
 	public static void main(String[] args){ 
 		Random rand = new Random(2);
-		int nbrPoints = 1000;
-		float[][] c = new float[nbrPoints*2][5];
+		int nbrPoints = 10000;
+		float[][] c = new float[nbrPoints][5];
 		//random creation of a list of tables as input
 //		for (int j = 0; j < nbrPoints; j++) {
 //			c[j][0] = (float) (Math.random()*30000);
@@ -46,17 +48,12 @@ public class CreateStack {
 //			c[j][4] = (float) (Math.random()*6000+1000);
 //		}
 		for (int j = 0; j < nbrPoints; j++){
-			c[2*j][0] = 530.f;
-			c[2*j][1] = 570.f;
-			c[2*j][2] = (float) (Math.random()*400+100.f);//000.f;
-			c[2*j][3] = j;
-			c[2*j][4] = calc.RandomClass.poissonNumber(2800,rand);
+			c[j][0] = 500.f;
+			c[j][1] = 500.f;
+			c[j][2] = 500.f;
+			c[j][3] = 20*j;
+			c[j][4] = (float) 2000;
 			
-			c[2*j+1][0] = 730.f;
-			c[2*j+1][1] = 770.f;
-			c[2*j+1][2] = (float) (Math.random()*400+100.f);//000.f;
-			c[2*j+1][3] = j;
-			c[2*j+1][4] = calc.RandomClass.poissonNumber(2800,rand);
 		}
 		ArrayList<Float> borders = new ArrayList<Float>();
 		borders.add((float) -99999);
@@ -66,18 +63,17 @@ public class CreateStack {
 		borders.add((float) -99999);
 		borders.add((float) 99999);
 		System.out.println("finished simulation");
-		float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
-				{202.222f,134.992f,229.455f},{303.333f,140.171f,197.503f},{404.444f,149.645f,175.083f},
-				{505.556f,169.047f,164.861f},{606.667f,196.601f,161.998f},{707.778f,235.912f,169.338f},
-				{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
-
+		float[][] calibr = {{0,131.6016f,299.7855f},{101.111f,124.3521f,247.8447f},
+				{202.222f,121.4928f,206.5095f},{303.333f,126.1539f,177.7527f},{404.444f,134.6805f, 157.5747f},
+				{505.556f,152.1423f, 148.3749f},{606.667f,176.9409f, 145.7982f},{707.778f,212.3208f, 152.4042f},
+				{808.889f,252.4194f,164.9916f},{910f,308.4156f,188.8461f}};//rescaled
 		
 		createTiffStack(c, 1/133.f/**resolution*/ , 10/**emptyspace*/, 10 /**emGain*/,borders, rand,
 				4.81f/**electron per A/Dcount */, (float) 30/**frameRate*/, 
-				0.0003f/**decayTime*/, 10/**sizePSF*/, 2/**modelNR*/, 1.f /**quantum efficiency*/, 
-				(float) 1.45/**NA*/, 647/**waveLength*/, 400/**zFocus*/, 
-				800/**zDefocus*/, 35.7f/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
-				,"C:\\Users\\herrmannsdoerfer\\Desktop\\teststackDGain10photons2800z300_500.tif");
+				0.030f/**decayTime*/, 10/**sizePSF*/, 2/**modelNR*/, 1.f /**quantum efficiency*/, 
+				(float) 1.45/**NA*/, 647/**waveLength*/, 00/**zFocus*/, 
+				400/**zDefocus*/, 35.7f/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
+				,"Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Tiff-Stacks\\Test Tiff Stacks\\teststack3DGain10photons2000z500_30msBlinkingTime_3DNewCalib.tif");
 
     } 
 	
@@ -107,12 +103,20 @@ public class CreateStack {
 			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, 
 			float offset, float[][] calib, String fname) { 
 		
+		//get mean intensity
+		float meanInt = 0;
+		for (int i=0; i<input.length; i++){
+			meanInt = meanInt + input[i][4];
+		}
+		meanInt /=input.length;
+		
+		
 		//convert List<float[][]> to List<float[]>
 		List<float[]> lInput = convertList(input);
 		System.out.println("finished conversion");
 		
 		//simulate distribution of the intensity over different frames
-		lInput = distributePSF(lInput, frameRate, decayTime);
+		lInput = distributePSF(lInput, frameRate, decayTime, meanInt);
 		System.out.println("finished distribution");
 		
 		//find out minimum x- and y-values			
@@ -199,11 +203,10 @@ public class CreateStack {
 				int pixelY = Math.round(currPSF[1]* resolution);
 	
 				double sum = 0;
-
-				float sig = calcSig(currPSF[2], numericalAperture, waveLength, zFocus, zDefocus);
 				
 				switch(modelNumber) { // symmetric Gaussian
 				case 1:
+					float sig = calcSig(currPSF[2], numericalAperture, waveLength, zFocus, zDefocus);
 					for (int k = -sizePSF; k <= sizePSF; k++) {
 						for (int m = -sizePSF; m <= sizePSF; m++) {
 							float intensityPhotons = (float) (symmInt(pixelX + k, pixelY + m, currPSF[0],
@@ -401,13 +404,14 @@ public class CreateStack {
 	 * @param decTime : time interval, over which the PSF distributes its intensity
 	 * @return new list with PSF spread over different frames
 	 */
-	private static List<float[]> distributePSF(List<float[]> lInp, float frRate, float meanDecTime) {
+	private static List<float[]> distributePSF(List<float[]> lInp, float frRate, float meanDecTime, float meanIntensity) {
 		float frameTime = 1/frRate;
 		
 		List<float[]> ret = new ArrayList<float[]>(); //new list
 		
 		for(int i = 0; i < lInp.size(); i++) {
-			float decTime = (float) (meanDecTime * -Math.log(1-Math.random()));
+			float decTime = lInp.get(i)[4]/meanIntensity*meanDecTime;
+			//float decTime = (float) (meanDecTime * -Math.log(1-Math.random()));
 			//simulation of a random beginning time
 			float beginningTime = (float) (Math.random()/frRate);
 			float t = beginningTime + decTime;
@@ -442,9 +446,29 @@ public class CreateStack {
 	}
 	
 
-	
+	/**
+	 * method writes ground-truth file after distributing the blinking event;
+	 * doesn't yet check whether event is in focus range
+	 * @param stormData
+	 * @param basename
+	 * @param borders
+	 */
+	private static void writeLocalizationsToFile(List<float[]> stormData, String basename) {
+		try{
+			FileWriter writer = new FileWriter(basename+"Localizations.txt");
+			writer.append("Pos_x Pos_y Pos_z Frame Intensity\n");
+			for (int i = 0; i<stormData.size(); i++){
+				float[] tmp = stormData.get(i);
+				writer.append(tmp[0]+" "+tmp[1]+" "+tmp[2]+" "+tmp[3]+" "+tmp[4]+"\n");
+			}
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {e.printStackTrace();}
+	}
 
 }
+
+
 
 
 //Input fuer Astigmatismus: List<Float> calib

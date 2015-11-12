@@ -224,7 +224,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField windowsizePSFRenderingField;
 	private JTextField electronsPerDnField;
 	
-	boolean allowShift = true;
+	boolean allowShift = false;
 	
 	JRadioButton radio2D;
 	JRadioButton radio3D;
