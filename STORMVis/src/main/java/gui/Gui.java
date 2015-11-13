@@ -110,7 +110,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	
 	JLabel lblRadiusOfFilaments;
 	
-	CreatePlot nt;
+	public CreatePlot nt;
 	
 	private JCheckBox showEmBox;
 	private JCheckBox showStormPointsBox;
@@ -1723,9 +1723,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		
 		plot = new Plot3D();
-		nt = new CreatePlot(plot);
-		nt.addListener(this);
-		nt.addPropertyChangeListener(this);
 		configureTableListener();
 		
 		JButton openEditorButton = new JButton("Open Editor");
@@ -1858,6 +1855,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		toolBar.add(aboutButton);
 		
 		calc = new STORMCalculator(null,null);
+		nt = new CreatePlot(null);
 	}
 	
 	
@@ -2136,7 +2134,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				plot.viewPoint = null;
 				plot.viewBounds = null;
 			}
-			visualizeAllSelectedData();
+			setSelectedListsForDrawing();
+			//visualizeAllSelectedData();
 			updateCounter();
 		}
 	}
@@ -2212,7 +2211,14 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			plot.dataSets.clear();
 			plot.addAllDataSets(sets);
 			plotPanel.removeAll();
-			nt.setPlot(plot);
+			nt = new CreatePlot(plot);
+//			nt.addListener((ProgressBarUpdateListener)this);
+			nt.addListener((ThreadCompleteListener)this);
+			nt.addPropertyChangeListener(this);
+			System.out.println("nt.exec");
+//			calc = new STORMCalculator(this.allDataSets.get(currentRow), random);
+//			calc.execute();
+			progressBar.setToolTipText("Visualizing...");
 			nt.execute();
 			
 //			plot.dataSets.clear();
@@ -2284,7 +2290,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			plot.dataSets.clear();
 			plot.addAllDataSets(sets);
 			plotPanel.removeAll();
-			nt.setPlot(plot);
+			nt = new CreatePlot(plot);
+//			nt.addListener((ProgressBarUpdateListener)this);
+//			nt.addListener((ThreadCompleteListener)this);
+			nt.addPropertyChangeListener(this);
+			System.out.println("do in bg");
 			nt.doInBackground();
 //			Thread t = new Thread(){
 //				@Override
@@ -2473,8 +2483,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	}
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		System.out.println(evt.getPropertyName());
-		if ("progress" == evt.getPropertyName()) {
+		if ("progress".equals(evt.getPropertyName())) {
             int progress = (Integer) evt.getNewValue();
             progressBar.setValue(progress);
 		}
@@ -2518,7 +2527,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		plotPanel.repaint();
 		graphComponent.revalidate();
 	}
-
+	
+	
 	public void copyFields(){
 		allDataSets.get(currentRow).getParameterSet().setPabs((float) (new Float(labelingEfficiencyField.getText())/100.));
 		allDataSets.get(currentRow).getParameterSet().setAoa((float) ((new Float(meanAngleField.getText()))/180*Math.PI));
@@ -2561,4 +2571,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setElectronPerAdCount(new Float(electronsPerDnField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setMeanBlinkingTime(new Float(meanBlinkingDurationField.getText()));
 	}
+
+	
 }

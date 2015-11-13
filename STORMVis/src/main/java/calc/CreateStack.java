@@ -155,7 +155,7 @@ public class CreateStack {
 		    }
 		});
 		
-		boolean ensureSinglePSF = true;
+		boolean ensureSinglePSF = false;
 		if (ensureSinglePSF){
 			List<float[]> finalList = new ArrayList<float[]>();
 			double toleranceInPx = 10;//minimal distance of centers

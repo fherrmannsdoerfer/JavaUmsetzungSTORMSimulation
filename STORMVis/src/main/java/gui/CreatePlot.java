@@ -21,12 +21,14 @@ public class CreatePlot  extends SwingWorker<Void, Void>{
 	  public  void removeListener(final ThreadCompleteListener listener) {
 	    listeners.remove(listener);
 	  }
-	  private  void notifyListeners() {
+
+	  public  void notifyListeners() {
 	    for (ThreadCompleteListener listener : listeners) {
 	      listener.notifyOfThreadComplete(this);
 	    }
 	  }
 	  
+	 
 	  @Override
 	  public Void doInBackground() {
 		  setProgress(0);
@@ -43,7 +45,6 @@ public class CreatePlot  extends SwingWorker<Void, Void>{
 	  }
 	  
 	  public void publicSetProgress(int prog){
-		  System.out.println("prog "+prog);
 		  setProgress(prog);
 	  }
 }
