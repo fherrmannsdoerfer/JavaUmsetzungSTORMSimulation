@@ -63,17 +63,18 @@ public class startBatchProcessing {
 		(new File(outputFolder)).mkdir();
 		boolean tiffStackOutput = true;
 		boolean suReSimOutput = true;
-		int numberOfSimulationsWithSameParameterSet = 100; //number of outputs for the same parameter set
-		SimulationParameter params = standardParameterSingleEpitopes();		
+		int numberOfSimulationsWithSameParameterSet = 1; //number of outputs for the same parameter set
+		SimulationParameter params = standardParameterVesicles();		
 		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(6.f));
 		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(15.f));
-		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(70.f));
-		ArrayList<Float> varAng = new ArrayList<Float>(Arrays.asList(1000.f));
+		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(10.f));
+		ArrayList<Float> varAng = new ArrayList<Float>(Arrays.asList(0.f));
 		//ArrayList<Float> de = new ArrayList<Float>(Arrays.asList(10.f,20.f,50.f,100.f));
-		ArrayList<Float> koff = new ArrayList<Float>(Arrays.asList(0.005f));
+		ArrayList<Float> koff = new ArrayList<Float>(Arrays.asList(0.0005f));
 		//ArrayList<Integer> frames = new ArrayList<Integer>(Arrays.asList(10000));
-		ArrayList<Float> labelLength = new ArrayList<Float>(Arrays.asList(8.f));
+		ArrayList<Float> labelLength = new ArrayList<Float>(Arrays.asList(16.f));
 		allDataSets.get(0).setProgressBar(new JProgressBar());
+		
 		
 		int counter = 0;
 		for (int s = 0; s<labelLength.size(); s++){
@@ -101,20 +102,18 @@ public class startBatchProcessing {
 									exportData(outputFolder+fname+"\\",fname, params);
 								}
 								if (tiffStackOutput){
-									float[][] calibr = {{0,146.224f,333.095f},{101.111f,138.169f,275.383f},
-											{202.222f,134.992f,229.455f},{303.333f,140.171f,197.503f},{404.444f,149.645f,175.083f},
-											{505.556f,169.047f,164.861f},{606.667f,196.601f,161.998f},{707.778f,235.912f,169.338f},
-											{808.889f,280.466f,183.324f},{910f,342.684f,209.829f}};
+									float[][] calibr = allDataSets.get(0).getParameterSet().getCalibrationFile();
 									allDataSets.get(0).setProgressBar(new JProgressBar());
 									params.sigmaXY = 0.f;
 									params.sigmaZ = 0.f;
 									calculate(params);
 									CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
-											10.f/**emGain*/,params.borders,random,1.f/**electrons per AD*/, (float) 30.f/**frameRate*/, 
-											0.01f/**blinking duration*/, 15/**sizePSF*/, 1/**modelNR*/,1.f,
-											(float) 1.45f/**NA*/, 647.f/**waveLength*/, 000.f/**zFocus*/, 
-											400.f/**zDefocus*/, 12.f/**sigmaNoise*/, 200.f/**constant offset*/, calibr/**calibration file*/,
-											outputFolder+fname+"\\"+fname+"TiffStack.tif");
+											10.f/**emGain*/,params.borders,random,4.81f/**electrons per AD*/, (float) 30.f/**frameRate*/, 
+											0.03f/**blinking duration*/, 15/**sizePSF*/, 2/**modelNR*/,1.f,
+											(float) 1.45f/**NA*/, 647.f/**waveLength*/, 200.f/**zFocus*/, 
+											400.f/**zDefocus*/, 35.7f/**sigmaNoise*/, 200.f/**constant offset*/, calibr/**calibration file*/,
+											outputFolder+fname+"\\"+fname+"TiffStack.tif",
+											false /* ensure single PSF*/, true /*split blinking over frames*/);
 								
 								}
 								System.out.println(String.format("run %d of %d",counter,sigmaXY.size()*koff.size()*le.size()*varAng.size()*labelLength.size()*numberOfSimulationsWithSameParameterSet));

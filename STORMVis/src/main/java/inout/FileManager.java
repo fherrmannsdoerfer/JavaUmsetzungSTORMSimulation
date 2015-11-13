@@ -336,6 +336,24 @@ public class FileManager {
 				else{
 					writer.append("2D simulation: FALSE\n");
 				}
+				if (ps.isDistributePSFoverFrames()){
+					writer.append("Distribute PSFs over Frames: TRUE\n");
+				}
+				else{
+					writer.append("Distribute PSFs over Frames: FALSE\n");
+				}
+				if (ps.isEnsureSinglePSF()){
+					writer.append("Ensure Single PSFs: TRUE\n");
+				}
+				else{
+					writer.append("Ensure Single PSFs: FALSE\n");
+				}
+				writer.append("Calibration File:\n");
+				writer.append("Fokal position in nm | sigmax in micrometers | sigmay in micrometers\n");
+				float[][] calib = ps.getCalibrationFile();
+				for (int i = 0; i<ps.getCalibrationFile().length; i++){
+					writer.append(calib[i][0]+ " "+calib[i][1]+" "+calib[i][2]+"\n");
+				}
 			}
 			writer.flush();
 			writer.close();

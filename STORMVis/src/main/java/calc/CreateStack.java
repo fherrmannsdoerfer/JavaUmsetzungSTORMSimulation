@@ -73,7 +73,8 @@ public class CreateStack {
 				0.030f/**decayTime*/, 10/**sizePSF*/, 2/**modelNR*/, 1.f /**quantum efficiency*/, 
 				(float) 1.45/**NA*/, 647/**waveLength*/, 00/**zFocus*/, 
 				400/**zDefocus*/, 35.7f/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
-				,"Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Tiff-Stacks\\Test Tiff Stacks\\teststack3DGain10photons2000z500_30msBlinkingTime_3DNewCalib.tif");
+				,"Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Tiff-Stacks\\Test Tiff Stacks\\teststack3DGain10photons2000z500_30msBlinkingTime_3DNewCalib.tif",
+				false /* ensure single PSF*/, true /*split blinking over frames*/);
 
     } 
 	
@@ -101,7 +102,11 @@ public class CreateStack {
 			ArrayList<Float> borders, Random rand,
 			float electronsPerADcount, float frameRate, float decayTime, int sizePSF, int modelNumber, float qe,
 			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, 
-			float offset, float[][] calib, String fname) { 
+			float offset, float[][] calib, String fname, boolean ensureSinglePSF, boolean splitIntensities) { 
+		
+		for (int i = 0; i<calib.length; i++){ //shift Fokus
+			calib[i][0] -=0; 
+		}
 		
 		//get mean intensity
 		float meanInt = 0;
@@ -115,9 +120,14 @@ public class CreateStack {
 		List<float[]> lInput = convertList(input);
 		System.out.println("finished conversion");
 		
+		
+		int numberPSFsBeforeSplitting = lInput.size();
 		//simulate distribution of the intensity over different frames
-		lInput = distributePSF(lInput, frameRate, decayTime, meanInt);
+		if (splitIntensities){
+			lInput = distributePSF(lInput, frameRate, decayTime, meanInt);
+		}
 		System.out.println("finished distribution");
+		int numberPSFsAfterSplitting = lInput.size();
 		
 		//find out minimum x- and y-values			
 		float minX = globalMin(lInput, 0); 
@@ -155,7 +165,6 @@ public class CreateStack {
 		    }
 		});
 		
-		boolean ensureSinglePSF = false;
 		if (ensureSinglePSF){
 			List<float[]> finalList = new ArrayList<float[]>();
 			double toleranceInPx = 10;//minimal distance of centers
@@ -252,7 +261,8 @@ public class CreateStack {
 			stackLeft.addSlice(pro); //adds a processor for each frame to the stack
 		}
 		System.out.println("finished procession");
-
+		System.out.println("#PSFs before splitting " + numberPSFsBeforeSplitting);
+		System.out.println("#PSFs after splitting " + numberPSFsAfterSplitting);
 		//save imagestack
 		ImagePlus leftStack = new ImagePlus("", stackLeft);
 		FileSaver fs = new FileSaver(leftStack);

@@ -132,6 +132,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JRadioButton radioIntermediate;
 	private JRadioButton radioFastest;
 	
+	private JCheckBox distributePSFOverFrames;
+	JCheckBox ensureSinglePSFchkBox;
+	
 	private JComboBox exampleComboBox;
 	
 	public STORMCalculator calc;
@@ -936,6 +939,18 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		defokusField.setMaximumSize(new Dimension(100, 2147483647));
 		defokusField.setColumns(5);
 		
+		Box horizontalBox_55 = Box.createHorizontalBox();
+		verticalBox_22.add(horizontalBox_55);
+		
+		ensureSinglePSFchkBox = new JCheckBox("Ensure Single PSFs");
+		horizontalBox_55.add(ensureSinglePSFchkBox);
+		
+		Component horizontalGlue_47 = Box.createHorizontalGlue();
+		horizontalBox_55.add(horizontalGlue_47);
+		
+		distributePSFOverFrames = new JCheckBox("Distribute PSFs Over Frames");
+		horizontalBox_55.add(distributePSFOverFrames);
+		
 		Box horizontalBox_47 = Box.createHorizontalBox();
 		verticalBox_19.add(horizontalBox_47);
 		
@@ -1020,7 +1035,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 							set.getEmptyPixelsOnRim(),set.getEmGain(), borders, random,
 							set.getElectronPerAdCount(), set.getFrameRate(), set.getMeanBlinkingTime(), set.getWindowsizePSF(),
 							modelNumber,set.getQuantumEfficiency(), set.getNa(), set.getPsfwidth(), set.getFokus(), set.getDefokus(), set.getSigmaBg(),
-							set.getConstOffset(), set.getCalibrationFile(), path);
+							set.getConstOffset(), set.getCalibrationFile(), path,set.isEnsureSinglePSF(), set.isDistributePSFoverFrames());
 					FileManager.writeLogFile(allDataSets.get(currentRow).getParameterSet(), path.substring(0, path.length()-4)+"TiffStack",borders,true);
 				}
 				
@@ -2051,6 +2066,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			}
 			electronsPerDnField.setText(Float.toString(set.getElectronPerAdCount()));
 			meanBlinkingDurationField.setText(Float.toString(set.getMeanBlinkingTime()));
+			ensureSinglePSFchkBox.setSelected(set.isEnsureSinglePSF());
+			distributePSFOverFrames.setSelected(set.isDistributePSFoverFrames());
 			updateButtonColors();
 		}
 	}
@@ -2570,6 +2587,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setTwoDPSF(radio2D.isSelected());
 		allDataSets.get(currentRow).getParameterSet().setElectronPerAdCount(new Float(electronsPerDnField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setMeanBlinkingTime(new Float(meanBlinkingDurationField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setDistributePSFoverFrames(distributePSFOverFrames.isSelected());
+		allDataSets.get(currentRow).getParameterSet().setEnsureSinglePSF(ensureSinglePSFchkBox.isSelected());
 	}
 
 	

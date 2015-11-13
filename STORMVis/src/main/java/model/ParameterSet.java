@@ -74,7 +74,9 @@ public class ParameterSet implements Serializable {
 
 	private float electronPerAdCount;
 	private float meanBlinkingTime;
-	    
+	
+	private boolean ensureSinglePSF;
+	private boolean distributePSFoverFrames;
     
 	
 
@@ -86,7 +88,7 @@ public class ParameterSet implements Serializable {
 			Float pointSize, Float lineWidth, Color emColor, Color stormColor, Color antibodyColor, Float pixelToNmRatio,
 			Float frameRate, Float sigmaBg, Float constOffset, Float emGain, Float quantumEfficiency, 
 			int windowsizePSF, int emptyPixelsOnRim, Float na, Float fokus, Float defokus, boolean twoDPSF,
-			float[][] calibrationFile, float electronPerAdCount,float meanBlinkingTime) {
+			float[][] calibrationFile, float electronPerAdCount,float meanBlinkingTime, boolean ensureSinglePSF, boolean distributePSFoverFrames) {
 		super();
 		this.loa = loa;
 		this.aoa = aoa;
@@ -142,6 +144,8 @@ public class ParameterSet implements Serializable {
 		this.calibrationFile = calibrationFile;
 		this.electronPerAdCount=electronPerAdCount;
 		this.meanBlinkingTime =meanBlinkingTime;
+		this.ensureSinglePSF = ensureSinglePSF;
+		this.distributePSFoverFrames = distributePSFoverFrames;
 	} 
     
     public ParameterSet() {
@@ -195,10 +199,10 @@ public class ParameterSet implements Serializable {
 		
 		this.pixelToNmRatio = 133.f;
 		this.frameRate = 30.f;
-		this.sigmaBg = 12.f;
+		this.sigmaBg = 35.7f;
 		this.constOffset = 200.f;
 		this.emGain = 10.f;
-		this.quantumEfficiency = 0.9f;
+		this.quantumEfficiency = 1.f;
 		this.windowsizePSF = 10;
 		this.emptyPixelsOnRim = 5;
 		this.na = 1.45f;
@@ -207,6 +211,8 @@ public class ParameterSet implements Serializable {
 		this.twoDPSF = true;
 		this.electronPerAdCount = 4.81f;
 		this.meanBlinkingTime = 0.05f;
+		this.ensureSinglePSF = false;
+		this.distributePSFoverFrames = true;
 		
     }
 
@@ -631,5 +637,19 @@ public class ParameterSet implements Serializable {
 	public void setMeanBlinkingTime(float meanBlinkingTime) {
 		this.meanBlinkingTime = meanBlinkingTime;
 	}
-    
+	public boolean isEnsureSinglePSF() {
+		return ensureSinglePSF;
+	}
+
+	public void setEnsureSinglePSF(boolean ensureSinglePSF) {
+		this.ensureSinglePSF = ensureSinglePSF;
+	}
+
+	public boolean isDistributePSFoverFrames() {
+		return distributePSFoverFrames;
+	}
+
+	public void setDistributePSFoverFrames(boolean distributePSFoverFrames) {
+		this.distributePSFoverFrames = distributePSFoverFrames;
+	}
 }
