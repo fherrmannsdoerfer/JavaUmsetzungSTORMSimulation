@@ -77,6 +77,7 @@ public class ParameterSet implements Serializable {
 	
 	private boolean ensureSinglePSF;
 	private boolean distributePSFoverFrames;
+	private int minIntensity;
     
 	
 
@@ -88,7 +89,8 @@ public class ParameterSet implements Serializable {
 			Float pointSize, Float lineWidth, Color emColor, Color stormColor, Color antibodyColor, Float pixelToNmRatio,
 			Float frameRate, Float sigmaBg, Float constOffset, Float emGain, Float quantumEfficiency, 
 			int windowsizePSF, int emptyPixelsOnRim, Float na, Float fokus, Float defokus, boolean twoDPSF,
-			float[][] calibrationFile, float electronPerAdCount,float meanBlinkingTime, boolean ensureSinglePSF, boolean distributePSFoverFrames) {
+			float[][] calibrationFile, float electronPerAdCount,float meanBlinkingTime, boolean ensureSinglePSF, 
+			boolean distributePSFoverFrames, int minIntensity) {
 		super();
 		this.loa = loa;
 		this.aoa = aoa;
@@ -146,6 +148,7 @@ public class ParameterSet implements Serializable {
 		this.meanBlinkingTime =meanBlinkingTime;
 		this.ensureSinglePSF = ensureSinglePSF;
 		this.distributePSFoverFrames = distributePSFoverFrames;
+		this.minIntensity = minIntensity;
 	} 
     
     public ParameterSet() {
@@ -213,6 +216,7 @@ public class ParameterSet implements Serializable {
 		this.meanBlinkingTime = 0.05f;
 		this.ensureSinglePSF = false;
 		this.distributePSFoverFrames = true;
+		this.minIntensity = 1000;
 		
     }
 
@@ -651,5 +655,13 @@ public class ParameterSet implements Serializable {
 
 	public void setDistributePSFoverFrames(boolean distributePSFoverFrames) {
 		this.distributePSFoverFrames = distributePSFoverFrames;
+	}
+
+	public int getMinIntensity() {
+		return minIntensity;
+	}
+
+	public void setMinIntensity(int minIntensity) {
+		this.minIntensity = minIntensity;
 	}
 }

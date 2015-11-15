@@ -1,11 +1,14 @@
 package calc;
 
 
+import gui.ThreadCompleteListener;
 import gui.DataTypeDetector.DataType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.swing.SwingWorker;
 
@@ -60,7 +63,24 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 		System.out.println("Worker finished");
 		currentDataSet.getProgressBar().setString("Calculation Done!");
 		currentDataSet.isCalculating = false;
+		notifyListeners();
 	}
+	
+	  private  Set<ThreadCompleteListener> listeners
+      = new CopyOnWriteArraySet<ThreadCompleteListener>();
+	public  void addListener(final ThreadCompleteListener listener) {
+		listeners.add(listener);
+	}
+	public  void removeListener(final ThreadCompleteListener listener) {
+		listeners.remove(listener);
+	}
+	
+	public  void notifyListeners() {
+		for (ThreadCompleteListener listener : listeners) {
+			listener.notifyOfThreadComplete(this);
+		}
+	}
+	
 	public void doSimulation() {
 		float[][] ep = null; 
 		float[][] ap = null;
@@ -144,5 +164,7 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 	public void publicSetProgress(int prog){
 		setProgress(prog);
 	}
+
+
 	
 }

@@ -80,6 +80,8 @@ import java.awt.CardLayout;
 import javax.swing.JSlider;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.DefaultComboBoxModel;
 
 
 /**
@@ -134,6 +136,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	
 	private JCheckBox distributePSFOverFrames;
 	JCheckBox ensureSinglePSFchkBox;
+	JComboBox tiffStackModeComboBox;
 	
 	private JComboBox exampleComboBox;
 	
@@ -229,8 +232,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	
 	boolean allowShift = false;
 	
-	JRadioButton radio2D;
-	JRadioButton radio3D;
+	JPanel createTiffStackPanel;
+	JPanel nativeSimulationPanel;
+	JPanel twoDPSFPanel;
+	JPanel threeDPSFPanel;
+	private JTextField minIntensityField;
 	/**
 	 * Launch the application.
 	 */
@@ -273,7 +279,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		setBounds(0, 0, 1200, 1070);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setPreferredSize(new Dimension(250, 995));
+		contentPane.setPreferredSize(new Dimension(250, 500));
 		
 		model = new DataSetTableModel();
         model.addTableModelListener(this);
@@ -287,790 +293,26 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		Box verticalBox_13 = Box.createVerticalBox();
 		contentPane.add(verticalBox_13);
-		dataSetTable = new JTable(model);
-		dataSetTable.setMinimumSize(new Dimension(30, 150));
-		dataSetTable.setPreferredSize(new Dimension(130, 120));
-		verticalBox_13.add(dataSetTable);
+				ButtonGroup group = new ButtonGroup();
 		
 		Box verticalBox = Box.createVerticalBox();
 		verticalBox.setMaximumSize(new Dimension(222222, 222220));
 		verticalBox_13.add(verticalBox);
-		verticalBox.setPreferredSize(new Dimension(290, 900));
-		verticalBox.setMinimumSize(new Dimension(290, 600));
+		verticalBox.setPreferredSize(new Dimension(250, 800));
+		verticalBox.setMinimumSize(new Dimension(250, 600));
 		verticalBox.setName("");
 		verticalBox.setFont(new Font("Dialog", Font.ITALIC, 89));
 		verticalBox.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		verticalBox.add(tabbedPane);
-				
-		Box verticalBox_7 = Box.createVerticalBox();
-		tabbedPane.addTab("Basic Settings", null, verticalBox_7, null);
-		
-		Box verticalBox_5 = Box.createVerticalBox();
-		verticalBox_7.add(verticalBox_5);
-		
-		Box verticalBox_1 = Box.createVerticalBox();
-		verticalBox_5.add(verticalBox_1);
-		verticalBox_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Structural parameters", TitledBorder.LEADING, TitledBorder.TOP, usedFont, null));
-		
-		Box horizontalBox = Box.createHorizontalBox();
-		verticalBox_1.add(horizontalBox);
-		
-		epitopeDensityLabel = new JLabel("<html>Epitope Density (nm<sup>-2</sup>)</html>");
-		horizontalBox.add(epitopeDensityLabel);
-		
-		Component horizontalGlue = Box.createHorizontalGlue();
-		horizontalBox.add(horizontalGlue);
-		
-		epitopeDensityField = new JFormattedTextField();
-		epitopeDensityField.getDocument().addDocumentListener(new MyDocumentListener(epitopeDensityField));
-		epitopeDensityField.setHorizontalAlignment(SwingConstants.RIGHT);
-		epitopeDensityField.setMinimumSize(new Dimension(6, 10));
-		epitopeDensityField.setMaximumSize(new Dimension(60, 22));
-		epitopeDensityField.setColumns(5);
-		horizontalBox.add(epitopeDensityField);
-		//horizontalBox.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{lblNewLabel, horizontalGlue, epitopeDensityField}));
-		
-		Component verticalGlue_4 = Box.createVerticalGlue();
-		verticalBox_1.add(verticalGlue_4);
-		
-		Box horizontalBox_1 = Box.createHorizontalBox();
-		verticalBox_1.add(horizontalBox_1);
-		
-		lblRadiusOfFilaments = new JLabel("Radius Of Filaments (nm)");
-		horizontalBox_1.add(lblRadiusOfFilaments);
-		
-		Component horizontalGlue_1 = Box.createHorizontalGlue();
-		horizontalBox_1.add(horizontalGlue_1);
-		
-		radiusOfFilamentsField = new JTextField();
-		radiusOfFilamentsField.getDocument().addDocumentListener(new MyDocumentListener(radiusOfFilamentsField));
-		radiusOfFilamentsField.setHorizontalAlignment(SwingConstants.RIGHT);
-		radiusOfFilamentsField.setMinimumSize(new Dimension(6, 10));
-		radiusOfFilamentsField.setMaximumSize(new Dimension(60, 22));
-		radiusOfFilamentsField.setColumns(5);
-		horizontalBox_1.add(radiusOfFilamentsField);
-		
-		Box horizontalBox_2 = Box.createHorizontalBox();
-		verticalBox_1.add(horizontalBox_2);
-		
-		Box horizontalBox_3 = Box.createHorizontalBox();
-		verticalBox_1.add(horizontalBox_3);
-		
-		Component verticalGlue = Box.createVerticalGlue();
-		verticalBox_5.add(verticalGlue);
-		
-		Box verticalBox_2 = Box.createVerticalBox();
-		verticalBox_5.add(verticalBox_2);
-		verticalBox_2.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Labeling Efficiency", TitledBorder.LEADING, TitledBorder.TOP, usedFont, new Color(0, 0, 0)));
-		
-		Box horizontalBox_4 = Box.createHorizontalBox();
-		verticalBox_2.add(horizontalBox_4);
-		
-		JLabel lblLabelingEfficiency = new JLabel("Labeling Efficiency (%)");
-		horizontalBox_4.add(lblLabelingEfficiency);
-		
-		Component horizontalGlue_4 = Box.createHorizontalGlue();
-		horizontalBox_4.add(horizontalGlue_4);
-		
-		labelingEfficiencyField = new JTextField();
-		labelingEfficiencyField.getDocument().addDocumentListener(new MyDocumentListener(labelingEfficiencyField));
-		labelingEfficiencyField.setHorizontalAlignment(SwingConstants.RIGHT);
-		labelingEfficiencyField.setMinimumSize(new Dimension(6, 10));
-		labelingEfficiencyField.setMaximumSize(new Dimension(60, 22));
-		labelingEfficiencyField.setColumns(5);
-		horizontalBox_4.add(labelingEfficiencyField);
-		
-		Component verticalGlue_5 = Box.createVerticalGlue();
-		verticalBox_2.add(verticalGlue_5);
-		
-		Box horizontalBox_7 = Box.createHorizontalBox();
-		verticalBox_2.add(horizontalBox_7);
-		
-		Component verticalGlue_1 = Box.createVerticalGlue();
-		verticalBox_5.add(verticalGlue_1);
-		
-		Box verticalBox_3 = Box.createVerticalBox();
-		verticalBox_5.add(verticalBox_3);
-		verticalBox_3.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Label Dependent Parameters", TitledBorder.LEADING, TitledBorder.TOP, usedFont, new Color(0, 0, 0)));
-		
-		Box horizontalBox_8 = Box.createHorizontalBox();
-		verticalBox_3.add(horizontalBox_8);
-		
-		JLabel lblMeanDistanceLabel = new JLabel("Label Epitope Distance (nm)");
-		horizontalBox_8.add(lblMeanDistanceLabel);
-		
-		Component horizontalGlue_8 = Box.createHorizontalGlue();
-		horizontalBox_8.add(horizontalGlue_8);
-		
-		labelLengthField = new JTextField();
-		labelLengthField.getDocument().addDocumentListener(new MyDocumentListener(labelLengthField));
-		labelLengthField.setHorizontalAlignment(SwingConstants.RIGHT);
-		labelLengthField.setMinimumSize(new Dimension(6, 10));
-		labelLengthField.setMaximumSize(new Dimension(60, 22));
-		labelLengthField.setColumns(5);
-		horizontalBox_8.add(labelLengthField);
-		
-		Component verticalGlue_7 = Box.createVerticalGlue();
-		verticalBox_3.add(verticalGlue_7);
-		
-		Box horizontalBox_9 = Box.createHorizontalBox();
-		verticalBox_3.add(horizontalBox_9);
-		
-		JLabel lblFluorophoresPerLabel = new JLabel("Fluorophores Per Label");
-		horizontalBox_9.add(lblFluorophoresPerLabel);
-		
-		Component horizontalGlue_9 = Box.createHorizontalGlue();
-		horizontalBox_9.add(horizontalGlue_9);
-		
-		fluorophoresPerLabelField = new JTextField();
-		fluorophoresPerLabelField.getDocument().addDocumentListener(new MyDocumentListener(fluorophoresPerLabelField));
-		fluorophoresPerLabelField.setHorizontalAlignment(SwingConstants.RIGHT);
-		fluorophoresPerLabelField.setMinimumSize(new Dimension(6, 10));
-		fluorophoresPerLabelField.setMaximumSize(new Dimension(60, 22));
-		fluorophoresPerLabelField.setColumns(5);
-		horizontalBox_9.add(fluorophoresPerLabelField);
-		
-		Component verticalGlue_8 = Box.createVerticalGlue();
-		verticalBox_3.add(verticalGlue_8);
-		
-		Component verticalGlue_2 = Box.createVerticalGlue();
-		verticalBox_5.add(verticalGlue_2);
-		
-		Box verticalBox_4 = Box.createVerticalBox();
-		verticalBox_5.add(verticalBox_4);
-		verticalBox_4.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Setup And Label Dependent Parameters", TitledBorder.LEADING, TitledBorder.TOP, usedFont, new Color(0, 0, 0)));
-		
-		Box horizontalBox_12 = Box.createHorizontalBox();
-		verticalBox_4.add(horizontalBox_12);
-		
-		JLabel lblLabelingResolutionXy = new JLabel("Localization Precision XY (nm)");
-		horizontalBox_12.add(lblLabelingResolutionXy);
-		
-		Component horizontalGlue_13 = Box.createHorizontalGlue();
-		horizontalBox_12.add(horizontalGlue_13);
-		
-		locPrecisionXYField = new JTextField();
-		locPrecisionXYField.getDocument().addDocumentListener(new MyDocumentListener(locPrecisionXYField));
-		locPrecisionXYField.setHorizontalAlignment(SwingConstants.RIGHT);
-		locPrecisionXYField.setMinimumSize(new Dimension(6, 10));
-		locPrecisionXYField.setMaximumSize(new Dimension(60, 22));
-		locPrecisionXYField.setColumns(5);
-		horizontalBox_12.add(locPrecisionXYField);
-		
-		Component verticalGlue_12 = Box.createVerticalGlue();
-		verticalBox_4.add(verticalGlue_12);
-		
-		Box horizontalBox_13 = Box.createHorizontalBox();
-		verticalBox_4.add(horizontalBox_13);
-		
-		JLabel lblLocalizaitonPrecisionZ = new JLabel("Localization Precision Z (nm)");
-		horizontalBox_13.add(lblLocalizaitonPrecisionZ);
-		
-		Component horizontalGlue_14 = Box.createHorizontalGlue();
-		horizontalBox_13.add(horizontalGlue_14);
-		
-		locPrecisionZField = new JTextField();
-		locPrecisionZField.getDocument().addDocumentListener(new MyDocumentListener(locPrecisionZField));
-		locPrecisionZField.setHorizontalAlignment(SwingConstants.RIGHT);
-		locPrecisionZField.setMinimumSize(new Dimension(6, 10));
-		locPrecisionZField.setMaximumSize(new Dimension(60, 22));
-		locPrecisionZField.setColumns(5);
-		horizontalBox_13.add(locPrecisionZField);
-		
-		Component verticalGlue_13 = Box.createVerticalGlue();
-		verticalBox_4.add(verticalGlue_13);
-		
-		Box horizontalBox_22 = Box.createHorizontalBox();
-		verticalBox_4.add(horizontalBox_22);
-		
-		JLabel lblRecordedFrames = new JLabel("Recorded Frames");
-		horizontalBox_22.add(lblRecordedFrames);
-		
-		Component horizontalGlue_26 = Box.createHorizontalGlue();
-		horizontalBox_22.add(horizontalGlue_26);
-		
-		recordedFramesField = new JTextField();
-		recordedFramesField.getDocument().addDocumentListener(new MyDocumentListener(recordedFramesField));
-		recordedFramesField.setHorizontalAlignment(SwingConstants.RIGHT);
-		recordedFramesField.setMinimumSize(new Dimension(6, 10));
-		recordedFramesField.setMaximumSize(new Dimension(60, 22));
-		recordedFramesField.setColumns(5);
-		horizontalBox_22.add(recordedFramesField);
-		
-		Box verticalBox_9 = Box.createVerticalBox();
-		tabbedPane.addTab("Advanced Settings", null, verticalBox_9, null);
-		
-		Box verticalBox_10 = Box.createVerticalBox();
-		verticalBox_10.setBorder(new TitledBorder(null, "Label Dependent Settings", TitledBorder.LEADING, TitledBorder.TOP, usedFont, null));
-		verticalBox_9.add(verticalBox_10);
-		
-		Box horizontalBox_5 = Box.createHorizontalBox();
-		verticalBox_10.add(horizontalBox_5);
-		
-		JLabel lblMeanAngle = new JLabel("Binding Angle (Degree)");
-		horizontalBox_5.add(lblMeanAngle);
-		
-		Component horizontalGlue_5 = Box.createHorizontalGlue();
-		horizontalBox_5.add(horizontalGlue_5);
-		
-		meanAngleField = new JTextField();
-		meanAngleField.getDocument().addDocumentListener(new MyDocumentListener(meanAngleField));
-		meanAngleField.setHorizontalAlignment(SwingConstants.RIGHT);
-		meanAngleField.setMinimumSize(new Dimension(6, 10));
-		meanAngleField.setMaximumSize(new Dimension(60, 22));
-		meanAngleField.setColumns(5);
-		horizontalBox_5.add(meanAngleField);
-		
-		JLabel lblNewLabel_7 = new JLabel("");
-		horizontalBox_5.add(lblNewLabel_7);
-		
-		Box horizontalBox_40 = Box.createHorizontalBox();
-		verticalBox_10.add(horizontalBox_40);
-		
-		JLabel lblNewLabel_8 = new JLabel("Sigma Of Angular Distribution");
-		horizontalBox_40.add(lblNewLabel_8);
-		
-		Component horizontalGlue_41 = Box.createHorizontalGlue();
-		horizontalBox_40.add(horizontalGlue_41);
-		
-		angularDistributionField = new JTextField();
-		angularDistributionField.getDocument().addDocumentListener(new MyDocumentListener(angularDistributionField));
-		angularDistributionField.setHorizontalAlignment(SwingConstants.RIGHT);
-		angularDistributionField.setMinimumSize(new Dimension(60, 22));
-		angularDistributionField.setMaximumSize(new Dimension(60, 22));
-		horizontalBox_40.add(angularDistributionField);
-		angularDistributionField.setColumns(5);
-		
-		Component verticalGlue_6 = Box.createVerticalGlue();
-		verticalBox_9.add(verticalGlue_6);
-		
-		Box verticalBox_12 = Box.createVerticalBox();
-		verticalBox_12.setBorder(new TitledBorder(null, "Fluorophore Dependent Settings", TitledBorder.LEADING, TitledBorder.TOP, usedFont, null));
-		verticalBox_9.add(verticalBox_12);
-		
-		Box horizontalBox_10 = Box.createHorizontalBox();
-		verticalBox_12.add(horizontalBox_10);
-		
-		JLabel lblAverageBlinkingNumber = new JLabel("On-Off Duty Cycle");
-		horizontalBox_10.add(lblAverageBlinkingNumber);
-		
-		Component horizontalGlue_10 = Box.createHorizontalGlue();
-		horizontalBox_10.add(horizontalGlue_10);
-		
-		dutyCycleField = new JTextField();
-		dutyCycleField.getDocument().addDocumentListener(new MyDocumentListener(dutyCycleField));
-		
-		dutyCycleField.setHorizontalAlignment(SwingConstants.RIGHT);
-		dutyCycleField.setMinimumSize(new Dimension(6, 10));
-		dutyCycleField.setMaximumSize(new Dimension(60, 22));
-		dutyCycleField.setColumns(5);
-		horizontalBox_10.add(dutyCycleField);
-		
-		Component verticalGlue_9 = Box.createVerticalGlue();
-		verticalBox_12.add(verticalGlue_9);
-		
-		Box horizontalBox_17 = Box.createHorizontalBox();
-		verticalBox_12.add(horizontalBox_17);
-		
-		Component horizontalGlue_3 = Box.createHorizontalGlue();
-		horizontalBox_17.add(horizontalGlue_3);
-		
-		Box horizontalBox_29 = Box.createHorizontalBox();
-		verticalBox_12.add(horizontalBox_29);
-		
-		JLabel lblAllowBleaching = new JLabel("Allow Bleaching");
-		horizontalBox_29.add(lblAllowBleaching);
-		
-		applyBleachBox = new JCheckBox("");
-		applyBleachBox.setHorizontalAlignment(SwingConstants.TRAILING);
-		horizontalBox_29.add(applyBleachBox);
-		
-		Component horizontalGlue_20 = Box.createHorizontalGlue();
-		horizontalBox_29.add(horizontalGlue_20);
-		
-		Component horizontalGlue_21 = Box.createHorizontalGlue();
-		horizontalBox_29.add(horizontalGlue_21);
-		
-		JLabel lblBleachConstant = new JLabel("Bleach Constant ");
-		horizontalBox_29.add(lblBleachConstant);
-		
-		Component horizontalGlue_19 = Box.createHorizontalGlue();
-		horizontalBox_29.add(horizontalGlue_19);
-		
-		bleachConstantField = new JTextField();
-		bleachConstantField.getDocument().addDocumentListener(new MyDocumentListener(bleachConstantField));
-		bleachConstantField.setMinimumSize(new Dimension(6, 10));
-		bleachConstantField.setMaximumSize(new Dimension(60, 22));
-		bleachConstantField.setHorizontalAlignment(SwingConstants.RIGHT);
-		bleachConstantField.setColumns(5);
-		horizontalBox_29.add(bleachConstantField);
-		
-		Component verticalGlue_30 = Box.createVerticalGlue();
-		verticalBox_12.add(verticalGlue_30);
-		
-		Component verticalGlue_11 = Box.createVerticalGlue();
-		verticalBox_12.add(verticalGlue_11);
-		
-		Box horizontalBox_11 = Box.createHorizontalBox();
-		verticalBox_12.add(horizontalBox_11);
-		
-		JLabel lblAveragePhotonOutput = new JLabel("Median Photon Output");
-		horizontalBox_11.add(lblAveragePhotonOutput);
-		
-		Component horizontalGlue_11 = Box.createHorizontalGlue();
-		horizontalBox_11.add(horizontalGlue_11);
-		
-		averagePhotonOutputField = new JTextField();
-		averagePhotonOutputField.getDocument().addDocumentListener(new MyDocumentListener(averagePhotonOutputField));
-		averagePhotonOutputField.setHorizontalAlignment(SwingConstants.RIGHT);
-		averagePhotonOutputField.setMinimumSize(new Dimension(6, 10));
-		averagePhotonOutputField.setMaximumSize(new Dimension(60, 22));
-		averagePhotonOutputField.setColumns(5);
-		horizontalBox_11.add(averagePhotonOutputField);
-		
-		Component verticalGlue_19 = Box.createVerticalGlue();
-		verticalBox_12.add(verticalGlue_19);
-		
-		Box horizontalBox_19 = Box.createHorizontalBox();
-		verticalBox_12.add(horizontalBox_19);
-		
-		JLabel lblNewLabel_5 = new JLabel("Couple Loc. Precision And Intensity ");
-		horizontalBox_19.add(lblNewLabel_5);
-		
-		Component horizontalGlue_37 = Box.createHorizontalGlue();
-		horizontalGlue_37.setSize(new Dimension(10, 0));
-		horizontalBox_19.add(horizontalGlue_37);
-		
-		coupleSigmaIntensityBox = new JCheckBox("");
-		coupleSigmaIntensityBox.setSelected(true);
-		horizontalBox_19.add(coupleSigmaIntensityBox);
-		
-		Component horizontalGlue_18 = Box.createHorizontalGlue();
-		horizontalBox_19.add(horizontalGlue_18);
-		
-		Box verticalBox_11 = Box.createVerticalBox();
-		verticalBox_11.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Background And Distortions", TitledBorder.LEADING, TitledBorder.TOP, usedFont, new Color(0, 0, 0)));
-		verticalBox_9.add(verticalBox_11);
-		
-		Box horizontalBox_6 = Box.createHorizontalBox();
-		verticalBox_11.add(horizontalBox_6);
-		
-		JLabel lblBackgroundLabel = new JLabel("<html>Background Label (&mu;m<sup>-3</sup>)</html>");
-		horizontalBox_6.add(lblBackgroundLabel);
-		
-		Component horizontalGlue_6 = Box.createHorizontalGlue();
-		horizontalBox_6.add(horizontalGlue_6);
-		
-		backgroundLabelField = new JTextField();
-		backgroundLabelField.getDocument().addDocumentListener(new MyDocumentListener(backgroundLabelField));
-		horizontalBox_6.add(backgroundLabelField);
-		backgroundLabelField.setHorizontalAlignment(SwingConstants.RIGHT);
-		backgroundLabelField.setMinimumSize(new Dimension(6, 10));
-		backgroundLabelField.setMaximumSize(new Dimension(60, 22));
-		backgroundLabelField.setColumns(5);
-		
-		Component verticalGlue_15 = Box.createVerticalGlue();
-		verticalBox_11.add(verticalGlue_15);
-		
-		Box horizontalBox_15 = Box.createHorizontalBox();
-		verticalBox_11.add(horizontalBox_15);
-		
-		Component verticalGlue_18 = Box.createVerticalGlue();
-		verticalBox_11.add(verticalGlue_18);
-		
-		Box horizontalBox_14 = Box.createHorizontalBox();
-		verticalBox_11.add(horizontalBox_14);
-		
-		Component horizontalGlue_17 = Box.createHorizontalGlue();
-		horizontalBox_14.add(horizontalGlue_17);
-		
-		Component horizontalGlue_15 = Box.createHorizontalGlue();
-		horizontalGlue_15.setPreferredSize(new Dimension(100, 0));
-		horizontalBox_14.add(horizontalGlue_15);
-		
-		Component verticalGlue_31 = Box.createVerticalGlue();
-		verticalBox_11.add(verticalGlue_31);
-		
-		Box horizontalBox_38 = Box.createHorizontalBox();
-		verticalBox_11.add(horizontalBox_38);
-		
-		JLabel lblDetectionEfficiency = new JLabel("Detection Efficiency (%)");
-		horizontalBox_38.add(lblDetectionEfficiency);
-		
-		Component horizontalGlue_22 = Box.createHorizontalGlue();
-		horizontalBox_38.add(horizontalGlue_22);
-		
-		detectionEfficiencyField = new JTextField();
-		detectionEfficiencyField.getDocument().addDocumentListener(new MyDocumentListener(detectionEfficiencyField));
-		detectionEfficiencyField.setMinimumSize(new Dimension(6, 10));
-		detectionEfficiencyField.setMaximumSize(new Dimension(60, 22));
-		detectionEfficiencyField.setHorizontalAlignment(SwingConstants.RIGHT);
-		detectionEfficiencyField.setColumns(5);
-		horizontalBox_38.add(detectionEfficiencyField);
-		
-		reproducibleOutputchkBox = new JCheckBox("Reproducible Output");
-		verticalBox_11.add(reproducibleOutputchkBox);
-		
-		Box verticalBox_18 = Box.createVerticalBox();
-		tabbedPane.addTab("Tiff Stack Creation", null, verticalBox_18, null);
-		
-		Box verticalBox_19 = Box.createVerticalBox();
-		verticalBox_18.add(verticalBox_19);
-		
-		Box verticalBox_20 = Box.createVerticalBox();
-		verticalBox_20.setBorder(new TitledBorder(null, "Camera Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		verticalBox_19.add(verticalBox_20);
-		
-		Box horizontalBox_41 = Box.createHorizontalBox();
-		verticalBox_20.add(horizontalBox_41);
-		
-		JLabel lblNewLabel_9 = new JLabel("Pixel To Nm Ratio");
-		horizontalBox_41.add(lblNewLabel_9);
-		
-		Component horizontalGlue_42 = Box.createHorizontalGlue();
-		horizontalBox_41.add(horizontalGlue_42);
-		
-		pxToNmField = new JTextField();
-		pxToNmField.setHorizontalAlignment(SwingConstants.RIGHT);
-		pxToNmField.setMaximumSize(new Dimension(100, 2147483647));
-		horizontalBox_41.add(pxToNmField);
-		pxToNmField.setColumns(5);
-		
-		Box horizontalBox_42 = Box.createHorizontalBox();
-		verticalBox_20.add(horizontalBox_42);
-		
-		JLabel lblNewLabel_10 = new JLabel("<html>Framerate (s<sup>-1</sup>)</html>");
-		horizontalBox_42.add(lblNewLabel_10);
-		
-		Component horizontalGlue_43 = Box.createHorizontalGlue();
-		horizontalBox_42.add(horizontalGlue_43);
-		
-		framerateField = new JTextField();
-		framerateField.setHorizontalAlignment(SwingConstants.RIGHT);
-		framerateField.setMaximumSize(new Dimension(100, 2147483647));
-		horizontalBox_42.add(framerateField);
-		framerateField.setColumns(5);
-		
-		Box horizontalBox_48 = Box.createHorizontalBox();
-		verticalBox_20.add(horizontalBox_48);
-		
-		JLabel lblSigmaBackground = new JLabel("Sigma Readout Noise (in DN)");
-		horizontalBox_48.add(lblSigmaBackground);
-		
-		Component horizontalGlue_49 = Box.createHorizontalGlue();
-		horizontalBox_48.add(horizontalGlue_49);
-		
-		sigmaBgField = new JTextField();
-		sigmaBgField.setHorizontalAlignment(SwingConstants.RIGHT);
-		sigmaBgField.setMaximumSize(new Dimension(100, 2147483647));
-		sigmaBgField.setColumns(5);
-		horizontalBox_48.add(sigmaBgField);
-		
-		Box horizontalBox_49 = Box.createHorizontalBox();
-		verticalBox_20.add(horizontalBox_49);
-		
-		JLabel lblConstantOffset = new JLabel("Constant Offset");
-		horizontalBox_49.add(lblConstantOffset);
-		
-		Component horizontalGlue_50 = Box.createHorizontalGlue();
-		horizontalBox_49.add(horizontalGlue_50);
-		
-		constOffsetField = new JTextField();
-		constOffsetField.setHorizontalAlignment(SwingConstants.RIGHT);
-		constOffsetField.setMaximumSize(new Dimension(100, 2147483647));
-		constOffsetField.setColumns(5);
-		horizontalBox_49.add(constOffsetField);
-		
-		Box horizontalBox_53 = Box.createHorizontalBox();
-		horizontalBox_53.setAlignmentY(Component.CENTER_ALIGNMENT);
-		verticalBox_20.add(horizontalBox_53);
-		
-		JLabel lblEmGain = new JLabel("EM Gain");
-		horizontalBox_53.add(lblEmGain);
-		
-		Component horizontalGlue_16 = Box.createHorizontalGlue();
-		horizontalBox_53.add(horizontalGlue_16);
-		
-		emGainField = new JTextField();
-		emGainField.setHorizontalAlignment(SwingConstants.RIGHT);
-		emGainField.setMaximumSize(new Dimension(100, 2147483647));
-		emGainField.setColumns(5);
-		horizontalBox_53.add(emGainField);
-		
-		Box horizontalBox_51 = Box.createHorizontalBox();
-		verticalBox_20.add(horizontalBox_51);
-		
-		JLabel lblWindowsizePsfRendering = new JLabel("Quantum Efficiency");
-		horizontalBox_51.add(lblWindowsizePsfRendering);
-		
-		Component horizontalGlue_52 = Box.createHorizontalGlue();
-		horizontalBox_51.add(horizontalGlue_52);
-		
-		quantumEfficiencyField = new JTextField();
-		quantumEfficiencyField.setHorizontalAlignment(SwingConstants.RIGHT);
-		quantumEfficiencyField.setMaximumSize(new Dimension(100, 2147483647));
-		quantumEfficiencyField.setColumns(5);
-		horizontalBox_51.add(quantumEfficiencyField);
-		
-		JLabel lblNewLabel_12 = new JLabel("electrons/DN");
-		horizontalBox_51.add(lblNewLabel_12);
-		
-		Component horizontalGlue_58 = Box.createHorizontalGlue();
-		horizontalBox_51.add(horizontalGlue_58);
-		
-		electronsPerDnField = new JTextField();
-		electronsPerDnField.setHorizontalAlignment(SwingConstants.RIGHT);
-		electronsPerDnField.setMaximumSize(new Dimension(100, 2147483647));
-		horizontalBox_51.add(electronsPerDnField);
-		electronsPerDnField.setColumns(5);
-		
-		Box verticalBox_21 = Box.createVerticalBox();
-		verticalBox_21.setBorder(new TitledBorder(null, "General Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		verticalBox_19.add(verticalBox_21);
-		
-		Box horizontalBox_54 = Box.createHorizontalBox();
-		verticalBox_21.add(horizontalBox_54);
-		
-		JLabel lblWindowsizePsfRendering_1 = new JLabel("Windowsize PSF Rendering");
-		horizontalBox_54.add(lblWindowsizePsfRendering_1);
-		
-		Component horizontalGlue_55 = Box.createHorizontalGlue();
-		horizontalBox_54.add(horizontalGlue_55);
-		
-		windowsizePSFRenderingField = new JTextField();
-		windowsizePSFRenderingField.setHorizontalAlignment(SwingConstants.RIGHT);
-		windowsizePSFRenderingField.setMaximumSize(new Dimension(100, 2147483647));
-		windowsizePSFRenderingField.setColumns(5);
-		horizontalBox_54.add(windowsizePSFRenderingField);
-		
-		Box horizontalBox_50 = Box.createHorizontalBox();
-		verticalBox_21.add(horizontalBox_50);
-		
-		JLabel lblEmptyPixelsOn = new JLabel("Empty Pixels On Rim");
-		horizontalBox_50.add(lblEmptyPixelsOn);
-		
-		Component horizontalGlue_51 = Box.createHorizontalGlue();
-		horizontalBox_50.add(horizontalGlue_51);
-		
-		emptyPixelsOnRimField = new JTextField();
-		emptyPixelsOnRimField.setHorizontalAlignment(SwingConstants.RIGHT);
-		emptyPixelsOnRimField.setMaximumSize(new Dimension(100, 2147483647));
-		emptyPixelsOnRimField.setColumns(5);
-		horizontalBox_50.add(emptyPixelsOnRimField);
-		
-		Box verticalBox_22 = Box.createVerticalBox();
-		verticalBox_22.setBorder(new TitledBorder(null, "PSF Settings", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		verticalBox_19.add(verticalBox_22);
-		
-		Box horizontalBox_44 = Box.createHorizontalBox();
-		verticalBox_22.add(horizontalBox_44);
-		
-		JLabel lblNumericalAperture = new JLabel("Numerical Aperture");
-		horizontalBox_44.add(lblNumericalAperture);
-		
-		Component horizontalGlue_45 = Box.createHorizontalGlue();
-		horizontalBox_44.add(horizontalGlue_45);
-		
-		naField = new JTextField();
-		naField.setHorizontalAlignment(SwingConstants.RIGHT);
-		horizontalBox_44.add(naField);
-		naField.setMaximumSize(new Dimension(100, 2147483647));
-		naField.setColumns(5);
-		
-		Box horizontalBox_43 = Box.createHorizontalBox();
-		verticalBox_22.add(horizontalBox_43);
-		
-		JLabel lblMeanBlinkingDuration = new JLabel("Mean Blinking Duration in (s)");
-		horizontalBox_43.add(lblMeanBlinkingDuration);
-		
-		Component horizontalGlue_44 = Box.createHorizontalGlue();
-		horizontalBox_43.add(horizontalGlue_44);
-		
-		meanBlinkingDurationField = new JTextField();
-		meanBlinkingDurationField.setHorizontalAlignment(SwingConstants.RIGHT);
-		meanBlinkingDurationField.setMaximumSize(new Dimension(100, 2147483647));
-		
-		meanBlinkingDurationField.setColumns(5);
-		horizontalBox_43.add(meanBlinkingDurationField);
-		
-		Box horizontalBox_45 = Box.createHorizontalBox();
-		verticalBox_22.add(horizontalBox_45);
-		
-		JLabel lblWavelength = new JLabel("Wavelength");
-		horizontalBox_45.add(lblWavelength);
-		
-		Component horizontalGlue_46 = Box.createHorizontalGlue();
-		horizontalBox_45.add(horizontalGlue_46);
-		
-		wavelengthField = new JTextField();
-		wavelengthField.setHorizontalAlignment(SwingConstants.RIGHT);
-		wavelengthField.setMaximumSize(new Dimension(100, 2147483647));
-		wavelengthField.setColumns(5);
-		horizontalBox_45.add(wavelengthField);
-		
-		Box horizontalBox_46 = Box.createHorizontalBox();
-		verticalBox_22.add(horizontalBox_46);
-		
-		JLabel lblFokus = new JLabel("Fokus");
-		horizontalBox_46.add(lblFokus);
-		
-		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
-		horizontalStrut_1.setPreferredSize(new Dimension(80, 0));
-		horizontalStrut_1.setMaximumSize(new Dimension(5000, 32767));
-		horizontalBox_46.add(horizontalStrut_1);
-		
-		fokusField = new JTextField();
-		fokusField.setHorizontalAlignment(SwingConstants.RIGHT);
-		fokusField.setMaximumSize(new Dimension(100, 2147483647));
-		fokusField.setColumns(5);
-		horizontalBox_46.add(fokusField);
-		
-		JLabel lblDefokus = new JLabel("Defokus");
-		horizontalBox_46.add(lblDefokus);
-		
-		Component horizontalGlue_48 = Box.createHorizontalGlue();
-		horizontalBox_46.add(horizontalGlue_48);
-		
-		defokusField = new JTextField();
-		defokusField.setHorizontalAlignment(SwingConstants.RIGHT);
-		horizontalBox_46.add(defokusField);
-		defokusField.setMaximumSize(new Dimension(100, 2147483647));
-		defokusField.setColumns(5);
-		
-		Box horizontalBox_55 = Box.createHorizontalBox();
-		verticalBox_22.add(horizontalBox_55);
-		
-		ensureSinglePSFchkBox = new JCheckBox("Ensure Single PSFs");
-		horizontalBox_55.add(ensureSinglePSFchkBox);
-		
-		Component horizontalGlue_47 = Box.createHorizontalGlue();
-		horizontalBox_55.add(horizontalGlue_47);
-		
-		distributePSFOverFrames = new JCheckBox("Distribute PSFs Over Frames");
-		horizontalBox_55.add(distributePSFOverFrames);
-		
-		Box horizontalBox_47 = Box.createHorizontalBox();
-		verticalBox_19.add(horizontalBox_47);
-		
-		JButton importCalibrationFileButton = new JButton("Import Calibration File");
-		importCalibrationFileButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (allDataSets.size()>0){
-					JFileChooser fc = new JFileChooser();
-					int returnValue = fc.showOpenDialog(getContentPane());
-					if(returnValue == JFileChooser.APPROVE_OPTION) {
-						String path = fc.getSelectedFile().getAbsolutePath();
-						String name = fc.getSelectedFile().getName();
-						CalibrationFileParser cfp = new CalibrationFileParser(path);
-						try {
-							allDataSets.get(currentRow).getParameterSet().setCalibrationFile(cfp.parse());
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-					
-				}
-			}
-		});
-		horizontalBox_47.add(importCalibrationFileButton);
-		
-		Box horizontalBox_52 = Box.createHorizontalBox();
-		verticalBox_19.add(horizontalBox_52);
-		
-		radio2D = new JRadioButton("2D");
-		buttonGroup.add(radio2D);
-		horizontalBox_52.add(radio2D);
-		
-		radio3D = new JRadioButton("3D");
-		buttonGroup.add(radio3D);
-		horizontalBox_52.add(radio3D);
-		
-		Component horizontalGlue_53 = Box.createHorizontalGlue();
-		horizontalBox_52.add(horizontalGlue_53);
-		
-		JButton exportTiffStackButton = new JButton("Export Tiffstack");
-		exportTiffStackButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				int returnValue = fc.showSaveDialog(getContentPane());
-				if(returnValue == JFileChooser.APPROVE_OPTION) {
-					String path = fc.getSelectedFile().getAbsolutePath();
-					String name = fc.getSelectedFile().getName();
-					if (!path.endsWith(EXTENSIONIMAGEOUTPUT)) {
-					    path += EXTENSIONIMAGEOUTPUT;
-					}
-					if(name.endsWith(EXTENSIONIMAGEOUTPUT)){
-						name = name.substring(0, name.length()-4);
-					}
-					
-					calculate(true);
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException e2) {
-						// TODO Auto-generated catch block
-						e2.printStackTrace();
-					}
-					while (allDataSets.get(currentRow).isCalculating){
-						try {
-							Thread.sleep(500);
-						} catch (InterruptedException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-					ParameterSet set = allDataSets.get(currentRow).getParameterSet();
-					set.setMeanBlinkingTime(Float.valueOf(meanBlinkingDurationField.getText()));
-					int modelNumber = 2;
-					if (set.isTwoDPSF()){
-						modelNumber  = 1;
-					}
-					getBorders();
-					
-					CreateStack.createTiffStack(allDataSets.get(currentRow).stormData, 1/set.getPixelToNmRatio(),
-							set.getEmptyPixelsOnRim(),set.getEmGain(), borders, random,
-							set.getElectronPerAdCount(), set.getFrameRate(), set.getMeanBlinkingTime(), set.getWindowsizePSF(),
-							modelNumber,set.getQuantumEfficiency(), set.getNa(), set.getPsfwidth(), set.getFokus(), set.getDefokus(), set.getSigmaBg(),
-							set.getConstOffset(), set.getCalibrationFile(), path,set.isEnsureSinglePSF(), set.isDistributePSFoverFrames());
-					FileManager.writeLogFile(allDataSets.get(currentRow).getParameterSet(), path.substring(0, path.length()-4)+"TiffStack",borders,true);
-				}
-				
-			}
-		});
-		horizontalBox_52.add(exportTiffStackButton);
-		
-		progressBar = new JProgressBar();
-		verticalBox.add(progressBar);
-		progressBar.setStringPainted(true);
-		
-		Component verticalGlue_21 = Box.createVerticalGlue();
-		verticalBox.add(verticalGlue_21);
-		
 		Box horizontalBox_37 = Box.createHorizontalBox();
 		verticalBox.add(horizontalBox_37);
-		
-		JButton calcButton = new JButton("Calculate");
-		horizontalBox_37.add(calcButton);
-		calcButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		calcButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				calculate();
-			}
-		});
-		
-		Component verticalGlue_16 = Box.createVerticalGlue();
-		verticalBox.add(verticalGlue_16);
 		
 		Box verticalBox_6 = Box.createVerticalBox();
 		verticalBox_6.setBorder(new TitledBorder(null, "Visualization Parameter", TitledBorder.LEADING, TitledBorder.TOP, usedFont, null));
 		verticalBox.add(verticalBox_6);
 		
 		JTabbedPane tabbedPane_1 = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane_1.setMaximumSize(new Dimension(32767, 300));
 		verticalBox_6.add(tabbedPane_1);
 		
 		Box verticalBox_16 = Box.createVerticalBox();
@@ -1093,8 +335,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		pointSizeField.setColumns(5);
 		horizontalBox_16.add(pointSizeField);
 		
-		Component verticalGlue_20 = Box.createVerticalGlue();
-		verticalBox_16.add(verticalGlue_20);
+		Component verticalGlue_2 = Box.createVerticalGlue();
+		verticalBox_16.add(verticalGlue_2);
 		
 		Box horizontalBox_24 = Box.createHorizontalBox();
 		verticalBox_16.add(horizontalBox_24);
@@ -1113,8 +355,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		lineWidthField.setColumns(5);
 		horizontalBox_24.add(lineWidthField);
 		
-		Component verticalGlue_17 = Box.createVerticalGlue();
-		verticalBox_16.add(verticalGlue_17);
+		Component verticalGlue_3 = Box.createVerticalGlue();
+		verticalBox_16.add(verticalGlue_3);
 		
 		Box horizontalBox_18 = Box.createHorizontalBox();
 		verticalBox_16.add(horizontalBox_18);
@@ -1140,6 +382,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			}
 		});
 		horizontalBox_18.add(showStormPointsBox);
+		
+		Component verticalGlue_4 = Box.createVerticalGlue();
+		verticalBox_16.add(verticalGlue_4);
 		
 		Box horizontalBox_20 = Box.createHorizontalBox();
 		verticalBox_16.add(horizontalBox_20);
@@ -1173,6 +418,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		});
 		horizontalBox_20.add(showAntibodiesBox);
 		
+		Component verticalGlue_5 = Box.createVerticalGlue();
+		verticalBox_16.add(verticalGlue_5);
+		
 		Box horizontalBox_21 = Box.createHorizontalBox();
 		verticalBox_16.add(horizontalBox_21);
 		
@@ -1205,8 +453,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			}
 		});
 		
-		Component verticalGlue_22 = Box.createVerticalGlue();
-		verticalBox_16.add(verticalGlue_22);
+		Component verticalGlue_6 = Box.createVerticalGlue();
+		verticalBox_16.add(verticalGlue_6);
 		
 		Box verticalBox_14 = Box.createVerticalBox();
 		verticalBox_16.add(verticalBox_14);
@@ -1268,9 +516,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		backgroundColorButton.setMaximumSize(new Dimension(33, 20));
 		horizontalBox_27.add(backgroundColorButton);
 		
-		Component verticalGlue_23 = Box.createVerticalGlue();
-		verticalBox_16.add(verticalGlue_23);
-		
 		Box horizontalBox_28 = Box.createHorizontalBox();
 		verticalBox_16.add(horizontalBox_28);
 		
@@ -1302,8 +547,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 				
 				Box verticalBox_8 = Box.createVerticalBox();
+				verticalBox_8.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 				horizontalBox_30.add(verticalBox_8);
-				verticalBox_8.setAlignmentX(Component.CENTER_ALIGNMENT);
 				
 				JLabel lblRenderingQuality = new JLabel("Rendering Quality");
 				verticalBox_8.add(lblRenderingQuality);
@@ -1322,14 +567,13 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				
 				radioFastest = new JRadioButton("Fastest");
 				verticalBox_8.add(radioFastest);
-				ButtonGroup group = new ButtonGroup();
 				group.add(radioNicest);
 				group.add(radioAdvanced);
 				group.add(radioIntermediate);
 				group.add(radioFastest);
 				
-				Component verticalGlue_24 = Box.createVerticalGlue();
-				verticalBox_8.add(verticalGlue_24);
+				Component verticalGlue_8 = Box.createVerticalGlue();
+				verticalBox_8.add(verticalGlue_8);
 				
 				keepBordersChkBox = new JCheckBox("Keep Borders");
 				verticalBox_8.add(keepBordersChkBox);
@@ -1338,6 +582,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				horizontalBox_30.add(horizontalGlue_36);
 				
 				Box verticalBox_15 = Box.createVerticalBox();
+				verticalBox_15.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 				horizontalBox_30.add(verticalBox_15);
 				
 				JLabel lblNewLabel = new JLabel("x min (nm)");
@@ -1373,9 +618,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				
 				horizontalBox_31.add(xminSlider);
 				
-				Component verticalGlue_25 = Box.createVerticalGlue();
-				verticalBox_15.add(verticalGlue_25);
-				
 				JLabel lblNewLabel_1 = new JLabel("x max (nm)");
 				verticalBox_15.add(lblNewLabel_1);
 				
@@ -1407,9 +649,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					}
 				});
 				horizontalBox_32.add(xmaxSlider);
-				
-				Component verticalGlue_26 = Box.createVerticalGlue();
-				verticalBox_15.add(verticalGlue_26);
 				
 				JLabel lblNewLabel_2 = new JLabel("y min (nm)");
 				verticalBox_15.add(lblNewLabel_2);
@@ -1443,9 +682,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				});
 				horizontalBox_33.add(yminSlider);
 				
-				Component verticalGlue_27 = Box.createVerticalGlue();
-				verticalBox_15.add(verticalGlue_27);
-				
 				JLabel lblNewLabel_3 = new JLabel("y max (nm)");
 				verticalBox_15.add(lblNewLabel_3);
 				
@@ -1477,9 +713,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					}
 				});
 				horizontalBox_34.add(ymaxSlider);
-				
-				Component verticalGlue_28 = Box.createVerticalGlue();
-				verticalBox_15.add(verticalGlue_28);
 				
 				JLabel lblNewLabel_4 = new JLabel("z min (nm)");
 				verticalBox_15.add(lblNewLabel_4);
@@ -1513,9 +746,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				});
 				horizontalBox_35.add(zminSlider);
 				
-				Component verticalGlue_29 = Box.createVerticalGlue();
-				verticalBox_15.add(verticalGlue_29);
-				
 				JLabel lblZMin = new JLabel("z max (nm)");
 				verticalBox_15.add(lblZMin);
 				
@@ -1547,13 +777,13 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					}
 				});
 				horizontalBox_36.add(zmaxSlider);
-		stormColorButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				allDataSets.get(currentRow).getParameterSet().setStormColor(JColorChooser.showDialog(getContentPane(), "Choose color for Storm points", allDataSets.get(currentRow).getParameterSet().getStormColor()));
-				updateButtonColors();
-			}
-		});
+				stormColorButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						allDataSets.get(currentRow).getParameterSet().setStormColor(JColorChooser.showDialog(getContentPane(), "Choose color for Storm points", allDataSets.get(currentRow).getParameterSet().getStormColor()));
+						updateButtonColors();
+					}
+				});
 				
 				
 				
@@ -1600,58 +830,46 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				
 			}
 		});
-	
-		horizontalBox_23.add(xzViewButton);
 		
-		Component horizontalGlue_28 = Box.createHorizontalGlue();
-		horizontalBox_23.add(horizontalGlue_28);
-		
-		yzViewButton = new JToggleButton("yz");
-		yzViewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println(viewStatus);
-				setViewPoint(0,0);
-				xyViewButton.setSelected(false);
-				xzViewButton.setSelected(false);
-				if (viewStatus == 3){
-					viewStatus = 0;
-					return;
+			horizontalBox_23.add(xzViewButton);
+			
+			Component horizontalGlue_28 = Box.createHorizontalGlue();
+			horizontalBox_23.add(horizontalGlue_28);
+			
+			yzViewButton = new JToggleButton("yz");
+			yzViewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.out.println(viewStatus);
+					setViewPoint(0,0);
+					xyViewButton.setSelected(false);
+					xzViewButton.setSelected(false);
+					if (viewStatus == 3){
+						viewStatus = 0;
+						return;
+					}
+					viewStatus = 3;
+					
 				}
-				viewStatus = 3;
-				
-			}
-		});
-		horizontalBox_23.add(yzViewButton);
-		
-						
-		Component horizontalGlue_30 = Box.createHorizontalGlue();
-		horizontalBox_23.add(horizontalGlue_30);
-		
-		Component verticalGlue_3 = Box.createVerticalGlue();
-		verticalBox.add(verticalGlue_3);
-		
-		saveViewpointButton = new JToggleButton("Fix Viewpoint");
-		saveViewpointButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		verticalBox.add(saveViewpointButton);
-		
-		Component verticalGlue_14 = Box.createVerticalGlue();
-		verticalBox.add(verticalGlue_14);
-		
-		JButton visButton = new JButton("Visualize");
-		verticalBox.add(visButton);
-		visButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		
-		Box horizontalBox_39 = Box.createHorizontalBox();
-		verticalBox.add(horizontalBox_39);
-		
-		Component horizontalGlue_40 = Box.createHorizontalGlue();
-		horizontalBox_39.add(horizontalGlue_40);
-		
-		JLabel lblNewLabel_6 = new JLabel("Number Of Visible Localizations:  ");
-		horizontalBox_39.add(lblNewLabel_6);
-		
-		numberOfVisibleLocalizationsLabel = new JLabel("0");
-		horizontalBox_39.add(numberOfVisibleLocalizationsLabel);
+			});
+			horizontalBox_23.add(yzViewButton);
+			
+							
+			Component horizontalGlue_30 = Box.createHorizontalGlue();
+			horizontalBox_23.add(horizontalGlue_30);
+			
+			saveViewpointButton = new JToggleButton("Fix Viewpoint");
+			saveViewpointButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+			verticalBox.add(saveViewpointButton);
+			
+			JButton visButton = new JButton("Visualize");
+			verticalBox.add(visButton);
+			visButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+			
+			Component verticalGlue = Box.createVerticalGlue();
+			verticalBox.add(verticalGlue);
+			
+			Box horizontalBox_39 = Box.createHorizontalBox();
+			verticalBox.add(horizontalBox_39);
 		
 		visButton.addActionListener(new ActionListener() {
 			@Override
@@ -1665,7 +883,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 //				t.start();
 			}
 		});
-		dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
 		jsp.setAlignmentX(Component.LEFT_ALIGNMENT);
 		jsp.setPreferredSize(new Dimension(350, 600));
 		panel.add(jsp, "name_652625437088073");
@@ -1738,7 +955,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		
 		plot = new Plot3D();
-		configureTableListener();
 		
 		JButton openEditorButton = new JButton("Open Editor");
 		openEditorButton.addActionListener(new ActionListener() {
@@ -1759,32 +975,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Component rigidArea_2 = Box.createRigidArea(new Dimension(20, 20));
 		toolBar.add(rigidArea_2);
 		toolBar.add(openEditorButton);
-		
-		Component rigidArea_3 = Box.createRigidArea(new Dimension(20, 20));
-		toolBar.add(rigidArea_3);
-		
-		exampleComboBox = new JComboBox();
-		exampleComboBox.setMaximumSize(new Dimension(200, 32767));
-		exampleComboBox.setMaximumRowCount(7);
-		exampleComboBox.addItem("Examples");
-		exampleComboBox.addItem("Microtubules 3D");
-		exampleComboBox.addItem("Mitochondria 3D");
-		exampleComboBox.addItem("Crossing Lines 2D");
-		exampleComboBox.addItem("Crossing Lines 3D");
-		exampleComboBox.addItem("Shpere 3D");
-		exampleComboBox.addItem("Triangles 3D");
-		exampleComboBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (exampleComboBox.getSelectedIndex()>0){
-					loadExamples(exampleComboBox.getSelectedIndex());
-				}
-			}
-		});
-		toolBar.add(exampleComboBox);
-		
-		Component horizontalGlue_24 = Box.createHorizontalGlue();
-		toolBar.add(horizontalGlue_24);
 		
 		JButton saveProjectButton = new JButton("Save Project");
 		saveProjectButton.addActionListener(new ActionListener() {
@@ -1810,15 +1000,863 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			}
 		});
 		
-		Component horizontalGlue_39 = Box.createHorizontalGlue();
-		toolBar.add(horizontalGlue_39);
-		
-		Component horizontalGlue_38 = Box.createHorizontalGlue();
-		toolBar.add(horizontalGlue_38);
+		Component rigidArea = Box.createRigidArea(new Dimension(20, 20));
+		toolBar.add(rigidArea);
 		
 		toolBar.add(saveProjectButton);
 		
+		Component rigidArea_3 = Box.createRigidArea(new Dimension(20, 20));
+		toolBar.add(rigidArea_3);
+		
+		exampleComboBox = new JComboBox();
+		exampleComboBox.setMaximumSize(new Dimension(200, 32767));
+		exampleComboBox.setMaximumRowCount(7);
+		exampleComboBox.addItem("Examples");
+		exampleComboBox.addItem("Microtubules 3D");
+		exampleComboBox.addItem("Mitochondria 3D");
+		exampleComboBox.addItem("Crossing Lines 2D");
+		exampleComboBox.addItem("Crossing Lines 3D");
+		exampleComboBox.addItem("Shpere 3D");
+		exampleComboBox.addItem("Triangles 3D");
+		exampleComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (exampleComboBox.getSelectedIndex()>0){
+					loadExamples(exampleComboBox.getSelectedIndex());
+				}
+			}
+		});
+		
+		Component horizontalGlue_25 = Box.createHorizontalGlue();
+		toolBar.add(horizontalGlue_25);
+		toolBar.add(exampleComboBox);
+		
+		JButton aboutButton = new JButton("About");
+		aboutButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				String text = "<html>SuReSim  Copyright (C) 2015  Frank Herrmannsdörfer, Varun Venkataramani, Max Scheurer<p>"
+			      + "This program comes with ABSOLUTELY NO WARRANTY;<p>"
+			      + "This is free software, and you are welcome to redistribute it under certain conditions. <p>"
+			      + "For more details see http://www.gnu.org/licenses/gpl-3.0.html</html>";
+					
+				JOptionPane.showMessageDialog(null, text, "About", JOptionPane.OK_CANCEL_OPTION);
+			}
+		});
+		
+		Component rigidArea_4 = Box.createRigidArea(new Dimension(20, 20));
+		toolBar.add(rigidArea_4);
+		toolBar.add(aboutButton);
+		
+		JPanel panel_2 = new JPanel();
+		getContentPane().add(panel_2, BorderLayout.WEST);
+		panel_2.setLayout(new CardLayout(0, 0));
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		panel_2.add(scrollPane_1, "name_8612746230277");
+		
+		Box verticalBox_23 = Box.createVerticalBox();
+		verticalBox_23.setMaximumSize(new Dimension(222222, 222220));
+		verticalBox_23.setPreferredSize(new Dimension(290, 650));
+		verticalBox_23.setMinimumSize(new Dimension(300, 850));
+		scrollPane_1.setViewportView(verticalBox_23);
+		dataSetTable = new JTable(model);
+		verticalBox_23.add(dataSetTable);
+		dataSetTable.setMinimumSize(new Dimension(30, 150));
+		dataSetTable.setPreferredSize(new Dimension(130, 140));
+		
+		progressBar = new JProgressBar();
+		verticalBox_23.add(progressBar);
+		progressBar.setPreferredSize(new Dimension(300, 20));
+		progressBar.setStringPainted(true);
+		
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.setMaximumSize(new Dimension(32767, 450));
+		verticalBox_23.add(tabbedPane);
+		
+		Box verticalBox_7 = Box.createVerticalBox();
+		tabbedPane.addTab("Basic Settings I", null, verticalBox_7, null);
+		
+		Box verticalBox_1 = Box.createVerticalBox();
+		verticalBox_7.add(verticalBox_1);
+		verticalBox_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Structural parameters", TitledBorder.LEADING, TitledBorder.TOP, usedFont, null));
+		
+		Box horizontalBox = Box.createHorizontalBox();
+		verticalBox_1.add(horizontalBox);
+		
+		epitopeDensityLabel = new JLabel("<html>Epitope Density (nm<sup>-2</sup>)</html>");
+		horizontalBox.add(epitopeDensityLabel);
+		
+		Component horizontalGlue = Box.createHorizontalGlue();
+		horizontalBox.add(horizontalGlue);
+		
+		epitopeDensityField = new JFormattedTextField();
+		epitopeDensityField.getDocument().addDocumentListener(new MyDocumentListener(epitopeDensityField));
+		epitopeDensityField.setHorizontalAlignment(SwingConstants.RIGHT);
+		epitopeDensityField.setMinimumSize(new Dimension(6, 10));
+		epitopeDensityField.setMaximumSize(new Dimension(60, 22));
+		epitopeDensityField.setColumns(5);
+		horizontalBox.add(epitopeDensityField);
+		
+		Box horizontalBox_1 = Box.createHorizontalBox();
+		verticalBox_1.add(horizontalBox_1);
+		
+		lblRadiusOfFilaments = new JLabel("Radius Of Filaments (nm)");
+		horizontalBox_1.add(lblRadiusOfFilaments);
+		
+		Component horizontalGlue_1 = Box.createHorizontalGlue();
+		horizontalBox_1.add(horizontalGlue_1);
+		
+		radiusOfFilamentsField = new JTextField();
+		radiusOfFilamentsField.getDocument().addDocumentListener(new MyDocumentListener(radiusOfFilamentsField));
+		radiusOfFilamentsField.setHorizontalAlignment(SwingConstants.RIGHT);
+		radiusOfFilamentsField.setMinimumSize(new Dimension(6, 10));
+		radiusOfFilamentsField.setMaximumSize(new Dimension(60, 22));
+		radiusOfFilamentsField.setColumns(5);
+		horizontalBox_1.add(radiusOfFilamentsField);
+		
+		Box horizontalBox_2 = Box.createHorizontalBox();
+		verticalBox_1.add(horizontalBox_2);
+		
+		Box horizontalBox_3 = Box.createHorizontalBox();
+		verticalBox_1.add(horizontalBox_3);
+		
+		Box verticalBox_2 = Box.createVerticalBox();
+		verticalBox_7.add(verticalBox_2);
+		verticalBox_2.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Label and Structure Dependent Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		
+		Box horizontalBox_4 = Box.createHorizontalBox();
+		verticalBox_2.add(horizontalBox_4);
+		
+		JLabel lblLabelingEfficiency = new JLabel("Labeling Efficiency (%)");
+		horizontalBox_4.add(lblLabelingEfficiency);
+		
+		Component horizontalGlue_4 = Box.createHorizontalGlue();
+		horizontalBox_4.add(horizontalGlue_4);
+		
+		labelingEfficiencyField = new JTextField();
+		labelingEfficiencyField.getDocument().addDocumentListener(new MyDocumentListener(labelingEfficiencyField));
+		labelingEfficiencyField.setHorizontalAlignment(SwingConstants.RIGHT);
+		labelingEfficiencyField.setMinimumSize(new Dimension(6, 10));
+		labelingEfficiencyField.setMaximumSize(new Dimension(60, 22));
+		labelingEfficiencyField.setColumns(5);
+		horizontalBox_4.add(labelingEfficiencyField);
+		
+		Box horizontalBox_7 = Box.createHorizontalBox();
+		verticalBox_2.add(horizontalBox_7);
+		
+		Box horizontalBox_10 = Box.createHorizontalBox();
+		verticalBox_2.add(horizontalBox_10);
+		
+		JLabel lblAverageBlinkingNumber = new JLabel("On-Off Duty Cycle");
+		horizontalBox_10.add(lblAverageBlinkingNumber);
+		
+		Component horizontalGlue_10 = Box.createHorizontalGlue();
+		horizontalBox_10.add(horizontalGlue_10);
+		
+		dutyCycleField = new JTextField();
+		dutyCycleField.getDocument().addDocumentListener(new MyDocumentListener(dutyCycleField));
+		
+		dutyCycleField.setHorizontalAlignment(SwingConstants.RIGHT);
+		dutyCycleField.setMinimumSize(new Dimension(6, 10));
+		dutyCycleField.setMaximumSize(new Dimension(60, 22));
+		dutyCycleField.setColumns(5);
+		horizontalBox_10.add(dutyCycleField);
+		
+		Box verticalBox_3 = Box.createVerticalBox();
+		verticalBox_7.add(verticalBox_3);
+		verticalBox_3.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Recording Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		
+		Box horizontalBox_22 = Box.createHorizontalBox();
+		verticalBox_3.add(horizontalBox_22);
+		
+		JLabel lblRecordedFrames = new JLabel("Recorded Frames");
+		horizontalBox_22.add(lblRecordedFrames);
+		
+		Component horizontalGlue_26 = Box.createHorizontalGlue();
+		horizontalBox_22.add(horizontalGlue_26);
+		
+		recordedFramesField = new JTextField();
+		recordedFramesField.getDocument().addDocumentListener(new MyDocumentListener(recordedFramesField));
+		recordedFramesField.setHorizontalAlignment(SwingConstants.RIGHT);
+		recordedFramesField.setMinimumSize(new Dimension(6, 10));
+		recordedFramesField.setMaximumSize(new Dimension(60, 22));
+		recordedFramesField.setColumns(5);
+		horizontalBox_22.add(recordedFramesField);
+		
+		Box verticalBox_9 = Box.createVerticalBox();
+		tabbedPane.addTab("Basic Settings II", null, verticalBox_9, null);
+		
+		Box verticalBox_10 = Box.createVerticalBox();
+		verticalBox_10.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Label Dependent Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		verticalBox_9.add(verticalBox_10);
+		
+		Box horizontalBox_5 = Box.createHorizontalBox();
+		verticalBox_10.add(horizontalBox_5);
+		
+		JLabel lblMeanAngle = new JLabel("Binding Angle (Degree)");
+		horizontalBox_5.add(lblMeanAngle);
+		
+		Component horizontalGlue_5 = Box.createHorizontalGlue();
+		horizontalBox_5.add(horizontalGlue_5);
+		
+		meanAngleField = new JTextField();
+		meanAngleField.getDocument().addDocumentListener(new MyDocumentListener(meanAngleField));
+		meanAngleField.setHorizontalAlignment(SwingConstants.RIGHT);
+		meanAngleField.setMinimumSize(new Dimension(6, 10));
+		meanAngleField.setMaximumSize(new Dimension(60, 22));
+		meanAngleField.setColumns(5);
+		horizontalBox_5.add(meanAngleField);
+		
+		JLabel lblNewLabel_7 = new JLabel("");
+		horizontalBox_5.add(lblNewLabel_7);
+		
+		Box horizontalBox_40 = Box.createHorizontalBox();
+		verticalBox_10.add(horizontalBox_40);
+		
+		JLabel lblNewLabel_8 = new JLabel("Sigma Of Angular Distribution");
+		horizontalBox_40.add(lblNewLabel_8);
+		
+		Component horizontalGlue_41 = Box.createHorizontalGlue();
+		horizontalBox_40.add(horizontalGlue_41);
+		
+		angularDistributionField = new JTextField();
+		angularDistributionField.getDocument().addDocumentListener(new MyDocumentListener(angularDistributionField));
+		angularDistributionField.setHorizontalAlignment(SwingConstants.RIGHT);
+		angularDistributionField.setMinimumSize(new Dimension(60, 22));
+		angularDistributionField.setMaximumSize(new Dimension(60, 22));
+		horizontalBox_40.add(angularDistributionField);
+		angularDistributionField.setColumns(5);
+		
+		Box horizontalBox_8 = Box.createHorizontalBox();
+		verticalBox_10.add(horizontalBox_8);
+		
+		JLabel lblMeanDistanceLabel = new JLabel("Label Epitope Distance (nm)");
+		horizontalBox_8.add(lblMeanDistanceLabel);
+		
+		Component horizontalGlue_8 = Box.createHorizontalGlue();
+		horizontalBox_8.add(horizontalGlue_8);
+		
+		labelLengthField = new JTextField();
+		labelLengthField.getDocument().addDocumentListener(new MyDocumentListener(labelLengthField));
+		labelLengthField.setHorizontalAlignment(SwingConstants.RIGHT);
+		labelLengthField.setMinimumSize(new Dimension(6, 10));
+		labelLengthField.setMaximumSize(new Dimension(60, 22));
+		labelLengthField.setColumns(5);
+		horizontalBox_8.add(labelLengthField);
+		
+		Box horizontalBox_9 = Box.createHorizontalBox();
+		verticalBox_10.add(horizontalBox_9);
+		
+		JLabel lblFluorophoresPerLabel = new JLabel("Fluorophores Per Label");
+		horizontalBox_9.add(lblFluorophoresPerLabel);
+		
+		Component horizontalGlue_9 = Box.createHorizontalGlue();
+		horizontalBox_9.add(horizontalGlue_9);
+		
+		fluorophoresPerLabelField = new JTextField();
+		fluorophoresPerLabelField.getDocument().addDocumentListener(new MyDocumentListener(fluorophoresPerLabelField));
+		fluorophoresPerLabelField.setHorizontalAlignment(SwingConstants.RIGHT);
+		fluorophoresPerLabelField.setMinimumSize(new Dimension(6, 10));
+		fluorophoresPerLabelField.setMaximumSize(new Dimension(60, 22));
+		fluorophoresPerLabelField.setColumns(5);
+		horizontalBox_9.add(fluorophoresPerLabelField);
+		
+		Box horizontalBox_29 = Box.createHorizontalBox();
+		verticalBox_10.add(horizontalBox_29);
+		
+		JLabel lblAllowBleaching = new JLabel("Allow Bleaching");
+		horizontalBox_29.add(lblAllowBleaching);
+		
+		applyBleachBox = new JCheckBox("");
+		applyBleachBox.setHorizontalAlignment(SwingConstants.TRAILING);
+		horizontalBox_29.add(applyBleachBox);
+		
+		Component horizontalGlue_20 = Box.createHorizontalGlue();
+		horizontalBox_29.add(horizontalGlue_20);
+		
+		Component horizontalGlue_21 = Box.createHorizontalGlue();
+		horizontalBox_29.add(horizontalGlue_21);
+		
+		JLabel lblBleachConstant = new JLabel("Bleach Constant ");
+		horizontalBox_29.add(lblBleachConstant);
+		
+		Component horizontalGlue_19 = Box.createHorizontalGlue();
+		horizontalBox_29.add(horizontalGlue_19);
+		
+		bleachConstantField = new JTextField();
+		bleachConstantField.getDocument().addDocumentListener(new MyDocumentListener(bleachConstantField));
+		bleachConstantField.setMinimumSize(new Dimension(6, 10));
+		bleachConstantField.setMaximumSize(new Dimension(60, 22));
+		bleachConstantField.setHorizontalAlignment(SwingConstants.RIGHT);
+		bleachConstantField.setColumns(5);
+		horizontalBox_29.add(bleachConstantField);
+		
+		Box verticalBox_11 = Box.createVerticalBox();
+		verticalBox_11.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Background", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		verticalBox_9.add(verticalBox_11);
+		
+		Box horizontalBox_6 = Box.createHorizontalBox();
+		verticalBox_11.add(horizontalBox_6);
+		
+		JLabel lblBackgroundLabel = new JLabel("<html>Background Label (&mu;m<sup>-3</sup>)</html>");
+		horizontalBox_6.add(lblBackgroundLabel);
+		
+		Component horizontalGlue_6 = Box.createHorizontalGlue();
+		horizontalBox_6.add(horizontalGlue_6);
+		
+		backgroundLabelField = new JTextField();
+		backgroundLabelField.getDocument().addDocumentListener(new MyDocumentListener(backgroundLabelField));
+		horizontalBox_6.add(backgroundLabelField);
+		backgroundLabelField.setHorizontalAlignment(SwingConstants.RIGHT);
+		backgroundLabelField.setMinimumSize(new Dimension(6, 10));
+		backgroundLabelField.setMaximumSize(new Dimension(60, 22));
+		backgroundLabelField.setColumns(5);
+		
+		Box horizontalBox_15 = Box.createHorizontalBox();
+		verticalBox_11.add(horizontalBox_15);
+		
+		Box horizontalBox_14 = Box.createHorizontalBox();
+		verticalBox_11.add(horizontalBox_14);
+		
+		Component horizontalGlue_17 = Box.createHorizontalGlue();
+		horizontalBox_14.add(horizontalGlue_17);
+		
+		Component horizontalGlue_15 = Box.createHorizontalGlue();
+		horizontalGlue_15.setPreferredSize(new Dimension(100, 0));
+		horizontalBox_14.add(horizontalGlue_15);
+		
+		reproducibleOutputchkBox = new JCheckBox("Reproducible Output");
+		verticalBox_11.add(reproducibleOutputchkBox);
+		
+		JComboBox comboBox = new JComboBox();
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Native Simulation", "Create Tiff-Stack"}));
+		comboBox.setMaximumSize(new Dimension(32767, 22));
+		comboBox.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JComboBox cb = (JComboBox) e.getSource();
+				if (cb.getSelectedIndex() == 0){
+					nativeSimulationPanel.setVisible(true);
+					createTiffStackPanel.setVisible(false);
+				}
+				else{
+					nativeSimulationPanel.setVisible(false);
+					createTiffStackPanel.setVisible(true);
+				}
+			}
+			
+		});
+		
+		Component verticalStrut = Box.createVerticalStrut(20);
+		verticalBox_23.add(verticalStrut);
+		verticalBox_23.add(comboBox);
+		
+		createTiffStackPanel = new JPanel();
+		verticalBox_23.add(createTiffStackPanel);
+		createTiffStackPanel.setLayout(new CardLayout(0, 0));
+		
+		Box verticalBox_19 = Box.createVerticalBox();
+		createTiffStackPanel.add(verticalBox_19, "name_11053082788701");
+		createTiffStackPanel.setVisible(false);
+		
+		Box verticalBox_21 = Box.createVerticalBox();
+		verticalBox_21.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "PSF Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		verticalBox_19.add(verticalBox_21);
+		
+		Box horizontalBox_11 = Box.createHorizontalBox();
+		verticalBox_21.add(horizontalBox_11);
+		
+		JLabel lblAveragePhotonOutput = new JLabel("Mean Photon Output");
+		horizontalBox_11.add(lblAveragePhotonOutput);
+		
+		Component horizontalGlue_11 = Box.createHorizontalGlue();
+		horizontalBox_11.add(horizontalGlue_11);
+		
+		averagePhotonOutputField = new JTextField();
+		averagePhotonOutputField.getDocument().addDocumentListener(new MyDocumentListener(averagePhotonOutputField));
+		averagePhotonOutputField.setHorizontalAlignment(SwingConstants.RIGHT);
+		averagePhotonOutputField.setMaximumSize(new Dimension(100, 22));
+		averagePhotonOutputField.setColumns(5);
+		horizontalBox_11.add(averagePhotonOutputField);
+		
+		Box horizontalBox_47 = Box.createHorizontalBox();
+		verticalBox_21.add(horizontalBox_47);
+		
+		JLabel lblNewLabel_11 = new JLabel("Minimal Photon Count");
+		horizontalBox_47.add(lblNewLabel_11);
+		
+		Component horizontalGlue_40 = Box.createHorizontalGlue();
+		horizontalBox_47.add(horizontalGlue_40);
+		
+		minIntensityField = new JTextField();
+		minIntensityField.setHorizontalAlignment(SwingConstants.RIGHT);
+		minIntensityField.setMaximumSize(new Dimension(100, 22));
+		horizontalBox_47.add(minIntensityField);
+		minIntensityField.setColumns(5);
+		
+		Box horizontalBox_43 = Box.createHorizontalBox();
+		verticalBox_21.add(horizontalBox_43);
+		
+		JLabel lblMeanBlinkingDuration = new JLabel("Mean Blinking Duration in (s)");
+		horizontalBox_43.add(lblMeanBlinkingDuration);
+		
+		Component horizontalGlue_44 = Box.createHorizontalGlue();
+		horizontalBox_43.add(horizontalGlue_44);
+		
+		meanBlinkingDurationField = new JTextField();
+		meanBlinkingDurationField.setHorizontalAlignment(SwingConstants.RIGHT);
+		meanBlinkingDurationField.setMaximumSize(new Dimension(100, 22));
+		
+		meanBlinkingDurationField.setColumns(5);
+		horizontalBox_43.add(meanBlinkingDurationField);
+		
+		Box verticalBox_20 = Box.createVerticalBox();
+		verticalBox_20.setBorder(new TitledBorder(null, "Camera Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		verticalBox_19.add(verticalBox_20);
+		
+		Box horizontalBox_41 = Box.createHorizontalBox();
+		verticalBox_20.add(horizontalBox_41);
+		
+		JLabel lblNewLabel_9 = new JLabel("Pixel To Nm Ratio");
+		horizontalBox_41.add(lblNewLabel_9);
+		
+		Component horizontalGlue_42 = Box.createHorizontalGlue();
+		horizontalBox_41.add(horizontalGlue_42);
+		
+		pxToNmField = new JTextField();
+		pxToNmField.setHorizontalAlignment(SwingConstants.RIGHT);
+		pxToNmField.setMaximumSize(new Dimension(100, 22));
+		horizontalBox_41.add(pxToNmField);
+		pxToNmField.setColumns(5);
+		
+		Box horizontalBox_42 = Box.createHorizontalBox();
+		verticalBox_20.add(horizontalBox_42);
+		
+		JLabel lblNewLabel_10 = new JLabel("<html>Framerate (s<sup>-1</sup>)</html>");
+		horizontalBox_42.add(lblNewLabel_10);
+		
+		Component horizontalGlue_43 = Box.createHorizontalGlue();
+		horizontalBox_42.add(horizontalGlue_43);
+		
+		framerateField = new JTextField();
+		framerateField.setHorizontalAlignment(SwingConstants.RIGHT);
+		framerateField.setMaximumSize(new Dimension(100, 22));
+		horizontalBox_42.add(framerateField);
+		framerateField.setColumns(5);
+		
+		Box horizontalBox_48 = Box.createHorizontalBox();
+		verticalBox_20.add(horizontalBox_48);
+		
+		JLabel lblSigmaBackground = new JLabel("Readout Noise (in DN)");
+		horizontalBox_48.add(lblSigmaBackground);
+		
+		Component horizontalGlue_49 = Box.createHorizontalGlue();
+		horizontalBox_48.add(horizontalGlue_49);
+		
+		sigmaBgField = new JTextField();
+		sigmaBgField.setHorizontalAlignment(SwingConstants.RIGHT);
+		sigmaBgField.setMaximumSize(new Dimension(100, 22));
+		sigmaBgField.setColumns(5);
+		horizontalBox_48.add(sigmaBgField);
+		
+		Box horizontalBox_49 = Box.createHorizontalBox();
+		verticalBox_20.add(horizontalBox_49);
+		
+		JLabel lblConstantOffset = new JLabel("Constant Offset");
+		horizontalBox_49.add(lblConstantOffset);
+		
+		Component horizontalGlue_50 = Box.createHorizontalGlue();
+		horizontalBox_49.add(horizontalGlue_50);
+		
+		constOffsetField = new JTextField();
+		constOffsetField.setHorizontalAlignment(SwingConstants.RIGHT);
+		constOffsetField.setMaximumSize(new Dimension(100, 22));
+		constOffsetField.setColumns(5);
+		horizontalBox_49.add(constOffsetField);
+		
+		Box horizontalBox_53 = Box.createHorizontalBox();
+		horizontalBox_53.setAlignmentY(Component.CENTER_ALIGNMENT);
+		verticalBox_20.add(horizontalBox_53);
+		
+		JLabel lblEmGain = new JLabel("EM Gain");
+		horizontalBox_53.add(lblEmGain);
+		
+		Component horizontalGlue_16 = Box.createHorizontalGlue();
+		horizontalBox_53.add(horizontalGlue_16);
+		
+		emGainField = new JTextField();
+		emGainField.setHorizontalAlignment(SwingConstants.RIGHT);
+		emGainField.setMaximumSize(new Dimension(100, 22));
+		emGainField.setColumns(5);
+		horizontalBox_53.add(emGainField);
+		
+		Box horizontalBox_56 = Box.createHorizontalBox();
+		verticalBox_20.add(horizontalBox_56);
+		
+		JLabel lblWindowsizePsfRendering = new JLabel("Quantum Efficiency");
+		horizontalBox_56.add(lblWindowsizePsfRendering);
+		
+		Component horizontalGlue_52 = Box.createHorizontalGlue();
+		horizontalBox_56.add(horizontalGlue_52);
+		
+		quantumEfficiencyField = new JTextField();
+		horizontalBox_56.add(quantumEfficiencyField);
+		quantumEfficiencyField.setHorizontalAlignment(SwingConstants.RIGHT);
+		quantumEfficiencyField.setMaximumSize(new Dimension(100, 22));
+		quantumEfficiencyField.setColumns(5);
+		
+		Box horizontalBox_51 = Box.createHorizontalBox();
+		verticalBox_20.add(horizontalBox_51);
+		
+		JLabel lblNewLabel_12 = new JLabel("electrons/DN");
+		horizontalBox_51.add(lblNewLabel_12);
+		
+		Component horizontalGlue_58 = Box.createHorizontalGlue();
+		horizontalBox_51.add(horizontalGlue_58);
+		
+		electronsPerDnField = new JTextField();
+		electronsPerDnField.setHorizontalAlignment(SwingConstants.RIGHT);
+		electronsPerDnField.setMaximumSize(new Dimension(100, 22));
+		horizontalBox_51.add(electronsPerDnField);
+		electronsPerDnField.setColumns(5);
+		
+		Box verticalBox_12 = Box.createVerticalBox();
+		verticalBox_12.setBorder(new TitledBorder(null, "Rendering Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		verticalBox_19.add(verticalBox_12);
+		
+		Box horizontalBox_54 = Box.createHorizontalBox();
+		verticalBox_12.add(horizontalBox_54);
+		
+		JLabel lblWindowsizePsfRendering_1 = new JLabel("Windowsize PSF Rendering");
+		horizontalBox_54.add(lblWindowsizePsfRendering_1);
+		
+		Component horizontalGlue_55 = Box.createHorizontalGlue();
+		horizontalBox_54.add(horizontalGlue_55);
+		
+		windowsizePSFRenderingField = new JTextField();
+		windowsizePSFRenderingField.setHorizontalAlignment(SwingConstants.RIGHT);
+		windowsizePSFRenderingField.setMaximumSize(new Dimension(100, 22));
+		windowsizePSFRenderingField.setColumns(5);
+		horizontalBox_54.add(windowsizePSFRenderingField);
+		
+		Box horizontalBox_50 = Box.createHorizontalBox();
+		verticalBox_12.add(horizontalBox_50);
+		
+		JLabel lblEmptyPixelsOn = new JLabel("Empty Pixels On Rim");
+		horizontalBox_50.add(lblEmptyPixelsOn);
+		
+		Component horizontalGlue_51 = Box.createHorizontalGlue();
+		horizontalBox_50.add(horizontalGlue_51);
+		
+		emptyPixelsOnRimField = new JTextField();
+		emptyPixelsOnRimField.setHorizontalAlignment(SwingConstants.RIGHT);
+		emptyPixelsOnRimField.setMaximumSize(new Dimension(100, 22));
+		emptyPixelsOnRimField.setColumns(5);
+		horizontalBox_50.add(emptyPixelsOnRimField);
+		
+		Component verticalStrut_1 = Box.createVerticalStrut(20);
+		verticalBox_19.add(verticalStrut_1);
+		
+		tiffStackModeComboBox = new JComboBox();
+		verticalBox_19.add(tiffStackModeComboBox);
+		tiffStackModeComboBox.setMaximumSize(new Dimension(32767, 22));
+		tiffStackModeComboBox.setModel(new DefaultComboBoxModel(new String[] {"2D PSFs", "3D PSFs"}));
+		tiffStackModeComboBox.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JComboBox cb = (JComboBox) e.getSource();
+				if (cb.getSelectedIndex() == 0){
+					twoDPSFPanel.setVisible(true);
+					threeDPSFPanel.setVisible(false);
+				}
+				else{
+					twoDPSFPanel.setVisible(false);
+					threeDPSFPanel.setVisible(true);
+				}
+				
+			}
+			
+		});
+		
+		twoDPSFPanel = new JPanel();
+		verticalBox_19.add(twoDPSFPanel);
+		twoDPSFPanel.setLayout(new CardLayout(0, 0));
+		
+		Box verticalBox_4 = Box.createVerticalBox();
+		verticalBox_4.setAlignmentY(Component.TOP_ALIGNMENT);
+		verticalBox_4.setAlignmentX(Component.CENTER_ALIGNMENT);
+		twoDPSFPanel.add(verticalBox_4, "name_11840657027630");
+		
+		Box horizontalBox_44 = Box.createHorizontalBox();
+		verticalBox_4.add(horizontalBox_44);
+		
+		JLabel lblNumericalAperture = new JLabel("Numerical Aperture");
+		horizontalBox_44.add(lblNumericalAperture);
+		
+		Component horizontalGlue_45 = Box.createHorizontalGlue();
+		horizontalBox_44.add(horizontalGlue_45);
+		
+		naField = new JTextField();
+		naField.setHorizontalAlignment(SwingConstants.RIGHT);
+		horizontalBox_44.add(naField);
+		naField.setMaximumSize(new Dimension(100, 22));
+		naField.setColumns(5);
+		
+		Component verticalStrut_2 = Box.createVerticalStrut(20);
+		verticalStrut_2.setPreferredSize(new Dimension(0, 2));
+		verticalStrut_2.setMinimumSize(new Dimension(0, 2));
+		verticalBox_4.add(verticalStrut_2);
+		
+		Box horizontalBox_45 = Box.createHorizontalBox();
+		verticalBox_4.add(horizontalBox_45);
+		
+		JLabel lblWavelength = new JLabel("Wavelength");
+		horizontalBox_45.add(lblWavelength);
+		
+		Component horizontalGlue_46 = Box.createHorizontalGlue();
+		horizontalBox_45.add(horizontalGlue_46);
+		
+		wavelengthField = new JTextField();
+		wavelengthField.setHorizontalAlignment(SwingConstants.RIGHT);
+		wavelengthField.setMaximumSize(new Dimension(100, 22));
+		wavelengthField.setColumns(5);
+		horizontalBox_45.add(wavelengthField);
+		
+		Component verticalStrut_4 = Box.createVerticalStrut(20);
+		verticalStrut_4.setPreferredSize(new Dimension(0, 2));
+		verticalStrut_4.setMinimumSize(new Dimension(0, 2));
+		verticalBox_4.add(verticalStrut_4);
+		
+		Box horizontalBox_57 = Box.createHorizontalBox();
+		verticalBox_4.add(horizontalBox_57);
+		
+		JLabel lblDefokus = new JLabel("Defokus");
+		horizontalBox_57.add(lblDefokus);
+		
+		Component horizontalGlue_48 = Box.createHorizontalGlue();
+		horizontalBox_57.add(horizontalGlue_48);
+		
+		defokusField = new JTextField();
+		horizontalBox_57.add(defokusField);
+		defokusField.setHorizontalAlignment(SwingConstants.RIGHT);
+		defokusField.setMaximumSize(new Dimension(100, 22));
+		defokusField.setColumns(5);
+		
+		Component verticalStrut_3 = Box.createVerticalStrut(20);
+		verticalStrut_3.setPreferredSize(new Dimension(0, 2));
+		verticalStrut_3.setMinimumSize(new Dimension(0, 2));
+		verticalBox_4.add(verticalStrut_3);
+		
+		Box horizontalBox_46 = Box.createHorizontalBox();
+		verticalBox_4.add(horizontalBox_46);
+		
+		JLabel lblFokus = new JLabel("Fokus");
+		horizontalBox_46.add(lblFokus);
+		
+		Component horizontalGlue_3 = Box.createHorizontalGlue();
+		horizontalBox_46.add(horizontalGlue_3);
+		
+		fokusField = new JTextField();
+		fokusField.setHorizontalAlignment(SwingConstants.RIGHT);
+		fokusField.setMaximumSize(new Dimension(100, 22));
+		fokusField.setColumns(5);
+		horizontalBox_46.add(fokusField);
+		
+		Component verticalGlue_7 = Box.createVerticalGlue();
+		verticalBox_4.add(verticalGlue_7);
+		
+		Component verticalGlue_9 = Box.createVerticalGlue();
+		verticalBox_4.add(verticalGlue_9);
+		
+		Component verticalGlue_10 = Box.createVerticalGlue();
+		verticalBox_4.add(verticalGlue_10);
+		
+		threeDPSFPanel = new JPanel();
+		verticalBox_19.add(threeDPSFPanel);
+		threeDPSFPanel.setVisible(false);
+		
+		Box verticalBox_18 = Box.createVerticalBox();
+		threeDPSFPanel.add(verticalBox_18);
+		
+		JButton importCalibrationFileButton = new JButton("Import Calibration File");
+		verticalBox_18.add(importCalibrationFileButton);
+		importCalibrationFileButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (allDataSets.size()>0){
+					JFileChooser fc = new JFileChooser();
+					int returnValue = fc.showOpenDialog(getContentPane());
+					if(returnValue == JFileChooser.APPROVE_OPTION) {
+						String path = fc.getSelectedFile().getAbsolutePath();
+						String name = fc.getSelectedFile().getName();
+						CalibrationFileParser cfp = new CalibrationFileParser(path);
+						try {
+							allDataSets.get(currentRow).getParameterSet().setCalibrationFile(cfp.parse());
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					
+				}
+			}
+		});
+		
+		Box verticalBox_22 = Box.createVerticalBox();
+		verticalBox_22.setBorder(new TitledBorder(null, "PSF Settings", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		verticalBox_19.add(verticalBox_22);
+		
+		Box horizontalBox_55 = Box.createHorizontalBox();
+		verticalBox_22.add(horizontalBox_55);
+		
+		ensureSinglePSFchkBox = new JCheckBox("Ensure Single PSFs");
+		horizontalBox_55.add(ensureSinglePSFchkBox);
+		
+		Component horizontalGlue_47 = Box.createHorizontalGlue();
+		horizontalBox_55.add(horizontalGlue_47);
+		
+		distributePSFOverFrames = new JCheckBox("Distribute PSFs Over Frames");
+		horizontalBox_55.add(distributePSFOverFrames);
+		
+		JButton exportTiffStackButton = new JButton("Export Tiffstack");
+		exportTiffStackButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		verticalBox_22.add(exportTiffStackButton);
+		exportTiffStackButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int returnValue = fc.showSaveDialog(getContentPane());
+				if(returnValue == JFileChooser.APPROVE_OPTION) {
+					String path = fc.getSelectedFile().getAbsolutePath();
+					String name = fc.getSelectedFile().getName();
+					if (!path.endsWith(EXTENSIONIMAGEOUTPUT)) {
+					    path += EXTENSIONIMAGEOUTPUT;
+					}
+					if(name.endsWith(EXTENSIONIMAGEOUTPUT)){
+						name = name.substring(0, name.length()-4);
+					}
+					
+					calculate(true);
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+					while (allDataSets.get(currentRow).isCalculating){
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					ParameterSet set = allDataSets.get(currentRow).getParameterSet();
+					set.setMeanBlinkingTime(Float.valueOf(meanBlinkingDurationField.getText()));
+					int modelNumber = 2;
+					if (set.isTwoDPSF()){
+						modelNumber  = 1;
+					}
+					getBorders();
+					CreateTiffStack cts = new CreateTiffStack(allDataSets.get(currentRow));
+					cts.execute();
+					CreateStack.createTiffStack(allDataSets.get(currentRow).stormData, 1/set.getPixelToNmRatio(),
+							set.getEmptyPixelsOnRim(),set.getEmGain(), borders, random,
+							set.getElectronPerAdCount(), set.getFrameRate(), set.getMeanBlinkingTime(), set.getWindowsizePSF(),
+							modelNumber,set.getQuantumEfficiency(), set.getNa(), set.getPsfwidth(), set.getFokus(), set.getDefokus(), set.getSigmaBg(),
+							set.getConstOffset(), set.getCalibrationFile(), path,set.isEnsureSinglePSF(), set.isDistributePSFoverFrames());
+					FileManager.writeLogFile(allDataSets.get(currentRow).getParameterSet(), path.substring(0, path.length()-4)+"TiffStack",borders,true);
+				}
+				
+			}
+		});
+		
+		nativeSimulationPanel = new JPanel();
+		verticalBox_23.add(nativeSimulationPanel);
+		nativeSimulationPanel.setLayout(new CardLayout(0, 0));
+		
+		Box verticalBox_5 = Box.createVerticalBox();
+		nativeSimulationPanel.add(verticalBox_5, "name_11059150642572");
+		
+		Box horizontalBox_12 = Box.createHorizontalBox();
+		verticalBox_5.add(horizontalBox_12);
+		
+		JLabel lblLabelingResolutionXy = new JLabel("Localization Precision XY (nm)");
+		horizontalBox_12.add(lblLabelingResolutionXy);
+		
+		Component horizontalGlue_13 = Box.createHorizontalGlue();
+		horizontalBox_12.add(horizontalGlue_13);
+		
+		locPrecisionXYField = new JTextField();
+		locPrecisionXYField.getDocument().addDocumentListener(new MyDocumentListener(locPrecisionXYField));
+		locPrecisionXYField.setHorizontalAlignment(SwingConstants.RIGHT);
+		locPrecisionXYField.setMaximumSize(new Dimension(60, 22));
+		locPrecisionXYField.setColumns(5);
+		horizontalBox_12.add(locPrecisionXYField);
+		
+		Box horizontalBox_13 = Box.createHorizontalBox();
+		verticalBox_5.add(horizontalBox_13);
+		
+		JLabel lblLocalizaitonPrecisionZ = new JLabel("Localization Precision Z (nm)");
+		horizontalBox_13.add(lblLocalizaitonPrecisionZ);
+		
+		Component horizontalGlue_14 = Box.createHorizontalGlue();
+		horizontalBox_13.add(horizontalGlue_14);
+		
+		locPrecisionZField = new JTextField();
+		locPrecisionZField.getDocument().addDocumentListener(new MyDocumentListener(locPrecisionZField));
+		locPrecisionZField.setHorizontalAlignment(SwingConstants.RIGHT);
+		locPrecisionZField.setMaximumSize(new Dimension(60, 22));
+		locPrecisionZField.setColumns(5);
+		horizontalBox_13.add(locPrecisionZField);
+		
+		Box horizontalBox_19 = Box.createHorizontalBox();
+		verticalBox_5.add(horizontalBox_19);
+		
+		JLabel lblNewLabel_5 = new JLabel("Couple Loc. Precision And Intensity ");
+		horizontalBox_19.add(lblNewLabel_5);
+		
+		Component horizontalGlue_37 = Box.createHorizontalGlue();
+		horizontalGlue_37.setSize(new Dimension(10, 0));
+		horizontalBox_19.add(horizontalGlue_37);
+		
+		coupleSigmaIntensityBox = new JCheckBox("");
+		coupleSigmaIntensityBox.setSelected(true);
+		horizontalBox_19.add(coupleSigmaIntensityBox);
+		
+		Component horizontalGlue_18 = Box.createHorizontalGlue();
+		horizontalBox_19.add(horizontalGlue_18);
+		
+		Box horizontalBox_38 = Box.createHorizontalBox();
+		verticalBox_5.add(horizontalBox_38);
+		
+		JLabel lblDetectionEfficiency = new JLabel("Detection Efficiency (%)");
+		horizontalBox_38.add(lblDetectionEfficiency);
+		
+		Component horizontalGlue_22 = Box.createHorizontalGlue();
+		horizontalBox_38.add(horizontalGlue_22);
+		
+		detectionEfficiencyField = new JTextField();
+		detectionEfficiencyField.getDocument().addDocumentListener(new MyDocumentListener(detectionEfficiencyField));
+		detectionEfficiencyField.setMinimumSize(new Dimension(6, 10));
+		detectionEfficiencyField.setMaximumSize(new Dimension(60, 22));
+		detectionEfficiencyField.setHorizontalAlignment(SwingConstants.RIGHT);
+		detectionEfficiencyField.setColumns(5);
+		horizontalBox_38.add(detectionEfficiencyField);
+		
+		JButton calcButton = new JButton("Calculate");
+		verticalBox_5.add(calcButton);
+		calcButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		Component verticalStrut_5 = Box.createVerticalStrut(20);
+		verticalBox_5.add(verticalStrut_5);
+		
 		JButton exportButton = new JButton("Export");
+		exportButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		verticalBox_5.add(exportButton);
 		exportButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1847,29 +1885,39 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				}
 			}
 		});
-		
-		Component rigidArea = Box.createRigidArea(new Dimension(20, 20));
-		toolBar.add(rigidArea);
-		toolBar.add(exportButton);
-		
-		Component horizontalGlue_25 = Box.createHorizontalGlue();
-		toolBar.add(horizontalGlue_25);
-		
-		JButton aboutButton = new JButton("About");
-		aboutButton.addActionListener(new ActionListener(){
+		calcButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e){
-				String text = "<html>SuReSim  Copyright (C) 2015  Frank Herrmannsdörfer, Varun Venkataramani, Max Scheurer<p>"
-			      + "This program comes with ABSOLUTELY NO WARRANTY;<p>"
-			      + "This is free software, and you are welcome to redistribute it under certain conditions. <p>"
-			      + "For more details see http://www.gnu.org/licenses/gpl-3.0.html</html>";
-					
-				JOptionPane.showMessageDialog(null, text, "About", JOptionPane.OK_CANCEL_OPTION);
+			public void actionPerformed(ActionEvent e) {
+				calculate();
 			}
 		});
-		toolBar.add(aboutButton);
+		
+		Component verticalGlue_1 = Box.createVerticalGlue();
+		verticalBox_23.add(verticalGlue_1);
+		
+		JPanel panel_1 = new JPanel();
+		panel_2.add(panel_1, "name_8612779840202");
+		
+		JPanel panel_3 = new JPanel();
+		getContentPane().add(panel_3, BorderLayout.SOUTH);
+		panel_3.setLayout(new CardLayout(0, 0));
+		
+		Box horizontalBox_17 = Box.createHorizontalBox();
+		panel_3.add(horizontalBox_17, "name_13635831669473");
+		
+		JLabel lblNewLabel_6 = new JLabel("Number Of Visible Localizations:  ");
+		horizontalBox_17.add(lblNewLabel_6);
+		
+		numberOfVisibleLocalizationsLabel = new JLabel("0");
+		horizontalBox_17.add(numberOfVisibleLocalizationsLabel);
+		
+		Component horizontalGlue_53 = Box.createHorizontalGlue();
+		horizontalBox_17.add(horizontalGlue_53);
+		dataSetTable.getColumnModel().getColumn(0).setMinWidth(100);
+		configureTableListener();
 		
 		calc = new STORMCalculator(null,null);
+		calc.addListener((ThreadCompleteListener)this);
 		nt = new CreatePlot(null);
 	}
 	
@@ -2051,7 +2099,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			coupleSigmaIntensityBox.setSelected(set.getCoupleSigmaIntensity());
 			pxToNmField.setText(String.format(Locale.ENGLISH,"%.2f",set.getPixelToNmRatio()));
 			framerateField.setText(Double.toString(set.getFrameRate()));
-			sigmaBgField.setText(Double.toString(set.getSigmaBg()));
+			sigmaBgField.setText(String.format(Locale.ENGLISH,"%.2f",set.getSigmaBg()));
 			constOffsetField.setText(Double.toString(set.getConstOffset()));
 			emGainField.setText(Double.toString(set.getEmGain()));
 			quantumEfficiencyField.setText(String.format(Locale.ENGLISH,"%.2f",set.getQuantumEfficiency()));
@@ -2061,15 +2109,16 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			fokusField.setText(Double.toString(set.getFokus()));
 			defokusField.setText(Double.toString(set.getDefokus()));
 			if (set.isTwoDPSF()){
-				radio2D.setSelected(true);
+				tiffStackModeComboBox.setSelectedIndex(0);
 			}
 			else{
-				radio3D.setSelected(true);
+				tiffStackModeComboBox.setSelectedIndex(1);
 			}
 			electronsPerDnField.setText(Float.toString(set.getElectronPerAdCount()));
 			meanBlinkingDurationField.setText(Float.toString(set.getMeanBlinkingTime()));
 			ensureSinglePSFchkBox.setSelected(set.isEnsureSinglePSF());
 			distributePSFOverFrames.setSelected(set.isDistributePSFoverFrames());
+			minIntensityField.setText(set.getMinIntensity()+"");
 			updateButtonColors();
 		}
 	}
@@ -2117,6 +2166,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		}
 		calc = new STORMCalculator(allDataSets.get(currentRow),this.random);
 		//calc = new STORMCalculator(allDataSets.get(currentRow));
+		calc.addListener(this);
 		calc.addPropertyChangeListener(this);
 		calc.execute();
 		// When calc has finished, grab the new dataset
@@ -2536,12 +2586,17 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	}
 
 	@Override
-	public void notifyOfThreadComplete(CreatePlot notifyingThread) {
-		graphComponent = (Component) plot.getChart().getCanvas();
-		plotPanel.add(graphComponent);
-		plotPanel.revalidate();
-		plotPanel.repaint();
-		graphComponent.revalidate();
+	public void notifyOfThreadComplete(Object obj) {
+		if (obj.getClass().equals(CreatePlot.class)){
+			graphComponent = (Component) plot.getChart().getCanvas();
+			plotPanel.add(graphComponent);
+			plotPanel.revalidate();
+			plotPanel.repaint();
+			graphComponent.revalidate();
+		}
+		if(obj.getClass().equals(STORMCalculator.class)){
+			setSelectedListsForDrawing();
+		}
 	}
 	
 	
@@ -2583,11 +2638,17 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setNa(new Float(naField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setFokus(new Float(fokusField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setDefokus(new Float(defokusField.getText()));
-		allDataSets.get(currentRow).getParameterSet().setTwoDPSF(radio2D.isSelected());
+		if (tiffStackModeComboBox.getSelectedIndex() == 0){
+			allDataSets.get(currentRow).getParameterSet().setTwoDPSF(true);
+		}
+		else{
+			allDataSets.get(currentRow).getParameterSet().setTwoDPSF(false);
+		}
 		allDataSets.get(currentRow).getParameterSet().setElectronPerAdCount(new Float(electronsPerDnField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setMeanBlinkingTime(new Float(meanBlinkingDurationField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setDistributePSFoverFrames(distributePSFOverFrames.isSelected());
 		allDataSets.get(currentRow).getParameterSet().setEnsureSinglePSF(ensureSinglePSFchkBox.isSelected());
+		allDataSets.get(currentRow).getParameterSet().setMinIntensity(new Integer(minIntensityField.getText()));
 	}
 
 	
