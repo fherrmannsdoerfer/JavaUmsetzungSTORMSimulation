@@ -105,7 +105,7 @@ public class CreateStack {
 			float offset, float[][] calib, String fname, boolean ensureSinglePSF, boolean splitIntensities) { 
 		
 		for (int i = 0; i<calib.length; i++){ //shift Fokus
-			calib[i][0] -=0; 
+			calib[i][0] -=350; 
 		}
 		
 		//get mean intensity

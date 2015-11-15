@@ -45,7 +45,7 @@ public class StormPointFinder {
 		}
 		else{
 			stormPoints = createStormPoints(listEndPoints, ps, sxy, sz, psfWidth, progressBar,
-					calc, ps.getFrames(), ps.getMeanPhotonNumber());
+					calc, ps.getFrames(), ps.getMeanPhotonNumber(),1000);
 		}
 		
 		return stormPoints;
@@ -55,22 +55,17 @@ public class StormPointFinder {
 		//return new float[2][2];
 	}
 	
-	//creates multiple blinking events based on the enpoints of the antibodies
+	//creates multiple blinking events based on the endpoints of the antibodies
 	//also multiple fluorophores per antibody are taken into account
 	private static float[][] createStormPoints(float[][] listEndPoints, ParameterSet ps, 
 			float sxy, float sz, float psfWidth, JProgressBar progressBar,
-			STORMCalculator calc, int frames, int meanPhotonNumber) {
-		double k = -Math.log(0.5)/(meanPhotonNumber-1000);
-		double factor = 500;
-		ArrayList<Float> intensities = new ArrayList<Float>();
-		for (int i = 1000; i<2000*meanPhotonNumber; i++){
-			for (int j = 0; j<Math.floor(factor * Math.exp(-k*i)); j++){
-				//System.out.println(Math.ceil(factor * Math.exp(-k*i)));
-				intensities.add((float) i);
-			}
-		}
+			STORMCalculator calc, int frames, int meanPhotonNumber, int minPhotonNumber) {
 		
-			
+		double k = 1.0/(meanPhotonNumber - minPhotonNumber);
+		double norm = 1/k*Math.exp(-k*minPhotonNumber);
+		//inverse density function: log(-k*randomNumber*norm+exp(-k*minPhotonNumber))/-k
+		
+					
 		float[][] stormPoints = null;
 		//individual number of blinking events per fluorophore
 		float[] nbrBlinkingEvents = new float[listEndPoints.length];
@@ -109,7 +104,7 @@ public class StormPointFinder {
 			ArrayList<Integer> idxList= new ArrayList<Integer>();
 			
 			for (int k1 = 0; k1 < idxArray.size(); k1++) {
-				intensity[k1] = intensities.get((int) (calc.random.nextDouble()*intensities.size()-1));
+				intensity[k1] = (float) (Math.log(-k*calc.random.nextDouble()*norm+Math.exp(-k*minPhotonNumber))/-k);
 				frame[k1] = (int) (calc.random.nextDouble()*frames);
 				idxList.add(k1);
 				if (ps.getCoupleSigmaIntensity()){
