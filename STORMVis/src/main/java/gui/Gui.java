@@ -1899,7 +1899,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		plot.viewPoint= new Coord3d((float) sigma, (float) theta, plot.currentChart.getViewPoint().z);
 		plot.viewBounds = plot.currentChart.getView().getBounds();
 		getDrawingParameters();
-		visualizeAllSelectedData();
+		setSelectedListsForDrawing();
+		//visualizeAllSelectedData();
 	}
 
 	private void proceedFileImport(File file) {
@@ -1971,9 +1972,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		}
 		if (allDataSets.size()==1){
 			allDataSets.get(0).getParameterSet().setGeneralVisibility(Boolean.TRUE);
-			visualize();
+			//visualize();
 		}
 		model.fireTableDataChanged();
+		setSelectedListsForDrawing();
 	}
 	/**
 	 * Configures the mouse listener for the dataset table. 
@@ -2194,16 +2196,13 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		plot.viewPoint = plot.currentChart.getViewPoint();
 		plot.viewBounds = plot.currentChart.getView().getBounds();
-		
-		//System.err.println("Viewpoint wurde überschrieben!!!! Zeile 1372");
-		//plot.viewPoint = new Coord3d((float) 0.6871975, (float) 0.30719763, (float) 835.31036);
-		
+			
 	}
 	
 	@Override
 	public void tableChanged(TableModelEvent e) {
 		//visualizeAllSelectedData();
-		setSelectedListsForDrawing();
+		//setSelectedListsForDrawing();
 	}
 	
 	/**
