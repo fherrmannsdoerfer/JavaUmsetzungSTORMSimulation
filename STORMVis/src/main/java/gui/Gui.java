@@ -146,7 +146,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	
 	int fontSize = 12;
 	Font usedFont = new Font("Dialog",Font.BOLD,fontSize);
-	
+	Gui selfReference;
 	
 	/**
 	 * is set if a project with an image from the editor was loaded
@@ -216,7 +216,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField angularDistributionField;
 	private JTextField pxToNmField;
 	private JTextField framerateField;
-	private JTextField meanBlinkingDurationField;
+	JTextField meanBlinkingDurationField;
 	private JTextField naField;
 	private JTextField wavelengthField;
 	private JTextField fokusField;
@@ -275,8 +275,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	 * Create the frame.
 	 */
 	public Gui() {
+		this.selfReference = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(0, 0, 1200, 1070);
+		setBounds(0, 0, 1600, 1070);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setPreferredSize(new Dimension(250, 500));
@@ -1330,7 +1331,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		verticalBox_11.add(reproducibleOutputchkBox);
 		
 		JComboBox comboBox = new JComboBox();
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Native Simulation", "Create Tiff-Stack"}));
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Direct Simulation", "Create Tiff-Stack"}));
 		comboBox.setMaximumSize(new Dimension(32767, 22));
 		comboBox.addActionListener(new ActionListener(){
 
@@ -1739,35 +1740,15 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 						name = name.substring(0, name.length()-4);
 					}
 					
-					calculate(true);
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException e2) {
-						// TODO Auto-generated catch block
-						e2.printStackTrace();
-					}
-					while (allDataSets.get(currentRow).isCalculating){
-						try {
-							Thread.sleep(500);
-						} catch (InterruptedException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-					ParameterSet set = allDataSets.get(currentRow).getParameterSet();
-					set.setMeanBlinkingTime(Float.valueOf(meanBlinkingDurationField.getText()));
-					int modelNumber = 2;
-					if (set.isTwoDPSF()){
-						modelNumber  = 1;
-					}
-					getBorders();
-					CreateTiffStack cts = new CreateTiffStack(allDataSets.get(currentRow));
+					setUpRandomNumberGenerator();
+					CreateTiffStack cts = new CreateTiffStack(allDataSets.get(currentRow), path, random, selfReference);
+					cts.addPropertyChangeListener(selfReference);
 					cts.execute();
-					CreateStack.createTiffStack(allDataSets.get(currentRow).stormData, 1/set.getPixelToNmRatio(),
-							set.getEmptyPixelsOnRim(),set.getEmGain(), borders, random,
-							set.getElectronPerAdCount(), set.getFrameRate(), set.getMeanBlinkingTime(), set.getWindowsizePSF(),
-							modelNumber,set.getQuantumEfficiency(), set.getNa(), set.getPsfwidth(), set.getFokus(), set.getDefokus(), set.getSigmaBg(),
-							set.getConstOffset(), set.getCalibrationFile(), path,set.isEnsureSinglePSF(), set.isDistributePSFoverFrames());
+//					CreateStack.createTiffStack(allDataSets.get(currentRow).stormData, 1/set.getPixelToNmRatio(),
+//							set.getEmptyPixelsOnRim(),set.getEmGain(), borders, random,
+//							set.getElectronPerAdCount(), set.getFrameRate(), set.getMeanBlinkingTime(), set.getWindowsizePSF(),
+//							modelNumber,set.getQuantumEfficiency(), set.getNa(), set.getPsfwidth(), set.getFokus(), set.getDefokus(), set.getSigmaBg(),
+//							set.getConstOffset(), set.getCalibrationFile(), path,set.isEnsureSinglePSF(), set.isDistributePSFoverFrames());
 					FileManager.writeLogFile(allDataSets.get(currentRow).getParameterSet(), path.substring(0, path.length()-4)+"TiffStack",borders,true);
 				}
 				
@@ -1816,7 +1797,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_19 = Box.createHorizontalBox();
 		verticalBox_5.add(horizontalBox_19);
 		
-		JLabel lblNewLabel_5 = new JLabel("Couple Loc. Precision And Intensity ");
+		JLabel lblNewLabel_5 = new JLabel("Constant Localization Precision");
 		horizontalBox_19.add(lblNewLabel_5);
 		
 		Component horizontalGlue_37 = Box.createHorizontalGlue();
@@ -2096,7 +2077,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			showStormPointsBox.setSelected(set.getStormVisibility());
 			
 			applyBleachBox.setSelected(set.getApplyBleaching());
-			coupleSigmaIntensityBox.setSelected(set.getCoupleSigmaIntensity());
+			coupleSigmaIntensityBox.setSelected(!set.getCoupleSigmaIntensity());
 			pxToNmField.setText(String.format(Locale.ENGLISH,"%.2f",set.getPixelToNmRatio()));
 			framerateField.setText(Double.toString(set.getFrameRate()));
 			sigmaBgField.setText(String.format(Locale.ENGLISH,"%.2f",set.getSigmaBg()));
@@ -2151,20 +2132,20 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	 * @throws Exception 
 	 */
 	private void calculate(){
-		calculate(false);
+		calculate(allDataSets.get(currentRow),false);
 	}
 	
-	private void calculate(boolean forTiffStack) {
+	void calculate(DataSet currDataSet, boolean forTiffStack) {
 		setUpRandomNumberGenerator();
 		if (allDataSets.size()<1){
 			return;
 		}
 		copyFields();
 		if (forTiffStack){
-			allDataSets.get(currentRow).getParameterSet().setSxy(0.0001f);
-			allDataSets.get(currentRow).getParameterSet().setSz(0.0001f); //set localization precision to 0 to get the fluorophore centers instead of STORM localizations
+			currDataSet.getParameterSet().setSxy(0.0001f);
+			currDataSet.getParameterSet().setSz(0.0001f); //set localization precision to 0 to get the fluorophore centers instead of STORM localizations
 		}
-		calc = new STORMCalculator(allDataSets.get(currentRow),this.random);
+		calc = new STORMCalculator(currDataSet,this.random);
 		//calc = new STORMCalculator(allDataSets.get(currentRow));
 		calc.addListener(this);
 		calc.addPropertyChangeListener(this);
@@ -2392,7 +2373,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		}
 	}
 	
-	private ArrayList<Float> getBorders(){
+	ArrayList<Float> getBorders(){
 		ArrayList<Float> borders = new ArrayList<Float>();
 		borders.add(new Float(xminField.getText()));
 		borders.add(new Float(xmaxField.getText()));
@@ -2625,7 +2606,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setLineWidth(new Float(lineWidthField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setApplyBleaching(applyBleachBox.isSelected());
-		allDataSets.get(currentRow).getParameterSet().setCoupleSigmaIntensity(coupleSigmaIntensityBox.isSelected());
+		allDataSets.get(currentRow).getParameterSet().setCoupleSigmaIntensity(!coupleSigmaIntensityBox.isSelected());
 		
 		allDataSets.get(currentRow).getParameterSet().setPixelToNmRatio(new Float(pxToNmField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setFrameRate(new Float(framerateField.getText()));

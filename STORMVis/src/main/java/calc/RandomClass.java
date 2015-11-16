@@ -32,8 +32,10 @@ public class RandomClass {
 	 * @return
 	 */
 	public static int poissonNumber(double lambda,Random rnd) {
+		
 		if (lambda>50){
-			return (int) Math.round(rnd.nextGaussian()*Math.sqrt(lambda)+lambda);
+			int retVal =(int) Math.ceil(Math.abs(Math.round(rnd.nextGaussian()*Math.sqrt(lambda)+lambda)));
+			return retVal;
 		}
 	  double L = Math.exp(-lambda);
 	  double p = 1.0;
@@ -43,7 +45,6 @@ public class RandomClass {
 	    k++;
 	    p *= Math.random();
 	  } while (p > L);
-	
 	  return k - 1;
 		}
 	

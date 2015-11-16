@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 
+import gui.CreatePlot;
+import gui.CreateTiffStack;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.FileSaver;
@@ -74,7 +76,7 @@ public class CreateStack {
 				(float) 1.45/**NA*/, 647/**waveLength*/, 00/**zFocus*/, 
 				400/**zDefocus*/, 35.7f/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
 				,"Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Tiff-Stacks\\Test Tiff Stacks\\teststack3DGain10photons2000z500_30msBlinkingTime_3DNewCalib.tif",
-				false /* ensure single PSF*/, true /*split blinking over frames*/);
+				false /* ensure single PSF*/, true /*split blinking over frames*/, new CreateTiffStack(null, null, null,null));
 
     } 
 	
@@ -102,10 +104,10 @@ public class CreateStack {
 			ArrayList<Float> borders, Random rand,
 			float electronsPerADcount, float frameRate, float decayTime, int sizePSF, int modelNumber, float qe,
 			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, 
-			float offset, float[][] calib, String fname, boolean ensureSinglePSF, boolean splitIntensities) { 
+			float offset, float[][] calib, String fname, boolean ensureSinglePSF, boolean splitIntensities, CreateTiffStack cp) { 
 		
 		for (int i = 0; i<calib.length; i++){ //shift Fokus
-			calib[i][0] -=350; 
+			calib[i][0] -=0; 
 		}
 		
 		//get mean intensity
@@ -198,7 +200,9 @@ public class CreateStack {
 			}
 			lInput = finalList;
 		}
-		for (int frame = 0; frame<lInput.get(lInput.size()-1)[3];frame++){
+		int lastFrame = (int) lInput.get(lInput.size()-1)[3];
+		for (int frame = 0; frame<lastFrame;frame++){
+			cp.publicSetProgress((int)100.*frame/lastFrame);
 		// fill image stack with images
 			FloatProcessor pro =  new FloatProcessor(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF);
 			while (lInput.size() > 0 && lInput.get(0)[3] == frame) {

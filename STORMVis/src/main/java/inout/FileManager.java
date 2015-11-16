@@ -301,10 +301,10 @@ public class FileManager {
 				writer.append("Merge close PSFs: FALSE\n");
 			}
 			if (ps.getCoupleSigmaIntensity()){
-				writer.append("Couple localization error with intensity: TRUE\n");
+				writer.append("Constant Localization Precision: False\n");
 			}
 			else{
-				writer.append("Couple localization error with intensity: FALSE\n");
+				writer.append("Constant Localization Precision: TRUE\n");
 			}
 			writer.append("Point size: "+ps.getPointSize()+"\n");
 			writer.append("Line width: "+ps.getLineWidth()+"\n");

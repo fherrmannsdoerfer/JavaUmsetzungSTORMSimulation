@@ -2,6 +2,9 @@ package model;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ParameterSet implements Serializable {
 	/**
@@ -78,6 +81,7 @@ public class ParameterSet implements Serializable {
 	private boolean ensureSinglePSF;
 	private boolean distributePSFoverFrames;
 	private int minIntensity;
+	private List<Float> borders;
     
 	
 
@@ -90,7 +94,7 @@ public class ParameterSet implements Serializable {
 			Float frameRate, Float sigmaBg, Float constOffset, Float emGain, Float quantumEfficiency, 
 			int windowsizePSF, int emptyPixelsOnRim, Float na, Float fokus, Float defokus, boolean twoDPSF,
 			float[][] calibrationFile, float electronPerAdCount,float meanBlinkingTime, boolean ensureSinglePSF, 
-			boolean distributePSFoverFrames, int minIntensity) {
+			boolean distributePSFoverFrames, int minIntensity, List<Float> borders) {
 		super();
 		this.loa = loa;
 		this.aoa = aoa;
@@ -149,6 +153,8 @@ public class ParameterSet implements Serializable {
 		this.ensureSinglePSF = ensureSinglePSF;
 		this.distributePSFoverFrames = distributePSFoverFrames;
 		this.minIntensity = minIntensity;
+		this.setBorders(borders);
+		
 	} 
     
     public ParameterSet() {
@@ -217,6 +223,7 @@ public class ParameterSet implements Serializable {
 		this.ensureSinglePSF = false;
 		this.distributePSFoverFrames = true;
 		this.minIntensity = 1000;
+		this.setBorders((List<Float>) Arrays.asList(-9e10f, 9e10f,-9e10f,9e10f,-9e10f,9e10f));
 		
     }
 
@@ -663,5 +670,13 @@ public class ParameterSet implements Serializable {
 
 	public void setMinIntensity(int minIntensity) {
 		this.minIntensity = minIntensity;
+	}
+
+	public ArrayList<Float> getBorders() {
+		return (ArrayList<Float>) borders;
+	}
+
+	public void setBorders(List<Float> borders2) {
+		this.borders = borders2;
 	}
 }
