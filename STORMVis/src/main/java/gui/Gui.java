@@ -237,6 +237,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	JPanel twoDPSFPanel;
 	JPanel threeDPSFPanel;
 	private JTextField minIntensityField;
+	private JTextField pixelSizeField;
+	private JTextField sigmaSizeField;
 	/**
 	 * Launch the application.
 	 */
@@ -1835,6 +1837,34 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Component verticalStrut_5 = Box.createVerticalStrut(20);
 		verticalBox_5.add(verticalStrut_5);
 		
+		Box horizontalBox_52 = Box.createHorizontalBox();
+		verticalBox_5.add(horizontalBox_52);
+		
+		JLabel lblNewLabel_13 = new JLabel("Pixelsize in Nm");
+		horizontalBox_52.add(lblNewLabel_13);
+		
+		Component horizontalGlue_24 = Box.createHorizontalGlue();
+		horizontalBox_52.add(horizontalGlue_24);
+		
+		pixelSizeField = new JTextField();
+		pixelSizeField.setMaximumSize(new Dimension(60, 22));
+		horizontalBox_52.add(pixelSizeField);
+		pixelSizeField.setColumns(5);
+		
+		Box horizontalBox_58 = Box.createHorizontalBox();
+		verticalBox_5.add(horizontalBox_58);
+		
+		JLabel lblNewLabel_14 = new JLabel("Width Of Rendered PSF (nm)");
+		horizontalBox_58.add(lblNewLabel_14);
+		
+		Component horizontalGlue_38 = Box.createHorizontalGlue();
+		horizontalBox_58.add(horizontalGlue_38);
+		
+		sigmaSizeField = new JTextField();
+		sigmaSizeField.setMaximumSize(new Dimension(60, 22));
+		horizontalBox_58.add(sigmaSizeField);
+		sigmaSizeField.setColumns(5);
+		
 		JButton exportButton = new JButton("Export");
 		exportButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		verticalBox_5.add(exportButton);
@@ -2100,6 +2130,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			ensureSinglePSFchkBox.setSelected(set.isEnsureSinglePSF());
 			distributePSFOverFrames.setSelected(set.isDistributePSFoverFrames());
 			minIntensityField.setText(set.getMinIntensity()+"");
+			sigmaSizeField.setText(set.getSigmaRendering()+"");
+			pixelSizeField.setText(set.getPixelsize()+"");
 			updateButtonColors();
 		}
 	}
@@ -2630,6 +2662,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setDistributePSFoverFrames(distributePSFOverFrames.isSelected());
 		allDataSets.get(currentRow).getParameterSet().setEnsureSinglePSF(ensureSinglePSFchkBox.isSelected());
 		allDataSets.get(currentRow).getParameterSet().setMinIntensity(new Integer(minIntensityField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setPixelsize(new Float(pixelSizeField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setSigmaRendering(new Float(sigmaSizeField.getText()));
 	}
 
 	
