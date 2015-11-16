@@ -2162,7 +2162,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		antibodyColorButton.setOpaque(true);
 		backgroundColorButton.setOpaque(true);
 		mainColorButton.setOpaque(true);
-		visualize();
 	}
 	
 	/**
