@@ -2300,12 +2300,12 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			nt = new CreatePlot(plot);
 //			nt.addListener((ProgressBarUpdateListener)this);
 			nt.addListener((ThreadCompleteListener)this);
-			nt.addPropertyChangeListener(this);
+			//nt.addPropertyChangeListener(this);
 			System.out.println("nt.exec");
 //			calc = new STORMCalculator(this.allDataSets.get(currentRow), random);
 //			calc.execute();
 			progressBar.setToolTipText("Visualizing...");
-			nt.execute();
+			nt.doInBackground();
 			
 //			plot.dataSets.clear();
 //			plot.addAllDataSets(sets);
@@ -2379,7 +2379,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			nt = new CreatePlot(plot);
 //			nt.addListener((ProgressBarUpdateListener)this);
 //			nt.addListener((ThreadCompleteListener)this);
-			nt.addPropertyChangeListener(this);
+			//nt.addPropertyChangeListener(this);
 			System.out.println("do in bg");
 			nt.doInBackground();
 //			Thread t = new Thread(){
