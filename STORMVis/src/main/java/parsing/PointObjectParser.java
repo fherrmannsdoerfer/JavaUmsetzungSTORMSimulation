@@ -50,9 +50,10 @@ public class PointObjectParser {
 	        String line;
 	        List<String> words = new ArrayList<String>();
 	        jregex.Pattern pattern = new jregex.Pattern(REGEX);
-	       
+	       int counter = 0;
 	        line = br.readLine(); //skip header
 	        while ((line = br.readLine()) != null) {
+	        	counter = counter + 1;
 	            words.clear();
 	            jregex.Matcher m = pattern.matcher(line);
 	           
@@ -74,14 +75,17 @@ public class PointObjectParser {
                 		coordinates.add(s);
                 	}
                 }
-                
-                float[] point =new float[5];
-               
-                for (int i = 0; i<5; i++){
-                	point[i] = Float.parseFloat(coordinates.get(i));
+                try{
+	                float[] point =new float[5];
+	                
+	                for (int i = 0; i<5; i++){
+	                	point[i] = Float.parseFloat(coordinates.get(i));
+	                }
+	                allPoints.add(point);
                 }
-                allPoints.add(point);
-               
+                catch(IndexOutOfBoundsException e){
+                	System.out.println("Problem encountered in line "+counter);
+                }
          
 	        }
 	        br.close();
