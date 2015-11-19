@@ -153,7 +153,7 @@ public class CreateStack {
 		}
 		for (int k = 0; k<2; k++){
 			borders.set(k, borders.get(k) +(emptySpace + sizePSF)/ resolution-minX);
-			borders.set(2*k+1, borders.get(2*k+1) +(emptySpace + sizePSF)/ resolution-minY);
+			borders.set(k+2, borders.get(k+2) +(emptySpace + sizePSF)/ resolution-minY);
 		}
 		
 	

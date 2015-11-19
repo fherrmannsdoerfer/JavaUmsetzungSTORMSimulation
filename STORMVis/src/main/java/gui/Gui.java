@@ -230,7 +230,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField windowsizePSFRenderingField;
 	private JTextField electronsPerDnField;
 	
-	boolean allowShift = false;
+	boolean allowShift = true;
 	
 	JPanel createTiffStackPanel;
 	JPanel nativeSimulationPanel;
