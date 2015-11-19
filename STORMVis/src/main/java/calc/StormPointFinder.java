@@ -45,7 +45,7 @@ public class StormPointFinder {
 		}
 		else{
 			stormPoints = createStormPoints(listEndPoints, ps, sxy, sz, psfWidth, progressBar,
-					calc, ps.getFrames(), ps.getMeanPhotonNumber(),1000);
+					calc, ps.getFrames(), ps.getMeanPhotonNumber(),ps.getMinIntensity());
 		}
 		
 		return stormPoints;

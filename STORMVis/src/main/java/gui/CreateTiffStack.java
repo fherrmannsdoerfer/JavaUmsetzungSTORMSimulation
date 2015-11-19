@@ -44,7 +44,7 @@ public class CreateTiffStack extends SwingWorker<Void,Void>{
 		if (psSet.isTwoDPSF()){
 			modelNumber  = 1;
 		}
-		guiReference.getBorders();
+		guiReference.borders = guiReference.getBorders();
 		set.progressBar.setString("Creating Tiff-Stack");
 		CreateStack.createTiffStack(set.stormData, 1/psSet.getPixelToNmRatio(),
 				psSet.getEmptyPixelsOnRim(),psSet.getEmGain(), guiReference.borders, random,
