@@ -347,7 +347,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			
 			Box verticalBox_1 = Box.createVerticalBox();
 			verticalBox_7.add(verticalBox_1);
-			verticalBox_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Structural parameters", TitledBorder.LEADING, TitledBorder.TOP, usedFont, null));
+			verticalBox_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Structural Parameters", TitledBorder.LEADING, TitledBorder.TOP, usedFont, null));
 			
 			Box horizontalBox = Box.createHorizontalBox();
 			verticalBox_1.add(horizontalBox);
@@ -901,7 +901,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			Box horizontalBox_57 = Box.createHorizontalBox();
 			verticalBox_4.add(horizontalBox_57);
 			
-			JLabel lblDefokus = new JLabel("Defokus");
+			JLabel lblDefokus = new JLabel("Defocus");
 			horizontalBox_57.add(lblDefokus);
 			
 			Component horizontalGlue_48 = Box.createHorizontalGlue();
@@ -921,7 +921,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			Box horizontalBox_46 = Box.createHorizontalBox();
 			verticalBox_4.add(horizontalBox_46);
 			
-			JLabel lblFokus = new JLabel("Fokus");
+			JLabel lblFokus = new JLabel("Focus");
 			horizontalBox_46.add(lblFokus);
 			
 			Component horizontalGlue_3 = Box.createHorizontalGlue();
@@ -1307,7 +1307,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			Box horizontalBox_21 = Box.createHorizontalBox();
 			verticalBox_16.add(horizontalBox_21);
 			
-			JLabel lblShowEm = new JLabel("Show EM");
+			JLabel lblShowEm = new JLabel("Show Structure");
 			horizontalBox_21.add(lblShowEm);
 			
 			Component horizontalGlue_23 = Box.createHorizontalGlue();

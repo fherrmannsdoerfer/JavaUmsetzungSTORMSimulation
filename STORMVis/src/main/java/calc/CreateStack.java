@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.apache.commons.io.FilenameUtils;
+
 import gui.CreatePlot;
 import gui.CreateTiffStack;
 import ij.ImagePlus;
@@ -39,7 +41,7 @@ public class CreateStack {
 	 */
 	public static void main(String[] args){ 
 		Random rand = new Random(2);
-		int nbrPoints = 10000;
+		int nbrPoints = 100;
 		float[][] c = new float[nbrPoints][5];
 		//random creation of a list of tables as input
 //		for (int j = 0; j < nbrPoints; j++) {
@@ -49,13 +51,14 @@ public class CreateStack {
 //			c[j][3] = (float) Math.round(Math.random()*100);
 //			c[j][4] = (float) (Math.random()*6000+1000);
 //		}
-		for (int j = 0; j < nbrPoints; j++){
-			c[j][0] = 500.f;
-			c[j][1] = 500.f;
-			c[j][2] = 500.f;
-			c[j][3] = 20*j;
-			c[j][4] = (float) 2000;
-			
+		for (int j = 0; j < nbrPoints/10; j++){
+			for (int k=0; k<10; k++){
+				c[j*10+k][0]=50;
+				c[j*10+k][1] = 50;
+				c[j*10+k][2]=k*90+1;
+				c[j*10+k][3]=j*10+k;
+				c[j*10+k][4]=4000;
+			}
 		}
 		ArrayList<Float> borders = new ArrayList<Float>();
 		borders.add((float) -99999);
@@ -65,18 +68,24 @@ public class CreateStack {
 		borders.add((float) -99999);
 		borders.add((float) 99999);
 		System.out.println("finished simulation");
-		float[][] calibr = {{0,131.6016f,299.7855f},{101.111f,124.3521f,247.8447f},
-				{202.222f,121.4928f,206.5095f},{303.333f,126.1539f,177.7527f},{404.444f,134.6805f, 157.5747f},
-				{505.556f,152.1423f, 148.3749f},{606.667f,176.9409f, 145.7982f},{707.778f,212.3208f, 152.4042f},
-				{808.889f,252.4194f,164.9916f},{910f,308.4156f,188.8461f}};//rescaled
+		float[][] calibr = {{0.0001f,131.6016f,299.7855f},
+						   {101.111f,124.3521f,247.8447f},
+						   {202.222f,121.4928f,206.5095f},
+						   {303.333f,126.1539f,177.7527f},
+						   {404.444f,134.6805f, 157.5747f},
+						   {505.556f,152.1423f, 148.3749f},
+						   {606.667f,176.9409f, 145.7982f},
+						   {707.778f,212.3208f, 152.4042f},
+						   {808.889f,252.4194f,164.9916f},
+						   {910f,308.4156f,188.8461f}};//rescaled
 		
 		createTiffStack(c, 1/133.f/**resolution*/ , 10/**emptyspace*/, 10 /**emGain*/,borders, rand,
 				4.81f/**electron per A/Dcount */, (float) 30/**frameRate*/, 
-				0.030f/**decayTime*/, 10/**sizePSF*/, 2/**modelNR*/, 1.f /**quantum efficiency*/, 
-				(float) 1.45/**NA*/, 647/**waveLength*/, 00/**zFocus*/, 
-				400/**zDefocus*/, 35.7f/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
-				,"Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\Tiff-Stacks\\Test Tiff Stacks\\teststack3DGain10photons2000z500_30msBlinkingTime_3DNewCalib.tif",
-				false /* ensure single PSF*/, true /*split blinking over frames*/, new CreateTiffStack(null, null, null,null));
+				0.030f/**decayTime*/, 10/**sizePSF*/,2/**modelNR*/, 1.f /**quantum efficiency*/, 
+				(float) 1.45/**NA*/, 647/**waveLength*/, 400/**zFocus*/, 
+				800/**zDefocus*/, 35.7f/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
+				,"Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\FigureComparisonTiffStackFit-TruePosition\\3D\\test.tif",
+				false /* ensure single PSF*/, false /*split blinking over frames*/, new CreateTiffStack(null, null, null,null));
 
     } 
 	
@@ -200,63 +209,66 @@ public class CreateStack {
 			}
 			lInput = finalList;
 		}
+		String basename = FilenameUtils.getBaseName(fname);
+		String path = FilenameUtils.getFullPath(fname);
+		writeLocalizationsToFile(lInput, path+"\\"+basename);
 		int lastFrame = (int) lInput.get(lInput.size()-1)[3];
 		for (int frame = 0; frame<lastFrame;frame++){
 			cp.publicSetProgress((int)100.*frame/lastFrame);
-		// fill image stack with images
+			// fill image stack with images
 			FloatProcessor pro =  new FloatProcessor(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF);
 			while (lInput.size() > 0 && lInput.get(0)[3] == frame) {
-				
 				float [] currPSF = lInput.get(0);
 				lInput.remove(0);
-				//modelling the form of the PSF
-								
-				//at least once
-				int pixelX = Math.round(currPSF[0]* resolution);
-				int pixelY = Math.round(currPSF[1]* resolution);
-	
-				double sum = 0;
-				
-				switch(modelNumber) { // symmetric Gaussian
-				case 1:
-					float sig = calcSig(currPSF[2], numericalAperture, waveLength, zFocus, zDefocus);
-					for (int k = -sizePSF; k <= sizePSF; k++) {
-						for (int m = -sizePSF; m <= sizePSF; m++) {
-							float intensityPhotons = (float) (symmInt(pixelX + k, pixelY + m, currPSF[0],
-									currPSF[1], currPSF[4],
-									sig, resolution)) * qe;
-							sum = sum + intensityPhotons;
-							float val4 = pro.getf(pixelX + k, pixelY + m);
-							val4 += calc.RandomClass.poissonNumber(calc.RandomClass.poissonNumber(intensityPhotons,rand),rand);//two poisson distributions, first for shot noise second for em gain factor of sqrt(2)
-							pro.setf(pixelX + k, pixelY + m, val4);
-							
-						}
-					}
-					System.out.println("current Intensity: "+ currPSF[4]+" intensity gaussian: "+sum+" z: "+currPSF[2]+" frame: "+currPSF[3]+" sigma: "+sig);
-					break;
+				if (Calc.isInRange(currPSF, borders)){
+					//modelling the form of the PSF
+									
+					//at least once
+					int pixelX = Math.round(currPSF[0]* resolution);
+					int pixelY = Math.round(currPSF[1]* resolution);
+		
+					double sum = 0;
 					
-				case 2: //asymmetric Gaussian
-					SplineCalculator spl = new SplineCalculator(calib);
-					spl.splines();
-					sum = 0;
-					if (spl.getSig(currPSF[2])==null){
-						break;
-					}
-					for (int k = -sizePSF; k <= sizePSF; k++) {
-						for (int m = -sizePSF; m <= sizePSF; m++) {
-							float intensityPhotons = (float) (aSymmInt(pixelX + k, pixelY + m, currPSF[0],
-									currPSF[1], currPSF[4],
-									spl.getSig(currPSF[2]), resolution)) *qe;
-							sum = sum + intensityPhotons;
-							float val4 = pro.getf(pixelX + k, pixelY + m);
-							val4 += calc.RandomClass.poissonNumber(calc.RandomClass.poissonNumber(intensityPhotons,rand),rand);//two poisson distributions, first for shot noise second for em gain factor of sqrt(2)
-							pro.setf(pixelX + k, pixelY + m, val4);
+					switch(modelNumber) { // symmetric Gaussian
+					case 1:
+						float sig = calcSig(currPSF[2], numericalAperture, waveLength, zFocus, zDefocus);
+						for (int k = -sizePSF; k <= sizePSF; k++) {
+							for (int m = -sizePSF; m <= sizePSF; m++) {
+								float intensityPhotons = (float) (symmInt(pixelX + k, pixelY + m, currPSF[0],
+										currPSF[1], currPSF[4],
+										sig, resolution)) * qe;
+								sum = sum + intensityPhotons;
+								float val4 = pro.getf(pixelX + k, pixelY + m);
+								val4 += calc.RandomClass.poissonNumber(calc.RandomClass.poissonNumber(intensityPhotons,rand),rand);//two poisson distributions, first for shot noise second for em gain factor of sqrt(2)
+								pro.setf(pixelX + k, pixelY + m, val4);
+								
+							}
 						}
+						System.out.println("current Intensity: "+ currPSF[4]+" intensity gaussian: "+sum+" z: "+currPSF[2]+" frame: "+currPSF[3]+" sigma: "+sig);
+						break;
+						
+					case 2: //asymmetric Gaussian
+						SplineCalculator spl = new SplineCalculator(calib);
+						spl.splines();
+						sum = 0;
+						if (spl.getSig(currPSF[2])==null){
+							break;
+						}
+						for (int k = -sizePSF; k <= sizePSF; k++) {
+							for (int m = -sizePSF; m <= sizePSF; m++) {
+								float intensityPhotons = (float) (aSymmInt(pixelX + k, pixelY + m, currPSF[0],
+										currPSF[1], currPSF[4],
+										spl.getSig(currPSF[2]), resolution)) *qe;
+								sum = sum + intensityPhotons;
+								float val4 = pro.getf(pixelX + k, pixelY + m);
+								val4 += calc.RandomClass.poissonNumber(calc.RandomClass.poissonNumber(intensityPhotons,rand),rand);//two poisson distributions, first for shot noise second for em gain factor of sqrt(2)
+								pro.setf(pixelX + k, pixelY + m, val4);
+							}
+						}
+						System.out.println("current Intensity: "+ currPSF[4]+" intensity gaussian: "+sum);
+						break;	
 					}
-					System.out.println("current Intensity: "+ currPSF[4]+" intensity gaussian: "+sum);
-					break;	
 				}
-				
 			}
 			pro.multiply(emGain);
 			pro.multiply(1/electronsPerADcount);
@@ -271,6 +283,7 @@ public class CreateStack {
 		ImagePlus leftStack = new ImagePlus("", stackLeft);
 		FileSaver fs = new FileSaver(leftStack);
 		fs.saveAsTiffStack(fname);
+		
 		System.out.println("file succesfully saved");
 		
 	}	
@@ -469,7 +482,7 @@ public class CreateStack {
 	 */
 	private static void writeLocalizationsToFile(List<float[]> stormData, String basename) {
 		try{
-			FileWriter writer = new FileWriter(basename+"Localizations.txt");
+			FileWriter writer = new FileWriter(basename+"GroundTruth.txt");
 			writer.append("Pos_x Pos_y Pos_z Frame Intensity\n");
 			for (int i = 0; i<stormData.size(); i++){
 				float[] tmp = stormData.get(i);

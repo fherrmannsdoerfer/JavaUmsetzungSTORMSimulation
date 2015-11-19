@@ -59,17 +59,14 @@ public class SplineCalculator {
 			// first step
 			float z0 = points[0][0];
 
-			float[][] in1 = { { 1, z0, (float) Math.pow(z0, 2), (float) Math.pow(z0, 3), points[0][1] },
-					{ 1, points[1][0], (float) Math.pow(points[1][0], 2), (float) Math.pow(points[1][0], 3),
-							points[1][1] },
-					{ 0, 1, (float) 2 * z0, (float) ((float) 3 * Math.pow(z0, 2)), 0 }, //bdry. cond. f'=0
-					{ 0, 0, 2, 6 * z0, 0 } }; //bdry. cond. f''=0
-			float[][] in2 = { { 1, z0, (float) Math.pow(z0, 2), (float) Math.pow(z0, 3), points[1][2] },
-					{ 1, points[1][0], (float) Math.pow(points[1][0], 2), (float) Math.pow(points[1][0], 3),
-							points[1][2] },
-					{ 0, 1, (float) 2 * z0, (float) ((float) 3 * Math.pow(z0, 2)),
-							(float) (points[1][2] - points[0][2]) / (points[1][0] - points[0][0]) },
-					{ 0, 0, 2, 6 * z0, 0 } };
+			float[][] in1 = { { 1, z0, 				(float) Math.pow(z0, 2), 			(float) Math.pow(z0, 3),			   points[0][1] },
+					          { 1, points[1][0], 	(float) Math.pow(points[1][0], 2), 	(float) Math.pow(points[1][0], 3),	   points[1][1] },
+					          { 0, 1, 				(float) 2 * z0, 					(float) ((float) 3 * Math.pow(z0, 2)), 0 }, //bdry. cond. f'=0
+					          { 0, 0,				2, 									6 * z0, 							   0 } }; //bdry. cond. f''=0
+			float[][] in2 = { { 	1, z0, 				(float) Math.pow(z0, 2), 			(float) Math.pow(z0, 3), 			  points[0][2] },
+								{ 	1, points[1][0], 	(float) Math.pow(points[1][0], 2), 	(float) Math.pow(points[1][0],3),	  points[1][2] },
+								{   0, 1,				(float) 2 * z0,						(float) ((float) 3 * Math.pow(z0, 2)),(float) (points[1][2] - points[0][2]) / (points[1][0] - points[0][0]) },
+								{	0, 0, 				2, 									6 * z0, 							   0 } };
 
 			// writing results in solution vector
 			for (int j = 0; j < 4; j++) {
@@ -84,9 +81,8 @@ public class SplineCalculator {
 				// calculate spline-coeffs
 				float pZ = points[i - 1][0]; // position on the left edge
 				// input matrices for both of the splines
-				float[][] inX = { { 1, pZ, (float) Math.pow(pZ, 2), (float) Math.pow(pZ, 3), points[i - 1][1] },
-						{ 1, points[i][0], (float) Math.pow(points[i][0], 2), (float) Math.pow(points[i][0], 3),
-								points[i][1] },
+				float[][] inX = { { 1, pZ, (float) Math.pow(pZ, 2),			  (float) Math.pow(pZ, 3),			points[i - 1][1] },
+						{ 1, points[i][0], (float) Math.pow(points[i][0], 2), (float) Math.pow(points[i][0], 3),points[i][1] },
 						{ 0, 1, (float) 2 * pZ, (float) ((float) 3 * Math.pow(pZ, 2)),
 								(float) (splineX[i - 1][1] + 2 * splineX[i - 1][2] * pZ
 										+ 3 * splineX[i - 1][3] * Math.pow(pZ, 2)) },

@@ -1,5 +1,6 @@
 package batchProcessing;
 
+import gui.CreateTiffStack;
 import gui.DataTypeDetector;
 import gui.ExamplesProvidingClass;
 import gui.ParserWrapper;
@@ -63,60 +64,64 @@ public class startBatchProcessing {
 		(new File(outputFolder)).mkdir();
 		boolean tiffStackOutput = true;
 		boolean suReSimOutput = true;
-		int numberOfSimulationsWithSameParameterSet = 1; //number of outputs for the same parameter set
-		SimulationParameter params = standardParameterVesicles();		
+		int numberOfSimulationsWithSameParameterSet = 100; //number of outputs for the same parameter set
+		SimulationParameter params = standardParameterRandomlyDistributedEpitopes();		
 		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(6.f));
 		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(15.f));
-		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(10.f));
-		ArrayList<Float> varAng = new ArrayList<Float>(Arrays.asList(0.f));
+		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(0.61538464f));
+		ArrayList<Float> varAng = new ArrayList<Float>(Arrays.asList(1000.f));
 		//ArrayList<Float> de = new ArrayList<Float>(Arrays.asList(10.f,20.f,50.f,100.f));
-		ArrayList<Float> koff = new ArrayList<Float>(Arrays.asList(0.0005f));
+		ArrayList<Float> koff = new ArrayList<Float>(Arrays.asList(7.f/50000));
 		//ArrayList<Integer> frames = new ArrayList<Integer>(Arrays.asList(10000));
 		ArrayList<Float> labelLength = new ArrayList<Float>(Arrays.asList(16.f));
+		ArrayList<Integer> photonOutput = new ArrayList<Integer>(Arrays.asList(2000,3000));
 		allDataSets.get(0).setProgressBar(new JProgressBar());
 		
 		
 		int counter = 0;
-		for (int s = 0; s<labelLength.size(); s++){
-			for (int a = 0; a<varAng.size(); a++){
-				for (int i =0; i<sigmaXY.size(); i++){
-					for (int j = 0;j< le.size(); j++){
-						for (int k = 0;k<koff.size(); k++){
-							for (int p = 0;p<numberOfSimulationsWithSameParameterSet; p++){
-								counter += 1;
-								params.labelEpitopeDistance = labelLength.get(s);
-								params.angularDeviation = (float) (varAng.get(a)/180.*Math.PI);
-								params.labelingEfficiency = le.get(j);
-								params.sigmaXY = sigmaXY.get(i);
-								params.sigmaZ = sigmaZ.get(i);
-								params.dutyCycle = koff.get(k);
-								params.sigmaRendering = 0.4 * params.sigmaXY;
-								calculate(params);
-								//params.detectionEfficiency = de.get(i);
-								//params.recordedFrames = frames.get(i);
-								params.borders = getBorders();
-								
-								String fname = String.format("sig%1.0f_%1.0flabEff%1.0fduty%1.0fAngDev%1.0fLabLen%1.0fver%d", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.dutyCycle,params.angularDeviation*180/Math.PI,params.labelEpitopeDistance,p);
-								if(suReSimOutput){
-									new File(outputFolder+fname+"\\").mkdir();
-									exportData(outputFolder+fname+"\\",fname, params);
-								}
-								if (tiffStackOutput){
-									float[][] calibr = allDataSets.get(0).getParameterSet().getCalibrationFile();
-									allDataSets.get(0).setProgressBar(new JProgressBar());
-									params.sigmaXY = 0.f;
-									params.sigmaZ = 0.f;
+		for (int ll = 0; ll<photonOutput.size();ll++){
+			for (int s = 0; s<labelLength.size(); s++){
+				for (int a = 0; a<varAng.size(); a++){
+					for (int i =0; i<sigmaXY.size(); i++){
+						for (int j = 0;j< le.size(); j++){
+							for (int k = 0;k<koff.size(); k++){
+								for (int p = 0;p<numberOfSimulationsWithSameParameterSet; p++){
+									counter += 1;
+									params.labelEpitopeDistance = labelLength.get(s);
+									params.angularDeviation = (float) (varAng.get(a)/180.*Math.PI);
+									params.labelingEfficiency = le.get(j);
+									params.sigmaXY = sigmaXY.get(i);
+									params.sigmaZ = sigmaZ.get(i);
+									params.dutyCycle = koff.get(k);
+									params.sigmaRendering = 0.4 * params.sigmaXY;
 									calculate(params);
-									CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
-											10.f/**emGain*/,params.borders,random,4.81f/**electrons per AD*/, (float) 30.f/**frameRate*/, 
-											0.03f/**blinking duration*/, 15/**sizePSF*/, 2/**modelNR*/,1.f,
-											(float) 1.45f/**NA*/, 647.f/**waveLength*/, 200.f/**zFocus*/, 
-											400.f/**zDefocus*/, 35.7f/**sigmaNoise*/, 200.f/**constant offset*/, calibr/**calibration file*/,
-											outputFolder+fname+"\\"+fname+"TiffStack.tif",
-											false /* ensure single PSF*/, true /*split blinking over frames*/);
-								
+									//params.detectionEfficiency = de.get(i);
+									//params.recordedFrames = frames.get(i);
+									params.borders = getBorders();
+									params.MeanPhotonNumber = photonOutput.get(ll);
+									String fname = String.format("sig%1.0f_%1.0flabEff%1.0fPhoton%dAngDev%1.0fLabLen%1.0fver%d", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.MeanPhotonNumber,params.angularDeviation*180/Math.PI,params.labelEpitopeDistance,p);
+									if(suReSimOutput){
+										new File(outputFolder+fname+"\\").mkdir();
+										exportData(outputFolder+fname+"\\",fname, params);
+									}
+									if (tiffStackOutput){
+										
+										float[][] calibr = allDataSets.get(0).getParameterSet().getCalibrationFile();
+										allDataSets.get(0).setProgressBar(new JProgressBar());
+										params.sigmaXY = 0.f;
+										params.sigmaZ = 0.f;
+										calculate(params);
+										CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
+												10.f/**emGain*/,params.borders,random,4.81f/**electrons per AD*/, (float) 30.f/**frameRate*/, 
+												0.03f/**blinking duration*/, 15/**sizePSF*/, 1/**modelNR*/,1.f,
+												(float) 1.45f/**NA*/, 647.f/**waveLength*/, 200.f/**zFocus*/, 
+												600.f/**zDefocus*/, 35.7f/**sigmaNoise*/, 200.f/**constant offset*/, calibr/**calibration file*/,
+												outputFolder+fname+"\\"+fname+"TiffStack.tif",
+												false /* ensure single PSF*/, true /*split blinking over frames*/, new CreateTiffStack(null,null,null,null));
+									
+									}
+									System.out.println(String.format("run %d of %d",counter,sigmaXY.size()*koff.size()*le.size()*varAng.size()*labelLength.size()*numberOfSimulationsWithSameParameterSet));
 								}
-								System.out.println(String.format("run %d of %d",counter,sigmaXY.size()*koff.size()*le.size()*varAng.size()*labelLength.size()*numberOfSimulationsWithSameParameterSet));
 							}
 						}
 					}
@@ -196,14 +201,14 @@ public class startBatchProcessing {
 		params.coupleSigmaIntensity = true;
 		params.detectionEfficiency = 100;
 		params.epitopeDensity = (float) 1.625;
-		params.fluorophoresPerLabel = 8;
-		params.dutyCycle = (float) (1.0/2000.f);
+		params.fluorophoresPerLabel = 1;
+		params.dutyCycle = (float) (7/50000.f);
 		params.labelEpitopeDistance = 16;
 		params.labelingEfficiency = 90;
 		params.makeItReproducible = false;
-		params.MeanPhotonNumber = 4000;
+		params.MeanPhotonNumber = 3000;
 		params.radiusOfFilament = (float) 12.5;
-		params.recordedFrames = 20000;
+		params.recordedFrames = 50000;
 		params.sigmaXY = 6;
 		params.sigmaZ = 30;
 		params.viewStatus = 1;
@@ -214,20 +219,20 @@ public class startBatchProcessing {
 	
 	private static SimulationParameter standardParameterRandomlyDistributedEpitopes() {
 		SimulationParameter params = new SimulationParameter();
-		params.angularDeviation = 100;
+		params.angularDeviation = 1000;
 		params.angleOfLabel = (float) (90.f/180*Math.PI);
 		params.backgroundPerMicroMeterCubed = 0;
 		params.coupleSigmaIntensity = true;
 		params.detectionEfficiency = 100;
 		params.epitopeDensity = (float) 1.625;
-		params.fluorophoresPerLabel = 8;
+		params.fluorophoresPerLabel = 1;
 		params.dutyCycle = (float) (1.0/2000.f);
 		params.labelEpitopeDistance = 16;
 		params.labelingEfficiency = 90;
 		params.makeItReproducible = false;
-		params.MeanPhotonNumber = 4000;
+		params.MeanPhotonNumber = 3000;
 		params.radiusOfFilament = (float) 0;
-		params.recordedFrames = 20000;
+		params.recordedFrames = 50000;
 		params.sigmaXY = 6;
 		params.sigmaZ = 30;
 		params.viewStatus = 1;
@@ -334,6 +339,7 @@ public class startBatchProcessing {
 		allDataSets.get(currentRow).getParameterSet().setMeanPhotonNumber(params.MeanPhotonNumber);
 		allDataSets.get(currentRow).getParameterSet().setPixelsize(params.pixelsize);
 		allDataSets.get(currentRow).getParameterSet().setSigmaRendering(params.sigmaRendering);
+		allDataSets.get(currentRow).getParameterSet().setAbpf(params.fluorophoresPerLabel);
 		
 		if(allDataSets.get(currentRow).dataType == DataType.LINES) {
 			allDataSets.get(currentRow).getParameterSet().setBspnm(params.epitopeDensity);
