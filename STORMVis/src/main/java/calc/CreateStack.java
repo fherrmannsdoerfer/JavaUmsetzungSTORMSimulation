@@ -146,10 +146,13 @@ public class CreateStack {
 		
 		//subtract minimum values to obtain coordinates in [0, infty]x[0, infty]
 		for (int j = 0; j < lInput.size(); j++) {   	//shifts the window to positive values
-			lInput.get(j)[0] -= minX; 
+			//lInput.get(j)[0] -= minX; 
 			lInput.get(j)[0] +=	(emptySpace + sizePSF)/ resolution;
-			lInput.get(j)[1] -= minY;
+			//lInput.get(j)[1] -= minY;
 			lInput.get(j)[1] += (emptySpace + sizePSF)/ resolution;
+		}
+		for (int k = 0; k<4; k++){
+			borders.set(k, borders.get(k) +(emptySpace + sizePSF)/ resolution);
 		}
 		
 	
