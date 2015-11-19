@@ -101,7 +101,7 @@ public class JaccardCalculator {
       }
       while(grTruth.size() > 0 && currGrTr.get(0)[3] == grTruth.get(0)[3]);
       
-      while (recPoints.get(0)[3]<currGrTr.get(0)[3]){
+      while (recPoints.size()>0&&recPoints.get(0)[3]<currGrTr.get(0)[3]){
     	  recPoints.remove(0);
     	  falsePositive += 1;
       }
@@ -129,6 +129,9 @@ public class JaccardCalculator {
             currRecPoints.remove(k);
             k--;
           }
+          else{
+        	  falsePositive += 1;
+          }
         }
       }
       
@@ -139,7 +142,7 @@ public class JaccardCalculator {
       }
       else{
         truePositive += currGrTr.size();
-        falsePositive += recPts - currGrTr.size();
+        //falsePositive += recPts - currGrTr.size();
       }
     }
     deltaX /= truePositive;

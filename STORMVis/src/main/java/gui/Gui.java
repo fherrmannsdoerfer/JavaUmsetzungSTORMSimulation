@@ -230,7 +230,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField windowsizePSFRenderingField;
 	private JTextField electronsPerDnField;
 	
-	boolean allowShift = true;
+	boolean allowShift = false;
 	
 	JPanel createTiffStackPanel;
 	JPanel nativeSimulationPanel;
@@ -282,7 +282,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		setBounds(0, 0, 1600, 1070);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setPreferredSize(new Dimension(250, 500));
+		contentPane.setPreferredSize(new Dimension(250, 700));
 		
 		model = new DataSetTableModel();
         model.addTableModelListener(this);
@@ -291,11 +291,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		panel.setLayout(new CardLayout(0, 0));
 		panel.add(contentPane);
 		JScrollPane jsp = new JScrollPane(contentPane);
-		jsp.setMinimumSize(new Dimension(27, 400));
+		jsp.setMinimumSize(new Dimension(27, 600));
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
 				ButtonGroup group = new ButtonGroup();
 		jsp.setAlignmentX(Component.LEFT_ALIGNMENT);
-		jsp.setPreferredSize(new Dimension(350, 600));
+		jsp.setPreferredSize(new Dimension(350, 1200));
 		panel.add(jsp, "name_652625437088073");
 		getContentPane().add(panel, BorderLayout.EAST);
 		
@@ -318,6 +318,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			dataSetTable.setPreferredSize(new Dimension(130, 140));
 			
 			JTabbedPane tabbedPane_2 = new JTabbedPane(JTabbedPane.TOP);
+			tabbedPane_2.setMinimumSize(new Dimension(5, 500));
+			tabbedPane_2.setPreferredSize(new Dimension(5, 500));
 			verticalBox_24.add(tabbedPane_2);
 			
 			JPanel panel_2 = new JPanel();
@@ -325,11 +327,15 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			panel_2.setLayout(new CardLayout(0, 0));
 			
 			JScrollPane scrollPane_1 = new JScrollPane();
+			scrollPane_1.setViewportBorder(new TitledBorder(null, "ViewPort", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			scrollPane_1.setPreferredSize(new Dimension(2, 1000));
+			scrollPane_1.setMinimumSize(new Dimension(250, 1000));
 			panel_2.add(scrollPane_1, "name_8612746230277");
 			
 			Box verticalBox_23 = Box.createVerticalBox();
+			verticalBox_23.setAlignmentX(Component.CENTER_ALIGNMENT);
 			verticalBox_23.setMaximumSize(new Dimension(222222, 222220));
-			verticalBox_23.setPreferredSize(new Dimension(290, 650));
+			verticalBox_23.setPreferredSize(new Dimension(290, 900));
 			verticalBox_23.setMinimumSize(new Dimension(300, 850));
 			scrollPane_1.setViewportView(verticalBox_23);
 			
