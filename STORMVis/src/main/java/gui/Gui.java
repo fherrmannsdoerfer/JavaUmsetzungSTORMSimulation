@@ -57,6 +57,7 @@ import javax.swing.event.TableModelListener;
 
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
+import org.w3c.dom.ProcessingInstruction;
 
 import parsing.CalibrationFileParser;
 import model.DataSet;
@@ -2299,7 +2300,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			plot.addAllDataSets(sets);
 			plotPanel.removeAll();
 			nt = new CreatePlot(plot);
-//			nt.addListener((ProgressBarUpdateListener)this);
+			nt.addPropertyChangeListener(this);
 			nt.addListener((ThreadCompleteListener)this);
 			//nt.addPropertyChangeListener(this);
 			System.out.println("nt.exec");
@@ -2378,6 +2379,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			plot.addAllDataSets(sets);
 			plotPanel.removeAll();
 			nt = new CreatePlot(plot);
+			nt.addPropertyChangeListener(this);
 			//nt.addListener((ProgressBarUpdateListener)this);
 			nt.addListener((ThreadCompleteListener)this);
 			//nt.addPropertyChangeListener(this);
