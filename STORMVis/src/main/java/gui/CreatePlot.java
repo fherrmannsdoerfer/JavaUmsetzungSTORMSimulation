@@ -31,16 +31,16 @@ public class CreatePlot  extends SwingWorker<Void, Void>{
 	 
 	  @Override
 	  public Void doInBackground() {
-		//  setProgress(0);
+		  setProgress(0);
+		  long start = System.nanoTime();
 	      plot.createChart(this);
 	      notifyListeners();
-	      System.out.println("Notification sent");
-
+	      System.out.println("Time for visualization: "+ (System.nanoTime()-start)/1e9 +"s");
+		  System.out.println("-------------------------------------");
 		return null;
 	  }
 	  @Override
 	  public void done(){
-		  System.out.println("Rendering finished");
 		  setProgress(100);
 	  }
 	  

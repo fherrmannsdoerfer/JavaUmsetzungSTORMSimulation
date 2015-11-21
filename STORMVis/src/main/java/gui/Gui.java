@@ -1683,7 +1683,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		xyViewButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(viewStatus);
+				//System.out.println(viewStatus);
 				setViewPoint(0,Math.PI/2);
 				xzViewButton.setSelected(false);
 				yzViewButton.setSelected(false);
@@ -2044,7 +2044,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			//visualize();
 		}
 		model.fireTableDataChanged();
-		setSelectedListsForDrawing();
+		//setSelectedListsForDrawing();
 	}
 	/**
 	 * Configures the mouse listener for the dataset table. 
@@ -2103,7 +2103,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			wavelengthField.setText(set.getPsfwidth().toString()); //psfwidth aus StormPointFinder         
 			lineWidthField.setText(set.getLineWidth().toString());
 			if(allDataSets.get(row).dataType == DataType.LINES) {
-				System.out.println(set.getBspnm());
 				epitopeDensityField.setText(String.format(Locale.ENGLISH,"%.4f", set.getBspnm()));
 			}
 			else {
@@ -2303,7 +2302,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			nt.addPropertyChangeListener(this);
 			nt.addListener((ThreadCompleteListener)this);
 			//nt.addPropertyChangeListener(this);
-			System.out.println("nt.exec");
+			
 //			calc = new STORMCalculator(this.allDataSets.get(currentRow), random);
 //			calc.execute();
 			progressBar.setToolTipText("Visualizing...");
@@ -2366,43 +2365,13 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		updateMinMax();
 		plot.borders = getBorders();
 		if(sets.size() > 0) {
-//			plot.dataSets.clear();
-//			plot.addAllDataSets(sets);
-//			plotPanel.removeAll();
-//			plot.createChart();
-//			graphComponent = (Component) plot.createChart().getCanvas();
-//			plotPanel.add(graphComponent);
-//			plotPanel.revalidate();
-//			plotPanel.repaint();
-//			graphComponent.revalidate();
 			plot.dataSets.clear();
 			plot.addAllDataSets(sets);
 			plotPanel.removeAll();
 			nt = new CreatePlot(plot);
 			nt.addPropertyChangeListener(this);
-			//nt.addListener((ProgressBarUpdateListener)this);
 			nt.addListener((ThreadCompleteListener)this);
-			//nt.addPropertyChangeListener(this);
-			System.out.println("do in bg");
 			nt.execute();
-//			Thread t = new Thread(){
-//				@Override
-//				public void run(){
-//					plot.run();
-//				}
-//			};
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			t.start();
-		
-//			try{
-//				plot.run();
-//			}
-//			catch (IllegalThreadStateException e){System.out.println("Thread already started");}
 			
 		}
 		else if(sets.size() == 0) {
