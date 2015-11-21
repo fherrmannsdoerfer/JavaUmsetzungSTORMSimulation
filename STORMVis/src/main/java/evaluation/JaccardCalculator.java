@@ -83,6 +83,8 @@ public class JaccardCalculator {
     float deltaY = 0;
     float rmseXY = 0;
     float rmseTot = 0;
+    int nbrTS = recPoints.size();
+    int nbrGt = grTruth.size();
     //permute the lists
     grTruth = permute(permVecGr, grTruth);
     recPoints = permute(permVecRec, recPoints);
@@ -91,6 +93,7 @@ public class JaccardCalculator {
     	grTruth.get(i)[0] += shiftx;
     	grTruth.get(i)[1] += shifty;
     }
+    
     
     while(grTruth.size() > 0) {
       //write points for current frame out of lists
@@ -119,43 +122,55 @@ public class JaccardCalculator {
       //count how many points are recognized 
       int recPts = 0; 
       for(int j = 0; j < currGrTr.size(); j++) {
-        for(int k = 0; k < currRecPoints.size(); k++) {
-          if(isInEllipse(tolR, tolZ, currRecPoints.get(k), currGrTr.get(j)) == true) {
-        	deltaX += currRecPoints.get(k)[0] - currGrTr.get(j)[0];
-        	deltaY += currRecPoints.get(k)[1] - currGrTr.get(j)[1];
-        	rmseXY += Math.pow(Math.pow(currRecPoints.get(k)[0] - currGrTr.get(j)[0], 2)+Math.pow(currRecPoints.get(k)[1] - currGrTr.get(j)[1], 2),1/2.0);
-        	rmseTot += Math.pow(Math.pow(currRecPoints.get(k)[0] - currGrTr.get(j)[0], 2)+Math.pow(currRecPoints.get(k)[1] - currGrTr.get(j)[1], 2)+Math.pow(currRecPoints.get(k)[2] - currGrTr.get(j)[3], 2),1/3.);
-            recPts++;
-            currRecPoints.remove(k);
-            k--;
-          }
-          else{
-        	  falsePositive += 1;
-          }
-        }
+    	  int idxMin = -1;
+    	  float minDist = Float.MAX_VALUE;
+    	  for(int k = 0; k < currRecPoints.size(); k++) {
+    		  float currDist = (float) Math.pow(Math.pow(currRecPoints.get(k)[0] - currGrTr.get(j)[0], 2)+Math.pow(currRecPoints.get(k)[1] - currGrTr.get(j)[1], 2)+Math.pow(currRecPoints.get(k)[2] - currGrTr.get(j)[2], 2),1/2.);
+    		  if (minDist>currDist){
+    			  idxMin = k;
+    			  minDist = currDist;
+    		  }
+    	  }
+    	  if (idxMin>-1&&isInEllipse(tolR,tolZ,currRecPoints.get(idxMin), currGrTr.get(j))){
+    		  deltaX += currRecPoints.get(idxMin)[0] - currGrTr.get(j)[0];
+          	  deltaY += currRecPoints.get(idxMin)[1] - currGrTr.get(j)[1];
+          	  rmseXY += (Math.pow(currRecPoints.get(idxMin)[0] - currGrTr.get(j)[0], 2)+Math.pow(currRecPoints.get(idxMin)[1] - currGrTr.get(j)[1], 2));
+          	  rmseTot += (Math.pow(currRecPoints.get(idxMin)[0] - currGrTr.get(j)[0], 2)+Math.pow(currRecPoints.get(idxMin)[1] - currGrTr.get(j)[1], 2)+Math.pow(currRecPoints.get(idxMin)[2] - currGrTr.get(j)[2], 2));
+              recPts++;
+              currRecPoints.remove(idxMin);
+    	  }
+    	  else{
+    		  
+    	  }
+        	
+        
       }
       
-      //update statistical categories
-      if(recPts <= currGrTr.size()) {
-        truePositive += recPts;
-        falseNegative += currGrTr.size() - recPts;
-      }
-      else{
-        truePositive += currGrTr.size();
-        //falsePositive += recPts - currGrTr.size();
-      }
+      truePositive += recPts;
+      falsePositive += currRecPoints.size();
+      falseNegative += currGrTr.size()- recPts;
+//      //update statistical categories
+//      if(recPts <= currGrTr.size()) {
+//        truePositive += recPts;
+//        falseNegative += currGrTr.size() - recPts;
+//      }
+//      else{
+//        truePositive += currGrTr.size();
+//        falsePositive += recPts - currGrTr.size();
+//      }
     }
+    falsePositive += recPoints.size();
     deltaX /= truePositive;
     deltaY /= truePositive;
-    rmseXY /= truePositive;
-    rmseTot /= truePositive;
+    rmseXY = (float) (Math.sqrt(rmseXY/truePositive));
+    rmseTot = (float) (Math.sqrt(rmseTot/truePositive));
     //calculate precision and recall
     float r = truePositive;
     r /= (truePositive + falseNegative);
     float p = truePositive;
     p /= (truePositive + falsePositive);
     
-    float[] re = new float[11];
+    float[] re = new float[14];
     re[0] = tolR;
     re[1] = tolZ;
     re[2] = (float) falsePositive + truePositive;
@@ -171,6 +186,9 @@ public class JaccardCalculator {
     re[8] = deltaY;
     re[9] = rmseXY;
     re[10] = rmseTot;
+    re[11] = falseNegative;
+    re[12] = nbrTS;
+    re[13] = nbrGt;
     return re;
   }
   

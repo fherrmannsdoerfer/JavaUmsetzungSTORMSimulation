@@ -5,7 +5,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.swing.SwingWorker;
 
-public class CreatePlot {// extends SwingWorker<Void, Void>{
+public class CreatePlot  extends SwingWorker<Void, Void>{
 	Plot3D plot;
 	public CreatePlot(Plot3D plot){
 		this.plot = plot;
@@ -29,7 +29,7 @@ public class CreatePlot {// extends SwingWorker<Void, Void>{
 	  }
 	  
 	 
-	//  @Override
+	  @Override
 	  public Void doInBackground() {
 		//  setProgress(0);
 	      plot.createChart(this);
@@ -38,13 +38,13 @@ public class CreatePlot {// extends SwingWorker<Void, Void>{
 
 		return null;
 	  }
-	  //@Override
+	  @Override
 	  public void done(){
 		  System.out.println("Rendering finished");
-		//  setProgress(100);
+		  setProgress(100);
 	  }
 	  
 	  public void publicSetProgress(int prog){
-		  //setProgress(prog);
+		  setProgress(prog);
 	  }
 }

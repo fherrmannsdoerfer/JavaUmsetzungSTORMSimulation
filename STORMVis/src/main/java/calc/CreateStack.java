@@ -41,7 +41,7 @@ public class CreateStack {
 	 */
 	public static void main(String[] args){ 
 		Random rand = new Random(2);
-		int nbrPoints = 100;
+		int nbrPoints = 2000;
 		float[][] c = new float[nbrPoints][5];
 		//random creation of a list of tables as input
 //		for (int j = 0; j < nbrPoints; j++) {
@@ -52,11 +52,11 @@ public class CreateStack {
 //			c[j][4] = (float) (Math.random()*6000+1000);
 //		}
 		for (int j = 0; j < nbrPoints/10; j++){
-			for (int k=0; k<10; k++){
+			for (int k=0; k<1; k++){
 				c[j*10+k][0]=50;
 				c[j*10+k][1] = 50;
 				c[j*10+k][2]=k*90+1;
-				c[j*10+k][3]=j*10+k;
+				c[j*10+k][3]=j;
 				c[j*10+k][4]=4000;
 			}
 		}
@@ -85,7 +85,7 @@ public class CreateStack {
 				(float) 1.45/**NA*/, 647/**waveLength*/, 400/**zFocus*/, 
 				800/**zDefocus*/, 35.7f/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
 				,"Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\FigureComparisonTiffStackFit-TruePosition\\3D\\test.tif",
-				false /* ensure single PSF*/, false /*split blinking over frames*/, new CreateTiffStack(null, null, null,null));
+				true /* ensure single PSF*/, false /*split blinking over frames*/, new CreateTiffStack(null, null, null,null));
 
     } 
 	

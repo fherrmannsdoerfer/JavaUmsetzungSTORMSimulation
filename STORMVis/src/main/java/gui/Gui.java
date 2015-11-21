@@ -2273,7 +2273,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	@Override
 	public void tableChanged(TableModelEvent e) {
 		//visualizeAllSelectedData();
-		//setSelectedListsForDrawing();
+		setSelectedListsForDrawing();
 	}
 	
 	/**
@@ -2306,7 +2306,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 //			calc = new STORMCalculator(this.allDataSets.get(currentRow), random);
 //			calc.execute();
 			progressBar.setToolTipText("Visualizing...");
-			nt.doInBackground();
+			nt.execute();
 			
 //			plot.dataSets.clear();
 //			plot.addAllDataSets(sets);
@@ -2378,11 +2378,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			plot.addAllDataSets(sets);
 			plotPanel.removeAll();
 			nt = new CreatePlot(plot);
-//			nt.addListener((ProgressBarUpdateListener)this);
-//			nt.addListener((ThreadCompleteListener)this);
+			//nt.addListener((ProgressBarUpdateListener)this);
+			nt.addListener((ThreadCompleteListener)this);
 			//nt.addPropertyChangeListener(this);
 			System.out.println("do in bg");
-			nt.doInBackground();
+			nt.execute();
 //			Thread t = new Thread(){
 //				@Override
 //				public void run(){

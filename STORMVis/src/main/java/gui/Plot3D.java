@@ -57,7 +57,7 @@ public class Plot3D{
 	   }
 	
 	public Plot3D() {
-		chartQuality = Quality.Nicest;
+		chartQuality = Quality.Intermediate;
 	}
 	
 	public void addDataSet(DataSet s) {
