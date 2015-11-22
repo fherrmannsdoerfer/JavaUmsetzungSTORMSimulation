@@ -28,6 +28,9 @@ public class DataTypeDetector {
             else if(line.contains("Pos_x Pos_y Pos_z Frame Intensity")){
             	return DataType.POINTS;
             }
+            else if(line.contains("# <localizations insequence")){
+            	return DataType.POINTS;
+            }
             else if(line.contains("Pos_x Pos_y Pos_z n_x n_y n_z")){
             	return DataType.EPITOPES;
             }
