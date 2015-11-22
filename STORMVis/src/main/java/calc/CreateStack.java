@@ -182,7 +182,7 @@ public class CreateStack {
 		
 		if (ensureSinglePSF){
 			List<float[]> finalList = new ArrayList<float[]>();
-			double toleranceInPx = 10;//minimal distance of centers
+			double toleranceInNm = 1500;//minimal distance of centers
 			List<float[]> alreadyPresentInCurrentFrame = new ArrayList<float[]>();
 			int frame = 0;
 			int maxFrame = (int) lInput.get(lInput.size()-1)[3];
@@ -193,7 +193,7 @@ public class CreateStack {
 					boolean isTooClose = false;
 					for (int i = 0; i<alreadyPresentInCurrentFrame.size(); i++){
 						float[] test = alreadyPresentInCurrentFrame.get(i);
-						if ((Math.pow((currPSF[0]-test[0]),2) + Math.pow((currPSF[1]-test[1]),2))<Math.pow((toleranceInPx/resolution),2)){
+						if ((Math.pow((currPSF[0]-test[0]),2) + Math.pow((currPSF[1]-test[1]),2))<Math.pow((toleranceInNm),2)){
 							currPSF[3]+=maxFrame+1; //add maximal frame number plus one
 							lInput.add(lInput.size(), currPSF);
 							isTooClose = true;

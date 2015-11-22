@@ -1,6 +1,7 @@
 package gui;
 
 import editor.Editor;
+import evaluation.Oberflaeche_Jaccard_Tool;
 import gui.DataTypeDetector.DataType;
 import inout.FileManager;
 import inout.ProjectFileFilter;
@@ -280,7 +281,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	public Gui() {
 		this.selfReference = this;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(0, 0, 1600, 1070);
+		setBounds(0, 0, 1200, 1000);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setPreferredSize(new Dimension(250, 700));
@@ -1899,6 +1900,17 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			}
 		});
 		
+		JButton btnEvaluate = new JButton("Evaluate");
+		btnEvaluate.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Oberflaeche_Jaccard_Tool ojt = new Oberflaeche_Jaccard_Tool("Evaluation Tool");
+			}
+			
+		});
+		toolBar.add(btnEvaluate);
+		
 		Component horizontalGlue_25 = Box.createHorizontalGlue();
 		toolBar.add(horizontalGlue_25);
 		toolBar.add(exampleComboBox);
@@ -2226,7 +2238,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			}
 			setSelectedListsForDrawing();
 			//visualizeAllSelectedData();
-			updateCounter();
 		}
 	}
 	
@@ -2585,6 +2596,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			plotPanel.revalidate();
 			plotPanel.repaint();
 			graphComponent.revalidate();
+			updateCounter();
 		}
 		if(obj.getClass().equals(STORMCalculator.class)){
 			setSelectedListsForDrawing();
