@@ -282,24 +282,40 @@ public class Editor implements KeyListener, TableModelListener {
 			}
 		});
         
+        JToggleButton tglbtnNewToggleButton = new JToggleButton("Toggle Scroll Mode");
+        tglbtnNewToggleButton.addActionListener(new ActionListener(){
+        	@Override
+			public void actionPerformed(ActionEvent e) {
+        		if(((JToggleButton)e.getSource()).isSelected()) {
+    				SCROLLMODE = false;
+    				drawPanel.setVisible(SCROLLMODE);
+    			}
+    			else {
+    				SCROLLMODE = true;
+    				drawPanel.setVisible(SCROLLMODE);
+    			}
+			}
+        });
+        
         GroupLayout gl_controlPanel = new GroupLayout(controlPanel);
         gl_controlPanel.setHorizontalGroup(
         	gl_controlPanel.createParallelGroup(Alignment.LEADING)
         		.addGroup(gl_controlPanel.createSequentialGroup()
         			.addContainerGap()
-        			.addGroup(gl_controlPanel.createParallelGroup(Alignment.TRAILING)
-        				.addGroup(gl_controlPanel.createSequentialGroup()
+        			.addGroup(gl_controlPanel.createParallelGroup(Alignment.LEADING)
+        				.addGroup(Alignment.TRAILING, gl_controlPanel.createSequentialGroup()
         					.addGap(6)
         					.addComponent(dataSetTable, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE))
-        				.addComponent(deleteLastButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        				.addComponent(addButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        				.addGroup(gl_controlPanel.createSequentialGroup()
+        				.addComponent(deleteLastButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+        				.addComponent(addButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+        				.addGroup(Alignment.TRAILING, gl_controlPanel.createSequentialGroup()
         					.addGap(6)
         					.addComponent(lblNmpx, GroupLayout.PREFERRED_SIZE, 53, GroupLayout.PREFERRED_SIZE)
         					.addPreferredGap(ComponentPlacement.RELATED)
         					.addComponent(pixelNmField, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE))
-        				.addComponent(importImageButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-        				.addComponent(saveProjectButton, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE))
+        				.addComponent(importImageButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+        				.addComponent(saveProjectButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+        				.addComponent(tglbtnNewToggleButton))
         			.addContainerGap())
         );
         gl_controlPanel.setVerticalGroup(
@@ -315,7 +331,9 @@ public class Editor implements KeyListener, TableModelListener {
         			.addComponent(addButton)
         			.addPreferredGap(ComponentPlacement.RELATED)
         			.addComponent(deleteLastButton)
-        			.addGap(71)
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addComponent(tglbtnNewToggleButton)
+        			.addGap(39)
         			.addComponent(dataSetTable, GroupLayout.PREFERRED_SIZE, 166, GroupLayout.PREFERRED_SIZE)
         			.addPreferredGap(ComponentPlacement.UNRELATED)
         			.addComponent(saveProjectButton)

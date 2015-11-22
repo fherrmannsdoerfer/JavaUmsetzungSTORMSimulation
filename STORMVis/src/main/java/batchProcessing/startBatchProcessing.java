@@ -62,19 +62,19 @@ public class startBatchProcessing {
 //		DataSet data = ExamplesProvidingClass.getDataset(1);
 //		furtherProceedFileImport(data, data.dataType);
 		(new File(outputFolder)).mkdir();
-		boolean tiffStackOutput = true;
+		boolean tiffStackOutput = false;
 		boolean suReSimOutput = true;
-		int numberOfSimulationsWithSameParameterSet = 100; //number of outputs for the same parameter set
-		SimulationParameter params = standardParameterRandomlyDistributedEpitopes();		
-		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(6.f));
-		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(15.f));
-		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(0.61538464f));
-		ArrayList<Float> varAng = new ArrayList<Float>(Arrays.asList(1000.f));
+		int numberOfSimulationsWithSameParameterSet = 1; //number of outputs for the same parameter set
+		SimulationParameter params = standardParameterActin();		
+		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(4.f,8.f,12.f,25.f));
+		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(8.f,30.f,40.f,50.f));
+		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(10.f,50.f,100.f));
+		ArrayList<Float> varAng = new ArrayList<Float>(Arrays.asList(0.f));
 		//ArrayList<Float> de = new ArrayList<Float>(Arrays.asList(10.f,20.f,50.f,100.f));
-		ArrayList<Float> koff = new ArrayList<Float>(Arrays.asList(7.f/50000));
+		ArrayList<Float> koff = new ArrayList<Float>(Arrays.asList(5.f/10000));
 		//ArrayList<Integer> frames = new ArrayList<Integer>(Arrays.asList(10000));
-		ArrayList<Float> labelLength = new ArrayList<Float>(Arrays.asList(16.f));
-		ArrayList<Integer> photonOutput = new ArrayList<Integer>(Arrays.asList(2000,3000));
+		ArrayList<Float> labelLength = new ArrayList<Float>(Arrays.asList(1.f));
+		ArrayList<Integer> photonOutput = new ArrayList<Integer>(Arrays.asList(4000));
 		allDataSets.get(0).setProgressBar(new JProgressBar());
 		
 		
