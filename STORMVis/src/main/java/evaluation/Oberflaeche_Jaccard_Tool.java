@@ -43,7 +43,7 @@ public class Oberflaeche_Jaccard_Tool extends JFrame {
   private final JTextField textField = new JTextField();
   private final JTextField textField_1 = new JTextField();
   private final JTextField textField_2 = new JTextField();
-  private final JLabel label = new JLabel("RMSE total");
+  private final JLabel lblRmseXyz = new JLabel("RMSE XYZ");
   private final JTextField textField_3 = new JTextField();
   private final JLabel lblFalseNegative = new JLabel();
   private final JTextField fnField = new JTextField();
@@ -71,7 +71,7 @@ public class Oberflaeche_Jaccard_Tool extends JFrame {
     cp.setLayout(null);
     // Anfang Komponenten
     
-    jButton1.setBounds(32, 128, 107, 25);
+    jButton1.setBounds(367, 134, 107, 25);
     jButton1.setText("Evaluate");
     jButton1.setMargin(new Insets(2, 2, 2, 2));
     jButton1.addActionListener(new ActionListener() { 
@@ -108,46 +108,46 @@ public class Oberflaeche_Jaccard_Tool extends JFrame {
       }
     });
     cp.add(jButton1);
-    jLabel1.setBounds(16, 16, 70, 20);
-    jLabel1.setText("tolerance");
+    jLabel1.setBounds(559, 15, 70, 20);
+    jLabel1.setText("Tolerance");
     cp.add(jLabel1);
-    jTextField1.setBounds(98, 48, 54, 20);
+    jTextField1.setBounds(586, 48, 54, 20);
     cp.add(jTextField1);
-    jTextField2.setBounds(98, 88, 54, 20);
+    jTextField2.setBounds(586, 88, 54, 20);
     cp.add(jTextField2);
-    jLabel2.setBounds(510, 16, 78, 20);
-    jLabel2.setText("file names");
+    jLabel2.setBounds(41, 15, 78, 20);
+    jLabel2.setText("File Names");
     cp.add(jLabel2);
-    jTextField3.setBounds(546, 48, 254, 20);
+    jTextField3.setBounds(155, 48, 368, 20);
     cp.add(jTextField3);
-    jTextField4.setBounds(546, 88, 254, 20);
+    jTextField4.setBounds(155, 88, 368, 20);
     cp.add(jTextField4);
-    jLabel3.setBounds(56, 48, 46, 20);
-    jLabel3.setText("xy");
+    jLabel3.setBounds(559, 48, 46, 20);
+    jLabel3.setText("XY");
     cp.add(jLabel3);
-    jLabel4.setBounds(56, 88, 46, 20);
-    jLabel4.setText("z");
+    jLabel4.setBounds(559, 88, 46, 20);
+    jLabel4.setText("Z");
     cp.add(jLabel4);
-    jLabel5.setBounds(432, 48, 102, 20);
-    jLabel5.setText("groundtruth");
+    jLabel5.setBounds(41, 48, 102, 20);
+    jLabel5.setText("Ground Truth");
     cp.add(jLabel5);
-    jLabel6.setBounds(432, 88, 102, 20);
-    jLabel6.setText("reconstruction");
+    jLabel6.setBounds(41, 88, 102, 20);
+    jLabel6.setText("Test Set");
     cp.add(jLabel6);
-    pointsTestSetField.setBounds(32, 183, 102, 20);
-    pointsTestSetField.setText("# points Testset");
+    pointsTestSetField.setBounds(31, 183, 102, 20);
+    pointsTestSetField.setText("# Points Test Set");
     cp.add(pointsTestSetField);
     jLabel8.setBounds(148, 183, 78, 20);
-    jLabel8.setText("true positive");
+    jLabel8.setText("True Positive");
     cp.add(jLabel8);
     jLabel9.setBounds(264, 183, 86, 20);
-    jLabel9.setText("false positive");
+    jLabel9.setText("False Positive");
     cp.add(jLabel9);
     jLabel10.setBounds(380, 183, 94, 20);
-    jLabel10.setText("Jaccard-index");
+    jLabel10.setText("Jaccard-Index");
     cp.add(jLabel10);
     jLabel11.setBounds(496, 183, 94, 20);
-    jLabel11.setText("f-score");
+    jLabel11.setText("F-Score");
     cp.add(jLabel11);
     jTextField5.setBounds(31, 208, 70, 20);
     cp.add(jTextField5);
@@ -160,21 +160,21 @@ public class Oberflaeche_Jaccard_Tool extends JFrame {
     jTextField9.setBounds(495, 208, 70, 20);
     cp.add(jTextField9);
     
-    JLabel lblNewLabel = new JLabel("shift X");
-    lblNewLabel.setBounds(266, 50, 56, 16);
+    JLabel lblNewLabel = new JLabel("Shift X");
+    lblNewLabel.setBounds(686, 52, 56, 16);
     getContentPane().add(lblNewLabel);
     
     shiftxField = new JTextField();
-    shiftxField.setBounds(316, 47, 61, 22);
+    shiftxField.setBounds(736, 46, 61, 22);
     getContentPane().add(shiftxField);
     shiftxField.setColumns(5);
     
-    JLabel lblNewLabel_1 = new JLabel("shift y");
-    lblNewLabel_1.setBounds(266, 90, 56, 16);
+    JLabel lblNewLabel_1 = new JLabel("Shift y");
+    lblNewLabel_1.setBounds(686, 92, 56, 16);
     getContentPane().add(lblNewLabel_1);
     
     shiftyField = new JTextField();
-    shiftyField.setBounds(316, 87, 61, 22);
+    shiftyField.setBounds(736, 86, 61, 22);
     getContentPane().add(shiftyField);
     shiftyField.setColumns(5);
     lblNewLabel_2.setBounds(612, 187, 56, 16);
@@ -195,13 +195,13 @@ public class Oberflaeche_Jaccard_Tool extends JFrame {
     textField_2.setBounds(727, 208, 70, 20);
     
     getContentPane().add(textField_2);
-    label.setBounds(727, 245, 70, 16);
+    lblRmseXyz.setBounds(727, 245, 70, 16);
     
-    getContentPane().add(label);
+    getContentPane().add(lblRmseXyz);
     textField_3.setBounds(727, 264, 70, 20);
     
     getContentPane().add(textField_3);
-    lblFalseNegative.setText("false negative");
+    lblFalseNegative.setText("False Negative");
     lblFalseNegative.setBounds(263, 241, 86, 20);
     
     getContentPane().add(lblFalseNegative);
@@ -222,11 +222,11 @@ public class Oberflaeche_Jaccard_Tool extends JFrame {
     textField_6.setBounds(495, 264, 70, 20);
     
     getContentPane().add(textField_6);
-    lblPointsGround.setText("# points ground truth");
-    lblPointsGround.setBounds(33, 239, 137, 20);
+    lblPointsGround.setText("# Points Ground Truth");
+    lblPointsGround.setBounds(31, 239, 137, 20);
     
     getContentPane().add(lblPointsGround);
-    gtField.setBounds(32, 264, 70, 20);
+    gtField.setBounds(31, 264, 70, 20);
     
     getContentPane().add(gtField);
     // Ende Komponenten

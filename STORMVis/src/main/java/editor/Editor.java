@@ -143,7 +143,7 @@ public class Editor implements KeyListener, TableModelListener {
         	}
         });
         
-        addButton = new JButton("add");
+        addButton = new JButton("Add");
         addButton.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -238,7 +238,7 @@ public class Editor implements KeyListener, TableModelListener {
          * Buttons
          */
         
-        deleteLastButton = new JButton("delete last point");
+        deleteLastButton = new JButton("Delete Last Point");
         deleteLastButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -257,7 +257,7 @@ public class Editor implements KeyListener, TableModelListener {
          * Save and load
          */
         
-        JButton saveProjectButton = new JButton("save as WIMP");
+        JButton saveProjectButton = new JButton("Save As WIMP");
         saveProjectButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
