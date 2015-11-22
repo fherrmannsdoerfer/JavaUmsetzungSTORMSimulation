@@ -58,7 +58,7 @@ import java.awt.Component;
 
 public class Editor implements KeyListener, TableModelListener {
 	
-	private static boolean SCROLLMODE = true;
+	private static boolean SCROLLMODE = false;
 	private JPanel superPanel;
 	private DrawPanel drawPanel;
 	private ImagePanel imgPanel;
@@ -137,6 +137,7 @@ public class Editor implements KeyListener, TableModelListener {
     				imgPanel.setPathAndReadImage(chooser.getSelectedFile().getAbsolutePath());
     				zoomFactor = 1.f;
     		        imgPanel.zoom(zoomFactor);
+    		        SCROLLMODE=true;
     		        updateBoundsOfComponents();
     			}
         	}
@@ -150,7 +151,6 @@ public class Editor implements KeyListener, TableModelListener {
 				final DataSetSelectionTableModel model = new DataSetSelectionTableModel();
 				final DataSetSelectionTable selectionTable = new DataSetSelectionTable(model);
 				model.data.addAll(allDataSets);
-				
 				/**
 				 * closed lines or open lines
 				 */
@@ -158,6 +158,7 @@ public class Editor implements KeyListener, TableModelListener {
 				model.selectableDataType = DataType.LINES;
 				
 				LineDataSet set = (LineDataSet) model.data.get(0);
+				
 	    		  set = drawPanel.addCurrentPointsToLineDataSet(set);
 	    		  allDataSets.set(0, set);
 	    		  model.data.set(0, set);
@@ -289,10 +290,14 @@ public class Editor implements KeyListener, TableModelListener {
         		if(((JToggleButton)e.getSource()).isSelected()) {
     				SCROLLMODE = false;
     				drawPanel.setVisible(SCROLLMODE);
+    				jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    				jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
     			}
     			else {
     				SCROLLMODE = true;
     				drawPanel.setVisible(SCROLLMODE);
+    				jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    				jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
     			}
 			}
         });
@@ -377,7 +382,7 @@ public class Editor implements KeyListener, TableModelListener {
 		newSet.setDataType(DataType.LINES);
 		System.out.println("all:" + allDataSets.size());
 		allDataSets.add(newSet);
-		model.visibleSets.add(Boolean.FALSE);
+		model.visibleSets.add(Boolean.TRUE);
 		model.data.add(newSet);
 		drawPanel.drawManager.currentPoints.clear();
 		drawPanel.repaint();
@@ -427,8 +432,8 @@ public class Editor implements KeyListener, TableModelListener {
 		superPanel.add(drawPanel);
         superPanel.add(imgPanel);
 		drawPanel.setBounds(0,0,(int) imgPanel.getPreferredSize().getWidth(),(int) imgPanel.getPreferredSize().getHeight());
-		jsp = new JScrollPane(imgPanel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		jsp = new JScrollPane(imgPanel,ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		jsp.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
 			@Override
 			public void adjustmentValueChanged(AdjustmentEvent e) {
