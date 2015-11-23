@@ -161,20 +161,20 @@ public class Oberflaeche_Jaccard_Tool extends JFrame {
     cp.add(jTextField9);
     
     JLabel lblNewLabel = new JLabel("Shift X");
-    lblNewLabel.setBounds(686, 52, 56, 16);
+    lblNewLabel.setBounds(686, 50, 56, 16);
     getContentPane().add(lblNewLabel);
     
     shiftxField = new JTextField();
-    shiftxField.setBounds(736, 46, 61, 22);
+    shiftxField.setBounds(736, 47, 61, 22);
     getContentPane().add(shiftxField);
     shiftxField.setColumns(5);
     
     JLabel lblNewLabel_1 = new JLabel("Shift y");
-    lblNewLabel_1.setBounds(686, 92, 56, 16);
+    lblNewLabel_1.setBounds(686, 90, 56, 16);
     getContentPane().add(lblNewLabel_1);
     
     shiftyField = new JTextField();
-    shiftyField.setBounds(736, 86, 61, 22);
+    shiftyField.setBounds(736, 87, 61, 22);
     getContentPane().add(shiftyField);
     shiftyField.setColumns(5);
     lblNewLabel_2.setBounds(612, 187, 56, 16);
