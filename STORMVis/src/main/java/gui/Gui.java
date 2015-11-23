@@ -287,7 +287,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		setBounds(0, 0, 1200, 1000);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setPreferredSize(new Dimension(250, 700));
+		contentPane.setPreferredSize(new Dimension(370, 700));
 		
 		ImageIcon img = new ImageIcon(getClass().getResource("/resources/Logo.jpg"));
 		loadDataLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -304,7 +304,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.X_AXIS));
 				ButtonGroup group = new ButtonGroup();
 		jsp.setAlignmentX(Component.LEFT_ALIGNMENT);
-		jsp.setPreferredSize(new Dimension(350, 1200));
+		jsp.setPreferredSize(new Dimension(400, 1200));
 		panel.add(jsp, "name_652625437088073");
 		getContentPane().add(panel, BorderLayout.EAST);
 		
@@ -320,6 +320,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	    new DropTarget(contentPane, myDragDropListener);
 			
 		Box verticalBox_24 = Box.createVerticalBox();
+		verticalBox_24.setPreferredSize(new Dimension(350, 0));
 		contentPane.add(verticalBox_24);
 		dataSetTable = new JTable(model);
 		verticalBox_24.add(dataSetTable);
@@ -332,6 +333,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		verticalBox_24.add(tabbedPane_2);
 		
 		JPanel panel_2 = new JPanel();
+		panel_2.setPreferredSize(new Dimension(340, 10));
 		tabbedPane_2.addTab("Simulation Parameters", null, panel_2, null);
 		panel_2.setLayout(new CardLayout(0, 0));
 		
@@ -344,8 +346,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box verticalBox_23 = Box.createVerticalBox();
 		verticalBox_23.setAlignmentX(Component.CENTER_ALIGNMENT);
 		verticalBox_23.setMaximumSize(new Dimension(222222, 222220));
-		verticalBox_23.setPreferredSize(new Dimension(290, 900));
-		verticalBox_23.setMinimumSize(new Dimension(300, 850));
+		verticalBox_23.setPreferredSize(new Dimension(320, 950));
+		verticalBox_23.setMinimumSize(new Dimension(320, 850));
 		scrollPane_1.setViewportView(verticalBox_23);
 		
 		progressBar = new JProgressBar();
@@ -631,6 +633,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		verticalBox_23.add(comboBox);
 		
 		createTiffStackPanel = new JPanel();
+		createTiffStackPanel.setPreferredSize(new Dimension(10, 900));
 		verticalBox_23.add(createTiffStackPanel);
 		createTiffStackPanel.setLayout(new CardLayout(0, 0));
 		
@@ -1139,6 +1142,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_52.add(horizontalGlue_24);
 		
 		pixelSizeField = new JTextField();
+		pixelSizeField.setHorizontalAlignment(SwingConstants.RIGHT);
 		pixelSizeField.getDocument().addDocumentListener(new MyDocumentListener(pixelSizeField));
 		pixelSizeField.setMaximumSize(new Dimension(60, 22));
 		horizontalBox_52.add(pixelSizeField);
@@ -1154,6 +1158,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_58.add(horizontalGlue_38);
 		
 		sigmaSizeField = new JTextField();
+		sigmaSizeField.setHorizontalAlignment(SwingConstants.RIGHT);
 		sigmaSizeField.getDocument().addDocumentListener(new MyDocumentListener(sigmaSizeField));
 		sigmaSizeField.setMaximumSize(new Dimension(60, 22));
 		horizontalBox_58.add(sigmaSizeField);
@@ -1220,7 +1225,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box verticalBox = Box.createVerticalBox();
 		verticalBox.setMaximumSize(new Dimension(222222, 222220));
 		verticalBox_13.add(verticalBox);
-		verticalBox.setPreferredSize(new Dimension(250, 800));
+		verticalBox.setPreferredSize(new Dimension(250, 900));
 		verticalBox.setMinimumSize(new Dimension(250, 600));
 		verticalBox.setName("");
 		verticalBox.setFont(new Font("Dialog", Font.ITALIC, 89));
