@@ -1065,7 +1065,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_12 = Box.createHorizontalBox();
 		verticalBox_5.add(horizontalBox_12);
 		
-		JLabel lblLabelingResolutionXy = new JLabel("Localization Precision XY (nm)");
+		JLabel lblLabelingResolutionXy = new JLabel("Localization Precision XY [nm]");
 		horizontalBox_12.add(lblLabelingResolutionXy);
 		
 		Component horizontalGlue_13 = Box.createHorizontalGlue();
@@ -1081,7 +1081,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_13 = Box.createHorizontalBox();
 		verticalBox_5.add(horizontalBox_13);
 		
-		JLabel lblLocalizaitonPrecisionZ = new JLabel("Localization Precision Z (nm)");
+		JLabel lblLocalizaitonPrecisionZ = new JLabel("Localization Precision Z [nm]");
 		horizontalBox_13.add(lblLocalizaitonPrecisionZ);
 		
 		Component horizontalGlue_14 = Box.createHorizontalGlue();
