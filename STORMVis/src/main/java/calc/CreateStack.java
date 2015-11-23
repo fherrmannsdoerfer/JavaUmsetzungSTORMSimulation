@@ -114,11 +114,10 @@ public class CreateStack {
 			float electronsPerADcount, float frameRate, float decayTime, int sizePSF, int modelNumber, float qe,
 			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, 
 			float offset, float[][] calib, String fname, boolean ensureSinglePSF, boolean splitIntensities, CreateTiffStack cp) { 
-		
 		for (int i = 0; i<calib.length; i++){ //shift Fokus
 			calib[i][0] -=0; 
 		}
-		
+		float pixelsize = 1/resolution;
 		//get mean intensity
 		float meanInt = 0;
 		for (int i=0; i<input.length; i++){
@@ -215,7 +214,7 @@ public class CreateStack {
 		}
 		String basename = FilenameUtils.getBaseName(fname);
 		String path = FilenameUtils.getFullPath(fname);
-		writeLocalizationsToFile(lInput, path+"\\"+basename, borders);
+		writeLocalizationsToFile(lInput, path+"\\"+basename, borders, pixelsize);
 		int lastFrame = (int) lInput.get(lInput.size()-1)[3];
 		for (int frame = 0; frame<lastFrame;frame++){
 			cp.publicSetProgress((int)100.*frame/lastFrame);
@@ -484,14 +483,14 @@ public class CreateStack {
 	 * @param basename
 	 * @param borders
 	 */
-	private static void writeLocalizationsToFile(List<float[]> stormData, String basename,ArrayList<Float> borders) {
+	private static void writeLocalizationsToFile(List<float[]> stormData, String basename,ArrayList<Float> borders, float pixelsize) {
 		try{
 			FileWriter writer = new FileWriter(basename+"GroundTruth.txt");
 			writer.append("Pos_x Pos_y Pos_z Frame Intensity\n");
 			for (int i = 0; i<stormData.size(); i++){
 				float[] tmp = stormData.get(i);
 				if (Calc.isInRange(tmp, borders)){
-					writer.append(tmp[0]+" "+tmp[1]+" "+tmp[2]+" "+tmp[3]+" "+tmp[4]+"\n");
+					writer.append((tmp[0]-pixelsize/2.0)+" "+(tmp[1]-pixelsize/2.0)+" "+tmp[2]+" "+tmp[3]+" "+tmp[4]+"\n");
 				}
 			}
 			writer.flush();
