@@ -1111,7 +1111,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_38 = Box.createHorizontalBox();
 		verticalBox_5.add(horizontalBox_38);
 		
-		JLabel lblDetectionEfficiency = new JLabel("Detection Efficiency (%)");
+		JLabel lblDetectionEfficiency = new JLabel("Detection Efficiency [%]");
 		horizontalBox_38.add(lblDetectionEfficiency);
 		
 		Component horizontalGlue_22 = Box.createHorizontalGlue();
@@ -1135,7 +1135,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_52 = Box.createHorizontalBox();
 		verticalBox_5.add(horizontalBox_52);
 		
-		JLabel lblNewLabel_13 = new JLabel("Pixelsize in Nm");
+		JLabel lblNewLabel_13 = new JLabel("Pixelsize [nm]");
 		horizontalBox_52.add(lblNewLabel_13);
 		
 		Component horizontalGlue_24 = Box.createHorizontalGlue();
@@ -1151,7 +1151,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_58 = Box.createHorizontalBox();
 		verticalBox_5.add(horizontalBox_58);
 		
-		JLabel lblNewLabel_14 = new JLabel("Width Of Rendered PSF (nm)");
+		JLabel lblNewLabel_14 = new JLabel("Width Of Rendered PSF [nm]");
 		horizontalBox_58.add(lblNewLabel_14);
 		
 		Component horizontalGlue_38 = Box.createHorizontalGlue();
