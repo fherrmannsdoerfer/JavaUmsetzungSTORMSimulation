@@ -142,7 +142,7 @@ public class Editor implements KeyListener, TableModelListener {
     			}
         	}
         });
-        
+            
         addButton = new JButton("Add");
         addButton.addActionListener(new ActionListener() {
 			
