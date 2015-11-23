@@ -242,8 +242,8 @@ public class FileManager {
 		try{
 			FileWriter writer = new FileWriter(basename+"Parameters.txt");
 			writer.append("Automatically generated Logfile containing all settings.\n");
-			writer.append("Angle of antibodies [degree]: "+ ps.getAoa()+"\n");
-			writer.append("Sigma of antibodies deviation [degree]: "+ ps.getSoa()+"\n");
+			writer.append("Angle of antibodies [degree]: "+ 180/Math.PI*ps.getAoa()+"\n");
+			writer.append("Sigma of antibodies deviation [degree]: "+ 180/Math.PI*ps.getSoa()+"\n");
 			writer.append("Bindingsites per nm [nm^-1]: " + ps.getBspnm()+"\n");
 			writer.append("Labeling efficiency [%]: "+ ps.getPabs()*100+"\n");
 			writer.append("Radius of filament [nm]: " + ps.getRof()+"\n");

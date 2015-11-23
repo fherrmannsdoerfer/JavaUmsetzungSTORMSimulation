@@ -36,7 +36,7 @@ public class Finder {
 		int numberOfFluorophores = (int) Math.floor(Calc.sum(areas)*bspsnm*pabs);
 		System.out.println("fluorophore  number: "+ numberOfFluorophores);
 		if(numberOfFluorophores == 0) {
-			return null;
+			//return null;
 		}
 		Pair<float[][],int[]> basePointPair = findBasePoints((int) Math.ceil(numberOfFluorophores * (1-doc)), triangles, areas, parameter.getProgressBar(), calc);
 //		Calc.print2dMatrix(basePointPair.getValue0());

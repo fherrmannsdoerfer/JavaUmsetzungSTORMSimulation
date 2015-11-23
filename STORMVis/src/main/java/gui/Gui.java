@@ -997,30 +997,36 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			exportTiffStackButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					JFileChooser fc = new JFileChooser();
-					int returnValue = fc.showSaveDialog(getContentPane());
-					if(returnValue == JFileChooser.APPROVE_OPTION) {
-						String path = fc.getSelectedFile().getAbsolutePath();
-						String name = fc.getSelectedFile().getName();
-						if (!path.endsWith(EXTENSIONIMAGEOUTPUT)) {
-						    path += EXTENSIONIMAGEOUTPUT;
+					if (allDataSets.size()>0){
+						JFileChooser fc = new JFileChooser();
+						int returnValue = fc.showSaveDialog(getContentPane());
+						if(returnValue == JFileChooser.APPROVE_OPTION) {
+							String path = fc.getSelectedFile().getAbsolutePath();
+							String name = fc.getSelectedFile().getName();
+							if (!path.endsWith(EXTENSIONIMAGEOUTPUT)) {
+							    path += EXTENSIONIMAGEOUTPUT;
+							}
+							if(name.endsWith(EXTENSIONIMAGEOUTPUT)){
+								name = name.substring(0, name.length()-4);
+							}
+							
+							setUpRandomNumberGenerator();
+							CreateTiffStack cts = new CreateTiffStack(allDataSets.get(currentRow), path, random, selfReference);
+							cts.addPropertyChangeListener(selfReference);
+							cts.execute();
+	//					CreateStack.createTiffStack(allDataSets.get(currentRow).stormData, 1/set.getPixelToNmRatio(),
+	//							set.getEmptyPixelsOnRim(),set.getEmGain(), borders, random,
+	//							set.getElectronPerAdCount(), set.getFrameRate(), set.getMeanBlinkingTime(), set.getWindowsizePSF(),
+	//							modelNumber,set.getQuantumEfficiency(), set.getNa(), set.getPsfwidth(), set.getFokus(), set.getDefokus(), set.getSigmaBg(),
+	//							set.getConstOffset(), set.getCalibrationFile(), path,set.isEnsureSinglePSF(), set.isDistributePSFoverFrames());
+							FileManager.writeLogFile(allDataSets.get(currentRow).getParameterSet(), path.substring(0, path.length()-4)+"TiffStack",borders,true);
 						}
-						if(name.endsWith(EXTENSIONIMAGEOUTPUT)){
-							name = name.substring(0, name.length()-4);
-						}
-						
-						setUpRandomNumberGenerator();
-						CreateTiffStack cts = new CreateTiffStack(allDataSets.get(currentRow), path, random, selfReference);
-						cts.addPropertyChangeListener(selfReference);
-						cts.execute();
-//					CreateStack.createTiffStack(allDataSets.get(currentRow).stormData, 1/set.getPixelToNmRatio(),
-//							set.getEmptyPixelsOnRim(),set.getEmGain(), borders, random,
-//							set.getElectronPerAdCount(), set.getFrameRate(), set.getMeanBlinkingTime(), set.getWindowsizePSF(),
-//							modelNumber,set.getQuantumEfficiency(), set.getNa(), set.getPsfwidth(), set.getFokus(), set.getDefokus(), set.getSigmaBg(),
-//							set.getConstOffset(), set.getCalibrationFile(), path,set.isEnsureSinglePSF(), set.isDistributePSFoverFrames());
-						FileManager.writeLogFile(allDataSets.get(currentRow).getParameterSet(), path.substring(0, path.length()-4)+"TiffStack",borders,true);
 					}
-					
+					else{
+						JOptionPane.showMessageDialog(null,
+							      "Error: Please import an example or file first.", "Error Massage",
+							      JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			});
 			
@@ -1135,32 +1141,46 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			exportButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					JFileChooser fc = new JFileChooser();
-					int returnValue = fc.showSaveDialog(getContentPane());
-					if(returnValue == JFileChooser.APPROVE_OPTION) {
-						String path = fc.getSelectedFile().getAbsolutePath();
-						String name = fc.getSelectedFile().getName();
-						if (!path.endsWith(EXTENSIONIMAGEOUTPUT)) {
-						    path += EXTENSIONIMAGEOUTPUT;
+					if (allDataSets.size()>0){
+						JFileChooser fc = new JFileChooser();
+						int returnValue = fc.showSaveDialog(getContentPane());
+						if(returnValue == JFileChooser.APPROVE_OPTION) {
+							String path = fc.getSelectedFile().getAbsolutePath();
+							String name = fc.getSelectedFile().getName();
+							if (!path.endsWith(EXTENSIONIMAGEOUTPUT)) {
+							    path += EXTENSIONIMAGEOUTPUT;
+							}
+							if(name.endsWith(EXTENSIONIMAGEOUTPUT)){
+								name = name.substring(0, name.length()-4);
+							}
+							System.out.println("Path to write project: " + path);
+							System.out.println("project name: " + name);
+							borders.clear();
+							borders = getBorders();
+							
+							copyFields();
+							FileManager.ExportToFile(allDataSets.get(currentRow), path, viewStatus,borders, 
+									allDataSets.get(currentRow).getParameterSet().getPixelsize(),allDataSets.get(currentRow).getParameterSet().getSigmaRendering());
 						}
-						if(name.endsWith(EXTENSIONIMAGEOUTPUT)){
-							name = name.substring(0, name.length()-4);
-						}
-						System.out.println("Path to write project: " + path);
-						System.out.println("project name: " + name);
-						borders.clear();
-						borders = getBorders();
-						
-						copyFields();
-						FileManager.ExportToFile(allDataSets.get(currentRow), path, viewStatus,borders, 
-								allDataSets.get(currentRow).getParameterSet().getPixelsize(),allDataSets.get(currentRow).getParameterSet().getSigmaRendering());
+					}
+					else {
+						JOptionPane.showMessageDialog(null,
+							      "Error: Please import an example or file first.", "Error Massage",
+							      JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			});
 			calcButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					calculate();
+					if (allDataSets.size()>0){
+						calculate();
+					}
+					else{
+						JOptionPane.showMessageDialog(null,
+							      "Error: Please import a file or example first.", "Error Massage",
+							      JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			});
 			
@@ -1479,6 +1499,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							updateSlider(Float.parseFloat(xminField.getText()),xminSlider);
+							allDataSets.get(currentRow).getParameterSet().getBorders().set(0, Float.parseFloat(xminField.getText()));
 						}
 						
 					});
@@ -1513,6 +1534,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							updateSlider(Float.parseFloat(xmaxField.getText()),xmaxSlider);
+							allDataSets.get(currentRow).getParameterSet().getBorders().set(1, Float.parseFloat(xmaxField.getText()));
 						}
 						
 					});
@@ -1541,10 +1563,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					yminField.setMaximumSize(new Dimension(60, 22));
 					yminField.setColumns(10);
 					yminField.addActionListener(new ActionListener(){
-
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							updateSlider(Float.parseFloat(yminField.getText()),yminSlider);
+							allDataSets.get(currentRow).getParameterSet().getBorders().set(2, Float.parseFloat(yminField.getText()));
 						}
 						
 					});
@@ -1573,10 +1595,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					ymaxField.setMaximumSize(new Dimension(60, 22));
 					ymaxField.setColumns(10);
 					ymaxField.addActionListener(new ActionListener(){
-
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							updateSlider(Float.parseFloat(ymaxField.getText()),ymaxSlider);
+							allDataSets.get(currentRow).getParameterSet().getBorders().set(3, Float.parseFloat(ymaxField.getText()));
 						}
 						
 					});
@@ -1605,10 +1627,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					zminField.setMaximumSize(new Dimension(60, 22));
 					zminField.setColumns(10);
 					zminField.addActionListener(new ActionListener(){
-
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							updateSlider(Float.parseFloat(zminField.getText()),zminSlider);
+							allDataSets.get(currentRow).getParameterSet().getBorders().set(4, Float.parseFloat(zminField.getText()));
 						}
 						
 					});
@@ -1637,10 +1659,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					zmaxField.setMaximumSize(new Dimension(60, 22));
 					zmaxField.setColumns(10);
 					zmaxField.addActionListener(new ActionListener(){
-
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							updateSlider(Float.parseFloat(zmaxField.getText()),zmaxSlider);
+							allDataSets.get(currentRow).getParameterSet().getBorders().set(5, Float.parseFloat(zmaxField.getText()));
 						}
 						
 					});
@@ -2047,6 +2069,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			//visualize();
 		}
 		model.fireTableDataChanged();
+		currentRow = allDataSets.size()-1;
+		loadParameterSetOfRow(currentRow);
+		updateMinMax();
 		//setSelectedListsForDrawing();
 	}
 	/**
@@ -2493,7 +2518,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				borders.add(zmax);
 			}
 		}
-		
+		allDataSets.get(currentRow).getParameterSet().setBorders(borders);
 		plot.borders = getBorders();
 	}
 	

@@ -153,11 +153,15 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 			currentDataSet.antiBodyEndPoints = ep2;
 			currentDataSet.antiBodyStartPoints = ap;
 		}
-		float[][] result = StormPointFinder.findStormPoints(currentDataSet.antiBodyEndPoints, currentDataSet, this);
+		try {
+			currentDataSet.stormData = StormPointFinder.findStormPoints(currentDataSet.antiBodyEndPoints, currentDataSet, this);
+		}
+		catch(Exception e){
+			currentDataSet.stormData = null;
+		}
 		/**
 		 * writing results to the current dataset
 		 */
-		currentDataSet.stormData = result;
 		currentDataSet.getProgressBar().setString("Calculation Done!");
 	}
 	

@@ -33,7 +33,7 @@ public class StormPointFinder {
 		boolean applyBleaching = ps.getApplyBleaching();
 		
 		if (background) { //unspecific labeling
-			listEndPoints = addBackground(listEndPoints, ilpmm3,calc);	
+			listEndPoints = addBackground(listEndPoints, ilpmm3,calc,ds.parameterSet.getBorders());	
     	}
 		if (fpab != 1){
 			listEndPoints = addMultipleFluorophoresPerAntibody(listEndPoints, fpab,calc);
@@ -209,7 +209,7 @@ public class StormPointFinder {
 			,STORMCalculator calc) {
 		int[] idx = new int[listEndPoints.length]; 
 		for (int i = 0; i<listEndPoints.length;i++) { //get random number of fluorophore for each antibody
-			idx[i] = (int) Math.abs(Math.floor(calc.random.nextGaussian() * Math.sqrt(fpab)+fpab));
+			idx[i] = RandomClass.poissonNumber(fpab, calc.random);//(int) Math.abs(Math.floor(calc.random.nextGaussian() * Math.sqrt(fpab)+fpab));
 		}
 		for (int i = 0; i < idx.length; i++) {//make sure that each antibodies has at least 1 fluorophore
 			if(idx[i] == 0) {
@@ -244,16 +244,14 @@ public class StormPointFinder {
 		return listEndPoints;
 	}
 
-	private static float[][] addBackground(float[][] listEndPoints, float ilpmm3,STORMCalculator calc) {
-		float xmin = Calc.min(listEndPoints, 0);
-		float xmax = Calc.max(listEndPoints, 0);
-		float ymin = Calc.min(listEndPoints, 1);
-		float ymax = Calc.max(listEndPoints, 1);
-		float zmin = Calc.min(listEndPoints, 2);
-		float zmax = Calc.max(listEndPoints, 2);
+	private static float[][] addBackground(float[][] listEndPoints, float ilpmm3,STORMCalculator calc, List<Float> borders) {
+		float xmin = borders.get(0);//Calc.min(listEndPoints, 0);
+		float xmax = borders.get(1);//Calc.max(listEndPoints, 0);
+		float ymin = borders.get(2);//Calc.min(listEndPoints, 1);
+		float ymax = borders.get(3);//Calc.max(listEndPoints, 1);
+		float zmin = borders.get(4);//Calc.min(listEndPoints, 2);
+		float zmax = borders.get(5);//Calc.max(listEndPoints, 2);
 
-		System.out.println(Calc.max(listEndPoints,0) +" | "+ Calc.min(listEndPoints,0));
-		System.out.println(Calc.max(listEndPoints,1) +" | "+ Calc.min(listEndPoints,1));
 		//ilpmm3: //incorrect localizations per micrometer ^3
 		int numberOfIncorrectLocalizations = (int) Math.floor(ilpmm3*(xmax-xmin)/1e3*(ymax-ymin)/1e3*(zmax-zmin)/1e3);
 		System.out.println("noil:" + numberOfIncorrectLocalizations);

@@ -536,6 +536,11 @@ public class Calc {
 	 */
 	
 	public static float[][] appendLine(float[][] m, float[] line) {
+		if (m.length == 0){
+			float[][] copy = new float[1][line.length];
+			copy[0] = line;
+			return copy;
+		}
 		float[][] copy = new float[m.length+1][m[0].length];
     	System.arraycopy(m, 0, copy, 0, m.length);
     	copy[m.length] = line;
