@@ -208,7 +208,7 @@ public class ParameterSet implements Serializable {
 		
 		this.pixelToNmRatio = 133.f;
 		this.frameRate = 30.f;
-		this.sigmaBg = 35.7f;
+		this.sigmaBg = 22f;
 		this.constOffset = 200.f;
 		this.emGain = 10.f;
 		this.quantumEfficiency = 1.f;

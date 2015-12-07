@@ -7,6 +7,7 @@ import inout.FileManager;
 import inout.ProjectFileFilter;
 import inout.TriangleLineFilter;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -14,6 +15,9 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -87,8 +91,7 @@ import javax.swing.JSlider;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.DefaultComboBoxModel;
-
+import javax.swing.DefaultComboBoxModel; 
 
 /**
  * @brief Sketch of GUI 
@@ -288,11 +291,18 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setPreferredSize(new Dimension(370, 700));
-		
+		SystemTray tray = SystemTray.getSystemTray();
+		try {
+			tray.add(new TrayIcon(new ImageIcon(getClass().getResource("/resources/LogoCropped.png")).getImage(),"icon"));
+		} catch (AWTException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 		ImageIcon img = new ImageIcon(getClass().getResource("/resources/Logo.jpg"));
 		loadDataLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		loadDataLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
 		loadDataLabel.setIcon(img);
+		this.setIconImage(new ImageIcon(getClass().getResource("/resources/LogoCropped.png")).getImage());
 		model = new DataSetTableModel();
         model.addTableModelListener(this);
 		
@@ -1962,7 +1972,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		aboutButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				String text = "<html>SuReSim  Copyright (C) 2015  Frank Herrmannsdörfer, Varun Venkataramani, Max Scheurer<p>"
+				String text = "<html>SuReSim  Copyright (C) 2015  Frank Herrmannsdörfer, Varun Venkataramani, Maximilian Scheurer<p>"
 			      + "This program comes with ABSOLUTELY NO WARRANTY;<p>"
 			      + "This is free software, and you are welcome to redistribute it under certain conditions. <p>"
 			      + "For more details see http://www.gnu.org/licenses/gpl-3.0.html</html>";

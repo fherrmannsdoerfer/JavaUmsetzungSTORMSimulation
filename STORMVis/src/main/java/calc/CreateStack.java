@@ -44,22 +44,22 @@ public class CreateStack {
 		int nbrPoints = 2000;
 		float[][] c = new float[nbrPoints][5];
 		//random creation of a list of tables as input
-//		for (int j = 0; j < nbrPoints; j++) {
-//			c[j][0] = (float) (Math.random()*30000);
-//			c[j][1] = (float) (Math.random()*30000);
-//			c[j][2] = (float) (Math.random()*3000);
-//			c[j][3] = (float) Math.round(Math.random()*100);
-//			c[j][4] = (float) (Math.random()*6000+1000);
-//		}
-		for (int j = 0; j < nbrPoints/10; j++){
-			for (int k=0; k<1; k++){
-				c[j*10+k][0]=50;
-				c[j*10+k][1] = 50;
-				c[j*10+k][2]=k*90+1;
-				c[j*10+k][3]=j;
-				c[j*10+k][4]=4000;
-			}
+		for (int j = 0; j < nbrPoints; j++) {
+			c[j][0] = (float) j*10;
+			c[j][1] = (float) j*10;
+			c[j][2] = (float) 400;
+			c[j][3] = (float) j*2;
+			c[j][4] = (float) 5000;
 		}
+//		for (int j = 0; j < nbrPoints/10; j++){
+//			for (int k=0; k<1; k++){
+//				c[j*10+k][0]=50;
+//				c[j*10+k][1] = 50;
+//				c[j*10+k][2]=k*90+1;
+//				c[j*10+k][3]=j;
+//				c[j*10+k][4]=4000;
+//			}
+//		}
 		ArrayList<Float> borders = new ArrayList<Float>();
 		borders.add((float) -99999);
 		borders.add((float) 99999);
@@ -81,10 +81,10 @@ public class CreateStack {
 		
 		createTiffStack(c, 1/133.f/**resolution*/ , 10/**emptyspace*/, 10 /**emGain*/,borders, rand,
 				4.81f/**electron per A/Dcount */, (float) 30/**frameRate*/, 
-				0.030f/**decayTime*/, 10/**sizePSF*/,2/**modelNR*/, 1.f /**quantum efficiency*/, 
+				0.030f/**decayTime*/, 10/**sizePSF*/,1/**modelNR*/, 1.f /**quantum efficiency*/, 
 				(float) 1.45/**NA*/, 647/**waveLength*/, 400/**zFocus*/, 
 				800/**zDefocus*/, 35.7f/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
-				,"Y:\\Users_shared\\SuReSim-Software Project\\SuReSim Rebuttal\\FigureComparisonTiffStackFit-TruePosition\\3D\\test.tif",
+				,"C:\\Users\\herrmannsdoerfer\\Desktop\\TestRapidStormOrigin\\test.tif",
 				true /* ensure single PSF*/, false /*split blinking over frames*/, new CreateTiffStack(null, null, null,null));
 
     } 
@@ -115,7 +115,7 @@ public class CreateStack {
 			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, 
 			float offset, float[][] calib, String fname, boolean ensureSinglePSF, boolean splitIntensities, CreateTiffStack cp) { 
 		for (int i = 0; i<calib.length; i++){ //shift Fokus
-			calib[i][0] -=0; 
+			calib[i][0] -=600; 
 		}
 		float pixelsize = 1/resolution;
 		//get mean intensity
@@ -268,7 +268,7 @@ public class CreateStack {
 								pro.setf(pixelX + k, pixelY + m, val4);
 							}
 						}
-						System.out.println("current Intensity: "+ currPSF[4]+" intensity gaussian: "+sum);
+						System.out.println("current Intensity: "+ currPSF[4]+" intensity gaussian: "+sum+" z: "+currPSF[2]+" frame: "+currPSF[3]+" sigma x: "+spl.getSig(currPSF[2])[0]+" sigma y: "+spl.getSig(currPSF[2])[1]);
 						break;	
 					}
 				}
