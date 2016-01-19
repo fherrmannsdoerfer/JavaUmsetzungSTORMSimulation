@@ -61,6 +61,7 @@ public class ParameterSet implements Serializable {
 	private Float constOffset;
 	private Float emGain;
 	private Float quantumEfficiency;
+	private Float deadTime;
 	
 
 	private int windowsizePSF;
@@ -94,7 +95,7 @@ public class ParameterSet implements Serializable {
 			Float frameRate, Float sigmaBg, Float constOffset, Float emGain, Float quantumEfficiency, 
 			int windowsizePSF, int emptyPixelsOnRim, Float na, Float fokus, Float defokus, boolean twoDPSF,
 			float[][] calibrationFile, float electronPerAdCount,float meanBlinkingTime, boolean ensureSinglePSF, 
-			boolean distributePSFoverFrames, int minIntensity, List<Float> borders) {
+			boolean distributePSFoverFrames, int minIntensity, List<Float> borders, Float deadTime) {
 		super();
 		this.loa = loa;
 		this.aoa = aoa;
@@ -154,6 +155,7 @@ public class ParameterSet implements Serializable {
 		this.distributePSFoverFrames = distributePSFoverFrames;
 		this.minIntensity = minIntensity;
 		this.setBorders(borders);
+		this.deadTime = deadTime;
 		
 	} 
     
@@ -224,9 +226,17 @@ public class ParameterSet implements Serializable {
 		this.distributePSFoverFrames = true;
 		this.minIntensity = 1000;
 		this.setBorders((List<Float>) Arrays.asList(-9e10f, 9e10f,-9e10f,9e10f,-9e10f,9e10f));
-		
+		this.deadTime = 0f;
     }
 
+    public Float getDeadTime(){
+    	return deadTime;
+    }
+    
+    public void setDeadTime(Float deadTime){
+    	this.deadTime = deadTime;
+    }
+    
 	public Float getLoa() {
 		return loa;
 	}

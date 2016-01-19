@@ -319,7 +319,8 @@ public class FileManager {
 				writer.append("Parameters for Tiffstack creation\n");
 				writer.append("Pixel to nanometer ratio: "+ps.getPixelToNmRatio()+"\n");
 				writer.append("Frame rate: "+ps.getFrameRate()+"\n");
-				writer.append("Mean blinking duration "+ps.getMeanBlinkingTime()+"\n");
+				writer.append("Mean blinking duration: "+ps.getMeanBlinkingTime()+"\n");
+				writer.append("Dead time: "+ps.getDeadTime()+"\n");
 				writer.append("Sigma of Readout noise: "+ps.getSigmaBg()+"\n");
 				writer.append("Value of constant background offset: "+ps.getConstOffset()+"\n");
 				writer.append("Em Gain: "+ps.getEmGain()+"\n");

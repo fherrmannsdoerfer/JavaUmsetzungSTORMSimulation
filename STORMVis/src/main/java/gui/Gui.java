@@ -247,6 +247,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField minIntensityField;
 	private JTextField pixelSizeField;
 	private JTextField sigmaSizeField;
+	private JTextField deadTimeField;
 	/**
 	 * Launch the application.
 	 */
@@ -740,6 +741,22 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		horizontalBox_42.add(framerateField);
 		framerateField.setColumns(5);
 		
+		Box horizontalBox_59 = Box.createHorizontalBox();
+		verticalBox_20.add(horizontalBox_59);
+		
+		JLabel lblDeadTimes = new JLabel("Dead time [s]");
+		horizontalBox_59.add(lblDeadTimes);
+		
+		Component horizontalGlue_18 = Box.createHorizontalGlue();
+		horizontalBox_59.add(horizontalGlue_18);
+		
+		deadTimeField = new JTextField();
+		deadTimeField.getDocument().addDocumentListener(new MyDocumentListener(deadTimeField));
+		deadTimeField.setMaximumSize(new Dimension(100, 22));
+		deadTimeField.setHorizontalAlignment(SwingConstants.RIGHT);
+		deadTimeField.setColumns(5);
+		horizontalBox_59.add(deadTimeField);
+		
 		Box horizontalBox_48 = Box.createHorizontalBox();
 		verticalBox_20.add(horizontalBox_48);
 		
@@ -972,12 +989,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		Component verticalGlue_7 = Box.createVerticalGlue();
 		verticalBox_4.add(verticalGlue_7);
-		
-		Component verticalGlue_9 = Box.createVerticalGlue();
-		verticalBox_4.add(verticalGlue_9);
-		
-		Component verticalGlue_10 = Box.createVerticalGlue();
-		verticalBox_4.add(verticalGlue_10);
 		
 		threeDPSFPanel = new JPanel();
 		verticalBox_19.add(threeDPSFPanel);
@@ -2187,6 +2198,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			coupleSigmaIntensityBox.setSelected(!set.getCoupleSigmaIntensity());
 			pxToNmField.setText(String.format(Locale.ENGLISH,"%.2f",set.getPixelToNmRatio()));
 			framerateField.setText(Double.toString(set.getFrameRate()));
+			deadTimeField.setText(Double.toString(set.getDeadTime()));
 			sigmaBgField.setText(String.format(Locale.ENGLISH,"%.2f",set.getSigmaBg()));
 			constOffsetField.setText(Double.toString(set.getConstOffset()));
 			emGainField.setText(Double.toString(set.getEmGain()));
@@ -2689,6 +2701,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		
 		allDataSets.get(currentRow).getParameterSet().setPixelToNmRatio(new Float(pxToNmField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setFrameRate(new Float(framerateField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setDeadTime(new Float(deadTimeField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setSigmaBg(new Float(sigmaBgField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setConstOffset(new Float(constOffsetField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setEmGain(new Float(emGainField.getText()));

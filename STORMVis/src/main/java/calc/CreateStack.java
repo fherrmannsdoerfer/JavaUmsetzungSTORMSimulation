@@ -49,7 +49,7 @@ public class CreateStack {
 			c[j][1] = (float) j*10;
 			c[j][2] = (float) 400;
 			c[j][3] = (float) j*2;
-			c[j][4] = (float) 5000;
+			c[j][4] = (float) 10000;
 		}
 //		for (int j = 0; j < nbrPoints/10; j++){
 //			for (int k=0; k<1; k++){
@@ -80,12 +80,12 @@ public class CreateStack {
 						   {910f,308.4156f,188.8461f}};//rescaled
 		
 		createTiffStack(c, 1/133.f/**resolution*/ , 10/**emptyspace*/, 10 /**emGain*/,borders, rand,
-				4.81f/**electron per A/Dcount */, (float) 30/**frameRate*/, 
-				0.030f/**decayTime*/, 10/**sizePSF*/,1/**modelNR*/, 1.f /**quantum efficiency*/, 
+				4.81f/**electron per A/Dcount */, (float) 50/**frameRate*/, 
+				0.10f/**decayTime*/, 0.005f /**dead time*/, 10/**sizePSF*/,1/**modelNR*/, 1.f /**quantum efficiency*/, 
 				(float) 1.45/**NA*/, 647/**waveLength*/, 400/**zFocus*/, 
 				800/**zDefocus*/, 35.7f/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
 				,"C:\\Users\\herrmannsdoerfer\\Desktop\\TestRapidStormOrigin\\test.tif",
-				true /* ensure single PSF*/, false /*split blinking over frames*/, new CreateTiffStack(null, null, null,null));
+				true /* ensure single PSF*/, true /*split blinking over frames*/, new CreateTiffStack(null, null, null,null));
 
     } 
 	
@@ -109,9 +109,9 @@ public class CreateStack {
 	 * @param offset : constant offset
 	 * @param calib : calibration file for asymmetric gaussian
 	 */
-	public static void createTiffStack(float[][] input, float resolution, int emptySpace, float emGain,
+	public static int createTiffStack(float[][] input, float resolution, int emptySpace, float emGain,
 			ArrayList<Float> borders, Random rand,
-			float electronsPerADcount, float frameRate, float decayTime, int sizePSF, int modelNumber, float qe,
+			float electronsPerADcount, float frameRate, float decayTime, float deadTime, int sizePSF, int modelNumber, float qe,
 			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, 
 			float offset, float[][] calib, String fname, boolean ensureSinglePSF, boolean splitIntensities, CreateTiffStack cp) { 
 		for (int i = 0; i<calib.length; i++){ //shift Fokus
@@ -134,7 +134,12 @@ public class CreateStack {
 		int numberPSFsBeforeSplitting = lInput.size();
 		//simulate distribution of the intensity over different frames
 		if (splitIntensities){
-			lInput = distributePSF(lInput, frameRate, decayTime, meanInt);
+			lInput = distributePSF(lInput, frameRate, deadTime, decayTime, meanInt);
+			//lInput = distributePSF(lInput, frameRate, decayTime, meanInt);
+		}
+		if (lInput.size()<=0){
+			System.out.println("no points to simulate.");
+			return 1;
 		}
 		System.out.println("finished distribution");
 		int numberPSFsAfterSplitting = lInput.size();
@@ -288,7 +293,7 @@ public class CreateStack {
 		fs.saveAsTiffStack(fname);
 		
 		System.out.println("file succesfully saved");
-		
+		return 0;
 	}	
 
 
@@ -475,6 +480,86 @@ public class CreateStack {
 		return ret;
 	}
 	
+	
+
+	/**
+	* auxiliary method distributePSF distributes the PSF in an amount different frames
+	* initialisation of new ArrayList necessary since adding elements to a non-specified list is not possible
+	* @param iInp : input list 
+	* @param frRate : rate in which frames are taken
+	* @param decTime : time interval, over which the PSF distributes its intensity
+	* @return new list with PSF spread over different frames
+	*/
+	private static List<float[]> distributePSF(List<float[]> lInp, float frRate, float deadTime, float meanDecTime, float meanIntensity) {
+	List<float[]> ret = new ArrayList<float[]>(); //new list
+	float frameTime = 1/frRate - deadTime;
+	if (frameTime < 0){
+		System.out.println("Dead time too long or framerate too high.");
+		return ret;
+	}
+	
+	for(int i = 0; i < lInp.size(); i++) {
+		float decTime = lInp.get(i)[4]/meanIntensity*meanDecTime;
+		//float decTime = (float) (meanDecTime * -Math.log(1-Math.random()));
+		//simulation of a random beginning time between 0 and end of deadtime; 
+		float beginningTime = (float) (Math.random()*frameTime + (Math.random()* deadTime));
+		float t = beginningTime + decTime ;
+		// checks if the blinking event begins before the beginning of the deadTime of the camera
+		//spreads the intensity of the PSF on arbitrarily many frames
+		if (beginningTime <= (frameTime)) {
+			if(t > frameTime) {
+				float overlap1 = (frameTime - beginningTime)/decTime; // fraction of decay time in first frame it occurs in
+				float[] val1 = {lInp.get(i)[0], lInp.get(i)[1], lInp.get(i)[2], lInp.get(i)[3],
+						lInp.get(i)[4]*overlap1};
+				float d = decTime;
+				d -= frameTime; 
+				d += beginningTime;
+				d -= deadTime;
+				ret.add(val1);
+				float overlap2 = frameTime/decTime; //fraction full frame over decay time
+				int n = 0;
+				while (d > frameTime) {
+					float[] val2 = {lInp.get(i)[0], lInp.get(i)[1], lInp.get(i)[2], lInp.get(i)[3] + n + 1,
+							lInp.get(i)[4]*overlap2};
+					d = d - frameTime - deadTime;
+					n++;
+					ret.add(val2);
+				}
+				if (d>0){//if d > 0 there is a fraction of frameTime which contributes to the next frame, if d< 0 the blinking event ended during dead time
+					float overlap3 = d/decTime; //fraction of the rest
+					float[] val3 = {lInp.get(i)[0], lInp.get(i)[1], lInp.get(i)[2], lInp.get(i)[3] + n + 1,
+							lInp.get(i)[4]*overlap3};
+					ret.add(val3);
+				}
+			}
+			else{
+				ret.add(lInp.get(i));
+			}
+		}
+		else if ((beginningTime + decTime) > (frameTime + deadTime)) {
+			//events that begin during the  deadtime and last until the camera is exposed to signal again
+			float x= decTime + beginningTime - deadTime -frameTime ;
+			float overlap5 = frameTime/decTime; //fraction full frame over decay time
+			int n = 0;
+			while (x > frameTime) {
+				float[] val2 = {lInp.get(i)[0], lInp.get(i)[1], lInp.get(i)[2], lInp.get(i)[3] + n + 1,
+						lInp.get(i)[4]*overlap5};
+				x = x - frameTime - deadTime;
+				n++;
+				ret.add(val2);
+			}
+			
+			float overlap6 =  x/decTime;
+			if (overlap6 > 0){
+				float[] val3 = {lInp.get(i)[0], lInp.get(i)[1], lInp.get(i)[2], lInp.get(i)[3] + n + 1,
+							lInp.get(i)[4]*overlap6};
+					ret.add(val3);
+				}
+			}
+		}
+		return ret; 
+	}
+
 
 	/**
 	 * method writes ground-truth file after distributing the blinking event;

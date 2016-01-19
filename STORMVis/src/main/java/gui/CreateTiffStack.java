@@ -48,7 +48,7 @@ public class CreateTiffStack extends SwingWorker<Void,Void>{
 		set.progressBar.setString("Creating Tiff-Stack");
 		CreateStack.createTiffStack(set.stormData, 1/psSet.getPixelToNmRatio(),
 				psSet.getEmptyPixelsOnRim(),psSet.getEmGain(), guiReference.borders, random,
-				psSet.getElectronPerAdCount(), psSet.getFrameRate(), psSet.getMeanBlinkingTime(), psSet.getWindowsizePSF(),
+				psSet.getElectronPerAdCount(), psSet.getFrameRate(), psSet.getMeanBlinkingTime(), psSet.getDeadTime(), psSet.getWindowsizePSF(),
 				modelNumber,psSet.getQuantumEfficiency(), psSet.getNa(), psSet.getPsfwidth(), psSet.getFokus(), psSet.getDefokus(), psSet.getSigmaBg(),
 				psSet.getConstOffset(), psSet.getCalibrationFile(), path,psSet.isEnsureSinglePSF(), psSet.isDistributePSFoverFrames(),this);
 		return null;
