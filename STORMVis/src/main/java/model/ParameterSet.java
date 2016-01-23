@@ -83,7 +83,7 @@ public class ParameterSet implements Serializable {
 	private boolean distributePSFoverFrames;
 	private int minIntensity;
 	private List<Float> borders;
-    
+    private boolean colorProof;
 	
 
 	public ParameterSet(Float loa, Float aoa, Float soa, Float bspnm, Float pabs,
@@ -95,7 +95,7 @@ public class ParameterSet implements Serializable {
 			Float frameRate, Float sigmaBg, Float constOffset, Float emGain, Float quantumEfficiency, 
 			int windowsizePSF, int emptyPixelsOnRim, Float na, Float fokus, Float defokus, boolean twoDPSF,
 			float[][] calibrationFile, float electronPerAdCount,float meanBlinkingTime, boolean ensureSinglePSF, 
-			boolean distributePSFoverFrames, int minIntensity, List<Float> borders, Float deadTime) {
+			boolean distributePSFoverFrames, int minIntensity, List<Float> borders, Float deadTime, boolean colorProof) {
 		super();
 		this.loa = loa;
 		this.aoa = aoa;
@@ -156,6 +156,7 @@ public class ParameterSet implements Serializable {
 		this.minIntensity = minIntensity;
 		this.setBorders(borders);
 		this.deadTime = deadTime;
+		this.colorProof = colorProof;
 		
 	} 
     
@@ -206,7 +207,7 @@ public class ParameterSet implements Serializable {
 		this.antibodyColor = new Color(255,204,102);
 		
 		this.pixelsize = 10;
-		this.sigmaRendering = 20;
+		this.sigmaRendering = 10;
 		
 		this.pixelToNmRatio = 133.f;
 		this.frameRate = 30.f;
@@ -227,8 +228,17 @@ public class ParameterSet implements Serializable {
 		this.minIntensity = 1000;
 		this.setBorders((List<Float>) Arrays.asList(-9e10f, 9e10f,-9e10f,9e10f,-9e10f,9e10f));
 		this.deadTime = 0f;
+		this.colorProof = false;
     }
-
+    
+    public boolean isColorProof(){
+    	return colorProof;
+    }
+    
+    public void setColorProof(boolean colorProof){
+    	this.colorProof = colorProof;
+    }
+    
     public Float getDeadTime(){
     	return deadTime;
     }

@@ -178,17 +178,17 @@ public class FileManager {
 			coloredImage.add(ch);
 		}
 		
-		coloredImage = Calc.addFilteredPoints3D(coloredImage, sigma, filterwidth, pixelsize, stormData,mode,borders,dims);
-		write3dImage(pixelX, pixelY, coloredImage, path);
+		coloredImage = Calc.addFilteredPoints3D(coloredImage, sigma, filterwidth, pixelsize, stormData,mode,borders,dims,dataset.getParameterSet().isColorProof());
+		write3dImage(pixelX, pixelY, coloredImage, path,"",false);
 		
 		ArrayList<float[][]> colorBar = new ArrayList<float[][]>();
 		for (int i = 0; i<3; i++){
 			float[][] ch = new float[512][30];
 			colorBar.add(ch);
 		}
-		colorBar = Calc.fillColorBar(colorBar, dims.get(4), dims.get(5));
+		colorBar = Calc.fillColorBar(colorBar, dims.get(4), dims.get(5), dataset.getParameterSet().isColorProof());
 		String tag = "ColorBar_zmin" + dims.get(4)+"_zmax"+dims.get(5); 
-		write3dImage(512,30,colorBar,path,tag,false);
+		write3dImage(512,30,colorBar,path,tag,true);
 
 	}
 	
@@ -204,7 +204,7 @@ public class FileManager {
 	private static void write3dImage(int pixelX, int pixelY, ArrayList<float[][]> coloredImage,String path){
 		write3dImage(pixelX, pixelY, coloredImage, path,"", true);
 	}
-	private static void write3dImage(int pixelX, int pixelY, ArrayList<float[][]> coloredImage,String path,String tag,boolean writeTiffs){
+	private static void write3dImage(int pixelX, int pixelY, ArrayList<float[][]> coloredImage,String path,String tag,boolean scalebar){
 		ImageProcessor ipRed = new FloatProcessor(pixelX,pixelY);
 		ImageProcessor ipGreen = new FloatProcessor(pixelX,pixelY);
 		ImageProcessor ipBlue = new FloatProcessor(pixelX,pixelY);
@@ -219,14 +219,23 @@ public class FileManager {
 		colImg.add(imgPRed);
 		colImg.add(imgPGreen);
 		colImg.add(imgPBlue);
-		
 		String basename = path.substring(0, path.length()-4);
-		if (writeTiffs){
+		if (!scalebar){
 			ij.IJ.save(colImg.get(0),basename+tag+"redCh.tif");
 			ij.IJ.save(colImg.get(1),basename+tag+"greenCh.tif");
 			ij.IJ.save(colImg.get(2),basename+tag+"blueCh.tif");
 		}
 		ImagePlus[] imPlusStack = new ImagePlus[3];
+		if (scalebar){
+			colImg.get(0).setDisplayRange(0, 255);
+			colImg.get(1).setDisplayRange(0, 255);
+			colImg.get(2).setDisplayRange(0, 255);
+		}
+		else {
+			colImg.get(0).setDisplayRange(0, 65500);
+			colImg.get(1).setDisplayRange(0, 65500);
+			colImg.get(2).setDisplayRange(0, 65500);
+		}
 		imPlusStack[0] = colImg.get(0);
 		imPlusStack[1] = colImg.get(1);
 		imPlusStack[2] = colImg.get(2);
@@ -313,6 +322,12 @@ public class FileManager {
 			writer.append("Selected borders in z: "+borders.get(4)+" to "+borders.get(5)+"\n");
 			writer.append("Pixelsize for output images in nm: "+ps.getPixelsize()+"\n");
 			writer.append("Width of Gaussian for rendering of output images in nm: "+ps.getSigmaRendering()+"\n");
+			if (ps.isColorProof()){
+				writer.append("Only blue and green colors used: TRUE\n");
+			}
+			else{
+				writer.append("Only blue and green colors used: FALSE\n");
+			}
 			
 			if (tiffStackOutput){
 				writer.append("\n");

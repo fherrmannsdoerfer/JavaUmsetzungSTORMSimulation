@@ -43,7 +43,7 @@ public class RandomClass {
 	
 	  do {
 	    k++;
-	    p *= Math.random();
+	    p *= rnd.nextDouble();
 	  } while (p > L);
 	  return k - 1;
 		}

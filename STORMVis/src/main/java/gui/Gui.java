@@ -248,6 +248,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	private JTextField pixelSizeField;
 	private JTextField sigmaSizeField;
 	private JTextField deadTimeField;
+	
+	private JCheckBox blueGreenOnlyChkBox;
 	/**
 	 * Launch the application.
 	 */
@@ -1184,6 +1186,18 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		sigmaSizeField.setMaximumSize(new Dimension(60, 22));
 		horizontalBox_58.add(sigmaSizeField);
 		sigmaSizeField.setColumns(5);
+		
+		Box horizontalBox_60 = Box.createHorizontalBox();
+		verticalBox_5.add(horizontalBox_60);
+		
+		JLabel lblNewLabel_15 = new JLabel("Blue/Green Colorbar Only");
+		horizontalBox_60.add(lblNewLabel_15);
+		
+		Component horizontalGlue_19 = Box.createHorizontalGlue();
+		horizontalBox_60.add(horizontalGlue_19);
+		
+		blueGreenOnlyChkBox = new JCheckBox("");
+		horizontalBox_60.add(blueGreenOnlyChkBox);
 		
 		JButton exportButton = new JButton("Export");
 		exportButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -2221,6 +2235,12 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			minIntensityField.setText(set.getMinIntensity()+"");
 			sigmaSizeField.setText(set.getSigmaRendering()+"");
 			pixelSizeField.setText(set.getPixelsize()+"");
+			if (set.isColorProof()){
+				blueGreenOnlyChkBox.setSelected(true);
+			}
+			else{
+				blueGreenOnlyChkBox.setSelected(false);
+			}
 			updateButtonColors();
 		}
 	}
@@ -2724,6 +2744,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		allDataSets.get(currentRow).getParameterSet().setMinIntensity(new Integer(minIntensityField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setPixelsize(new Float(pixelSizeField.getText()));
 		allDataSets.get(currentRow).getParameterSet().setSigmaRendering(new Float(sigmaSizeField.getText()));
+		allDataSets.get(currentRow).getParameterSet().setColorProof(blueGreenOnlyChkBox.isSelected());
 	}
 
 	

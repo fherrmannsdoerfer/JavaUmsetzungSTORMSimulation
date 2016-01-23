@@ -26,7 +26,11 @@ public class StormPointFinder {
 		float sxy = ps.getSxy();
 		float sz = ps.getSz();
 		float fpab = ps.getFpab();
-		boolean background = true;
+		boolean background = false;
+		if (ps.getIlpmm3()>0){
+			background = true;
+		}
+		
 		float psfWidth = ps.getPsfwidth();
 		float ilpmm3 = ps.getIlpmm3();
 		boolean mergedPSFs = ps.getMergedPSF();

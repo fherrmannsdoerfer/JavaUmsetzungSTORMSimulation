@@ -630,14 +630,15 @@ public class Calc {
 	
 
 	
-	public static ArrayList<float[][]> fillColorBar(ArrayList<float[][]> colorBar, float zmin, float zmax){
+	public static ArrayList<float[][]> fillColorBar(ArrayList<float[][]> colorBar, 
+			float zmin, float zmax, boolean colorProof){
 		int width = colorBar.get(0)[0].length;
 		int height = colorBar.get(0).length;
 		float interval = (zmax-zmin)/height;
 		for (int i = 0; i<height; i++){
 			for (int j =0; j<width; j++){
 				for (int k = 0; k<3; k++){
-					colorBar.get(k)[i][j] = getColor(i*interval, zmax-zmin,k);
+					colorBar.get(k)[i][j] = getColor(i*interval, zmax-zmin,k, colorProof);
 				}
 			}
 		}
@@ -645,7 +646,7 @@ public class Calc {
 	}
 	
 	public static ArrayList<float[][]> addFilteredPoints3D(ArrayList<float[][]> coloredImage, double sigma, int filterwidth, 
-			double pixelsize, float[][] sd, int mode, ArrayList<Float> borders, ArrayList<Float> dims){
+			double pixelsize, float[][] sd, int mode, ArrayList<Float> borders, ArrayList<Float> dims, boolean colorProof){
 		if (filterwidth %2 == 0) {System.err.println("filterwidth must be odd");}
 		double factor = 10000*1/(2*Math.PI*sigma*sigma);
 		double factor2 = -0.5/sigma/sigma;
@@ -686,7 +687,6 @@ public class Calc {
 						posZ = (sl[0])-zMin;
 						break;
 				}
-				boolean inverted = false;
 							
 				int pixelXStart = (int)Math.floor(posX) - (filterwidth-1)/2;
 				int pixelYStart = (int)Math.floor(posY) - (filterwidth-1)/2;
@@ -697,9 +697,9 @@ public class Calc {
 						try{
 							
 							float weight = (float) (factor*intensity* Math.exp(factor2*(Math.pow((k-posX),2)+Math.pow((l-posY),2))));
-							redChannel[k][l] = redChannel[k][l] + getColor(posZ,zMax,0) * weight;
-							greenChannel[k][l] = greenChannel[k][l] +getColor(posZ,zMax,1) * weight;
-							blueChannel[k][l] = blueChannel[k][l] +getColor(posZ,zMax,2) * weight;
+							redChannel[k][l] = redChannel[k][l] + getColor(posZ,zMax,0,colorProof) * weight;
+							greenChannel[k][l] = greenChannel[k][l] +getColor(posZ,zMax,1,colorProof) * weight;
+							blueChannel[k][l] = blueChannel[k][l] +getColor(posZ,zMax,2,colorProof) * weight;
 							
 							
 						} catch(IndexOutOfBoundsException e){e.toString();}
@@ -707,8 +707,9 @@ public class Calc {
 				}
 			}
 		}
+		removeBrightestSpots(redChannel,greenChannel,blueChannel,0.9999);
 		float max= 0;
-		float min = (float) 1e19;
+		float min = (float) 1e199;
 		for (int i = 0; i<redChannel.length;i++){
 			for(int j = 0; j<redChannel[0].length; j++){
 				max = Math.max(redChannel[i][j],max);
@@ -721,52 +722,116 @@ public class Calc {
 		}
 		for (int i = 0; i<redChannel.length;i++){
 			for(int j = 0; j<redChannel[0].length; j++){
-				redChannel[i][j] = (redChannel[i][j]-min);
-				greenChannel[i][j] = (greenChannel[i][j]-min);
-				blueChannel[i][j] = (blueChannel[i][j]-min);
+				redChannel[i][j] = (redChannel[i][j]-min)/(max-min) *65535.0f;
+				greenChannel[i][j] = (greenChannel[i][j]-min)/(max-min) *65535.0f;
+				blueChannel[i][j] = (blueChannel[i][j]-min)/(max-min) *65535.0f;
 			}
 		}
-		//ArrayList<float[][]> normalizedChannels = normalizeChannels(redChannel, greenChannel, blueChannel);
-		//coloredImage.clear();
-		//coloredImage.add(normalizedChannels.get(0));
-		//coloredImage.add(normalizedChannels.get(1));
-		//coloredImage.add(normalizedChannels.get(2));
+
+	
 		return coloredImage;
 	}
-	
+	private static void removeBrightestSpots(float[][] redChannel,
+			float[][] greenChannel, float[][] blueChannel, double percentile) {
+		ArrayList<Float> allPoints = new ArrayList<Float>();
+		for (int i = 0; i<redChannel.length;i++){
+			for(int j = 0; j<redChannel[0].length; j++){
+				if (redChannel[i][j]>0){
+					allPoints.add(redChannel[i][j]);
+				}
+				if (greenChannel[i][j]>0){
+					allPoints.add(greenChannel[i][j]);
+				}
+				if (blueChannel[i][j]>0){
+					allPoints.add(blueChannel[i][j]);
+				}
+			}
+		}
+		Collections.sort(allPoints);
+		float newMaxVal = allPoints.get(((int)(allPoints.size()*percentile)));
+		for (int i = 0; i<redChannel.length;i++){
+			for(int j = 0; j<redChannel[0].length; j++){
+				redChannel[i][j] = Math.min(redChannel[i][j], newMaxVal);
+				greenChannel[i][j] = Math.min(greenChannel[i][j], newMaxVal);
+				blueChannel[i][j] = Math.min(blueChannel[i][j], newMaxVal);
+			}
+		}
+	}
+
 	private static float getColor(double posZ, float zMax, int color) {
-		
-		if (posZ < 0.25* zMax){
-			//blue rises from 0 to 1
-			if (color == 2){
-				return (float) (4*posZ / zMax);
+		return getColor(posZ, zMax,color, false);
+	}
+	private static float getColor(double posZ, float zMax, int color, boolean redGreenBlindProof) {
+//		if (posZ < 0.25* zMax){
+//			//blue rises from 0 to 1
+//			if (color == 2){
+//				return (float) (4*posZ / zMax);
+//			}
+//		}
+		boolean switchColorProof = false;
+		if (redGreenBlindProof){
+			if (switchColorProof){
+				if (posZ < 0.5* zMax){
+					//green rises from 0 to 1 blue stays one
+					if (color == 1){
+						return (float)(2*posZ/zMax);
+					}
+					if (color == 2){
+						return (float) 1;//(1-3*(posZ/zMax));// 1;//(2 - 4*posZ/zMax)	;
+					}
+				}
+				else {
+					//green stays one, blue goes to zero again
+					if (color == 1){
+						return (float) 1;//(4*posZ/zMax - 2);
+					}
+					if (color == 2){
+						return (float) (2 - 2*posZ/zMax);
+					}
+				}
+			}
+			else{
+				if (color == 0){
+					return (float) (posZ/zMax *(86-230) + 230);
+				}
+				if (color == 1){
+					return (float) (posZ/zMax *(180-159) + 159);
+				}
+				if (color == 2){
+					return (float) (posZ/zMax *(233-0) + 0);
+				}
 			}
 		}
-		else if (posZ < 0.5* zMax){
-			//green rises from 0 to 1 blue stays one
-			if (color == 1){
-				return (float)(4*posZ/zMax - 1);
+		else{
+			if (posZ < 0.3333333* zMax){
+				//green rises from 0 to 1 blue stays one
+				if (color == 1){
+					return (float)(3*posZ/zMax);
+				}
+				if (color == 2){
+					return (float) 1;//(1-3*(posZ/zMax));// 1;//(2 - 4*posZ/zMax)	;
+				}
 			}
-			if (color == 2){
-				return (float) 1;//(2 - 4*posZ/zMax)	;
+			else if (posZ < 0.6666666* zMax){
+				//green stays one, blue goes to zero again
+				if (color == 1){
+					return (float) 1;//(4*posZ/zMax - 2);
+				}
+				if (color == 2){
+					return (float) (2 - 3*posZ/zMax);
+				}
 			}
-		}
-		else if (posZ < 0.75* zMax){
-			//green stays one, blue goes to zero again
-			if (color == 1){
-				return (float) 1;//(4*posZ/zMax - 2);
-			}
-			if (color == 2){
-				return (float) (3 - 4*posZ/zMax);
-			}
-		}
-		else {
-			//green goes to zero red rises
-			if (color == 0){
-				return (float) (4*posZ/zMax - 3);
-			}
-			if (color == 1){
-				return (float) (4-4*posZ/zMax);
+			else {
+				//green goes to zero red rises
+				if (color == 0){
+					return (float) (3*posZ/zMax - 2);
+				}
+				if (color == 1){
+					return (float) (3-3*posZ/zMax);
+				}
+				if (color == 2){
+					return (float) (3*posZ/zMax - 2); //changes red to magenta
+				}
 			}
 		}
 		return 0;
