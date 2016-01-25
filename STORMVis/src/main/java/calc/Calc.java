@@ -748,14 +748,21 @@ public class Calc {
 			}
 		}
 		Collections.sort(allPoints);
-		float newMaxVal = allPoints.get(((int)(allPoints.size()*percentile)));
-		for (int i = 0; i<redChannel.length;i++){
-			for(int j = 0; j<redChannel[0].length; j++){
-				redChannel[i][j] = Math.min(redChannel[i][j], newMaxVal);
-				greenChannel[i][j] = Math.min(greenChannel[i][j], newMaxVal);
-				blueChannel[i][j] = Math.min(blueChannel[i][j], newMaxVal);
+		if ((int)(allPoints.size()*percentile)<allPoints.size()){
+			float newMaxVal = allPoints.get(((int)(allPoints.size()*percentile)));
+			for (int i = 0; i<redChannel.length;i++){
+				for(int j = 0; j<redChannel[0].length; j++){
+					redChannel[i][j] = Math.min(redChannel[i][j], newMaxVal);
+					greenChannel[i][j] = Math.min(greenChannel[i][j], newMaxVal);
+					blueChannel[i][j] = Math.min(blueChannel[i][j], newMaxVal);
+				}
 			}
 		}
+		else {
+			//do nothing
+		}
+		
+		
 	}
 
 	private static float getColor(double posZ, float zMax, int color) {

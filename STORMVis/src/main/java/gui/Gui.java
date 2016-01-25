@@ -1190,7 +1190,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_60 = Box.createHorizontalBox();
 		verticalBox_5.add(horizontalBox_60);
 		
-		JLabel lblNewLabel_15 = new JLabel("Blue/Green Colorbar Only");
+		JLabel lblNewLabel_15 = new JLabel("Color Blind Save Colorcode");
 		horizontalBox_60.add(lblNewLabel_15);
 		
 		Component horizontalGlue_19 = Box.createHorizontalGlue();

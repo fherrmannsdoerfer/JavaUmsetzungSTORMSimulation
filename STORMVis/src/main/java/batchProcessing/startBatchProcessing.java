@@ -65,9 +65,9 @@ public class startBatchProcessing {
 		boolean tiffStackOutput = false;
 		boolean suReSimOutput = true;
 		int numberOfSimulationsWithSameParameterSet = 1; //number of outputs for the same parameter set
-		SimulationParameter params = standardParameterVesicles();
-		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(4.f));
-		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(8.f));
+		SimulationParameter params = standardParameterActin();
+		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(4.f,8.f,12.f,25.f));
+		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(8.f,30.f,40.f,50.f));
 		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(10.f,50.f,100.f));
 		ArrayList<Float> varAng = new ArrayList<Float>(Arrays.asList(0f));
 		//ArrayList<Float> de = new ArrayList<Float>(Arrays.asList(10.f,20.f,50.f,100.f));
@@ -94,10 +94,11 @@ public class startBatchProcessing {
 									params.sigmaZ = sigmaZ.get(i);
 									params.dutyCycle = koff.get(k);
 									params.sigmaRendering = 10;
+									
 									calculate(params);
 									//params.detectionEfficiency = de.get(i);
 									//params.recordedFrames = frames.get(i);
-									params.borders = getSpecificBorders();
+									params.borders = getBorders();
 									params.MeanPhotonNumber = photonOutput.get(ll);
 									String fname = String.format("sig%1.0f_%1.0flabEff%1.0fPhoton%dbindAng%1.0fLabLen%1.0fver%d", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.MeanPhotonNumber,params.angleOfLabel*180/Math.PI,params.labelEpitopeDistance,p);
 									if(suReSimOutput){
