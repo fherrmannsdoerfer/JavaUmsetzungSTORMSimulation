@@ -746,7 +746,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_59 = Box.createHorizontalBox();
 		verticalBox_20.add(horizontalBox_59);
 		
-		JLabel lblDeadTimes = new JLabel("Dead time [s]");
+		JLabel lblDeadTimes = new JLabel("Dead Time [s]");
 		horizontalBox_59.add(lblDeadTimes);
 		
 		Component horizontalGlue_18 = Box.createHorizontalGlue();
@@ -1190,7 +1190,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_60 = Box.createHorizontalBox();
 		verticalBox_5.add(horizontalBox_60);
 		
-		JLabel lblNewLabel_15 = new JLabel("Color Blind Save Colorcode");
+		JLabel lblNewLabel_15 = new JLabel("Alternative Colorcode (Orange/Blue)");
 		horizontalBox_60.add(lblNewLabel_15);
 		
 		Component horizontalGlue_19 = Box.createHorizontalGlue();
@@ -1997,7 +1997,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		aboutButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				String text = "<html>SuReSim  Copyright (C) 2015  Frank Herrmannsdörfer, Varun Venkataramani, Maximilian Scheurer<p>"
+				String text = "<html>SuReSim Version 0.5.1  Copyright (C) 2015  Frank Herrmannsdörfer, Maximilian Scheurer, Varun Venkataramani<p>"
 			      + "This program comes with ABSOLUTELY NO WARRANTY;<p>"
 			      + "This is free software, and you are welcome to redistribute it under certain conditions. <p>"
 			      + "For more details see http://www.gnu.org/licenses/gpl-3.0.html</html>";
