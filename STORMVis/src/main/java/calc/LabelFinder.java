@@ -18,7 +18,7 @@ import org.jzy3d.maths.Coord3d;
  * Finds Antibodies/lines/ep/ap
  *
  */
-public class Finder {
+public class LabelFinder {
 	// fluorophore = binding site
 	public static Pair<float[][],float[][]> findAntibodiesTri(List<float[][]> trList, 
 			DataSet parameter, STORMCalculator calc) {

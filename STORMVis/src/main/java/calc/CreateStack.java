@@ -1,7 +1,7 @@
 /**
  * class creates a Tiff-Stack out of a table of blinking events
  * it takes account for random processes like noise
- * @author Niels Schlusser
+ * @author Niels Schlusser, Frank Herrmannsörfer
  * @date 20.10.2015
  */
 
@@ -23,9 +23,6 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.FileSaver;
 import ij.process.*;
-
-
-
 
 public class CreateStack {
 
@@ -68,6 +65,7 @@ public class CreateStack {
 		borders.add((float) -99999);
 		borders.add((float) 99999);
 		System.out.println("finished simulation");
+		//calibration used for simulation of 3D PSFs
 		float[][] calibr = {{0.0001f,131.6016f,299.7855f},
 						   {101.111f,124.3521f,247.8447f},
 						   {202.222f,121.4928f,206.5095f},
@@ -84,7 +82,7 @@ public class CreateStack {
 				0.10f/**decayTime*/, 0.005f /**dead time*/, 10/**sizePSF*/,1/**modelNR*/, 1.f /**quantum efficiency*/, 
 				(float) 1.45/**NA*/, 647/**waveLength*/, 400/**zFocus*/, 
 				800/**zDefocus*/, 35.7f/**sigmaNoise*/, 200/**constant offset*/, calibr/**calibration file*/
-				,"C:\\Users\\herrmannsdoerfer\\Desktop\\TestRapidStormOrigin\\test.tif",
+				,"C:\\test.tif",
 				true /* ensure single PSF*/, true /*split blinking over frames*/, new CreateTiffStack(null, null, null,null));
 
     } 
@@ -96,27 +94,39 @@ public class CreateStack {
 	 * @param input : list of float tables as input
 	 * @param resolution : resolution, i.e. ratio pixel per nanometres 
 	 * @param emptySpace : empty pixels on the edges
-	 * @param intensityPerPhoton : measure for the intensity contribution of one photon on a pixel
+	 * @param emGain : EM Gain multiplier
+	 * @param borders : borders describe which part of the input data will be rendered into tiff stacks
+	 * @param rand : Instance of random number generator
+	 * @param electronsPerADcount : Conversion factor from electrons to digital numbers
 	 * @param frameRate : rate with which frames are taken
 	 * @param decayTime : mean duration of a blinking event
+	 * @param deadTime: dead time of the camera, all photons which would be detected during this time are lost
 	 * @param sizePSF : size over which the PSF is spread
 	 * @param modelNumber : kind of model for the PSF
+	 * @param qe: quantum efficiency
 	 * @param numerical aperture of the microscope
 	 * @param wavelength of the used light
 	 * @param zFocus : z-plane, in which the focus lies
 	 * @param zDefocus : z-value, for which the microscope defocusses
 	 * @param sigmaNoise : sigma of the Gaussian noise in the whole image
 	 * @param offset : constant offset
-	 * @param calib : calibration file for asymmetric gaussian
+	 * @param calib : calibration file for asymmetric Gaussian
+	 * @param fname : filename for the output tiff stack, also the the list of ground truth data points is copied to the same folder
+	 * @param ensureSinglePSF : option to ensure no overlapping PSFs
+	 * @param splitIntensities : option to enable single blinking events to contribute to multiple frames
+	 * @param cp : instance of CreateTiffStack SwingWorker to monitor progress
 	 */
 	public static int createTiffStack(float[][] input, float resolution, int emptySpace, float emGain,
 			ArrayList<Float> borders, Random rand,
 			float electronsPerADcount, float frameRate, float decayTime, float deadTime, int sizePSF, int modelNumber, float qe,
 			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, 
 			float offset, float[][] calib, String fname, boolean ensureSinglePSF, boolean splitIntensities, CreateTiffStack cp) { 
-		for (int i = 0; i<calib.length; i++){ //shift Fokus
-			calib[i][0] -=600; 
+		if (input.length<=0){
+			System.out.println("no points to simulate.");
+			return 1;
 		}
+		List<float[]> lInput = convertList(input);
+		
 		float pixelsize = 1/resolution;
 		//get mean intensity
 		float meanInt = 0;
@@ -127,8 +137,6 @@ public class CreateStack {
 		
 		
 		//convert List<float[][]> to List<float[]>
-		List<float[]> lInput = convertList(input);
-		System.out.println("finished conversion");
 		
 		
 		int numberPSFsBeforeSplitting = lInput.size();
@@ -137,11 +145,7 @@ public class CreateStack {
 			lInput = distributePSF(lInput, frameRate, deadTime, decayTime, meanInt);
 			//lInput = distributePSF(lInput, frameRate, decayTime, meanInt);
 		}
-		if (lInput.size()<=0){
-			System.out.println("no points to simulate.");
-			return 1;
-		}
-		System.out.println("finished distribution");
+		
 		int numberPSFsAfterSplitting = lInput.size();
 		
 		//find out minimum x- and y-values			
@@ -171,7 +175,7 @@ public class CreateStack {
 		ImageStack stackLeft = new ImageStack(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF); //emptySpace on both sides
 		//System.out.println("finished initialisation of image devices");
 		
-		//performing sorting operation by quicksort algorithm
+		//performing sorting operation by quicksort algorithm based on frame
 		Collections.sort(lInput, new Comparator<float[]>() {
 		    @Override
 		    public int compare(float[] o1, float[] o2) {
@@ -184,43 +188,62 @@ public class CreateStack {
 		    }
 		});
 		
-		if (ensureSinglePSF){
-			List<float[]> finalList = new ArrayList<float[]>();
-			double toleranceInNm = 1500;//minimal distance of centers
-			List<float[]> alreadyPresentInCurrentFrame = new ArrayList<float[]>();
-			int frame = 0;
-			int maxFrame = (int) lInput.get(lInput.size()-1)[3];
-			while (lInput.size()>0){
-				while (lInput.size() > 0 && lInput.get(0)[3] == frame) {
-					float [] currPSF = lInput.get(0);
-					lInput.remove(0);
-					boolean isTooClose = false;
-					for (int i = 0; i<alreadyPresentInCurrentFrame.size(); i++){
-						float[] test = alreadyPresentInCurrentFrame.get(i);
-						if ((Math.pow((currPSF[0]-test[0]),2) + Math.pow((currPSF[1]-test[1]),2))<Math.pow((toleranceInNm),2)){
-							currPSF[3]+=maxFrame+1; //add maximal frame number plus one
-							lInput.add(lInput.size(), currPSF);
-							isTooClose = true;
-							break;
-						}
-					}
-					if (isTooClose){
-						
-					}
-					else{
-						finalList.add(currPSF);
-						alreadyPresentInCurrentFrame.add(currPSF);
-					}
-				}
-				frame += 1;
-				alreadyPresentInCurrentFrame.clear();
-			}
-			lInput = finalList;
+		if (ensureSinglePSF){// for test purposes close PSF appearing in the same frame will be omitted by 
+			lInput = stretchDateToEnsureNonOverlappingPSFs(lInput);
 		}
 		String basename = FilenameUtils.getBaseName(fname);
 		String path = FilenameUtils.getFullPath(fname);
+		
 		writeLocalizationsToFile(lInput, path+"\\"+basename, borders, pixelsize);
 		int lastFrame = (int) lInput.get(lInput.size()-1)[3];
+		
+		stackLeft= fillTiffStack(lInput, stackLeft, resolution, emptySpace, emGain,
+				borders, rand, lastFrame, pImgWidth, pImgHeight, electronsPerADcount, frameRate,decayTime,
+				deadTime, sizePSF, modelNumber, qe, numericalAperture, waveLength, zFocus, zDefocus, sigmaNoise,
+				offset,calib,ensureSinglePSF, splitIntensities, cp);
+		
+		
+		//save imagestack
+		ImagePlus leftStack = new ImagePlus("", stackLeft);
+		FileSaver fs = new FileSaver(leftStack);
+		fs.saveAsTiffStack(fname);
+		
+		return 0;
+	}	
+
+
+	/**
+	 * method fillTiffStack calculates the intensities for all pixels of the tiff stack
+	 * @param input : list of float tables as input
+	 * @param stackLeft : empty tiff stack which will be filled
+	 * @param resolution : resolution, i.e. ratio pixel per nanometers 
+	 * @param emptySpace : empty pixels on the edges
+	 * @param emGain : EM Gain multiplier
+	 * @param borders : borders describe which part of the input data will be rendered into tiff stacks
+	 * @param rand : Instance of random number generator
+	 * @param electronsPerADcount : Conversion factor from electrons to digital numbers
+	 * @param frameRate : rate with which frames are taken
+	 * @param decayTime : mean duration of a blinking event
+	 * @param deadTime: dead time of the camera, all photons which would be detected during this time are lost
+	 * @param sizePSF : size over which the PSF is spread
+	 * @param modelNumber : kind of model for the PSF
+	 * @param qe: quantum efficiency
+	 * @param numerical aperture of the microscope
+	 * @param wavelength of the used light
+	 * @param zFocus : z-plane, in which the focus lies
+	 * @param zDefocus : z-value, for which the microscope defocusses
+	 * @param sigmaNoise : sigma of the Gaussian noise in the whole image
+	 * @param offset : constant offset
+	 * @param calib : calibration file for asymmetric Gaussian
+	 * @param ensureSinglePSF : option to ensure no overlapping PSFs
+	 * @param splitIntensities : option to enable single blinking events to contribute to multiple frames
+	 * @param cp : instance of CreateTiffStack SwingWorker to monitor progress
+	 */
+	private static ImageStack fillTiffStack(List<float[]> lInput, ImageStack stackLeft, float resolution, int emptySpace, float emGain,
+			ArrayList<Float> borders, Random rand, int lastFrame, int pImgWidth, int pImgHeight,
+			float electronsPerADcount, float frameRate, float decayTime, float deadTime, int sizePSF, int modelNumber, float qe,
+			float numericalAperture, float waveLength, float zFocus, float zDefocus, float sigmaNoise, 
+			float offset, float[][] calib, boolean ensureSinglePSF, boolean splitIntensities, CreateTiffStack cp) {
 		for (int frame = 0; frame<lastFrame;frame++){
 			cp.publicSetProgress((int)100.*frame/lastFrame);
 			// fill image stack with images
@@ -237,8 +260,8 @@ public class CreateStack {
 		
 					double sum = 0;
 					
-					switch(modelNumber) { // symmetric Gaussian
-					case 1:
+					switch(modelNumber) { 
+					case 1:// symmetric Gaussian
 						float sig = calcSig(currPSF[2], numericalAperture, waveLength, zFocus, zDefocus);
 						for (int k = -sizePSF; k <= sizePSF; k++) {
 							for (int m = -sizePSF; m <= sizePSF; m++) {
@@ -284,20 +307,48 @@ public class CreateStack {
 			pro.noise(sigmaNoise); //add Gaussian Readout noise (unit digital numbers NOT electrons)
 			stackLeft.addSlice(pro); //adds a processor for each frame to the stack
 		}
-		System.out.println("finished procession");
-		System.out.println("#PSFs before splitting " + numberPSFsBeforeSplitting);
-		System.out.println("#PSFs after splitting " + numberPSFsAfterSplitting);
-		//save imagestack
-		ImagePlus leftStack = new ImagePlus("", stackLeft);
-		FileSaver fs = new FileSaver(leftStack);
-		fs.saveAsTiffStack(fname);
-		
-		System.out.println("file succesfully saved");
-		return 0;
-	}	
+		return stackLeft;
+	}
 
+	/**
+	 * auxiliary method finds global maximum in the list of arrays for a given column
+	 * @param lInput : list of blinking events
+	 * @return finalList: altered list of blinking events ensuring a minimal distance of 1500 nm between the centers
+	 */
+	private static List<float[]> stretchDateToEnsureNonOverlappingPSFs(List<float[]> lInput) {
+		List<float[]> finalList = new ArrayList<float[]>();
+		double toleranceInNm = 1500;//minimal distance of centers
+		List<float[]> alreadyPresentInCurrentFrame = new ArrayList<float[]>();
+		int frame = 0;
+		int maxFrame = (int) lInput.get(lInput.size()-1)[3];
+		while (lInput.size()>0){
+			while (lInput.size() > 0 && lInput.get(0)[3] == frame) {
+				float [] currPSF = lInput.get(0);
+				lInput.remove(0);
+				boolean isTooClose = false;
+				for (int i = 0; i<alreadyPresentInCurrentFrame.size(); i++){
+					float[] test = alreadyPresentInCurrentFrame.get(i);
+					if ((Math.pow((currPSF[0]-test[0]),2) + Math.pow((currPSF[1]-test[1]),2))<Math.pow((toleranceInNm),2)){
+						currPSF[3]+=maxFrame+1; //add maximal frame number plus one
+						lInput.add(lInput.size(), currPSF);
+						isTooClose = true;
+						break;
+					}
+				}
+				if (isTooClose){
+					
+				}
+				else{
+					finalList.add(currPSF);
+					alreadyPresentInCurrentFrame.add(currPSF);
+				}
+			}
+			frame += 1;
+			alreadyPresentInCurrentFrame.clear();
+		}
+		return finalList;
+	}
 
-	
 	/**
 	 * auxiliary method creates a list out of the list of tables of events
 	 * @param input list
@@ -484,13 +535,16 @@ public class CreateStack {
 
 	/**
 	* auxiliary method distributePSF distributes the PSF in an amount different frames
-	* initialisation of new ArrayList necessary since adding elements to a non-specified list is not possible
+	* initialization of new ArrayList necessary since adding elements to a non-specified list is not possible
 	* @param iInp : input list 
 	* @param frRate : rate in which frames are taken
-	* @param decTime : time interval, over which the PSF distributes its intensity
+	* @param deadTime : dead time describes a certain amount of time per frame where no photons are collected
+	* @param meanDecTime : photon number as specified in meanIntensity is distributet over the mean decay time.
+	* @param meanIntensity : describes the number of photons per mean decay time  
 	* @return new list with PSF spread over different frames
 	*/
-	private static List<float[]> distributePSF(List<float[]> lInp, float frRate, float deadTime, float meanDecTime, float meanIntensity) {
+	private static List<float[]> distributePSF(List<float[]> lInp, float frRate, float deadTime, 
+			float meanDecTime, float meanIntensity) {
 	List<float[]> ret = new ArrayList<float[]>(); //new list
 	float frameTime = 1/frRate - deadTime;
 	if (frameTime < 0){

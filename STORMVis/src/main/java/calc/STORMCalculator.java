@@ -38,7 +38,7 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 		this.random = random;
 	}
 	
-		public DataSet getCurrentDataSet() {
+	public DataSet getCurrentDataSet() {
 		return currentDataSet;
 	}
 
@@ -66,27 +66,34 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 		notifyListeners();
 	}
 	
-	  private  Set<ThreadCompleteListener> listeners
+	private  Set<ThreadCompleteListener> listeners
       = new CopyOnWriteArraySet<ThreadCompleteListener>();
-	public  void addListener(final ThreadCompleteListener listener) {
+	public void addListener(final ThreadCompleteListener listener) {
 		listeners.add(listener);
 	}
-	public  void removeListener(final ThreadCompleteListener listener) {
+	public void removeListener(final ThreadCompleteListener listener) {
 		listeners.remove(listener);
 	}
 	
-	public  void notifyListeners() {
+	public void notifyListeners() {
 		for (ThreadCompleteListener listener : listeners) {
 			listener.notifyOfThreadComplete(this);
 		}
 	}
-	
+	/**
+	 * 
+	 * Function actually doing the complete simulation.
+	 * In case of surface models and line models the epitope positions are found first.
+	 * After that the labels are placed
+	 * In the last step STORM localizations are simulated based on the assumed fluorophore positions near the end of the labels.
+	 *
+	 */
 	public void doSimulation() {
 		float[][] ep = null; 
 		float[][] ap = null;
 		if(currentDataSet.dataType == DataType.TRIANGLES) {
 			TriangleDataSet currentTrs = (TriangleDataSet) currentDataSet;
-			Pair<float[][],float[][]> p = Finder.findAntibodiesTri(currentTrs.primitives, currentDataSet, this);
+			Pair<float[][],float[][]> p = LabelFinder.findAntibodiesTri(currentTrs.primitives, currentDataSet, this);
 			ep = p.getValue1(); 
 			ap = p.getValue0();
 			float [][] epCopy = new float[ep.length][];
@@ -101,7 +108,7 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 		}
 		else if(currentDataSet.dataType == DataType.LINES) {
 			LineDataSet currentLines = (LineDataSet) currentDataSet;
-			Pair<float[][],float[][]> p = Finder.findAntibodiesLines(currentLines.data, currentDataSet, this);
+			Pair<float[][],float[][]> p = LabelFinder.findAntibodiesLines(currentLines.data, currentDataSet, this);
 			ap = p.getValue0();
 			ep = p.getValue1();
 			float [][] epCopy = new float[ep.length][];
@@ -136,7 +143,7 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 					float alpha =  (float) (random.nextDouble()*2*Math.PI);
 					float[] vec = Calc.getVectorLine(ps.getAoa()+angleDeviation,ps.getLoa(),alpha); //a random vector with the set angle is created
 
-					vec = Finder.findRotation(vec,normTri); //the surface normal is rotated 
+					vec = LabelFinder.findRotation(vec,normTri); //the surface normal is rotated 
 					double length = Math.sqrt(vec[0]*vec[0]+vec[1]*vec[1]+vec[2]*vec[2]);
 					for (int j = 0; j<3; j++){
 						ep2[i][j] = (float) (ap[i][j] + vec[j]/length*currentDataSet.parameterSet.getLoa());
