@@ -846,7 +846,7 @@ public class Calc {
 
 	public static float[][] addFilteredPoints(float[][] image, double sigma, int filterwidth, 
 			double pixelsize, float[][] sd, int mode, ArrayList<Float> dims,
-			ArrayList<Float> borders){
+			ArrayList<Float> borders, float[] shifts){
 		if (filterwidth %2 == 0) {System.err.println("filterwidth must be odd");}
 		float xmin = dims.get(0);
 		float ymin = dims.get(2);
@@ -860,16 +860,16 @@ public class Calc {
 			double posY = 0;
 			switch (mode){
 				case 1:
-					posX = (sl[0]-xmin)/pixelsize+filterwidth; //position of current localization
-					posY = (sl[1]-ymin)/pixelsize+filterwidth;
+					posX = (sl[0]+shifts[0])/pixelsize+filterwidth; //position of current localization
+					posY = (sl[1]+shifts[1])/pixelsize+filterwidth;
 					break;
 				case 2:
-					posX = (sl[0]-xmin)/pixelsize+filterwidth; //position of current localization
-					posY = (sl[2]-zmin)/pixelsize+filterwidth;
+					posX = (sl[0]+shifts[0])/pixelsize+filterwidth; //position of current localization
+					posY = (sl[2]+shifts[2])/pixelsize+filterwidth;
 					break;
 				case 3:
-					posX = (sl[1]-ymin)/pixelsize+filterwidth; //position of current localization
-					posY = (sl[2]-zmin)/pixelsize+filterwidth;
+					posX = (sl[1]+shifts[1])/pixelsize+filterwidth; //position of current localization
+					posY = (sl[2]+shifts[2])/pixelsize+filterwidth;
 					break;
 			}
 			

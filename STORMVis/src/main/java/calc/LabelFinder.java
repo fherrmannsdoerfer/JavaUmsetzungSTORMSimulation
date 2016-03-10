@@ -15,11 +15,26 @@ import org.jzy3d.maths.Coord3d;
 
 /**
  * 
- * Finds Antibodies/lines/ep/ap
+ * This class manages the simulation of the label positions
+ * for surface and line models the first step is to simulate
+ *  the user defined number of epitopes, this step is skipped
+ * if an epitope model is imported.
+ * Then certain epitopes are chosen based on the labeling
+ * efficiency. This epitopes are treated as the starting 
+ * point of the label. The label length and angle define 
+ * the end point of the label which is where the fluorophore is assumed.
+ * 
  *
  */
 public class LabelFinder {
-	// fluorophore = binding site
+	/**
+	 * Finds label coordinates for surface models
+	 * 
+	 * @param trList : surface model 
+	 * @param parameter : instance of DataSet class containing all necessary parameters like labeling efficiency, label length ...
+	 * @param calc : instance of STORMCalculator class containing the random number generator
+	 * @return list of starting points and endpoints of the labels
+	 */
 	public static Pair<float[][],float[][]> findAntibodiesTri(List<float[][]> trList, 
 			DataSet parameter, STORMCalculator calc) {
 		ParameterSet ps = parameter.getParameterSet();
@@ -46,20 +61,29 @@ public class LabelFinder {
 		return new Pair<float[][],float[][]>(basepoints,ep);
 	}
 	
-	public static Pair<float[][],int[]> findBasePoints(int nbrFluorophores,float[][][] tr,
+	/**
+	 * finds starting points for the labels for surface models
+	 * @param nbrLabels : number of labels
+	 * @param tr : coordinate list defining the triangles the surface consitst of
+	 * @param areas : list of surface area for each triangle
+	 * @param progressBar : instance of the used progress bar
+	 * @param calc : instance of STORMCalculator providing the random number generator
+	 * @return list of starting points and corresponding triangles
+	 */
+	public static Pair<float[][],int[]> findBasePoints(int nbrLabels,float[][][] tr,
 			float[] areas, JProgressBar progressBar, STORMCalculator calc) {
-		float[][] points = new float[nbrFluorophores][3];
+		float[][] points = new float[nbrLabels][3];
 		Pair<float[][],float[][]> vecPair = Calc.getVertices(tr);
 		float[][] vec1 = vecPair.getValue0();
 		float[][] vec2 = vecPair.getValue1();
-		int[] idx = getRandomTriangles(areas, nbrFluorophores,progressBar,calc);
+		int[] idx = getRandomTriangles(areas, nbrLabels,progressBar,calc);
 		progressBar.setString("Finding Basepoints");
-		for (int f = 0; f < nbrFluorophores; f++) {
+		for (int f = 0; f < nbrLabels; f++) {
 			while(true) {
 				double randx = calc.random.nextDouble();
 				double randy = calc.random.nextDouble();
 				//if (f%(nbrFluorophores/100)==0) {
-					calc.publicSetProgress((int) (1.*f/nbrFluorophores*100.));
+					calc.publicSetProgress((int) (1.*f/nbrLabels*100.));
 				//}
 				for (int i = 0; i < 3; i++) {
 					points[f][i] = tr[idx[f]][0][i] + (float) randx*vec1[idx[f]][i] + (float) randy*vec2[idx[f]][i];
@@ -73,18 +97,24 @@ public class LabelFinder {
 		}
 		return new Pair<float[][], int[]>(points, idx);
 	}
-	
+	/**
+	 * finds starting points and end points of the labels for line models
+	 * @param lines : List of lines defining the filaments
+	 * @param parameter : instance of DataSet class containing all necessary parameters like labeling efficiency, label length ...
+	 * @param calc : instance of STORMCalculator providing the random number generator
+	 * @return list of starting points and list of end points of the labels
+	 */
 	public static Pair<float[][],float[][]> findAntibodiesLines(List<ArrayList<Coord3d>> lines, 
-			DataSet ds, STORMCalculator calc) {
-		JProgressBar progressBar = ds.getProgressBar();
-		ParameterSet ps = ds.getParameterSet();
-		float bspnm = ps.getBspnm();
-		float pabs = ps.getPabs();
-		float rof = ps.getRof();
-		float aoa = ps.getAoa();
-		float soa = ps.getSoa();
-		float loa = ps.getLoa();
-		//finds start- and endpoint of antibodies for filamentous structures
+			DataSet parameter, STORMCalculator calc) {
+		JProgressBar progressBar = parameter.getProgressBar();
+		ParameterSet ps = parameter.getParameterSet();
+		float bspnm = ps.getBspnm(); //binding sites per nm
+		float pabs = ps.getPabs(); //labeling efficiency
+		float rof = ps.getRof(); //radius of filament
+		float aoa = ps.getAoa(); //angle of label
+		float soa = ps.getSoa(); //standard deviation of label angle
+		float loa = ps.getLoa(); //length of label
+		//finds start- and endpoints of antibodies for filamentous structures
 		int objectNumber = lines.size();
 		List<ArrayList<float[]>> points = new ArrayList<ArrayList<float[]>>();
 		
@@ -196,9 +226,7 @@ public class LabelFinder {
 				System.out.println("NAN FOUND EP");
 			}
 		}
-//		System.out.println("EP");
-//		Calc.print2dMatrix(ep);
-		System.out.println("Rotations completed");
+
 		return ep;
 	}
 	

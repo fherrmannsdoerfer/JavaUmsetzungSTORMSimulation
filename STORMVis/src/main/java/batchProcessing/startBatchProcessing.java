@@ -38,7 +38,7 @@ public class startBatchProcessing {
 	private static String EXTENSIONIMAGEOUTPUT = ".tif";
 	private static String outputFolder = "";// "C:\\Users\\herrmannsdoerfer\\Desktop\\Tiff-StackTestModelle\\Mikrotubuli\\";
 	private static String inputFolder = "";
-	
+	static float[] shifts ={500,500,500};
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -415,7 +415,7 @@ public class startBatchProcessing {
 		System.out.println("Path to write project: " + path);
 		System.out.println("project name: " + name);
 		FileManager.ExportToFile(allDataSets.get(0), path, params.viewStatus,params.borders,
-				allDataSets.get(0).getParameterSet().getPixelsize(),allDataSets.get(0).getParameterSet().getSigmaRendering());
+				allDataSets.get(0).getParameterSet().getPixelsize(),allDataSets.get(0).getParameterSet().getSigmaRendering(),shifts);
 	}
 }
 

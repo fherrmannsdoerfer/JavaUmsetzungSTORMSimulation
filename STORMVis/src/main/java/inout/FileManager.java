@@ -120,16 +120,18 @@ public class FileManager {
 		return p;
 	}
 
-	public static void ExportToFile(DataSet dataset, String path, int mode,ArrayList<Float> borders,double pixelsize, double sigma) {
+	public static void ExportToFile(DataSet dataset, String path, int mode,ArrayList<Float> borders,
+			double pixelsize, double sigma, float[] shifts) {
 		
 		String basename = path.substring(0, path.length()-4);
-		writeProjectionToFile(dataset,path,mode,borders,pixelsize, sigma);
+		writeProjectionToFile(dataset,path,mode,borders,pixelsize, sigma, shifts);
 		writeLocalizationsToFile(dataset.stormData,basename,borders);
 		writeLocalizationsToFileForFRC(dataset.stormData, basename,borders);
 		writeLogFile(dataset.getParameterSet(), basename,borders);
 	}
 	
-	private static void writeProjectionToFile(DataSet dataset, String path, int mode, ArrayList<Float> borders, double pixelsize, double sigmaOrig){
+	private static void writeProjectionToFile(DataSet dataset, String path, int mode, 
+			ArrayList<Float> borders, double pixelsize, double sigmaOrig, float[] shifts){
 		float[][] stormData = dataset.stormData;
 //		double pixelsize = 10;
 		double sigma = sigmaOrig/pixelsize; //in nm sigma to blur localizations
@@ -155,21 +157,21 @@ public class FileManager {
 		
 		switch (mode){//which projection is exported
 			case 1://xy
-				pixelX =(int) Math.pow(2, Math.ceil(Math.log((xmax-xmin) / pixelsize+2*filterwidth)/Math.log(2)));
-				pixelY = (int) Math.pow(2, Math.ceil(Math.log((ymax-ymin) / pixelsize+2*filterwidth)/Math.log(2)));
+				pixelX = (int) Math.pow(2, Math.ceil(Math.log((xmax+shifts[0]) / pixelsize+2*filterwidth)/Math.log(2)));
+				pixelY = (int) Math.pow(2, Math.ceil(Math.log((ymax+shifts[1]) / pixelsize+2*filterwidth)/Math.log(2)));
 				break;
 			case 2://xz
-				pixelX =(int) Math.pow(2, Math.ceil(Math.log((xmax-xmin) / pixelsize+2*filterwidth)/Math.log(2)));
-				pixelY = (int) Math.pow(2, Math.ceil(Math.log((zmax-zmin) / pixelsize+2*filterwidth)/Math.log(2)));
+				pixelX = (int) Math.pow(2, Math.ceil(Math.log((xmax+shifts[0]) / pixelsize+2*filterwidth)/Math.log(2)));
+				pixelY = (int) Math.pow(2, Math.ceil(Math.log((zmax+shifts[2]) / pixelsize+2*filterwidth)/Math.log(2)));
 				break;
 			case 3://yz
-				pixelX =(int) Math.pow(2, Math.ceil(Math.log((ymax-ymin) / pixelsize+2*filterwidth)/Math.log(2)));
-				pixelY = (int) Math.pow(2, Math.ceil(Math.log((zmax-zmin) / pixelsize+2*filterwidth)/Math.log(2)));
+				pixelX = (int) Math.pow(2, Math.ceil(Math.log((ymax+shifts[1]) / pixelsize+2*filterwidth)/Math.log(2)));
+				pixelY = (int) Math.pow(2, Math.ceil(Math.log((zmax+shifts[2]) / pixelsize+2*filterwidth)/Math.log(2)));
 				break;
 		}
 		
 		float [][] image = new float[pixelX][pixelY];
-		image = Calc.addFilteredPoints(image, sigma, filterwidth, pixelsize, stormData,mode,dims,borders);
+		image = Calc.addFilteredPoints(image, sigma, filterwidth, pixelsize, stormData,mode,dims,borders,shifts);
 		write2dImage(pixelX, pixelY, image, path);
 		
 		ArrayList<float[][]> coloredImage = new ArrayList<float[][]>();

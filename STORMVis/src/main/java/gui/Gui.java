@@ -189,9 +189,13 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	
 	int viewStatus = 0; // which projection is used for display and rendering
 	
-	float shiftX = -1;
-	float shiftY = -1;
-	float shiftZ = -1;
+	float shiftX = -1;  //used if allowShift is true leading to centered coordinates
+	float shiftY = -1;	//the coordinates of consecutively imported models will be 
+	float shiftZ = -1;	//shifted in accordance to shift applied to the first imported model
+	
+	float[] shifts = {500,500,500}; 	//for aligned output of multiple channels 
+								//the same shift for the coordinates is needed when projections
+								//are rendered. Default is 500 nm in each direction
 	
 	public Color backgroundColor = Color.BLACK;
 	public Color mainColor = Color.WHITE;
@@ -1221,10 +1225,11 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 						System.out.println("project name: " + name);
 						borders.clear();
 						borders = getBorders();
-						
+						findShifts(allDataSets);
 						copyFields();
 						FileManager.ExportToFile(allDataSets.get(currentRow), path, viewStatus,borders, 
-								allDataSets.get(currentRow).getParameterSet().getPixelsize(),allDataSets.get(currentRow).getParameterSet().getSigmaRendering());
+								allDataSets.get(currentRow).getParameterSet().getPixelsize(),
+								allDataSets.get(currentRow).getParameterSet().getSigmaRendering(), shifts);
 					}
 				}
 				else {
@@ -2033,6 +2038,14 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	}
 	
 	
+	protected void findShifts(List<DataSet> allDataSets2) {
+		for (DataSet ds: allDataSets2){
+			shifts[0] = Math.max(-Calc.min(ds.stormData, 0),shifts[0]);
+			shifts[1] = Math.max(-Calc.min(ds.stormData, 1),shifts[1]);
+			shifts[2] = Math.max(-Calc.min(ds.stormData, 2),shifts[2]);
+		}
+	}
+
 	protected void updateCounter() {
 		int nbrVisLocs = 0;
 		if (allDataSets.get(currentRow).stormData!= null){
