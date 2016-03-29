@@ -108,7 +108,7 @@ public class STORMCalculator extends SwingWorker<Void, Void>{
 		}
 		else if(currentDataSet.dataType == DataType.LINES) {
 			LineDataSet currentLines = (LineDataSet) currentDataSet;
-			Pair<float[][],float[][]> p = LabelFinder.findAntibodiesLines(currentLines.data, currentDataSet, this);
+			Pair<float[][],float[][]> p = LabelFinder.findLabelsLines(currentLines.data, currentDataSet, this);
 			ap = p.getValue0();
 			ep = p.getValue1();
 			float [][] epCopy = new float[ep.length][];

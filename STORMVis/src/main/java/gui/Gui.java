@@ -2337,6 +2337,8 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 				plot.viewPoint = null;
 				plot.viewBounds = null;
 			}
+			allDataSets.get(currentRow).getParameterSet().setPointSize(new Float(pointSizeField.getText()));
+			allDataSets.get(currentRow).getParameterSet().setLineWidth(new Float(lineWidthField.getText()));
 			setSelectedListsForDrawing();
 			//visualizeAllSelectedData();
 		}
@@ -2407,6 +2409,10 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		model.data.addAll(allDataSets);
 		updateMinMax();
 		if(sets.size() > 0) {
+			plot.showBox = chckbxShowAxes.isSelected();
+			plot.showTicks = chckbxShowTicks.isSelected();
+			plot.backgroundColor = new org.jzy3d.colors.Color(backgroundColor.getRed(),backgroundColor.getGreen(),backgroundColor.getBlue());
+			plot.mainColor = new org.jzy3d.colors.Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue());
 			plot.dataSets.clear();
 			plot.addAllDataSets(sets);
 			plotPanel.removeAll();

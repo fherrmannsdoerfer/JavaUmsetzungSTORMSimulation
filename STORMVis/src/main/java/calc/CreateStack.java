@@ -134,19 +134,12 @@ public class CreateStack {
 			meanInt = meanInt + input[i][4];
 		}
 		meanInt /=input.length;
-		
-		
-		//convert List<float[][]> to List<float[]>
-		
-		
-		int numberPSFsBeforeSplitting = lInput.size();
+
 		//simulate distribution of the intensity over different frames
 		if (splitIntensities){
 			lInput = distributePSF(lInput, frameRate, deadTime, decayTime, meanInt);
 			//lInput = distributePSF(lInput, frameRate, decayTime, meanInt);
 		}
-		
-		int numberPSFsAfterSplitting = lInput.size();
 		
 		//find out minimum x- and y-values			
 		float minX = globalMin(lInput, 0); 
@@ -159,7 +152,7 @@ public class CreateStack {
 			lInput.get(j)[1] -= minY;
 			lInput.get(j)[1] += (emptySpace + sizePSF)/ resolution;
 		}
-		for (int k = 0; k<2; k++){
+		for (int k = 0; k<2; k++){//increase borders to ensure that psfs are not cut 
 			borders.set(k, borders.get(k) +(emptySpace + sizePSF)/ resolution-minX);
 			borders.set(k+2, borders.get(k+2) +(emptySpace + sizePSF)/ resolution-minY);
 		}
@@ -173,7 +166,6 @@ public class CreateStack {
 		
 		//create new image stack	
 		ImageStack stackLeft = new ImageStack(pImgWidth + emptySpace + sizePSF, pImgHeight + emptySpace + sizePSF); //emptySpace on both sides
-		//System.out.println("finished initialisation of image devices");
 		
 		//performing sorting operation by quicksort algorithm based on frame
 		Collections.sort(lInput, new Comparator<float[]>() {
@@ -311,7 +303,9 @@ public class CreateStack {
 	}
 
 	/**
-	 * auxiliary method finds global maximum in the list of arrays for a given column
+	 * this function ensures that no PSFs are rendered closer than 1500 nm to each other. 
+	 * If two PSFs might be to close one in the same frame, one of the psfs is put in a new
+	 * frame at the end of the image stack where a new frame is created
 	 * @param lInput : list of blinking events
 	 * @return finalList: altered list of blinking events ensuring a minimal distance of 1500 nm between the centers
 	 */
@@ -638,9 +632,3 @@ public class CreateStack {
 	}
 
 }
-
-
-
-
-//Input fuer Astigmatismus: List<Float> calib
-													

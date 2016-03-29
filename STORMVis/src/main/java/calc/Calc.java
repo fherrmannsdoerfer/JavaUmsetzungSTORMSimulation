@@ -51,7 +51,7 @@ public class Calc {
 	}
 	
 	/**
-	 * 
+	 * function to print a 3d matrix to the console
 	 * @param array - 3d matrix
 	 * prints a 3d matrix, iteration by "page"
 	 */
@@ -282,6 +282,9 @@ public class Calc {
 	}
 	
 	/**
+	 * function finds vector for surface data input. The angle between the
+	 * surface normal and this vector can be specified. The additional 
+	 * degree of freedom is defined by the third parameter.
 	 * @param aoa
 	 * @param length
 	 * @return vector with antibody angle and length for triangles and lines
@@ -295,19 +298,21 @@ public class Calc {
 		return vec;
 	}
 	
-	public static float[] getVector(float aoa, float length, float alpha) {
-		double x = Math.cos(aoa)*Math.cos(alpha);
-		double y = Math.cos(aoa)*Math.sin(alpha);
-		double z = Math.sin(aoa);
-		float[] vec = {(float) (x*length),(float) (y*length),(float) (z*length)};
-		return vec;
-	}
+	/**
+	 * function finds vector for line data input. The angle between the
+	 * surface normal and this vector can be specified. The additional 
+	 * degree of freedom is defined by the third parameter.
+	 * @param aoa
+	 * @param length
+	 * @param alpha
+	 * @return
+	 */
 	public static float[] getVectorLine(float aoa, float length, float alpha) {
 		double z = Math.sin(aoa)*Math.sin(alpha);
 		double y = Math.sin(aoa)*Math.cos(alpha);
 		double x = 0;
 		if (aoa > Math.PI/2){
-			 x= -Math.sqrt(1-y*y-z*z);
+			x= -Math.sqrt(1-y*y-z*z);
 		}
 		else {
 			x = Math.sqrt(1-y*y-z*z);
@@ -318,9 +323,9 @@ public class Calc {
 
 	
 	/**
-	 * Matrix multiplication
-	 * @param m
-	 * @param vec
+	 * Matrix multiplication with vector
+	 * @param m : matrix
+	 * @param vec : vector
 	 * @return m x vec
 	 */
 	public static float[] applyMatrix(float[][] m, float[] vec) {
@@ -338,8 +343,8 @@ public class Calc {
 	
 	/**
 	 * Simple matrix multiplication
-	 * @param m1
-	 * @param m2
+	 * @param m1 : first matrix
+	 * @param m2 : second matrix
 	 * @return m1 x m2
 	 */
 	
@@ -359,8 +364,8 @@ public class Calc {
 	
 	/**
 	 * Matrix addition
-	 * @param m1
-	 * @param m2
+	 * @param m1 : first matrix
+	 * @param m2 : second matrix
 	 * @return m1 + m2
 	 */
 	
@@ -376,11 +381,10 @@ public class Calc {
 	
 	/**
 	 * Division of matrix by real number
-	 * @param m1
-	 * @param div
-	 * @return m1/div
+	 * @param m1 : matrix
+	 * @param div : real number
+	 * @return result of devision m1/div
 	 */
-	
 	
 	public static float[][] matrixDivide(float[][] m1, float div) {
 		float[][] result = new float[m1.length][m1.length];
@@ -392,6 +396,12 @@ public class Calc {
 		return result;
 	}
 	
+	/**
+	 * function multiplies vector with real value
+	 * @param vec
+	 * @param multi
+	 * @return scaled vector
+	 */
 	public static float[] multiplyVector(float[] vec, float multi) {
 		float[] result = new float[vec.length];
 		for(int i = 0; i < vec.length; i++) {
@@ -418,45 +428,7 @@ public class Calc {
         return result;
     }
 	
-	/**
-	 * 
-	 * Distances of all vertices in m1 and m2 (used for mergePSF)
-	 * @param m1
-	 * @param m2
-	 * @return distance
-	 */
-	
-	public static float[][] pairwiseDistance(float[][] m1, float[][] m2) {
-		float[][] result = new float[m1.length][m1.length];
-		for(int i = 0; i < m1.length; i++) {
-			for(int j = 0; j < m1.length; j ++) {
-				float[] vec1 = m1[i];
-				float[] vec2 = m2[j];
-				float difference = getNorm(difference(vec1, vec2));
-				result[i][j] = difference;
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * Addition of add to lower triangle of an n x n matrix m
-	 * @param m
-	 * @param add
-	 * @return m(lower triangle) + add
-	 */
-	
-	public static float[][] addToLowerTriangle(float[][] m, float add) {
-		float[][] result = m;
-		for (int i = 0; i < m.length; i++) {
-			for (int j = i; j < m.length; j ++) {
-				result[j][i] += add;
-			}
-		}
-		return m;
-	}
-	
-	
+			
 	/**
 	 * Random vector multiplied with multiplier
 	 * @param dimension
@@ -516,12 +488,22 @@ public class Calc {
 		return max;
 	}
 	
+	/**
+	 * determine largest value of int array
+	 * @param f : int array
+	 * @return max value of given array
+	 */
 	public static float max(int[] f) {
 		List<Integer> list = Arrays.asList(ArrayUtils.toObject(f));
 		Integer min = Collections.max(list);
 		return min.intValue();
 	}
 	
+	/**
+	 * determine largest value of float array
+	 * @param f : float array
+	 * @return largest value of given array
+	 */
 	public static float max(float[] f) {
 		List<Float> list = Arrays.asList(ArrayUtils.toObject(f));
 		Float max = Collections.max(list);
@@ -574,23 +556,23 @@ public class Calc {
 		float[][] result = toFloatArray(list);
 		return result;
 	}
-	
-	public static List<float[]> removeDeletedLinesToArrayList(List<float[]> m) {
-		List<float[]> list = new ArrayList<float[]>();
-		for (int i = 0; i < m.size(); i++) {
-			if(m.get(i)[0] != -1 && m.get(i)[1] != -1) {
-				list.add(m.get(i));
-			}
-		}
-		return list;
-	}
-	
-	
-	
+		
+	/**
+	 * returns column specified in second argument from 2d float array
+	 * @param m : float array
+	 * @param col : index of column to return
+	 * @return column to return
+	 */
 	public static float[] getColumn(float[][] m, int col) {
 		m = Calc.transpose(m);
 		return m[col];
 	}
+	
+	/**
+	 * converts list of float arrays to 2d float array
+	 * @param f : list of 1d float arrays
+	 * @return 2d float array
+	 */
 	
 	public static float[][] toFloatArray(List<float[]> f) {
 		if (f.size()==0){
@@ -603,33 +585,15 @@ public class Calc {
 		return result;
 	}
 	
-	public static TFloatArrayList getColumnOfArrayList(List<float[]> list, int column) {
-		TFloatArrayList result = new TFloatArrayList();
-		for(int i = 0; i < list.size(); i++) {
-			result.add(list.get(i)[column]);
-		}
-		return result;
-	}
-	
-	public static float[] getColumnOfArrayListToFloatArray(List<float[]> list, int column) {
-		float[] result = new float[list.size()];
-		for(int i = 0; i < list.size(); i++) {
-			result[i]= list.get(i)[column];
-		}
-		return result;
-	}
-	
-	// only for nx2 vertices
-	public static float[] getLengthDiffVec(float[][] m) {
-		float[] result = new float[m.length];
-		for(int i = 0; i < m.length; i++) {
-			result[i] = getNorm(m[i]);
-		}
-		return result;
-	}
-	
-
-	
+	/**
+	 * fills the three individual rgb channels of the color bar in a continuous fashion
+	 * @param colorBar : Arraylist of 2d float arrays representing the 3 color channels
+	 * @param zmin : minimal z value represented by the color bar
+	 * @param zmax : maximal z value represented by the color bar
+	 * @param colorProof : boolean value to chose between colors with improved contrast for red/green blind people
+	 * @return filled color bar
+	 */
+		
 	public static ArrayList<float[][]> fillColorBar(ArrayList<float[][]> colorBar, 
 			float zmin, float zmax, boolean colorProof){
 		int width = colorBar.get(0)[0].length;
@@ -645,6 +609,19 @@ public class Calc {
 		return colorBar;
 	}
 	
+	/**
+	 * this function samples a Gaussian with custom width at the center of each localization
+	 * @param coloredImage : List of 2d float arrays representing the rgb channels
+	 * @param sigma : width of the Gaussian in nm
+	 * @param filterwidth : width of the region in which the Gaussian is sampled in pixels.
+	 * @param pixelsize : pixelsize in nm for the output image
+	 * @param sd : 2d array of the localizations
+	 * @param mode : defines which projection is rendered
+	 * @param borders : borders defining which part of the data is rendered
+	 * @param dims : dimension of the data (xmin, xmax, ymin,..., zmax)
+	 * @param colorProof : boolean value to chose between colors with improved contrast for red/green blind people
+	 * @return list of 2d float arrays representing the rgb channels
+	 */
 	public static ArrayList<float[][]> addFilteredPoints3D(ArrayList<float[][]> coloredImage, double sigma, int filterwidth, 
 			double pixelsize, float[][] sd, int mode, ArrayList<Float> borders, ArrayList<Float> dims, boolean colorProof){
 		if (filterwidth %2 == 0) {System.err.println("filterwidth must be odd");}
@@ -731,6 +708,14 @@ public class Calc {
 	
 		return coloredImage;
 	}
+	
+	/**
+	 * function which overrides the largest intensity values based on given percentile
+	 * @param redChannel : 2d array representing the red channel of the image
+	 * @param greenChannel : 2d array representing the green channel of the image
+	 * @param blueChannel : 2d array representing the blue channel of the image
+	 * @param percentile : percentile defining how many percent of the intensities stay unaltered
+	 */
 	private static void removeBrightestSpots(float[][] redChannel,
 			float[][] greenChannel, float[][] blueChannel, double percentile) {
 		ArrayList<Float> allPoints = new ArrayList<Float>();
@@ -764,17 +749,28 @@ public class Calc {
 		
 		
 	}
-
+	
+	/**
+	 * returns intensity value based on z position and specified color channel
+	 * @param posZ : z value of current localization
+	 * @param zMax : maximal z value(0 is assumed to be the lower bound)
+	 * @param color : 0 = red channel, 1 = green, 2 = blue
+	 * @return intensity value based on z position and specified color
+	 */
 	private static float getColor(double posZ, float zMax, int color) {
 		return getColor(posZ, zMax,color, false);
 	}
+	
+	/**
+	 * returns intensity value based on z position and specified color channel
+	 * @param posZ : z value of current localization
+	 * @param zMax : maximal z value(0 is assumed to be the lower bound)
+	 * @param color : 0 = red channel, 1 = green, 2 = blue
+	 * @param redGreenBlindProof : boolean value to chose between colors with improved contrast for red/green blind people
+	 * @return intensity value based on z position and specified color
+	 */
 	private static float getColor(double posZ, float zMax, int color, boolean redGreenBlindProof) {
-//		if (posZ < 0.25* zMax){
-//			//blue rises from 0 to 1
-//			if (color == 2){
-//				return (float) (4*posZ / zMax);
-//			}
-//		}
+
 		boolean switchColorProof = false;
 		if (redGreenBlindProof){
 			if (switchColorProof){
@@ -844,13 +840,24 @@ public class Calc {
 		return 0;
 	}
 
+	/**
+	 * this function samples a Gaussian with custom width at the center of each localization
+	 * @param image : float array representing one channel of a gray scale image
+	 * @param @param sigma : width of the Gaussian in nm
+	 * @param filterwidth : width of the region in which the Gaussian is sampled in pixels.
+	 * @param pixelsize : pixelsize in nm for the output image
+	 * @param sd : 2d array of the localizations
+	 * @param mode : defines which projection is rendered
+	 * @param borders : borders defining which part of the data is rendered
+	 * @param dims : dimension of the data (xmin, xmax, ymin,..., zmax)
+	 * @param shifts : used to ensure the same coordinate system for all rendered images 
+	 * @return rendered image
+	 */
 	public static float[][] addFilteredPoints(float[][] image, double sigma, int filterwidth, 
 			double pixelsize, float[][] sd, int mode, ArrayList<Float> dims,
 			ArrayList<Float> borders, float[] shifts){
 		if (filterwidth %2 == 0) {System.err.println("filterwidth must be odd");}
-		float xmin = dims.get(0);
-		float ymin = dims.get(2);
-		float zmin = dims.get(4);
+		
 		double factor = 100*1/(2*Math.PI*sigma*sigma);
 		double factor2 = -0.5/sigma/sigma;
 		//System.out.println(sd.getSize());
@@ -889,6 +896,11 @@ public class Calc {
 		return image;
 	}
 
+	/**
+	 * function to calculate how much the coordinates of the given line data set have to be shifted to be centered
+	 * @param data : filamentous data 
+	 * @return list of shifts
+	 */
 	public static ArrayList<Float> findShiftLines(List<ArrayList<Coord3d>> data) {
 		ArrayList<Float> shifts = new ArrayList<Float>();
 		ArrayList<Float> dims = new ArrayList<Float>();
@@ -899,6 +911,11 @@ public class Calc {
 		return shifts;
 	}
 	
+	/**
+	 * function to find the bounding box for filamentous input
+	 * @param data list of list of points representing a list of lines given by points
+	 * @return arraylist containing the min/max values for all dimensions
+	 */
 	public static ArrayList<Float> findDimsLines(List<ArrayList<Coord3d>> data){
 		ArrayList<Float> dims = new ArrayList<Float>();
 		float minx = Float.MAX_VALUE;
@@ -938,6 +955,11 @@ public class Calc {
 		return dims;
 	}
 
+	/**
+	 * function finds how surface models have to be shifted to be centered 
+	 * @param primitives list of 2d float arrays representing individual triangles
+	 * @return list containing the amount of shift for each dimension
+	 */
 	public static ArrayList<Float> findShiftTriangles(List<float[][]> primitives) {
 		ArrayList<Float> dims = findDimsTriangles(primitives);
 		ArrayList<Float> shifts = new ArrayList<Float>();
@@ -947,6 +969,11 @@ public class Calc {
 		return shifts;
 	}
 	
+	/**
+	 * function to find bounding box of surface model input data
+	 * @param primitives : list of 2d float arrays representing individual triangles 
+	 * @return bounding box containing all triangles
+	 */
 	public static ArrayList<Float> findDimsTriangles(List<float[][]> primitives){
 		ArrayList<Float> dims = new ArrayList<Float>();
 		float minx = Float.MAX_VALUE;
@@ -986,7 +1013,12 @@ public class Calc {
 		return dims;
 	}
 	
-	public static ArrayList<Float> findDims(float[][] antiBodyEndPoints){
+	/**
+	 * function to find bounding box for 2d float array
+	 * @param arrayToFindBounds
+	 * @return arraylist containing the min/max values for all dimensions
+	 */
+	public static ArrayList<Float> findDims(float[][] arrayToFindBounds){
 		ArrayList<Float> dims = new ArrayList<Float>();
 		float minx = Float.MAX_VALUE;
 		float maxx = -Float.MAX_VALUE;
@@ -994,7 +1026,7 @@ public class Calc {
 		float maxy = -Float.MAX_VALUE;
 		float minz = Float.MAX_VALUE;
 		float maxz = -Float.MAX_VALUE;
-		for(float[] prim:antiBodyEndPoints){
+		for(float[] prim:arrayToFindBounds){
 			for(int i =0; i<prim.length; i++){
 				if (prim[0]<minx){
 					minx = prim[0];
@@ -1026,7 +1058,12 @@ public class Calc {
 	}
 	
 	
-
+	/**
+	 * function that finds all localizations within the specified borders
+	 * @param stormData : list of localizations
+	 * @param borders : borders given by arraylist of floats
+	 * @return indices of points which lie inside the borders
+	 */
 
 	public static ArrayList<Integer> findStormDataInRange(float[][] stormData,
 			ArrayList<Float> borders) {
@@ -1043,6 +1080,12 @@ public class Calc {
 		return retList;
 	}
 
+	/**
+	 * function counting the number of visible localizations. All localizations are visible that lie within the borders.
+	 * @param borders : borders, only the inner part is counted
+	 * @param dataSet : list of localizations
+	 * @return number of visible localizations
+	 */
 	public static int countVisibleLocs(ArrayList<Float> borders,
 			DataSet dataSet) {
 		int counter = 0;
@@ -1054,7 +1097,12 @@ public class Calc {
 		}
 		return counter;
 	}
-
+	/**
+	 * helper function to determine if a given point lies within the borders
+	 * @param tmp
+	 * @param borders
+	 * @return
+	 */
 	public static boolean isInRange(float[] tmp, ArrayList<Float> borders) {
 		// TODO Auto-generated method stub
 		if (borders.isEmpty()){
