@@ -2165,6 +2165,12 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 					int row = target.getSelectedRow();
 					int column = target.getSelectedColumn();
 					System.out.println("row/col :" + row + " | " + column);
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					loadParameterSetOfRow(row);
 				}
 			}
@@ -2214,7 +2220,6 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			else {
 				epitopeDensityField.setText(String.format(Locale.ENGLISH,"%.4f",set.getBspsnm()));
 			}
-			
 			pointSizeField.setText(set.getPointSize().toString());
 
 			showAntibodiesBox.setSelected(set.getAntibodyVisibility());
