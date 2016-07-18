@@ -21,7 +21,7 @@ import org.jzy3d.maths.Coord3d;
 public class LineObjectParser {
 	
 	//static String REGEX = "\\s+ \\d+ \\s+\\d+\\.*\\d+.*";
-	static String REGEX = "\\s+\\d+\\s+\\d+\\.*\\d+.*";
+	static String REGEX = "\\s+\\d+\\s+\\p{Punct}?\\d+\\.*\\d+.*";
 	
 	public List<ArrayList<Coord3d>> allObjects = new ArrayList<ArrayList<Coord3d>>();
 	public int objectNumber = 0;

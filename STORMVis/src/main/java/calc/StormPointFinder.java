@@ -48,6 +48,10 @@ public class StormPointFinder {
 					calc,ps.getFrames(), ps.getMeanPhotonNumber(), ps.getBleachConst(), applyBleaching);
 		}
 		else{
+//			stormPoints = createStormPointsPafp(listEndPoints, ps, 
+//					sxy, sz, psfWidth, progressBar,
+//					calc, ps.getFrames(), ps.getMeanPhotonNumber(), 0.01f,7.8f, 
+//					0.4f, 15.7f, 0.24f, 5.4f);
 			stormPoints = createStormPoints(listEndPoints, ps, sxy, sz, psfWidth, progressBar,
 					calc, ps.getFrames(), ps.getMeanPhotonNumber(),ps.getMinIntensity());
 		}
@@ -208,6 +212,114 @@ public class StormPointFinder {
 		return stormPoints;
 	}
 	
+	private static float[][] createStormPointsPafp(float[][] listEndPoints, ParameterSet ps, 
+			float sxy, float sz, float psfWidth, JProgressBar progressBar,
+			STORMCalculator calc, int frames, int meanPhotonNumber, float ka,float kd, 
+			float kr1, float kr2, float alpha, float kb) {
+		for (int i = 0; i< 100; i++){
+			System.err.println("Pafp mode selected!!!");
+		}
+		progressBar.setString("Create Localizations");
+		double k = -Math.log(0.5)/(meanPhotonNumber-1000);
+		double factor = 500;
+		ArrayList<Float> intensities = new ArrayList<Float>();
+		for (int i = 1000; i<20*meanPhotonNumber; i++){
+			for (int j = 0; j<Math.floor(factor * Math.exp(-k*i)); j++){
+				//System.out.println(Math.ceil(factor * Math.exp(-k*i)));
+				intensities.add((float) i);
+			}
+		}
+		factor = 1000;
+		ArrayList<Integer> startFrames = new ArrayList<Integer>();
+		for (int i = 0; i<listEndPoints.length; i++){
+			while (true){
+				int maxFrame =(int) (calc.random.nextDouble() * frames*10);
+				//find first frame in which the activation appears
+				double randomNumber = calc.random.nextDouble(); //random number is equally distributed between 0 and 1 and it is used
+				double tmp = Math.exp(-ka*maxFrame*(ps.getDeadTime()+1/ps.getFrameRate()));
+				if (randomNumber < tmp){ //to be tested for the probability that this frame gets this 
+					startFrames.add(maxFrame); //localization. If it is smaller maxFrame is stored and the while loop is left
+					break;
+				}		//if it is to large a new maxFrame is determined.
+
+			}
+		}
+		List<float[]> allStormPoints = new ArrayList<float[]>();
+		float[][] stormPoints = null;
+		float x;
+		float y;
+		float z;
+		for (int i = 0; i< listEndPoints.length; i++){
+			calc.publicSetProgress((int) (1.*i/listEndPoints.length*100.));
+			int startFrame = startFrames.get(i);
+			if (startFrame>frames){
+				continue;
+			}
+			int counter = 0;
+			float dt = (ps.getDeadTime()+1/ps.getFrameRate()); //time
+			//probabilities that a transfer occurs in this frame
+			double pAtoBleach = 1 - Math.exp(-kb*dt);
+			double pAtoDark = 1 - Math.exp(-kd*dt);
+			double pDarktoA = 1-1/(1+alpha) * (Math.exp(-kr1*dt)+alpha*Math.exp(-kr2*dt));
+			boolean notBleached = true;
+			int state = 1; //1 corresponds to active, 2 corresponds to dark, 3 corresponds to bleached
+			while (notBleached){
+				switch (state){
+				case 1://active
+					double randomNumber = calc.random.nextDouble();
+					double randomNumber4 = calc.random.nextDouble();
+					boolean aToBleach =  (pAtoBleach > randomNumber);
+					boolean aToDark = (pAtoDark > randomNumber4);
+					if (aToBleach && aToDark){//if both would have happened chose based on the likelihood for each process which happens
+						double randomNumber2 = calc.random.nextDouble() * (pAtoBleach + pAtoDark);
+						if (randomNumber2>pAtoDark){//bleaching occurs
+							state = 3;
+							notBleached = false;
+						}
+						else{
+							state = 2;
+						}
+					}
+					else if(aToBleach){
+						state = 3;
+						notBleached = false;
+					}
+					else if(aToDark){
+						state = 2;
+					}
+					else{//stays in active state
+						float intensity = intensities.get((int) (calc.random.nextDouble()*intensities.size()-1));
+						if (ps.getCoupleSigmaIntensity()){
+							x = (float) (listEndPoints[i][0] + calc.random.nextGaussian()*(sxy/Math.sqrt(intensity/meanPhotonNumber)));
+							y = (float) (listEndPoints[i][1] + calc.random.nextGaussian()*(sxy/Math.sqrt(intensity/meanPhotonNumber)));
+							z = (float) (listEndPoints[i][2] + calc.random.nextGaussian()*(sz/Math.sqrt(intensity/meanPhotonNumber)));
+						}
+						else {
+							x = (float) (listEndPoints[i][0] + calc.random.nextGaussian()*(sxy));
+							y = (float) (listEndPoints[i][1] + calc.random.nextGaussian()*(sxy));
+							z = (float) (listEndPoints[i][2] + calc.random.nextGaussian()*(sz));
+						}
+						float tmpLoc[] = {x,y,z,startFrame + counter,intensity};
+						allStormPoints.add(tmpLoc);
+					}
+					break;
+				case 2:
+					double randomNumber3 = calc.random.nextDouble();
+					if (pDarktoA > randomNumber3){
+						state = 1;
+					}
+					break;
+				case 3://should never be reached
+					break;
+				}
+				counter += 1;
+			}
+		}
+		stormPoints = Calc.toFloatArray(allStormPoints);
+		System.out.println("Number localizations: "+ allStormPoints.size());
+		calc.publicSetProgress((int) (100));
+		return stormPoints;
+	}
 	
 	private static float[][] addMultipleFluorophoresPerAntibody(float[][] listEndPoints, float fpab
 			,STORMCalculator calc) {

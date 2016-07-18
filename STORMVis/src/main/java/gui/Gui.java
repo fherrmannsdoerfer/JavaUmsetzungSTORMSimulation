@@ -165,7 +165,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	/**
 	 * contains all current dataSets (displayed in table)
 	 */
-	private List<DataSet> allDataSets = new ArrayList<DataSet>();
+	private static List<DataSet> allDataSets = new ArrayList<DataSet>();
 	
 	
 	private JButton emColorButton;
@@ -258,7 +258,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		 try {
+		try {
 	            // Set System L&F
 	        UIManager.setLookAndFeel(
 	            UIManager.getSystemLookAndFeelClassName());
@@ -293,7 +293,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	 */
 	public Gui() {
 		this.selfReference = this;
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); //to prevent the virtual machine from termination
 		setBounds(0, 0, 1200, 1000);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -2036,7 +2036,17 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		calc.addListener((ThreadCompleteListener)this);
 		nt = new CreatePlot(null);
 	}
-	
+	public float[][] returnSTORMPoints(int idxDataset){
+		if (idxDataset>=allDataSets.size()){
+			//System.out.println("allDataSets.size() "+allDataSets.size());
+			//System.out.println("currentRow "+currentRow);
+			System.out.println("You requested data from a dataset not yet loaded!");
+		}
+		else{
+			return allDataSets.get(idxDataset).stormData;
+		}
+		return null;
+	}
 	
 	protected void findShifts(List<DataSet> allDataSets2) {
 		for (DataSet ds: allDataSets2){
@@ -2152,6 +2162,32 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		updateMinMax();
 		//setSelectedListsForDrawing();
 	}
+	
+	public void createGUI(String[] args) {
+		try {
+	            // Set System L&F
+	        UIManager.setLookAndFeel(
+	            UIManager.getSystemLookAndFeelClassName());
+	    } 
+	    catch (UnsupportedLookAndFeelException e) {
+	       // handle exception
+	    }
+	    catch (ClassNotFoundException e) {
+	       // handle exception
+	    }
+	    catch (InstantiationException e) {
+	       // handle exception
+	    }
+	    catch (IllegalAccessException e) {
+	       // handle exception
+	    }
+		Gui frame = new Gui();
+		frame.setTitle("SuReSim");
+		frame.setVisible(true);
+				
+	
+	}
+	
 	/**
 	 * Configures the mouse listener for the dataset table. 
 	 * When a line is clicked, its ParameterSet is loaded to the configuration panel.
@@ -2332,7 +2368,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	/**
 	 * invoked by visualize button
 	 */
-	private void visualize() {
+	public void visualize() {
 		if(currentRow != -1) {
 			getDrawingParameters();
 			if(saveViewpointButton.isSelected()) {
@@ -2346,6 +2382,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 			allDataSets.get(currentRow).getParameterSet().setLineWidth(new Float(lineWidthField.getText()));
 			setSelectedListsForDrawing();
 			//visualizeAllSelectedData();
+			returnSTORMPoints(2);
 		}
 	}
 	
