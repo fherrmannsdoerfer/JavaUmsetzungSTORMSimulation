@@ -33,7 +33,6 @@ public class StormPointFinder {
 		
 		float psfWidth = ps.getPsfwidth();
 		float ilpmm3 = ps.getIlpmm3();
-		boolean mergedPSFs = ps.getMergedPSF();
 		boolean applyBleaching = ps.getApplyBleaching();
 		
 		if (background) { //unspecific labeling
@@ -48,12 +47,17 @@ public class StormPointFinder {
 					calc,ps.getFrames(), ps.getMeanPhotonNumber(), ps.getBleachConst(), applyBleaching);
 		}
 		else{
-//			stormPoints = createStormPointsPafp(listEndPoints, ps, 
-//					sxy, sz, psfWidth, progressBar,
-//					calc, ps.getFrames(), ps.getMeanPhotonNumber(), 0.01f,7.8f, 
-//					0.4f, 15.7f, 0.24f, 5.4f);
+			if (ps.isUseSTORMBlinking()){
+//			
 			stormPoints = createStormPoints(listEndPoints, ps, sxy, sz, psfWidth, progressBar,
 					calc, ps.getFrames(), ps.getMeanPhotonNumber(),ps.getMinIntensity());
+			}
+			else{
+				stormPoints = createStormPointsPafp(listEndPoints, ps, 
+						sxy, sz, psfWidth, progressBar,
+						calc, ps.getFrames(), ps.getMeanPhotonNumber(), 0.01f,7.8f, 
+						0.4f, 15.7f, 0.24f, 5.4f);
+			}
 		}
 		
 		return stormPoints;

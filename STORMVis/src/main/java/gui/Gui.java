@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
@@ -1862,8 +1863,9 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	    		if (new ProjectFileFilter().accept(event.getFile())){
 	    			proceedProjectImport(event.getFile());
 	    		}
-	    		if (new TriangleLineFilter().accept(event.getFile()))
-	    		proceedFileImport(event.getFile());
+	    		if (new TriangleLineFilter().accept(event.getFile())){
+	    			proceedFileImport(event.getFile());
+	    		}
 	    	}
 	    });
 		plotPanel.setLayout(new CardLayout(0, 0));
@@ -2022,7 +2024,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_17 = Box.createHorizontalBox();
 		panel_3.add(horizontalBox_17, "name_13635831669473");
 		
-		JLabel lblNewLabel_6 = new JLabel("Number Of Visible Localizations:  ");
+		JLabel lblNewLabel_6 = new JLabel("Number Of Localizations:  ");
 		horizontalBox_17.add(lblNewLabel_6);
 		
 		numberOfVisibleLocalizationsLabel = new JLabel("0");
@@ -2483,12 +2485,12 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 //					plot.run();
 //				}
 //			};
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 //			t.start();
 		}
 		else if(sets.size() == 0) {

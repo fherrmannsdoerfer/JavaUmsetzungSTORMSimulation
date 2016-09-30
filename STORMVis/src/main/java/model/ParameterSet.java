@@ -84,6 +84,8 @@ public class ParameterSet implements Serializable {
 	private int minIntensity;
 	private List<Float> borders;
     private boolean colorProof;
+    
+    private boolean useSTORMBlinking;
 	
 
 	public ParameterSet(Float loa, Float aoa, Float soa, Float bspnm, Float pabs,
@@ -95,7 +97,7 @@ public class ParameterSet implements Serializable {
 			Float frameRate, Float sigmaBg, Float constOffset, Float emGain, Float quantumEfficiency, 
 			int windowsizePSF, int emptyPixelsOnRim, Float na, Float fokus, Float defokus, boolean twoDPSF,
 			float[][] calibrationFile, float electronPerAdCount,float meanBlinkingTime, boolean ensureSinglePSF, 
-			boolean distributePSFoverFrames, int minIntensity, List<Float> borders, Float deadTime, boolean colorProof) {
+			boolean distributePSFoverFrames, int minIntensity, List<Float> borders, Float deadTime, boolean colorProof, boolean useSTORMBlinking) {
 		super();
 		this.loa = loa;
 		this.aoa = aoa;
@@ -158,11 +160,12 @@ public class ParameterSet implements Serializable {
 		this.deadTime = deadTime;
 		this.colorProof = colorProof;
 		
+		this.useSTORMBlinking = useSTORMBlinking;
 	} 
     
     public ParameterSet() {
     	super();
-    	this.loa = new Float(16.f); 	
+    	this.loa = new Float(15.f); 	
         this.aoa = new Float((float) (90./180.*Math.PI));
         this.soa = new Float(0.f);
         this.bspnm = new Float(13.f/8.f);
@@ -170,8 +173,8 @@ public class ParameterSet implements Serializable {
         this.abpf = new Float(14);		
         this.rof = new Float(12.5f);		
         this.fpab = new Float(1.f); 
-        this.sxy = new Float(10.0f); 
-        this.sz = new Float(30.0f); 
+        this.sxy = new Float(4.0f); 
+        this.sz = new Float(8.0f); 
         this.doc = new Float(0.f); 
         this.nocpsmm = new Float(1.f); 
         this.docpsnm = new Float(0.01f);
@@ -189,14 +192,14 @@ public class ParameterSet implements Serializable {
 		this.stormVisibility = Boolean.TRUE;   
 		this.antibodyVisibility = Boolean.TRUE;
 		
-		this.ilpmm3 = new Float(50.f);
+		this.ilpmm3 = new Float(0.f);
 		this.psfwidth = new Float(647.f);
 		
 		this.applyBleaching= Boolean.FALSE;
 		this.mergedPSF = Boolean.FALSE;
 		this.coupleSigmaIntensity = Boolean.TRUE;
 		
-		this.pointSize = new Float(2.f);
+		this.pointSize = new Float(4.f);
 		this.lineWidth = new Float(2.f);
 		
 		/**
@@ -229,6 +232,16 @@ public class ParameterSet implements Serializable {
 		this.setBorders((List<Float>) Arrays.asList(-9e10f, 9e10f,-9e10f,9e10f,-9e10f,9e10f));
 		this.deadTime = 0f;
 		this.colorProof = false;
+		
+		this.useSTORMBlinking = true;
+    }
+    
+    public boolean isUseSTORMBlinking(){
+    	return useSTORMBlinking;
+    }
+    
+    public void setuseSTORMBlinking(boolean useSTORMBlinking){
+    	this.useSTORMBlinking = useSTORMBlinking;
     }
     
     public boolean isColorProof(){

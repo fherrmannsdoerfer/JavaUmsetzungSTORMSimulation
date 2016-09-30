@@ -23,6 +23,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import calc.Calc;
 import calc.CreateStack;
@@ -30,6 +31,7 @@ import calc.STORMCalculator;
 import model.DataSet;
 import model.EpitopeDataSet;
 import model.LineDataSet;
+import model.ParameterSet;
 import model.TriangleDataSet;
 
 public class startBatchProcessing {
@@ -38,8 +40,10 @@ public class startBatchProcessing {
 	private static String EXTENSIONIMAGEOUTPUT = ".tif";
 	private static String outputFolder = "";// "C:\\Users\\herrmannsdoerfer\\Desktop\\Tiff-StackTestModelle\\Mikrotubuli\\";
 	private static String inputFolder = "";
-	static float[] shifts ={500,500,500};
+	static float[] shifts ={0,0,0};
 	public static void main(String[] args) {
+		allDataSets.add(new DataSet(new ParameterSet()));
+		processMultipleFiles();
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException e) {
@@ -65,74 +69,138 @@ public class startBatchProcessing {
 		boolean tiffStackOutput = false;
 		boolean suReSimOutput = true;
 		int numberOfSimulationsWithSameParameterSet = 1; //number of outputs for the same parameter set
-		SimulationParameter params = standardParameterActin();
+		SimulationParameter params = standardParameterVesicles();
 		ArrayList<Float> sigmaXY = new ArrayList<Float>(Arrays.asList(4.f,8.f,12.f,25.f));
 		ArrayList<Float> sigmaZ = new ArrayList<Float>(Arrays.asList(8.f,30.f,40.f,50.f));
-		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(10.f,50.f,100.f));
+		ArrayList<Float> le = new ArrayList<Float>(Arrays.asList(1.f,10.f,43.f,100.f));
 		ArrayList<Float> varAng = new ArrayList<Float>(Arrays.asList(0f));
 		//ArrayList<Float> de = new ArrayList<Float>(Arrays.asList(10.f,20.f,50.f,100.f));
 		ArrayList<Float> koff = new ArrayList<Float>(Arrays.asList(5.f/10000));
 		//ArrayList<Integer> frames = new ArrayList<Integer>(Arrays.asList(10000));
-		ArrayList<Float> labelLength = new ArrayList<Float>(Arrays.asList(16.f));
+		ArrayList<Float> labelLength = new ArrayList<Float>(Arrays.asList(15f));
+		ArrayList<Integer> nbrLabel = new ArrayList<Integer>(Arrays.asList(8));
 		ArrayList<Integer> photonOutput = new ArrayList<Integer>(Arrays.asList(4000));
+		ArrayList<Float> bgLabelPerMM3 = new ArrayList<Float>(Arrays.asList(0f,50f,100f));
+		ArrayList<Float> bindingAngles = new ArrayList<Float>(Arrays.asList(90f,-90f));
+		ArrayList<Float> epitopeDensities = new ArrayList<Float>(Arrays.asList((float)(31.5/(4*Math.PI*20*20)),(float)(69.8/(4f*Math.PI*20*20)),(float)(8.3/(4f*Math.PI*20f*20f))));
+		ArrayList<Float> sigmaRender = new ArrayList<Float>(Arrays.asList(1f,5f,10f));
+		
 		allDataSets.get(0).setProgressBar(new JProgressBar());
 		
-		
 		int counter = 0;
-		for (int ll = 0; ll<photonOutput.size();ll++){
-			for (int s = 0; s<labelLength.size(); s++){
-				for (int a = 0; a<varAng.size(); a++){
-					for (int i =0; i<sigmaXY.size(); i++){
-						for (int j = 0;j< le.size(); j++){
-							for (int k = 0;k<koff.size(); k++){
-								for (int p = 0;p<numberOfSimulationsWithSameParameterSet; p++){
-									counter += 1;
-									params.labelEpitopeDistance = labelLength.get(s);
-									params.angularDeviation = (float) (varAng.get(a)/180.*Math.PI);
-									params.labelingEfficiency = le.get(j);
-									params.sigmaXY = sigmaXY.get(i);
-									params.sigmaZ = sigmaZ.get(i);
-									params.dutyCycle = koff.get(k);
-									params.sigmaRendering = 10;
-									
-									calculate(params);
-									//params.detectionEfficiency = de.get(i);
-									//params.recordedFrames = frames.get(i);
-									params.borders = getBorders();
-									params.MeanPhotonNumber = photonOutput.get(ll);
-									String fname = String.format("sig%1.0f_%1.0flabEff%1.0fPhoton%dbindAng%1.0fLabLen%1.0fver%d", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.MeanPhotonNumber,params.angleOfLabel*180/Math.PI,params.labelEpitopeDistance,p);
-									if(suReSimOutput){
-										new File(outputFolder+fname+"\\").mkdir();
-										exportData(outputFolder+fname+"\\",fname, params);
+		for (int r = 0; r < sigmaRender.size(); r++){
+			for (int q = 0; q < epitopeDensities.size(); q++){
+				for (int m = 0; m<bgLabelPerMM3.size(); m++){
+					for(int o = 0; o<bindingAngles.size(); o++){
+						for (int nl = 0; nl<nbrLabel.size(); nl++){
+							for (int ll = 0; ll<photonOutput.size();ll++){
+								for (int s = 0; s<labelLength.size(); s++){
+									for (int a = 0; a<varAng.size(); a++){
+										for (int i =0; i<sigmaXY.size(); i++){
+											for (int j = 0;j< le.size(); j++){
+												for (int k = 0;k<koff.size(); k++){
+													for (int p = 0;p<numberOfSimulationsWithSameParameterSet; p++){
+														counter += 1;
+														params.epitopeDensity = (float)epitopeDensities.get(q);
+														params.labelEpitopeDistance = labelLength.get(s);
+														params.angularDeviation = (float) (varAng.get(a)/180.*Math.PI);
+														params.labelingEfficiency = le.get(j);
+														params.sigmaXY = sigmaXY.get(i);
+														params.sigmaZ = sigmaZ.get(i);
+														params.dutyCycle = koff.get(k);
+														params.fluorophoresPerLabel = nbrLabel.get(nl);
+														params.backgroundPerMicroMeterCubed = bgLabelPerMM3.get(m);
+														params.angleOfLabel = bindingAngles.get(o);
+														params.sigmaRendering = sigmaRender.get(r);
+														params.borders = getSpecificBorders();
+														calculate(params);
+														//params.detectionEfficiency = de.get(i);
+														//params.recordedFrames = frames.get(i);
+														try{
+															params.borders = getBorders();
+														}
+														catch(NullPointerException e){
+															e.printStackTrace();
+														}
+														params.MeanPhotonNumber = photonOutput.get(ll);
+														//String fname = String.format("sig%1.0f_%1.0flabEff%1.0fPhoton%dbindAng%1.0fLabLen%1.0fver%d", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.MeanPhotonNumber,params.angleOfLabel*180/Math.PI,params.labelEpitopeDistance,p);
+														String fname = String.format("sig%1.0f_%1.0fLabEff%1.0fBGPerMM3%1.0fLabelLen%1.2fnbrLab%1.1fBindAngl%2.0fEpiDens%3.5fSigRend%1.0f", params.sigmaXY,params.sigmaZ,params.labelingEfficiency,params.backgroundPerMicroMeterCubed,params.labelEpitopeDistance,params.fluorophoresPerLabel,params.angleOfLabel,params.epitopeDensity,params.sigmaRendering);
+														if(suReSimOutput){
+															new File(outputFolder+fname+"\\").mkdir();
+															exportData(outputFolder+fname+"\\",fname, params);
+														}
+														if (tiffStackOutput){
+															
+															float[][] calibr = allDataSets.get(0).getParameterSet().getCalibrationFile();
+															allDataSets.get(0).setProgressBar(new JProgressBar());
+															params.sigmaXY = 0.f;
+															params.sigmaZ = 0.f;
+															calculate(params);
+															CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
+																	10.f/**emGain*/,params.borders,random,4.81f/**electrons per AD*/, (float) 30.f/**frameRate*/, 
+																	0.03f/**blinking duration*/,0.00f /**dead time*/, 15/**sizePSF*/, 1/**modelNR*/,1.f,
+																	(float) 1.45f/**NA*/, 647.f/**waveLength*/, 200.f/**zFocus*/, 
+																	600.f/**zDefocus*/, 35.7f/**sigmaNoise*/, 200.f/**constant offset*/, calibr/**calibration file*/,
+																	outputFolder+fname+"\\"+fname+"TiffStack.tif",
+																	false /* ensure single PSF*/, true /*split blinking over frames*/, new CreateTiffStack(null,null,null,null));
+														
+														}
+														System.out.println(String.format("run %d of %d",counter,sigmaXY.size()*koff.size()*le.size()*varAng.size()*labelLength.size()*numberOfSimulationsWithSameParameterSet*bgLabelPerMM3.size()*bindingAngles.size()*nbrLabel.size()*epitopeDensities.size()*sigmaRender.size()));
+													}
+												}
+											}
+										}
 									}
-									if (tiffStackOutput){
-										
-										float[][] calibr = allDataSets.get(0).getParameterSet().getCalibrationFile();
-										allDataSets.get(0).setProgressBar(new JProgressBar());
-										params.sigmaXY = 0.f;
-										params.sigmaZ = 0.f;
-										calculate(params);
-										CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
-												10.f/**emGain*/,params.borders,random,4.81f/**electrons per AD*/, (float) 30.f/**frameRate*/, 
-												0.03f/**blinking duration*/,0.00f /**dead time*/, 15/**sizePSF*/, 1/**modelNR*/,1.f,
-												(float) 1.45f/**NA*/, 647.f/**waveLength*/, 200.f/**zFocus*/, 
-												600.f/**zDefocus*/, 35.7f/**sigmaNoise*/, 200.f/**constant offset*/, calibr/**calibration file*/,
-												outputFolder+fname+"\\"+fname+"TiffStack.tif",
-												false /* ensure single PSF*/, true /*split blinking over frames*/, new CreateTiffStack(null,null,null,null));
-									
-									}
-									System.out.println(String.format("run %d of %d",counter,sigmaXY.size()*koff.size()*le.size()*varAng.size()*labelLength.size()*numberOfSimulationsWithSameParameterSet));
 								}
 							}
 						}
 					}
 				}
-			}
+			}		
 		}
 		
 		
+	}
+	
+	public static void processMultipleFiles(){
+		boolean tiffStackOutput = false;
+		boolean suReSimOutput = true;
+		SimulationParameter params = standardParameterSingleEpitopes();
+		params.useSTORMBlinking = false;
+		String importPath = "W:\\herrmannsdoerfer\\Sonstiges\\LaborTagebuch\\Dateien\\2016_09\\epitopes\\";
+		String outputFolder = "W:\\herrmannsdoerfer\\Sonstiges\\LaborTagebuch\\Dateien\\2016_09\\output\\";
+		(new File(outputFolder)).mkdir();
+		File[] listFiles = (new File(importPath)).listFiles();
 		
-		
+		for (int i = 0; i<listFiles.length;i++){
+			File file = listFiles[i];
+			proceedFileImport(file);
+			
+			calculate(params);
+			params.borders = getBorders();
+			String fname = FilenameUtils.getBaseName(file.getName());
+			
+			if(suReSimOutput){
+				new File(outputFolder+fname+"\\").mkdir();
+				exportData(outputFolder+fname+"\\",fname, params);
+			}
+			if (tiffStackOutput){
+				
+				float[][] calibr = allDataSets.get(0).getParameterSet().getCalibrationFile();
+				allDataSets.get(0).setProgressBar(new JProgressBar());
+				params.sigmaXY = 0.f;
+				params.sigmaZ = 0.f;
+				calculate(params);
+				CreateStack.createTiffStack(allDataSets.get(0).stormData, 1/133.f/**resolution*/ , 10/**emptyspace*/, 
+						10.f/**emGain*/,params.borders,random,4.81f/**electrons per AD*/, (float) 30.f/**frameRate*/, 
+						0.03f/**blinking duration*/,0.00f /**dead time*/, 15/**sizePSF*/, 1/**modelNR*/,1.f,
+						(float) 1.45f/**NA*/, 647.f/**waveLength*/, 200.f/**zFocus*/, 
+						600.f/**zDefocus*/, 35.7f/**sigmaNoise*/, 200.f/**constant offset*/, calibr/**calibration file*/,
+						outputFolder+fname+"\\"+fname+"TiffStack.tif",
+						false /* ensure single PSF*/, true /*split blinking over frames*/, new CreateTiffStack(null,null,null,null));
+			
+			}
+		}
 	}
 	
 	private static void createRandomEpitopesOnLine(double length, int nbrEpitopes) {
@@ -198,25 +266,25 @@ public class startBatchProcessing {
 	
 	private static SimulationParameter standardParameterSingleEpitopes() {
 		SimulationParameter params = new SimulationParameter();
-		params.angularDeviation = 0;
+		params.angularDeviation = (float) (90.f/180*Math.PI);
 		params.angleOfLabel = (float) (90.f/180*Math.PI);
 		params.backgroundPerMicroMeterCubed = 0;
-		params.coupleSigmaIntensity = true;
+		params.coupleSigmaIntensity = false;
 		params.detectionEfficiency = 100;
 		params.epitopeDensity = (float) 1.625;
 		params.fluorophoresPerLabel = 1;
-		params.dutyCycle = (float) (7/50000.f);
-		params.labelEpitopeDistance = 16;
-		params.labelingEfficiency = 90;
-		params.makeItReproducible = false;
+		params.dutyCycle = (float) (1/5000.f);
+		params.labelEpitopeDistance = 8;
+		params.labelingEfficiency = 25f;
+		params.makeItReproducible = true;
 		params.MeanPhotonNumber = 3000;
 		params.radiusOfFilament = (float) 12.5;
-		params.recordedFrames = 50000;
-		params.sigmaXY = 6;
+		params.recordedFrames = 15000;
+		params.sigmaXY = 8;
 		params.sigmaZ = 30;
 		params.viewStatus = 1;
 		params.sigmaRendering = 5;
-		params.pixelsize = 2.5;
+		params.pixelsize = 10;
 		return params;
 	}
 	
@@ -285,7 +353,7 @@ public class startBatchProcessing {
 		params.sigmaXY = 4;
 		params.sigmaZ = 8;
 		params.viewStatus = 1;
-		params.colorProof = true;
+		params.colorProof = false;
 		return params;
 	}
 
@@ -297,10 +365,10 @@ public class startBatchProcessing {
 	
 	private static ArrayList<Float> getSpecificBorders(){
 		ArrayList<Float> retList = new ArrayList<Float>();
-		retList.add(-5550f);
-		retList.add(-4910f);
-		retList.add(2240f);
-		retList.add(2883.9f);
+		retList.add(-1000f);
+		retList.add(1640f);
+		retList.add(-1000f);
+		retList.add(1640f);
 		retList.add(-50f);
 		retList.add(250f);
 		return retList;
@@ -330,7 +398,7 @@ public class startBatchProcessing {
 			System.out.println("PLY file parsed.");
 		}
 		
-		allDataSets.add(data);
+		allDataSets.set(0,data);
 	
 	}
 	private static void calculate(SimulationParameter params) {
@@ -355,6 +423,9 @@ public class startBatchProcessing {
 		allDataSets.get(currentRow).getParameterSet().setAbpf(params.fluorophoresPerLabel);
 		allDataSets.get(currentRow).getParameterSet().setSigmaRendering(10);
 		allDataSets.get(currentRow).getParameterSet().setColorProof(params.colorProof);
+		allDataSets.get(currentRow).getParameterSet().setBorders(params.borders);
+		allDataSets.get(currentRow).getParameterSet().setSigmaRendering(params.sigmaRendering);
+		allDataSets.get(currentRow).getParameterSet().setuseSTORMBlinking(params.useSTORMBlinking);
 		
 		if(allDataSets.get(currentRow).dataType == DataType.LINES) {
 			allDataSets.get(currentRow).getParameterSet().setBspnm(params.epitopeDensity);
@@ -415,7 +486,7 @@ public class startBatchProcessing {
 		System.out.println("Path to write project: " + path);
 		System.out.println("project name: " + name);
 		FileManager.ExportToFile(allDataSets.get(0), path, params.viewStatus,params.borders,
-				allDataSets.get(0).getParameterSet().getPixelsize(),allDataSets.get(0).getParameterSet().getSigmaRendering(),shifts);
+				allDataSets.get(0).getParameterSet().getPixelsize(),params.sigmaRendering,shifts);
 	}
 }
 
@@ -442,6 +513,7 @@ class SimulationParameter{
 	double pixelsize = 10;
 	double sigmaRendering = 20;
 	boolean colorProof = false;
+	boolean useSTORMBlinking = true;
 	SimulationParameter(){
 	
 	}
