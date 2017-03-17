@@ -234,9 +234,9 @@ public class FileManager {
 			colImg.get(2).setDisplayRange(0, 255);
 		}
 		else {
-			colImg.get(0).setDisplayRange(0, 65500);
-			colImg.get(1).setDisplayRange(0, 65500);
-			colImg.get(2).setDisplayRange(0, 65500);
+			//colImg.get(0).setDisplayRange(0, 65500);
+			//colImg.get(1).setDisplayRange(0, 65500);
+		//	colImg.get(2).setDisplayRange(0, 65500);
 		}
 		imPlusStack[0] = colImg.get(0);
 		imPlusStack[1] = colImg.get(1);

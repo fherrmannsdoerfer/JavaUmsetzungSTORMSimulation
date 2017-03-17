@@ -602,7 +602,7 @@ public class Calc {
 		for (int i = 0; i<height; i++){
 			for (int j =0; j<width; j++){
 				for (int k = 0; k<3; k++){
-					colorBar.get(k)[i][j] = getColor(i*interval, zmax-zmin,k, colorProof);
+					colorBar.get(k)[i][j] = 255*getColor(i*interval, zmax-zmin,k, colorProof);
 				}
 			}
 		}

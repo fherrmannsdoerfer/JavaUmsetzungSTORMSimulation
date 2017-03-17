@@ -816,7 +816,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 		Box horizontalBox_56 = Box.createHorizontalBox();
 		verticalBox_20.add(horizontalBox_56);
 		
-		JLabel lblWindowsizePsfRendering = new JLabel("Quantum Efficiency [%]");
+		JLabel lblWindowsizePsfRendering = new JLabel("Quantum Efficiency [0 ... 1]");
 		horizontalBox_56.add(lblWindowsizePsfRendering);
 		
 		Component horizontalGlue_52 = Box.createHorizontalGlue();
