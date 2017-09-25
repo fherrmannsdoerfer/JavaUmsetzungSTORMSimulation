@@ -294,7 +294,7 @@ public class Gui extends JFrame implements TableModelListener,PropertyChangeList
 	 */
 	public Gui() {
 		this.selfReference = this;
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); //to prevent the virtual machine from termination
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //to prevent the virtual machine from termination
 		setBounds(0, 0, 1200, 1000);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

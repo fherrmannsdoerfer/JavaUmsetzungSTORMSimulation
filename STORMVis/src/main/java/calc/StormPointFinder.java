@@ -174,7 +174,7 @@ public class StormPointFinder {
 				double randomNumber = calc.random.nextDouble(); //random number is equally distributed between 0 and 1 and it is used
 				double tmp = Math.exp(-kBleach*maxFrame);
 				if (randomNumber < tmp){ //to be tested for the probability that this frame gets this 
-					maxFrames.add(maxFrame); //localization. If it is smaller maxFrame is stored and the while loop is left
+					maxFrames.add(maxFrame); //localization. If it is smaller maxFrame is stored and the while loop is exited
 					break;
 				}		//if it is to large a new maxFrame is determined.
 
