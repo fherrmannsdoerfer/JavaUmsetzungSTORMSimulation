@@ -24,6 +24,7 @@ public class DataSet implements Serializable {
 	public float[][] stormData;
 	public float[][] antiBodyStartPoints;
 	public float[][] antiBodyEndPoints;
+	public float[][] fluorophorePos;
 	
 	public boolean isCalculating;
 	

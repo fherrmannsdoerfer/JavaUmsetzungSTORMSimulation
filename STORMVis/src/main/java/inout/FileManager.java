@@ -126,6 +126,7 @@ public class FileManager {
 		String basename = path.substring(0, path.length()-4);
 		writeProjectionToFile(dataset,path,mode,borders,pixelsize, sigma, shifts);
 		writeEpitopesToFile(dataset.antiBodyStartPoints, basename,borders);
+		writeFluorophoresToFile(dataset.fluorophorePos,basename,borders);
 		writeLocalizationsToFile(dataset.stormData,basename,borders);
 		writeLocalizationsToFileForFRC(dataset.stormData, basename,borders);
 		writeLogFile(dataset.getParameterSet(), basename,borders);
@@ -400,6 +401,21 @@ public class FileManager {
 			writer.append("Pos_x Pos_y Pos_z \n");
 			for (int i = 0; i<epitopeData.length; i++){
 				float[] tmp = epitopeData[i];
+				if (Calc.isInRange(tmp,borders)){
+					writer.append(tmp[0]+" "+tmp[1]+" "+tmp[2]+"\n");
+        		}
+			}
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {e.printStackTrace();}
+	}
+	
+	private static void writeFluorophoresToFile(float[][] fluorophorePos, String basename,ArrayList<Float> borders) {
+		try{
+			FileWriter writer = new FileWriter(basename+"FluorophorePos.txt");
+			writer.append("Pos_x Pos_y Pos_z \n");
+			for (int i = 0; i<fluorophorePos.length; i++){
+				float[] tmp = fluorophorePos[i];
 				if (Calc.isInRange(tmp,borders)){
 					writer.append(tmp[0]+" "+tmp[1]+" "+tmp[2]+"\n");
         		}

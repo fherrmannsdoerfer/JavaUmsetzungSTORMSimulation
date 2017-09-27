@@ -41,6 +41,7 @@ public class StormPointFinder {
 		if (fpab != 1){
 			listEndPoints = addMultipleFluorophoresPerAntibody(listEndPoints, fpab,calc);
 		}
+		ds.fluorophorePos = listEndPoints.clone();
 		float[][] stormPoints;
 		if (applyBleaching){
 			stormPoints = createStormPointsRealisticBleaching(listEndPoints, ps, sxy, sz,  psfWidth, progressBar, 
